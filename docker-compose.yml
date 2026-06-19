@@ -23,6 +23,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-switching}
       REPLICATION_USER: ${REPLICATION_USER:-switching_replicator}
       REPLICATION_PASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:-switching_app_password_change_me}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:-switching_flyway_password_change_me}
     ports:
       - "5433:5432"
     volumes:
@@ -277,7 +279,12 @@ services:
       OBJECT_STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-switching_minio}
       OBJECT_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
       MESSAGE_CRYPTO_KEY_BASE64: ${MESSAGE_CRYPTO_KEY_BASE64:-}
+      # Webhook secret encryption (dev: local AES)
+      SWITCHING_WEBHOOK_ENCRYPTION_PROVIDER: ${SWITCHING_WEBHOOK_ENCRYPTION_PROVIDER:-local}
+      SWITCHING_WEBHOOK_ENCRYPTION_LOCAL_MASTER_KEY_BASE64: ${SWITCHING_WEBHOOK_ENCRYPTION_LOCAL_MASTER_KEY_BASE64:-}
+      SWITCHING_WEBHOOK_ENCRYPTION_LOCAL_KEY_ID: ${SWITCHING_WEBHOOK_ENCRYPTION_LOCAL_KEY_ID:-dev-local-1}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      SWITCHING_OUTBOX_QUEUE_ENABLED: "true"
       OUTBOX_QUEUE_ENABLED: "true"
       OUTBOX_QUEUE_TOPIC: switching.outbox.dispatch
       OUTBOX_QUEUE_GROUP_ID: switching-outbox-dispatcher
