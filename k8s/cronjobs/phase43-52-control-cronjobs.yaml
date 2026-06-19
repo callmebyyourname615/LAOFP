@@ -1,0 +1,139 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-crypto-inventory-control
+  labels: {app.kubernetes.io/name: switching, switching.io/control-phase: "43-52"}
+spec:
+  schedule: "15 1 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 7
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 900
+      template:
+        metadata: {labels: {app.kubernetes.io/name: switching-control}}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+          containers:
+            - name: control
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/crypto/check_crypto_inventory.sh"]
+              env:
+                - {name: CRYPTO_ROTATION_WARNING_DAYS, valueFrom: {configMapKeyRef: {name: switching-phase43-52-control-policy, key: crypto-rotation-warning-days}}}
+              envFrom: [{secretRef: {name: switching-ops-db-secret}}]
+              resources: {requests: {cpu: 25m, memory: 64Mi}, limits: {cpu: 250m, memory: 256Mi}}
+              securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-adjustment-age-control
+  labels: {app.kubernetes.io/name: switching, switching.io/control-phase: "43-52"}
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 300
+      template:
+        metadata: {labels: {app.kubernetes.io/name: switching-control}}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+          containers:
+            - name: control
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/adjustments/check_pending_adjustments.sh"]
+              env:
+                - {name: MAX_PENDING_ADJUSTMENT_HOURS, valueFrom: {configMapKeyRef: {name: switching-phase43-52-control-policy, key: manual-adjustment-max-pending-hours}}}
+              envFrom: [{secretRef: {name: switching-ops-db-secret}}]
+              resources: {requests: {cpu: 25m, memory: 64Mi}, limits: {cpu: 200m, memory: 192Mi}}
+              securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-finality-integrity-control
+  labels: {app.kubernetes.io/name: switching, switching.io/control-phase: "43-52"}
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 300
+      template:
+        metadata: {labels: {app.kubernetes.io/name: switching-control}}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+          containers:
+            - name: control
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/finality/check_finality_integrity.sh"]
+              envFrom: [{secretRef: {name: switching-ops-db-secret}}]
+              resources: {requests: {cpu: 25m, memory: 64Mi}, limits: {cpu: 200m, memory: 192Mi}}
+              securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-evidence-age-control
+  labels: {app.kubernetes.io/name: switching, switching.io/control-phase: "43-52"}
+spec:
+  schedule: "20 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 300
+      template:
+        metadata: {labels: {app.kubernetes.io/name: switching-control}}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+          containers:
+            - name: control
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/lineage/check_unverified_evidence.sh"]
+              env:
+                - {name: EVIDENCE_VERIFICATION_MAX_AGE_HOURS, valueFrom: {configMapKeyRef: {name: switching-phase43-52-control-policy, key: evidence-verification-max-age-hours}}}
+              envFrom: [{secretRef: {name: switching-ops-db-secret}}]
+              resources: {requests: {cpu: 25m, memory: 64Mi}, limits: {cpu: 200m, memory: 192Mi}}
+              securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-third-party-dependency-probe
+  labels: {app.kubernetes.io/name: switching, switching.io/control-phase: "43-52"}
+spec:
+  schedule: "*/2 * * * *"
+  suspend: true
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 120
+      template:
+        metadata: {labels: {app.kubernetes.io/name: switching-control}}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+          containers:
+            - name: probe
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["python3","/workspace/scripts/dependencies/probe_dependencies.py","/config/dependencies.yaml","/tmp/results.json"]
+              volumeMounts: [{name: config, mountPath: /config, readOnly: true}]
+              resources: {requests: {cpu: 25m, memory: 64Mi}, limits: {cpu: 250m, memory: 256Mi}}
+              securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+          volumes: [{name: config, configMap: {name: switching-third-party-probe-config}}]

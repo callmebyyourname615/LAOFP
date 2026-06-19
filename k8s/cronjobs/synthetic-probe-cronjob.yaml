@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-synthetic-probe
+  labels:
+    app.kubernetes.io/name: switching
+    switching.io/control-phase: "41"
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 12
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 120
+      template:
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: synthetic-probe
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["python3", "/workspace/scripts/synthetic/run_synthetic_probe.py"]
+              envFrom:
+                - configMapRef: {name: switching-synthetic-probe-config}
+                - secretRef: {name: switching-synthetic-probe-secret}
+                - secretRef: {name: switching-ops-db-secret}
+              resources:
+                requests: {cpu: 25m, memory: 64Mi}
+                limits: {cpu: 250m, memory: 256Mi}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: ["ALL"]}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switching-synthetic-probe-config
+data:
+  SYNTHETIC_BASE_URL: "https://switching-api.switching.svc.cluster.local"
+  SYNTHETIC_PROBE_CODE: "E2E-CORE"
+  SYNTHETIC_MODE: "END_TO_END"
+  SYNTHETIC_SOURCE_BANK: "SYN001"
+  SYNTHETIC_DESTINATION_BANK: "SYN002"
+  SYNTHETIC_AMOUNT: "1.00"
+  SYNTHETIC_CURRENCY: "LAK"

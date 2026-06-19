@@ -1,0 +1,10 @@
+{
+  "templateCode": "TRANSFER-STATUS",
+  "channel": "IN_APP",
+  "locale": "en",
+  "bodyTemplate": "Transfer {{reference}} is {{status}}.",
+  "allowedPlaceholders": [
+    "reference",
+    "status"
+  ]
+}

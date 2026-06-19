@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.example.com/events/outbox-dispatch/v1",
+  "title": "Outbox dispatch event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaName", "schemaVersion", "eventId", "outboxEventId", "queuedAt"],
+  "properties": {
+    "schemaName": {"const": "switching.outbox.dispatch"},
+    "schemaVersion": {"const": 1},
+    "eventId": {"type": "string", "format": "uuid"},
+    "outboxEventId": {"type": "integer", "minimum": 1},
+    "transferRef": {"type": ["string", "null"], "maxLength": 128},
+    "queuedAt": {"type": "string", "format": "date-time"}
+  }
+}

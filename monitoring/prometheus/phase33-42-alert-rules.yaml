@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-phase33-42-controls
+spec:
+  groups:
+    - name: switching-financial-controls
+      rules:
+        - alert: SwitchingLiquidityHeadroomLow
+          expr: switching_liquidity_breaches_open > 0
+          for: 2m
+          labels: {severity: critical}
+          annotations: {summary: "Participant liquidity headroom below minimum"}
+        - alert: SwitchingGovernedFxRateMissing
+          expr: switching_fx_pairs_without_valid_rate > 0
+          for: 2m
+          labels: {severity: critical}
+          annotations: {summary: "No valid governed FX rate"}
+        - alert: SwitchingCertificateExpiringSoon
+          expr: switching_participant_certificates_expiring_30d > 0
+          for: 15m
+          labels: {severity: warning}
+          annotations: {summary: "Participant certificate expires within 30 days"}
+        - alert: SwitchingSyntheticProbeFailed
+          expr: switching_synthetic_failures_last10m > 0
+          for: 1m
+          labels: {severity: critical}
+          annotations: {summary: "Synthetic payment probe failed"}
+        - alert: SwitchingCorrectiveActionOverdue
+          expr: switching_incident_actions_overdue > 0
+          for: 30m
+          labels: {severity: warning}
+          annotations: {summary: "Incident corrective action is overdue"}
+        - alert: SwitchingRegulatoryReportOverdue
+          expr: switching_regulatory_reports_overdue > 0
+          for: 15m
+          labels: {severity: critical}
+          annotations: {summary: "Regulatory report submission overdue"}
+        - alert: SwitchingNotificationDeadLetterGrowing
+          expr: switching_notifications_dead_last30m > 10
+          for: 10m
+          labels: {severity: warning}
+          annotations: {summary: "Notification dead-letter volume increasing"}

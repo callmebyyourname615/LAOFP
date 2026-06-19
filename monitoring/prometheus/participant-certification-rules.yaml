@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-participant-certification
+  namespace: monitoring
+  labels: {release: prometheus}
+spec:
+  groups:
+    - name: switching.participant.certification
+      rules:
+        - alert: SwitchingActiveParticipantUncertified
+          expr: max(switching_participants_active_without_current_certification) > 0
+          for: 10m
+          labels: {severity: critical, service: switching-participant-management}
+          annotations:
+            summary: Active participant lacks a current PASS certification
+            description: Activation should be blocked; investigate direct database changes or expired evidence.
+            runbook_url: docs/runbooks/RB-20_PARTICIPANT_CERTIFICATION.md
+        - alert: SwitchingParticipantCertificationExpiringSoon
+          expr: max(switching_participants_current_certification_expiring_thirty_days) > 0
+          for: 1h
+          labels: {severity: warning, service: switching-participant-management}
+          annotations:
+            summary: Participant certification expires within 30 days
+            description: Schedule recertification before the current PASS evidence expires.
+            runbook_url: docs/runbooks/RB-20_PARTICIPANT_CERTIFICATION.md

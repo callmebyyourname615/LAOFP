@@ -1,0 +1,102 @@
+spring:
+  datasource:
+    url: ${DB_URL}           # no default — staging must use a real DB
+    username: ${DB_USERNAME}
+  flyway:
+    enabled: false
+    url: ${DB_URL}
+    user: ${DB_USERNAME}
+  jpa:
+    show-sql: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+      group:
+        liveness:
+          include: livenessState,ping
+        readiness:
+          include: readinessState,db,sanctionsFreshness
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 100ms,250ms,500ms,1s,2s
+
+switching:
+  observability:
+    environment: ${OBSERVABILITY_ENVIRONMENT:staging}
+    operational-metrics-refresh: ${OPERATIONAL_METRICS_REFRESH:PT30S}
+  payment:
+    json-initiation:
+      enabled: ${JSON_INITIATION_ENABLED:true}   # allow JSON path in staging for QA/smoke tests
+  mock-bank:
+    pacs002:
+      force-reject: ${MOCK_BANK_FORCE_REJECT:false}
+  aml:
+    screening-fail-closed: ${AML_SCREENING_FAIL_CLOSED:true}
+    sanctions:
+      bol:
+        enabled: ${AML_BOL_SANCTIONS_ENABLED:false}
+        url: ${AML_BOL_SANCTIONS_URL:}
+        minimum-records: ${AML_BOL_SANCTIONS_MIN_RECORDS:1}
+        api-key: ${AML_BOL_SANCTIONS_API_KEY:${BOL_FIU_API_KEY:}}
+      ofac:
+        enabled: ${AML_OFAC_SANCTIONS_ENABLED:false}
+      un:
+        enabled: ${AML_UN_SANCTIONS_ENABLED:false}
+  webhook:
+    endpoint-policy:
+      enabled: true
+      require-https: true
+      require-allowlist: true
+      allow-private-addresses: false
+      allowed-ports: ${WEBHOOK_ALLOWED_PORTS:443}
+      allowed-hosts: ${WEBHOOK_ALLOWED_HOSTS}
+      dns-resolve-timeout-millis: ${WEBHOOK_DNS_TIMEOUT_MS:3000}
+      proxy-enabled: ${WEBHOOK_EGRESS_PROXY_ENABLED:true}
+      proxy-host: ${WEBHOOK_EGRESS_PROXY_HOST}
+      proxy-port: ${WEBHOOK_EGRESS_PROXY_PORT:3128}
+    encryption:
+      provider: ${WEBHOOK_ENCRYPTION_PROVIDER:vault-transit}
+      vault:
+        address: ${VAULT_ADDR}
+        auth-method: ${WEBHOOK_VAULT_AUTH_METHOD:kubernetes}
+        kubernetes-auth-mount: ${WEBHOOK_VAULT_KUBERNETES_AUTH_MOUNT:kubernetes}
+        kubernetes-role: ${WEBHOOK_VAULT_KUBERNETES_ROLE:switching-webhook}
+        service-account-token-file: ${WEBHOOK_VAULT_SERVICE_ACCOUNT_TOKEN_FILE:/var/run/secrets/vault/token}
+        token-renewal-skew: ${WEBHOOK_VAULT_TOKEN_RENEWAL_SKEW:30s}
+        namespace: ${VAULT_NAMESPACE:}
+        mount: ${WEBHOOK_VAULT_TRANSIT_MOUNT:transit}
+        key: ${WEBHOOK_VAULT_TRANSIT_KEY:switching-webhook}
+    rotation:
+      default-grace-minutes: ${WEBHOOK_SECRET_ROTATION_GRACE_MINUTES:60}
+      max-grace-minutes: ${WEBHOOK_SECRET_ROTATION_MAX_GRACE_MINUTES:10080}
+  outbox:
+    schema:
+      allow-legacy-messages: false
+  security:
+    message-crypto-key-base64: ${MESSAGE_CRYPTO_KEY_BASE64}   # no default — must be set
+    api-key:
+      enabled: true
+    oauth:
+      enabled: ${SECURITY_OAUTH_ENABLED:false}
+      jwt-secret: ${OAUTH_JWT_SECRET}
+      token-ttl-seconds: ${OAUTH_TOKEN_TTL_SECONDS:3600}
+    mtls:
+      enabled: ${SECURITY_MTLS_ENABLED:true}
+      cert-header: ${MTLS_CERT_HEADER:ssl-client-cert}
+    signing:
+      enabled: ${SECURITY_SIGNING_ENABLED:false}
+      timestamp-tolerance-seconds: ${SIGNING_TIMESTAMP_TOLERANCE:30}
+    rate-limit:
+      enabled: true
+      requests-per-minute: ${RATE_LIMIT_RPM:100}

@@ -1,0 +1,31 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: switching-trust-bundle
+  namespace: switching
+  labels:
+    app.kubernetes.io/name: switching-api
+    app.kubernetes.io/component: trust-bundle
+spec:
+  refreshPolicy: Periodic
+  refreshInterval: 1h
+  secretStoreRef:
+    name: switching-vault
+    kind: SecretStore
+  target:
+    name: switching-trust-bundle
+    creationPolicy: Orphan
+    deletionPolicy: Retain
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          app.kubernetes.io/name: switching-api
+          app.kubernetes.io/managed-by: external-secrets
+  data:
+    - secretKey: postgres-ca.crt
+      remoteRef: { key: switching/prod/trust, property: postgres-ca.crt }
+    - secretKey: kafka-truststore.p12
+      remoteRef: { key: switching/prod/trust, property: kafka-truststore.p12 }
+    - secretKey: kafka-keystore.p12
+      remoteRef: { key: switching/prod/trust, property: kafka-keystore.p12 }

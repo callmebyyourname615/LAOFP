@@ -1,0 +1,19 @@
+version: 1
+entitlements:
+  - participant: BANK001
+    product: CREDIT_TRANSFER
+    channel: API
+    currency: LAK
+    effective_from: '2026-07-01T00:00:00+07:00'
+limits:
+  - name: bank001-credit-transfer
+    scope_type: PARTICIPANT_PRODUCT
+    scope_value: BANK001:CREDIT_TRANSFER
+    product: CREDIT_TRANSFER
+    channel: API
+    currency: LAK
+    per_transaction_amount: 500000000
+    hourly_amount: 3000000000
+    daily_amount: 15000000000
+    daily_count: 50000
+    timezone: Asia/Vientiane

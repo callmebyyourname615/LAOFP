@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-api-slo-recording
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: switching-api.slo.recording
+      interval: 30s
+      rules:
+        - record: switching:sli_requests:rate5m
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api"}[5m]))
+        - record: switching:sli_errors:rate5m
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[5m]))
+        - record: switching:sli_error_ratio:rate5m
+          expr: switching:sli_errors:rate5m / clamp_min(switching:sli_requests:rate5m, 0.001)
+        - record: switching:sli_error_ratio:rate30m
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[30m])) / clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api"}[30m])), 0.001)
+        - record: switching:sli_error_ratio:rate1h
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[1h])) / clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api"}[1h])), 0.001)
+        - record: switching:sli_error_ratio:rate6h
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[6h])) / clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api"}[6h])), 0.001)
+        - record: switching:sli_error_ratio:rate3d
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[3d])) / clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api"}[3d])), 0.001)
+        - record: switching:sli_error_ratio:rate30d
+          expr: sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[30d])) / clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api"}[30d])), 0.001)
+        - record: switching:slo_error_budget_remaining:ratio30d
+          expr: clamp_max(clamp_min(1 - (switching:sli_error_ratio:rate30d / 0.0005), 1), 0)
+        - record: switching:sli_latency_p95_seconds:rate5m
+          expr: histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{application="switching-api"}[5m])))

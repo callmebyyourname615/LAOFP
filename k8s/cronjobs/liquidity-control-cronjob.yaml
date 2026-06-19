@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-liquidity-control
+  labels:
+    app.kubernetes.io/name: switching
+    switching.io/control-phase: "33-42"
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 7
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 900
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: switching-control
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-ops
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: control
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              imagePullPolicy: IfNotPresent
+              command: ["/workspace/scripts/liquidity/check_intraday_liquidity.sh"]
+              envFrom:
+                - secretRef:
+                    name: switching-ops-db-secret
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]

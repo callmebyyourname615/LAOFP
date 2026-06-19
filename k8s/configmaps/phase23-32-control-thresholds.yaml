@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switching-phase23-32-control-thresholds
+data:
+  reconciliation_exception_sla_minutes: "60"
+  fraud_high_risk_score: "80"
+  data_quality_critical_failures_allowed: "0"
+  region_failover_max_lag_seconds: "30"
+  privacy_case_due_days: "15"
+  compliance_control_failure_budget: "0"

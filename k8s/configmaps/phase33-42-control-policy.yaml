@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switching-phase33-42-control-policy
+data:
+  certificate-warning-days: "30"
+  synthetic-maximum-response-bytes: "1048576"
+  regulatory-artifact-encryption-required: "true"
+  notification-maximum-attempts: "8"
+  incident-sev1-rca-hours: "72"
+  incident-sev2-rca-hours: "120"

@@ -1,0 +1,26 @@
+CREATE TABLE privileged_access_sessions (
+    id BIGSERIAL PRIMARY KEY,
+    session_ref VARCHAR(64) NOT NULL UNIQUE,
+    requested_by VARCHAR(160) NOT NULL,
+    requested_at TIMESTAMP NOT NULL,
+    reason VARCHAR(1000) NOT NULL,
+    ticket_reference VARCHAR(160) NOT NULL,
+    requested_ttl_minutes INTEGER NOT NULL,
+    max_uses INTEGER NOT NULL,
+    approved_by VARCHAR(160),
+    approved_at TIMESTAMP,
+    token_hash CHAR(64) UNIQUE,
+    token_prefix VARCHAR(12),
+    expires_at TIMESTAMP,
+    use_count INTEGER NOT NULL DEFAULT 0,
+    last_used_at TIMESTAMP,
+    status VARCHAR(24) NOT NULL,
+    revoked_by VARCHAR(160),
+    revoked_at TIMESTAMP,
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT ck_privileged_access_status CHECK (status IN ('PENDING','ACTIVE','EXPIRED','REVOKED','REJECTED')),
+    CONSTRAINT ck_privileged_access_ttl CHECK (requested_ttl_minutes BETWEEN 1 AND 30),
+    CONSTRAINT ck_privileged_access_uses CHECK (max_uses BETWEEN 1 AND 20 AND use_count >= 0),
+    CONSTRAINT ck_privileged_access_four_eyes CHECK (approved_by IS NULL OR approved_by <> requested_by)
+);
+CREATE INDEX idx_privileged_access_status_expiry ON privileged_access_sessions(status, expires_at);

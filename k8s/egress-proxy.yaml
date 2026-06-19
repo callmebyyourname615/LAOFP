@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switching-egress-allowlist
+  namespace: switching
+data:
+  README: |-
+    Production webhook traffic must use an organization-managed egress proxy or firewall.
+    Permit TCP/443 only to approved PSP webhook FQDNs. Do not add CIDR 0.0.0.0/0.
+    Keep this list synchronized with WEBHOOK_ALLOWED_HOSTS and change approval records.

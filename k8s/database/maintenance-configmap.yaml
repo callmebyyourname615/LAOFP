@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switching-db-maintenance-scripts
+  namespace: switching
+data:
+  run-maintenance.sh: |
+    #!/usr/bin/env sh
+    set -eu
+    : "${DB_HOST:?DB_HOST required}"
+    : "${DB_NAME:?DB_NAME required}"
+    : "${DB_MAINTENANCE_USERNAME:?DB_MAINTENANCE_USERNAME required}"
+    : "${DB_MAINTENANCE_PASSWORD:?DB_MAINTENANCE_PASSWORD required}"
+    : "${DB_SSLROOTCERT:?DB_SSLROOTCERT required}"
+    export PGHOST="$DB_HOST" PGPORT="${DB_PORT:-5432}" PGDATABASE="$DB_NAME"
+    export PGUSER="$DB_MAINTENANCE_USERNAME" PGPASSWORD="$DB_MAINTENANCE_PASSWORD"
+    export PGSSLMODE="${DB_SSLMODE:-verify-full}" PGSSLROOTCERT="$DB_SSLROOTCERT"
+    export PGAPPNAME="switching-db-maintenance"
+    run_id="$(cat /proc/sys/kernel/random/uuid)"
+    locked="$(psql -XAtqc 'SELECT pg_try_advisory_lock(94712048)')"
+    [ "$locked" = "t" ] || { echo "another maintenance run owns the advisory lock" >&2; exit 75; }
+    psql -X -v ON_ERROR_STOP=1 -v run_id="$run_id" <<'SQL'
+    INSERT INTO database_maintenance_runs(run_id, operation, status, started_at, details_json)
+    VALUES (:'run_id'::uuid, 'VACUUM_ANALYZE', 'STARTED', NOW(), '{"runner":"kubernetes-cronjob"}');
+    SQL
+    finish() {
+      rc=$?
+      trap - EXIT INT TERM
+      status="SUCCEEDED"
+      [ "$rc" -eq 0 ] || status="FAILED"
+      details="{\"runner\":\"kubernetes-cronjob\",\"exitCode\":${rc}}"
+      psql -X -v ON_ERROR_STOP=1 -v run_id="$run_id" -v status="$status" -v details="$details" <<'SQL' || true
+    UPDATE database_maintenance_runs
+       SET status = :'status', completed_at = NOW(), details_json = :'details'
+     WHERE run_id = :'run_id'::uuid;
+    SELECT pg_advisory_unlock(94712048);
+    SQL
+      exit "$rc"
+    }
+    trap finish EXIT INT TERM
+    psql -X -f /work/preflight.sql
+    psql -X -f /work/vacuum-analyze.sql
+  preflight.sql: |
+    \set ON_ERROR_STOP on
+    DO $$ BEGIN
+      IF pg_is_in_recovery() THEN RAISE EXCEPTION 'must run on primary'; END IF;
+      IF EXISTS (SELECT 1 FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND xact_start IS NOT NULL AND now()-xact_start > interval '5 minutes')
+      THEN RAISE EXCEPTION 'long-running transaction blocks maintenance'; END IF;
+      IF EXISTS (
+        SELECT 1 FROM pg_index i
+        JOIN pg_class c ON c.oid = i.indexrelid
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE NOT i.indisvalid AND n.nspname NOT IN ('pg_catalog','information_schema')
+      ) THEN RAISE EXCEPTION 'invalid user index blocks maintenance'; END IF;
+    END $$;
+  vacuum-analyze.sql: |
+    \set ON_ERROR_STOP on
+    VACUUM (ANALYZE, SKIP_LOCKED) participants;
+    VACUUM (ANALYZE, SKIP_LOCKED) connector_configs;
+    VACUUM (ANALYZE, SKIP_LOCKED) routing_rules;
+    VACUUM (ANALYZE, SKIP_LOCKED) outbox_messages;
+    VACUUM (ANALYZE, SKIP_LOCKED) outbox_dead_letters;
+    VACUUM (ANALYZE, SKIP_LOCKED) webhook_delivery_log;
+    VACUUM (ANALYZE, SKIP_LOCKED) audit_logs;
+    ANALYZE transactions;
+    ANALYZE inquiries;
+    ANALYZE transaction_events;

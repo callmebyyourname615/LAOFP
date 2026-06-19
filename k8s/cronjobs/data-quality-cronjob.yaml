@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-data-quality
+spec:
+  schedule: "*/30 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: data-quality
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/dataquality/run_data_quality.sh"]
+              envFrom:
+                - secretRef:
+                    name: switching-readonly-db-secret

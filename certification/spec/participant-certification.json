@@ -1,0 +1,21 @@
+{
+  "suiteVersion": "1.0.0",
+  "variables": {
+    "SOURCE_BANK": "BANKA",
+    "DESTINATION_BANK": "BANKB",
+    "DEBTOR_ACCOUNT": "100000001",
+    "CREDITOR_ACCOUNT": "200000001"
+  },
+  "steps": [
+    {"name": "liveness", "method": "GET", "path": "/actuator/health/liveness", "authenticated": false, "expectedStatus": [200]},
+    {"name": "unauthorized inquiry rejected", "method": "POST", "path": "/api/inquiries", "authenticated": false, "expectedStatus": [401], "body": {}},
+    {"name": "valid inquiry", "method": "POST", "path": "/api/inquiries", "authenticated": true, "signed": true, "expectedStatus": [200],
+      "body": {"clientInquiryId": "cert-{{RUN_ID}}", "idempotencyKey": "inq-{{RUN_ID}}", "sourceBank": "{{SOURCE_BANK}}", "destinationBank": "{{DESTINATION_BANK}}", "debtorAccount": "{{DEBTOR_ACCOUNT}}", "creditorAccount": "{{CREDITOR_ACCOUNT}}", "amount": 1000, "currency": "LAK", "reference": "participant certification"},
+      "extract": {"INQUIRY_REF": "inquiryRef"}},
+    {"name": "idempotent inquiry replay", "method": "POST", "path": "/api/inquiries", "authenticated": true, "signed": true, "expectedStatus": [200],
+      "body": {"clientInquiryId": "cert-{{RUN_ID}}", "idempotencyKey": "inq-{{RUN_ID}}", "sourceBank": "{{SOURCE_BANK}}", "destinationBank": "{{DESTINATION_BANK}}", "debtorAccount": "{{DEBTOR_ACCOUNT}}", "creditorAccount": "{{CREDITOR_ACCOUNT}}", "amount": 1000, "currency": "LAK", "reference": "participant certification"}},
+    {"name": "transfer linked to inquiry", "method": "POST", "path": "/api/transfers", "authenticated": true, "signed": true, "expectedStatus": [200],
+      "body": {"sourceBank": "{{SOURCE_BANK}}", "destinationBank": "{{DESTINATION_BANK}}", "debtorAccount": "{{DEBTOR_ACCOUNT}}", "creditorAccount": "{{CREDITOR_ACCOUNT}}", "amount": 1000, "currency": "LAK", "reference": "participant certification", "idempotencyKey": "tx-{{RUN_ID}}", "inquiryRef": "{{INQUIRY_REF}}"},
+      "extract": {"TRANSFER_REF": "transferRef"}}
+  ]
+}

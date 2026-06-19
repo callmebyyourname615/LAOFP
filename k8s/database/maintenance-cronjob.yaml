@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-db-maintenance
+  namespace: switching
+spec:
+  schedule: "30 2 * * 0"
+  timeZone: "Asia/Vientiane"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels: {app: switching-db-maintenance}
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: maintenance
+              image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-backup@sha256:REPLACE_WITH_BACKUP_IMAGE_DIGEST
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - cp /scripts/* /work/ && chmod +x /work/run-maintenance.sh && cd /work && ./run-maintenance.sh
+              envFrom:
+                - secretRef: {name: switching-db-maintenance-secrets}
+              env:
+                - {name: DB_SSLROOTCERT, value: /var/run/secrets/trust/ca.crt}
+              volumeMounts:
+                - {name: scripts, mountPath: /scripts, readOnly: true}
+                - {name: trust, mountPath: /var/run/secrets/trust, readOnly: true}
+                - {name: work, mountPath: /work}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: ["ALL"]}
+              resources:
+                requests: {cpu: 100m, memory: 128Mi}
+                limits: {cpu: "1", memory: 512Mi}
+          volumes:
+            - name: scripts
+              configMap:
+                name: switching-db-maintenance-scripts
+                defaultMode: 0550
+            - name: trust
+              secret:
+                secretName: switching-trust-bundle
+                defaultMode: 0440
+            - name: work
+              emptyDir: {sizeLimit: 32Mi}

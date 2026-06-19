@@ -1,0 +1,10 @@
+title = "Switching API Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known deterministic 32-byte test fixture; never used outside tests/CI"
+regexes = [
+  '''NImwCmFwkSIeDgy8UJtzGq86A389puEEe6gi2Wdo9MM=''',
+]

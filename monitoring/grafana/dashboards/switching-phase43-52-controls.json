@@ -1,0 +1,20 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "graphTooltip": 1,
+  "panels": [
+    {"id": 1, "type": "stat", "title": "Limit denials (5m)", "targets": [{"expr": "sum(increase(switching_transaction_limit_decisions_total{decision=\"DENY\"}[5m]))", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}},
+    {"id": 2, "type": "stat", "title": "Pending adjustments", "targets": [{"expr": "switching_manual_adjustments_pending", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}},
+    {"id": 3, "type": "stat", "title": "Open dependency circuits", "targets": [{"expr": "sum(switching_third_party_circuit_open)", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}},
+    {"id": 4, "type": "stat", "title": "Unverified evidence", "targets": [{"expr": "switching_control_evidence_unverified", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}},
+    {"id": 5, "type": "timeseries", "title": "Capacity forecast vs observed", "targets": [{"expr": "switching_capacity_observed_request_rate", "legendFormat": "observed", "refId": "A"}, {"expr": "switching_capacity_forecast_request_rate", "legendFormat": "forecast", "refId": "B"}], "gridPos": {"h": 9, "w": 12, "x": 0, "y": 8}},
+    {"id": 6, "type": "timeseries", "title": "Finality integrity failures", "targets": [{"expr": "sum(increase(switching_finality_integrity_failures_total[15m]))", "refId": "A"}], "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8}}
+  ],
+  "schemaVersion": 39,
+  "tags": ["switching", "governance", "phase43-52"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "title": "Switching Phase 43-52 Controls",
+  "uid": "switching-phase43-52-controls",
+  "version": 1
+}

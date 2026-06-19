@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: switching-api
+  namespace: switching
+  labels:
+    app: switching-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: switching-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: switching-api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      serviceAccountName: switching-api
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
+      # Database migration is executed once by k8s/migration-job.yaml before rollout.
+
+      containers:
+        - name: switching-api
+          image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-api@sha256:REPLACE_WITH_IMAGE_DIGEST
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: management
+              containerPort: 9090
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: switching-config
+            - secretRef:
+                name: switching-secrets
+          # P20: JVM tuning — G1GC with 100ms pause target, 512MB heap floor, 900MB ceiling
+          env:
+            - name: JAVA_OPTS
+              value: "-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms512m -Xmx900m -XX:+UseContainerSupport"
+          volumeMounts:
+            - name: trust-bundle
+              mountPath: /var/run/secrets/trust
+              readOnly: true
+            - name: vault-jwt
+              mountPath: /var/run/secrets/vault
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "500m"      # P20: higher request for 10K TPS workload
+              memory: "768Mi"
+            limits:
+              cpu: "2000m"
+              memory: "1200Mi" # P20: headroom above -Xmx900m for JVM overhead
+          # ── Liveness: restart pod if app is deadlocked ───────────────────
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 5
+          # ── Readiness: only send traffic when DB + app are ready ─────────
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: management
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+          # ── Startup: give extra time on cold start (Flyway + JVM warmup) ─
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            failureThreshold: 24    # 20 + 24*5 = 2 min max startup time
+            timeoutSeconds: 5
+
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi
+        - name: trust-bundle
+          secret:
+            secretName: switching-trust-bundle
+            defaultMode: 0440
+        - name: vault-jwt
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: vault
+                  expirationSeconds: 600

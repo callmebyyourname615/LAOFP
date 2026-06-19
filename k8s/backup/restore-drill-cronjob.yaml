@@ -1,0 +1,89 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-restore-drill
+  namespace: switching
+  labels:
+    app.kubernetes.io/name: switching-backup
+    app.kubernetes.io/component: restore-drill
+spec:
+  schedule: "0 2 1 * *"
+  timeZone: "Asia/Vientiane"
+  concurrencyPolicy: Forbid
+  suspend: true
+  successfulJobsHistoryLimit: 12
+  failedJobsHistoryLimit: 12
+  startingDeadlineSeconds: 3600
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 7200
+      ttlSecondsAfterFinished: 2592000
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: switching-backup
+            app.kubernetes.io/component: restore-drill
+        spec:
+          serviceAccountName: switching-backup
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            seccompProfile: { type: RuntimeDefault }
+          containers:
+            - name: restore-drill
+              image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-backup@sha256:REPLACE_WITH_BACKUP_IMAGE_DIGEST
+              imagePullPolicy: IfNotPresent
+              command: ["/opt/switching-backup/bin/restore-drill.sh"]
+              envFrom:
+                - configMapRef: { name: switching-backup-config }
+                - secretRef: { name: switching-backup-secrets }
+              env:
+                - { name: BACKUP_AGE_IDENTITY_FILE, value: /var/run/secrets/backup/age-identity.txt }
+                - { name: RESTORE_TARGET_DIR, value: /var/lib/switching-backup/restore-drill/data }
+              resources:
+                requests: { cpu: "1", memory: "2Gi" }
+                limits: { cpu: "4", memory: "8Gi" }
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+              volumeMounts:
+                - { name: trust-bundle, mountPath: /var/run/secrets/trust, readOnly: true }
+                - { name: restore-key, mountPath: /var/run/secrets/backup, readOnly: true }
+                - { name: restore-data, mountPath: /var/lib/switching-backup/restore-drill }
+                - { name: work, mountPath: /var/lib/switching-backup/work }
+                - { name: metrics, mountPath: /var/lib/switching-backup/metrics }
+                - { name: tmp, mountPath: /tmp }
+          volumes:
+            - name: trust-bundle
+              secret:
+                secretName: switching-trust-bundle
+                defaultMode: 0440
+            - name: restore-key
+              secret:
+                secretName: switching-restore-secrets
+                defaultMode: 0400
+            - name: restore-data
+              ephemeral:
+                volumeClaimTemplate:
+                  metadata:
+                    labels:
+                      app.kubernetes.io/name: switching-backup
+                      app.kubernetes.io/component: restore-drill
+                  spec:
+                    accessModes: ["ReadWriteOnce"]
+                    storageClassName: REPLACE_WITH_RESTORE_STORAGE_CLASS
+                    resources:
+                      requests:
+                        storage: 100Gi
+            - name: work
+              emptyDir: { sizeLimit: "10Gi" }
+            - name: metrics
+              emptyDir: { sizeLimit: "16Mi" }
+            - name: tmp
+              emptyDir: { sizeLimit: "2Gi" }

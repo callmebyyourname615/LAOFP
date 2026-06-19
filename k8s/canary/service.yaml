@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: switching-api-canary
+  namespace: switching
+  labels:
+    app: switching-api-canary
+spec:
+  type: ClusterIP
+  selector:
+    app: switching-api-canary
+    track: canary
+  ports:
+    - {name: http, port: 80, targetPort: 8080, protocol: TCP}
+    - {name: management, port: 9090, targetPort: 9090, protocol: TCP}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: switching-api-canary-management
+  namespace: switching
+  labels:
+    app: switching-api-canary
+    monitoring: enabled
+spec:
+  type: ClusterIP
+  selector:
+    app: switching-api-canary
+    track: canary
+  ports:
+    - {name: management, port: 9090, targetPort: 9090, protocol: TCP}

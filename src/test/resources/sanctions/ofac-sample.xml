@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdnList xmlns="https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/XML">
+  <sdnEntry>
+    <uid>12345</uid>
+    <firstName>JOHN</firstName>
+    <lastName>DOE</lastName>
+    <sdnType>Individual</sdnType>
+    <programList><program>SDGT</program></programList>
+    <akaList>
+      <aka><uid>1</uid><type>strong</type><firstName>JONATHAN</firstName><lastName>DOE</lastName></aka>
+    </akaList>
+    <idList>
+      <id><uid>10</uid><idType>Passport</idType><idNumber>P123</idNumber><idCountry>LAOS</idCountry></id>
+    </idList>
+  </sdnEntry>
+  <sdnEntry>
+    <uid>67890</uid>
+    <lastName>EXAMPLE TRADING COMPANY</lastName>
+    <sdnType>Entity</sdnType>
+    <programList><program>NPWMD</program></programList>
+  </sdnEntry>
+</sdnList>

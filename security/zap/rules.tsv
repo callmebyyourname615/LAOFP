@@ -1,0 +1,2 @@
+10021	IGNORE	X-Content-Type-Options is set by the production ingress
+10038	IGNORE	Content-Security-Policy is not applicable to JSON API responses

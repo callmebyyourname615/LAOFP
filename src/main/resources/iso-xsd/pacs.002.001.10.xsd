@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Simplified structural XSD for ISO 20022 pacs.002.001.10
+  (FI-to-FI Payment Status Report V10)
+
+  Validates: namespace, document structure, GrpHdr mandatory fields,
+  TxInfAndSts presence with OrgnlMsgId and TxSts.
+-->
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="urn:iso:std:iso:20022:tech:xsd:pacs.002.001.10"
+    targetNamespace="urn:iso:std:iso:20022:tech:xsd:pacs.002.001.10"
+    elementFormDefault="qualified"
+    version="pacs.002.001.10">
+
+  <xs:element name="Document" type="tns:Document"/>
+
+  <xs:complexType name="Document">
+    <xs:sequence>
+      <xs:element name="FIToFIPmtStsRpt" type="tns:FIToFIPaymentStatusReportV10"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FIToFIPaymentStatusReportV10">
+    <xs:sequence>
+      <xs:element name="GrpHdr"      type="tns:GroupHeader91"/>
+      <xs:element name="OrgnlGrpInfAndSts" type="tns:OriginalGroupHeader17" minOccurs="0"/>
+      <xs:element name="TxInfAndSts" type="tns:PaymentTransaction130" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GroupHeader91">
+    <xs:sequence>
+      <xs:element name="MsgId"    type="tns:Max35Text"/>
+      <xs:element name="CreDtTm" type="xs:dateTime"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OriginalGroupHeader17">
+    <xs:sequence>
+      <xs:element name="OrgnlMsgId"   type="tns:Max35Text"/>
+      <xs:element name="OrgnlMsgNmId" type="tns:Max35Text" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentTransaction130">
+    <xs:sequence>
+      <xs:element name="OrgnlMsgId"      type="tns:Max35Text" minOccurs="0"/>
+      <xs:element name="OrgnlEndToEndId" type="tns:Max35Text" minOccurs="0"/>
+      <xs:element name="OrgnlTxId"       type="tns:Max35Text" minOccurs="0"/>
+      <xs:element name="TxSts"           type="tns:ExternalPaymentTransactionStatus1Code" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Simple types -->
+  <xs:simpleType name="Max35Text">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="35"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ExternalPaymentTransactionStatus1Code">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

@@ -1,0 +1,29 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: switching-client-ca
+  namespace: switching
+  labels:
+    app.kubernetes.io/name: switching-api
+    app.kubernetes.io/component: ingress-client-ca
+spec:
+  refreshPolicy: Periodic
+  refreshInterval: 1h
+  secretStoreRef:
+    name: switching-vault
+    kind: SecretStore
+  target:
+    name: switching-client-ca
+    creationPolicy: Orphan
+    deletionPolicy: Retain
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          app.kubernetes.io/name: switching-api
+          app.kubernetes.io/managed-by: external-secrets
+  data:
+    - secretKey: ca.crt
+      remoteRef:
+        key: switching/prod/trust
+        property: client-ca.crt

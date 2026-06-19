@@ -1,0 +1,253 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/switching_db}
+    username: ${DB_USERNAME:macbookpro}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # P20: Ncores × 2 + 1 per pod (8-core target) — env override for pod sizing
+      maximum-pool-size: ${HIKARI_MAX_POOL_SIZE:17}
+      minimum-idle: ${HIKARI_MIN_IDLE:5}
+      # P20: fail-fast at 3s rather than blocking threads for 30s under overload
+      connection-timeout: ${HIKARI_CONNECTION_TIMEOUT_MS:3000}
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      pool-name: SwitchingHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: ${JPA_SHOW_SQL:false}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: ${HIBERNATE_FORMAT_SQL:false}
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    # Separate privileged user for schema migrations (falls back to datasource creds if not set)
+    url: ${FLYWAY_URL:${DB_URL:jdbc:postgresql://localhost:5432/switching_db}}
+    user: ${FLYWAY_USERNAME:${DB_USERNAME:macbookpro}}
+    password: ${FLYWAY_PASSWORD:${DB_PASSWORD:}}
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+        spring.json.add.type.headers: false
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.example.switching.outbox.queue
+        spring.json.value.default.type: com.example.switching.outbox.queue.OutboxQueueMessage
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  tomcat:
+    # Limit raw POST body to 1 MB — protects ISO XML endpoints from oversized payloads
+    max-http-form-post-size: 1MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+switching:
+  api:
+    v1-prefix: ${SWITCHING_API_V1_PREFIX:/v1}
+  payment:
+    json-initiation:
+      enabled: ${JSON_INITIATION_ENABLED:false}
+  mock-bank:
+    pacs002:
+      force-reject: ${MOCK_BANK_FORCE_REJECT:false}
+  settlement:
+    bol-rtgs-url: ${BOL_RTGS_URL:http://localhost:9099/rtgs/pacs009}
+    rtgs-timeout-ms: ${SETTLEMENT_RTGS_TIMEOUT_MS:5000}
+    rtgs-callback-ip-whitelist: ${RTGS_CALLBACK_IP_WHITELIST:127.0.0.1,::1,0:0:0:0:0:0:0:1}
+    rtgs-threshold-lak: ${SETTLEMENT_RTGS_THRESHOLD_LAK:500000000}
+    time-zone: ${SETTLEMENT_TIME_ZONE:Asia/Vientiane}
+    cycle1-cron: ${SETTLEMENT_CYCLE1_CRON:0 45 8 * * MON-FRI}
+    cycle2-cron: ${SETTLEMENT_CYCLE2_CRON:0 45 11 * * MON-FRI}
+    cycle3-cron: ${SETTLEMENT_CYCLE3_CRON:0 15 15 * * MON-FRI}
+    cycle4-cron: ${SETTLEMENT_CYCLE4_CRON:0 45 19 * * MON-FRI}
+  security:
+    message-crypto-key-base64: ${MESSAGE_CRYPTO_KEY_BASE64:}
+    api-key:
+      enabled: ${API_KEY_AUTH_ENABLED:true}
+    oauth:
+      enabled: ${SECURITY_OAUTH_ENABLED:false}
+      jwt-secret: ${OAUTH_JWT_SECRET:dev-test-oauth-secret-change-me-32-bytes}
+      token-ttl-seconds: ${OAUTH_TOKEN_TTL_SECONDS:3600}
+    mtls:
+      enabled: ${SECURITY_MTLS_ENABLED:false}
+      cert-header: ${MTLS_CERT_HEADER:ssl-client-cert}
+    signing:
+      enabled: ${SECURITY_SIGNING_ENABLED:false}
+      timestamp-tolerance-seconds: ${SIGNING_TIMESTAMP_TOLERANCE:30}
+    rate-limit:
+      enabled: ${RATE_LIMIT_ENABLED:true}
+      requests-per-minute: ${RATE_LIMIT_RPM:100}
+  webhook:
+    endpoint-policy:
+      enabled: ${WEBHOOK_ENDPOINT_POLICY_ENABLED:true}
+      require-https: ${WEBHOOK_REQUIRE_HTTPS:true}
+      require-allowlist: ${WEBHOOK_REQUIRE_ALLOWLIST:false}
+      allow-private-addresses: ${WEBHOOK_ALLOW_PRIVATE_ADDRESSES:false}
+      allowed-ports: ${WEBHOOK_ALLOWED_PORTS:443}
+      allowed-hosts: ${WEBHOOK_ALLOWED_HOSTS:}
+      dns-resolve-timeout-millis: ${WEBHOOK_DNS_TIMEOUT_MS:3000}
+      proxy-enabled: ${WEBHOOK_EGRESS_PROXY_ENABLED:false}
+      proxy-host: ${WEBHOOK_EGRESS_PROXY_HOST:}
+      proxy-port: ${WEBHOOK_EGRESS_PROXY_PORT:3128}
+    encryption:
+      provider: ${WEBHOOK_ENCRYPTION_PROVIDER:local}
+      connect-timeout: ${WEBHOOK_VAULT_CONNECT_TIMEOUT:3s}
+      request-timeout: ${WEBHOOK_VAULT_REQUEST_TIMEOUT:5s}
+      vault:
+        address: ${VAULT_ADDR:}
+        token: ${VAULT_TOKEN:}
+        auth-method: ${WEBHOOK_VAULT_AUTH_METHOD:token}
+        kubernetes-auth-mount: ${WEBHOOK_VAULT_KUBERNETES_AUTH_MOUNT:kubernetes}
+        kubernetes-role: ${WEBHOOK_VAULT_KUBERNETES_ROLE:switching-webhook}
+        service-account-token-file: ${WEBHOOK_VAULT_SERVICE_ACCOUNT_TOKEN_FILE:/var/run/secrets/vault/token}
+        token-renewal-skew: ${WEBHOOK_VAULT_TOKEN_RENEWAL_SKEW:30s}
+        namespace: ${VAULT_NAMESPACE:}
+        mount: ${WEBHOOK_VAULT_TRANSIT_MOUNT:transit}
+        key: ${WEBHOOK_VAULT_TRANSIT_KEY:switching-webhook}
+      local:
+        master-key-base64: ${WEBHOOK_LOCAL_MASTER_KEY_BASE64:}
+    rotation:
+      default-grace-minutes: ${WEBHOOK_SECRET_ROTATION_GRACE_MINUTES:60}
+      max-grace-minutes: ${WEBHOOK_SECRET_ROTATION_MAX_GRACE_MINUTES:10080}
+  outbox:
+    schema:
+      allow-legacy-messages: ${OUTBOX_SCHEMA_ALLOW_LEGACY:false}
+    queue:
+      enabled: ${OUTBOX_QUEUE_ENABLED:false}
+      topic: ${OUTBOX_QUEUE_TOPIC:switching.outbox.dispatch}
+      group-id: ${OUTBOX_QUEUE_GROUP_ID:switching-outbox-dispatcher}
+    worker:
+      poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:30000}
+      recovery-interval-ms: ${OUTBOX_RECOVERY_INTERVAL_MS:60000}
+      batch-size: ${OUTBOX_BATCH_SIZE:20}
+      max-retry: ${OUTBOX_MAX_RETRY:5}
+      stuck-timeout-minutes: ${OUTBOX_STUCK_TIMEOUT_MINUTES:2}
+  archive:
+    hot-retention-days: ${ARCHIVE_HOT_RETENTION_DAYS:90}
+    partition-forward-days: ${ARCHIVE_PARTITION_FORWARD_DAYS:90}
+    worker-enabled: ${ARCHIVE_WORKER_ENABLED:true}
+    partition-maintenance-enabled: ${PARTITION_MAINTENANCE_ENABLED:true}
+    archive-cron: ${ARCHIVE_CRON:0 15 1 * * *}
+    partition-cron: ${PARTITION_CRON:0 5 0 * * *}
+    archive-db-url: ${ARCHIVE_DB_URL:jdbc:postgresql://localhost:5434/switching_archive}
+    archive-db-username: ${ARCHIVE_DB_USERNAME:switching_archive}
+    archive-db-password: ${ARCHIVE_DB_PASSWORD:switching_archive_postgres_password_change_me}
+    object-storage:
+      endpoint: ${OBJECT_STORAGE_ENDPOINT:http://localhost:9000}
+      bucket: ${OBJECT_STORAGE_BUCKET:switching-archive}
+      access-key: ${OBJECT_STORAGE_ACCESS_KEY:switching_minio}
+      secret-key: ${OBJECT_STORAGE_SECRET_KEY:switching_minio_password_change_me}
+      retention-years: ${OBJECT_STORAGE_RETENTION_YEARS:10}
+  fpre:
+    retry-attempts: ${FPRE_RETRY_ATTEMPTS:5}
+    retry-delays-seconds: ${FPRE_RETRY_DELAYS_SECONDS:30,60,120,300,600}
+    jitter-percent: ${FPRE_JITTER_PERCENT:10}
+    auto-reversal-enabled: ${FPRE_AUTO_REVERSAL_ENABLED:true}
+    suspension-window-minutes: ${FPRE_SUSPENSION_WINDOW_MINUTES:30}
+    suspension-reversal-threshold: ${FPRE_SUSPENSION_REVERSAL_THRESHOLD:3}
+  aml:
+    screening-enabled: ${AML_SCREENING_ENABLED:true}
+    screening-timeout-ms: ${AML_SCREENING_TIMEOUT_MS:2000}
+    screening-fail-closed: ${AML_SCREENING_FAIL_CLOSED:true}
+    screening-executor-core-size: ${AML_SCREENING_EXECUTOR_CORE_SIZE:4}
+    screening-executor-max-size: ${AML_SCREENING_EXECUTOR_MAX_SIZE:16}
+    screening-executor-queue-capacity: ${AML_SCREENING_EXECUTOR_QUEUE_CAPACITY:200}
+    bol-fiu-url: ${BOL_FIU_URL:http://localhost:9099/fiu}
+    bol-fiu-api-key: ${BOL_FIU_API_KEY:dev-fiu-key}
+    str-submission-interval-minutes: ${AML_STR_SUBMISSION_INTERVAL:5}
+    sanctions-sync-cron: ${AML_SANCTIONS_SYNC_CRON:0 0 2 * * *}
+    sanctions:
+      connect-timeout: ${AML_SANCTIONS_CONNECT_TIMEOUT:5s}
+      read-timeout: ${AML_SANCTIONS_READ_TIMEOUT:20s}
+      retry-attempts: ${AML_SANCTIONS_RETRY_ATTEMPTS:3}
+      retry-initial-backoff: ${AML_SANCTIONS_RETRY_BACKOFF:1s}
+      max-payload-bytes: ${AML_SANCTIONS_MAX_PAYLOAD_BYTES:67108864}
+      maximum-age: ${AML_SANCTIONS_MAXIMUM_AGE:30h}
+      fail-closed-on-stale: ${AML_SANCTIONS_FAIL_CLOSED_ON_STALE:true}
+      metrics-refresh-interval: ${AML_SANCTIONS_METRICS_REFRESH_INTERVAL:1m}
+      bol:
+        enabled: ${AML_BOL_SANCTIONS_ENABLED:false}
+        url: ${AML_BOL_SANCTIONS_URL:}
+        minimum-records: ${AML_BOL_SANCTIONS_MIN_RECORDS:1}
+        allow-insecure-http: ${AML_BOL_SANCTIONS_ALLOW_HTTP:false}
+        api-key-header: ${AML_BOL_SANCTIONS_API_KEY_HEADER:X-API-Key}
+        api-key: ${AML_BOL_SANCTIONS_API_KEY:${BOL_FIU_API_KEY:dev-fiu-key}}
+      ofac:
+        enabled: ${AML_OFAC_SANCTIONS_ENABLED:false}
+        url: ${AML_OFAC_SANCTIONS_URL:https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML}
+        minimum-records: ${AML_OFAC_SANCTIONS_MIN_RECORDS:100}
+        allow-insecure-http: false
+      un:
+        enabled: ${AML_UN_SANCTIONS_ENABLED:false}
+        url: ${AML_UN_SANCTIONS_URL:https://scsanctions.un.org/resources/xml/en/consolidated.xml}
+        minimum-records: ${AML_UN_SANCTIONS_MIN_RECORDS:100}
+        allow-insecure-http: false
+  risk:
+    fraud-scoring-enabled: ${RISK_FRAUD_SCORING_ENABLED:true}
+    high-risk-threshold: ${RISK_HIGH_RISK_THRESHOLD:0.75}
+    velocity-daily-max-count: ${RISK_VELOCITY_DAILY_MAX_COUNT:500}
+    velocity-hourly-max-count: ${RISK_VELOCITY_HOURLY_MAX_COUNT:100}
+    velocity-daily-max-amount-lak: ${RISK_VELOCITY_DAILY_MAX_AMOUNT_LAK:500000000}
+  vpa:
+    token-ttl-seconds: ${VPA_TOKEN_TTL_SECONDS:300}
+  qr:
+    sla-ms: ${QR_SLA_MS:10000}
+    dynamic-max-expiry-minutes: ${QR_DYNAMIC_MAX_EXPIRY_MINUTES:1440}
+    refund-window-days: ${QR_REFUND_WINDOW_DAYS:30}
+  billpayment:
+    biller-api-timeout-seconds: ${BILLPAYMENT_BILLER_API_TIMEOUT:30}
+    token-ttl-minutes: ${BILLPAYMENT_TOKEN_TTL_MINUTES:10}
+    duplicate-window-hours: ${BILLPAYMENT_DUPLICATE_WINDOW_HOURS:24}
+  dispute:
+    window-days: ${DISPUTE_WINDOW_DAYS:90}
+    sla-check-interval-ms: ${DISPUTE_SLA_CHECK_INTERVAL_MS:600000}
+    retention-years: ${DISPUTE_RETENTION_YEARS:7}
+  crossborder:
+    quote-ttl-seconds: ${CROSSBORDER_QUOTE_TTL_SECONDS:30}
+    purpose-code-threshold-lak: ${CROSSBORDER_PURPOSE_CODE_THRESHOLD:5000000}
+    promptpay-url: ${PROMPTPAY_API_URL:http://mock-promptpay:9099/promptpay}
+    cnaps-url: ${CNAPS_API_URL:http://mock-cnaps:9099/cnaps}
+    napas-url: ${NAPAS_API_URL:http://mock-napas:9099/napas}
+    swift-url: ${SWIFT_API_URL:http://mock-swift:9099/swift}
+    swift-bic: ${SWIFT_BIC:BFILLALAXXX}
+    adapter-timeout-seconds: ${CROSSBORDER_ADAPTER_TIMEOUT:30}
+
+  reconciliation:
+    exception-sla-minutes: ${RECONCILIATION_EXCEPTION_SLA_MINUTES:60}
+  fraud:
+    high-risk-score: ${FRAUD_HIGH_RISK_SCORE:80}
+  data-quality:
+    critical-failures-allowed: ${DATA_QUALITY_CRITICAL_FAILURES_ALLOWED:0}
+  multi-region:
+    failover-max-lag-seconds: ${REGION_FAILOVER_MAX_LAG_SECONDS:30}
+  privacy:
+    case-due-days: ${PRIVACY_CASE_DUE_DAYS:15}
+  compliance:
+    failure-budget: ${COMPLIANCE_CONTROL_FAILURE_BUDGET:0}

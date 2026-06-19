@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-full-backup
+  namespace: switching
+  labels:
+    app.kubernetes.io/name: switching-backup
+    app.kubernetes.io/component: full-backup
+spec:
+  schedule: "15 1 * * *"
+  timeZone: "Asia/Vientiane"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 7
+  startingDeadlineSeconds: 1800
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 14400
+      ttlSecondsAfterFinished: 604800
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: switching-backup
+            app.kubernetes.io/component: full-backup
+        spec:
+          serviceAccountName: switching-backup
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            seccompProfile: { type: RuntimeDefault }
+          containers:
+            - name: backup
+              image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-backup@sha256:REPLACE_WITH_BACKUP_IMAGE_DIGEST
+              imagePullPolicy: IfNotPresent
+              command: ["/opt/switching-backup/bin/full-backup.sh"]
+              envFrom:
+                - configMapRef: { name: switching-backup-config }
+                - secretRef: { name: switching-backup-secrets }
+              resources:
+                requests: { cpu: "500m", memory: "512Mi" }
+                limits: { cpu: "2", memory: "2Gi" }
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+              volumeMounts:
+                - { name: trust-bundle, mountPath: /var/run/secrets/trust, readOnly: true }
+                - { name: work, mountPath: /var/lib/switching-backup/work }
+                - { name: metrics, mountPath: /var/lib/switching-backup/metrics }
+                - { name: tmp, mountPath: /tmp }
+          volumes:
+            - name: trust-bundle
+              secret:
+                secretName: switching-trust-bundle
+                defaultMode: 0440
+            - name: work
+              emptyDir: { sizeLimit: "100Gi" }
+            - name: metrics
+              emptyDir: { sizeLimit: "16Mi" }
+            - name: tmp
+              emptyDir: { sizeLimit: "1Gi" }

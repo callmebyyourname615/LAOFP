@@ -1,0 +1,35 @@
+# Apply only after creating Secret/alertmanager-receivers with keys webhook-url and smtp-password.
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: switching-api-routing
+  namespace: monitoring
+  labels:
+    alertmanagerConfig: platform
+spec:
+  route:
+    receiver: switching-operations
+    groupBy: [alertname, severity, service]
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 2h
+    routes:
+      - receiver: switching-critical
+        matchers:
+          - name: severity
+            value: critical
+            matchType: "="
+        repeatInterval: 30m
+  receivers:
+    - name: switching-operations
+      webhookConfigs:
+        - urlSecret:
+            name: alertmanager-receivers
+            key: webhook-url
+          sendResolved: true
+    - name: switching-critical
+      webhookConfigs:
+        - urlSecret:
+            name: alertmanager-receivers
+            key: webhook-url
+          sendResolved: true

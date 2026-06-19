@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Simplified structural XSD for ISO 20022 pacs.008.001.08
+  (FI-to-FI Customer Credit Transfer V08)
+
+  This is a structural validation schema, not the full official ISO 20022 schema.
+  It validates: namespace, document structure, GrpHdr mandatory fields, and
+  CdtTrfTxInf presence. Sub-elements not critical to switching routing are
+  accepted as xs:any to remain compatible with bank-specific extensions.
+
+  Replace with the official ISO 20022 schema from iso20022.org for full
+  production compliance (CERT-080 requirement).
+-->
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08"
+    targetNamespace="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08"
+    elementFormDefault="qualified"
+    version="pacs.008.001.08">
+
+  <!-- Root element -->
+  <xs:element name="Document" type="tns:Document"/>
+
+  <xs:complexType name="Document">
+    <xs:sequence>
+      <xs:element name="FIToFICstmrCdtTrf" type="tns:FIToFICstmrCdtTrfV08"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FIToFICstmrCdtTrfV08">
+    <xs:sequence>
+      <xs:element name="GrpHdr" type="tns:GroupHeader93"/>
+      <xs:element name="CdtTrfTxInf" type="tns:CreditTransferTransaction50" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Group Header — mandatory fields enforced -->
+  <xs:complexType name="GroupHeader93">
+    <xs:sequence>
+      <xs:element name="MsgId"    type="tns:Max35Text"/>
+      <xs:element name="CreDtTm" type="xs:dateTime"/>
+      <xs:element name="NbOfTxs" type="tns:Max15NumericText"/>
+      <xs:element name="SttlmInf" type="tns:SettlementInstruction11"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SettlementInstruction11">
+    <xs:sequence>
+      <xs:element name="SttlmMtd" type="tns:Max35Text"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Credit Transfer Transaction — minimal required fields -->
+  <xs:complexType name="CreditTransferTransaction50">
+    <xs:sequence>
+      <xs:element name="PmtId" type="tns:PaymentIdentification13"/>
+      <xs:element name="IntrBkSttlmAmt" type="tns:ActiveCurrencyAndAmount"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentIdentification13">
+    <xs:sequence>
+      <xs:element name="InstrId"     type="tns:Max35Text"  minOccurs="0"/>
+      <xs:element name="EndToEndId"  type="tns:Max35Text"/>
+      <xs:element name="TxId"        type="tns:Max35Text"  minOccurs="0"/>
+      <xs:element name="UETR"        type="tns:UUIDv4Identifier" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActiveCurrencyAndAmount">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="Ccy" type="tns:ActiveCurrencyCode" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Simple types -->
+  <xs:simpleType name="Max35Text">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="35"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Max15NumericText">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{1,15}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ActiveCurrencyCode">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="UUIDv4Identifier">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

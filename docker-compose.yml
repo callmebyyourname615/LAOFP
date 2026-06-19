@@ -1,0 +1,296 @@
+services:
+  # HOT PostgreSQL primary.
+  # Owns switching_db.public only; Flyway migrations for active switching data run here.
+  postgres:
+    image: postgres:16
+    container_name: switching-postgres
+    restart: unless-stopped
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_replication_slots=10"
+      - "-c"
+      - "max_slot_wal_keep_size=20GB"
+      - "-c"
+      - "hot_standby=on"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-switching_postgres_password_change_me}
+      POSTGRES_DB: switching_db
+      POSTGRES_USER: ${POSTGRES_USER:-switching}
+      REPLICATION_USER: ${REPLICATION_USER:-switching_replicator}
+      REPLICATION_PASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db-users.sh:/docker-entrypoint-initdb.d/01-init-db-users.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-switching} -d switching_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # HOT PostgreSQL read replica.
+  # Read-only copy of switching_db for dashboard/search/report reads.
+  postgres-read-replica:
+    image: postgres:16
+    container_name: switching-postgres-read-replica
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+    command: >
+      bash -c "
+        if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
+          until psql -h postgres -p 5432 -U ${REPLICATION_USER:-switching_replicator} -d switching_db -c \"SELECT pg_create_physical_replication_slot('read_replica_slot') WHERE NOT EXISTS (SELECT 1 FROM pg_replication_slots WHERE slot_name = 'read_replica_slot');\"; do
+            echo 'waiting to create primary replication slot...';
+            sleep 2;
+          done;
+          until pg_basebackup -h postgres -p 5432 -D /var/lib/postgresql/data -U ${REPLICATION_USER:-switching_replicator} -Fp -Xs -P -R --slot=read_replica_slot; do
+            echo 'waiting for primary replication slot...';
+            sleep 2;
+          done;
+          chown -R postgres:postgres /var/lib/postgresql/data;
+          chmod 700 /var/lib/postgresql/data;
+        fi;
+        exec gosu postgres postgres -c hot_standby=on
+      "
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-switching} -d switching_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # ARCHIVE PostgreSQL.
+  # Owns switching_archive.public archive tables and switching_archive.object_storage metadata.
+  postgres-archive:
+    image: postgres:16
+    container_name: switching-postgres-archive
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${ARCHIVE_POSTGRES_PASSWORD:-switching_archive_postgres_password_change_me}
+      POSTGRES_DB: switching_archive
+      POSTGRES_USER: ${ARCHIVE_POSTGRES_USER:-switching_archive}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_archive_data:/var/lib/postgresql/data
+      - ./scripts/init-archive-db.sql:/docker-entrypoint-initdb.d/01-init-archive-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ARCHIVE_POSTGRES_USER:-switching_archive} -d switching_archive"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # Object storage service.
+  # Stores the actual archived payload/file bytes; PostgreSQL stores only metadata pointers.
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    container_name: switching-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-switching_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    container_name: switching-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-switching_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD;
+        mc mb --ignore-existing local/switching-archive;
+        mc version enable local/switching-archive;
+        mc mb --ignore-existing local/switching-backups;
+        mc version enable local/switching-backups;
+      "
+    restart: "no"
+
+  redpanda:
+    image: redpandadata/redpanda:v24.3.6
+    container_name: switching-redpanda
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --smp
+      - "1"
+      - --memory
+      - "512M"
+      - --reserve-memory
+      - "0M"
+      - --overprovisioned
+      - --node-id
+      - "0"
+      - --check=false
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
+    ports:
+      - "19092:19092"
+      - "9644:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+
+  # On-demand encrypted physical backup. Run with:
+  # docker compose --profile backup run --rm backup-full
+  backup-full:
+    profiles: ["backup"]
+    build:
+      context: ./backup
+    container_name: switching-backup-full
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: switching_db
+      PGUSER: ${REPLICATION_USER:-switching_replicator}
+      PGPASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+      PGSSLMODE: disable
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: switching-backups
+      S3_PREFIX: switching
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-switching_minio}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      S3_SERVER_SIDE_ENCRYPTION: none
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
+      SECONDARY_S3_ENABLED: "false"
+    command: ["/opt/switching-backup/bin/full-backup.sh"]
+    volumes:
+      - backup_work:/var/lib/switching-backup/work
+      - backup_metrics:/var/lib/switching-backup/metrics
+    restart: "no"
+
+  # Continuous WAL receiver for PITR. Keep this service running in UAT:
+  # docker compose --profile backup up -d backup-wal
+  backup-wal:
+    profiles: ["backup"]
+    build:
+      context: ./backup
+    container_name: switching-backup-wal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: switching_db
+      PGUSER: ${REPLICATION_USER:-switching_replicator}
+      PGPASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+      PGSSLMODE: disable
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: switching-backups
+      S3_PREFIX: switching
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-switching_minio}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      S3_SERVER_SIDE_ENCRYPTION: none
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
+      SECONDARY_S3_ENABLED: "false"
+      WAL_REPLICATION_SLOT: switching_backup_slot
+    command: ["/opt/switching-backup/bin/wal-receiver.sh"]
+    volumes:
+      - backup_wal_spool:/var/lib/switching-backup/incoming
+      - backup_work:/var/lib/switching-backup/work
+      - backup_metrics:/var/lib/switching-backup/metrics
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: switching-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      postgres-read-replica:
+        condition: service_healthy
+      postgres-archive:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+      redpanda:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      # HOT primary datasource: writes and strongly-consistent reads.
+      DB_URL: jdbc:postgresql://postgres:5432/switching_db
+      DB_USERNAME: switching_app
+      DB_PASSWORD: ${DB_APP_PASSWORD:-switching_app_password_change_me}
+      # HOT read replica datasource: read-only dashboards/search/report queries.
+      READ_REPLICA_DB_URL: jdbc:postgresql://postgres-read-replica:5432/switching_db
+      # HOT DB Flyway datasource uses the migration role created by scripts/init-db-users.sh.
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/switching_db
+      FLYWAY_USERNAME: switching_flyway
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:-switching_flyway_password_change_me}
+      # ARCHIVE DB datasource: archive tables in public, object metadata in object_storage.
+      ARCHIVE_DB_URL: jdbc:postgresql://postgres-archive:5432/switching_archive
+      ARCHIVE_DB_USERNAME: ${ARCHIVE_POSTGRES_USER:-switching_archive}
+      ARCHIVE_DB_PASSWORD: ${ARCHIVE_POSTGRES_PASSWORD:-switching_archive_postgres_password_change_me}
+      # Object storage endpoint: actual archived payload/file bytes.
+      OBJECT_STORAGE_ENDPOINT: http://minio:9000
+      OBJECT_STORAGE_BUCKET: switching-archive
+      OBJECT_STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-switching_minio}
+      OBJECT_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      MESSAGE_CRYPTO_KEY_BASE64: ${MESSAGE_CRYPTO_KEY_BASE64:-}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      OUTBOX_QUEUE_ENABLED: "true"
+      OUTBOX_QUEUE_TOPIC: switching.outbox.dispatch
+      OUTBOX_QUEUE_GROUP_ID: switching-outbox-dispatcher
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+  postgres_replica_data:
+  postgres_archive_data:
+  minio_data:
+  redpanda_data:
+  backup_work:
+  backup_wal_spool:
+  backup_metrics:

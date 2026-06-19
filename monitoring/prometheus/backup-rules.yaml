@@ -1,0 +1,89 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-backup-critical-alerts
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: switching-backup
+    release: prometheus
+spec:
+  groups:
+    - name: switching-backup.pitr
+      interval: 60s
+      rules:
+        - alert: SwitchingBaseBackupStale
+          expr: absent(switching_backup_last_success_timestamp_seconds) or time() - max(switching_backup_last_success_timestamp_seconds) > 108000
+          for: 10m
+          labels:
+            severity: critical
+            service: switching-backup
+          annotations:
+            summary: No successful physical base backup in 30 hours
+            description: The production backup recovery chain may no longer meet its RPO/RTO assumptions.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingbasebackupstale
+
+        - alert: SwitchingBaseBackupFailed
+          expr: max(switching_backup_last_attempt_failed) > 0
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-backup
+          annotations:
+            summary: The latest physical base backup attempt failed
+            description: Review the CronJob, PostgreSQL replication connection, encryption, and both object-storage targets.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingbasebackupfailed
+
+        - alert: SwitchingWalArchiveStale
+          expr: absent(switching_wal_archive_last_success_timestamp_seconds) or time() - max(switching_wal_archive_last_success_timestamp_seconds) > 900
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-backup
+          annotations:
+            summary: Continuous WAL archive has not advanced for 15 minutes
+            description: PITR data-loss exposure is increasing. Check pg_receivewal, the physical slot, spool capacity, and object storage.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingwalarchivestale
+
+        - alert: SwitchingWalArchiveFailed
+          expr: max(switching_wal_archive_failed) > 0
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-backup
+          annotations:
+            summary: A WAL segment failed encryption or upload
+            description: The segment remains in the durable spool and must be uploaded before it is removed.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingwalarchivefailed
+
+        - alert: SwitchingBackupCrossRegionCopyFailed
+          expr: max(switching_backup_cross_region_success) < 1 or time() - max(switching_backup_cross_region_last_check_timestamp_seconds) > 108000
+          for: 15m
+          labels:
+            severity: critical
+            service: switching-backup
+          annotations:
+            summary: Off-site backup copy is absent or no longer verified
+            description: Primary storage loss could remove the only recoverable copy.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingbackupcrossregioncopyfailed
+
+        - alert: SwitchingRestoreDrillOverdue
+          expr: absent(switching_restore_drill_last_success_timestamp_seconds) or time() - max(switching_restore_drill_last_success_timestamp_seconds) > 3024000
+          for: 1h
+          labels:
+            severity: warning
+            service: switching-backup
+          annotations:
+            summary: No successful isolated restore drill in 35 days
+            description: A backup is not considered recoverable until a current restore drill has passed.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingrestoredrilloverdue
+
+        - alert: SwitchingRestoreDrillFailedOrMissedRto
+          expr: max(switching_restore_drill_failed) > 0 or max(switching_restore_drill_rto_target_met) < 1
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-backup
+          annotations:
+            summary: Restore drill failed or exceeded the approved RTO
+            description: Keep the production go-live gate closed until the failure is remediated and the drill is repeated.
+            runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md#switchingrestoredrillfailedormissedrto

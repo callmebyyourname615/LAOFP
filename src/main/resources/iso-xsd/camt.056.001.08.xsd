@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Simplified structural XSD for ISO 20022 camt.056.001.08
+  (FI-to-FI Payment Cancellation Request V08)
+
+  Validates: namespace, document structure, GrpHdr MsgId, Undrlyg presence.
+-->
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="urn:iso:std:iso:20022:tech:xsd:camt.056.001.08"
+    targetNamespace="urn:iso:std:iso:20022:tech:xsd:camt.056.001.08"
+    elementFormDefault="qualified"
+    version="camt.056.001.08">
+
+  <xs:element name="Document" type="tns:Document"/>
+
+  <xs:complexType name="Document">
+    <xs:sequence>
+      <xs:element name="FIToFIPmtCxlReq" type="tns:FIToFIPaymentCancellationRequestV08"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FIToFIPaymentCancellationRequestV08">
+    <xs:sequence>
+      <xs:element name="Assgnmt"  type="tns:CaseAssignment5"/>
+      <xs:element name="Undrlyg" type="tns:UnderlyingTransaction22" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CaseAssignment5">
+    <xs:sequence>
+      <xs:element name="Id"      type="tns:Max35Text"/>
+      <xs:element name="Assgnr" type="xs:anyType"/>
+      <xs:element name="Assgne" type="xs:anyType"/>
+      <xs:element name="CreDtTm" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="UnderlyingTransaction22">
+    <xs:sequence>
+      <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="Max35Text">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="35"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

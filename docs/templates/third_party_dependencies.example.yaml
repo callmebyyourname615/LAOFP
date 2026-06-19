@@ -1,0 +1,14 @@
+dependencies:
+  - code: RTGS_PRIMARY
+    name: National RTGS
+    type: RTGS
+    endpoint: https://rtgs.example.invalid/health
+    criticality: CRITICAL
+    timeout_seconds: 5
+    expected_status: 200
+    sla:
+      availability_target: 0.999
+      latency_p95_ms: 1500
+      failure_threshold: 3
+      recovery_success_threshold: 2
+      open_seconds: 60

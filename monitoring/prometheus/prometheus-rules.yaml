@@ -1,0 +1,161 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-api-critical-alerts
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: switching-api
+    release: prometheus
+spec:
+  groups:
+    - name: switching-api.availability
+      interval: 30s
+      rules:
+        - alert: SwitchingApiUnavailable
+          expr: absent(up{namespace="switching",service="switching-api-management"}) or max(up{namespace="switching",service="switching-api-management"}) < 1
+          for: 2m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Switching API has no scrapeable management endpoint
+            description: No switching-api management target has been healthy for two minutes.
+            runbook_url: docs/runbooks/RB-08_MONITORING_AND_API_SLO.md#switchingapiunavailable
+
+        - alert: SwitchingApiHighErrorRate
+          expr: |
+            (
+              sum(rate(http_server_requests_seconds_count{application="switching-api",status=~"5.."}[5m]))
+              /
+              clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api"}[5m])), 0.001)
+            ) > 0.01
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Switching API HTTP 5xx rate exceeds 1%
+            description: The 5-minute HTTP server error ratio is above the production threshold.
+            runbook_url: docs/runbooks/RB-08_MONITORING_AND_API_SLO.md#switchingapihigherrorrate
+
+        - alert: SwitchingApiHighP95Latency
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum by (le) (rate(http_server_requests_seconds_bucket{application="switching-api"}[5m]))
+            ) > 1
+          for: 10m
+          labels:
+            severity: warning
+            service: switching-api
+          annotations:
+            summary: Switching API p95 latency exceeds one second
+            description: HTTP p95 latency has remained above one second for ten minutes.
+            runbook_url: docs/runbooks/RB-08_MONITORING_AND_API_SLO.md#switchingapihighp95latency
+
+        - alert: SwitchingDatabasePoolSaturated
+          expr: |
+            max(hikaricp_connections_pending{application="switching-api"}) > 0
+            or
+            (
+              max(hikaricp_connections_active{application="switching-api"})
+              /
+              clamp_min(max(hikaricp_connections_max{application="switching-api"}), 1)
+            ) > 0.9
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Switching API database pool is saturated
+            description: Hikari has pending borrowers or is using more than 90% of the configured pool.
+            runbook_url: docs/runbooks/RB-09_DATABASE_AND_QUEUE_PRESSURE.md#switchingdatabasepoolsaturated
+
+    - name: switching-api.business-flow
+      interval: 30s
+      rules:
+        - alert: SwitchingOutboxBacklog
+          expr: max(switching_ops_outbox_pending{application="switching-api"}) > 100
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Outbox delivery backlog is growing
+            description: More than 100 outbox messages have remained pending or processing.
+            runbook_url: docs/runbooks/RB-09_DATABASE_AND_QUEUE_PRESSURE.md#switchingoutboxbacklog
+
+        - alert: SwitchingTransactionRejectSpike
+          expr: max(switching_ops_transactions_rejected_last5m{application="switching-api"}) > 20
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Transaction rejects exceed the five-minute threshold
+            description: More than 20 transactions were rejected in the rolling five-minute window.
+            runbook_url: docs/runbooks/RB-10_TRANSACTION_SETTLEMENT_AND_WEBHOOK.md#switchingtransactionrejectspike
+
+        - alert: SwitchingSettlementFailure
+          expr: max(switching_ops_settlement_failed_today{application="switching-api"}) > 0
+          for: 2m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: A settlement cycle failed today
+            description: At least one settlement cycle is in FAILED state and requires operator action.
+            runbook_url: docs/runbooks/RB-10_TRANSACTION_SETTLEMENT_AND_WEBHOOK.md#switchingsettlementfailure
+
+        - alert: SwitchingWebhookDeliveryFailure
+          expr: |
+            max(switching_ops_webhook_failed_final{application="switching-api"}) > 0
+            or max(switching_ops_webhook_pending_overdue{application="switching-api"}) > 25
+          for: 5m
+          labels:
+            severity: warning
+            service: switching-api
+          annotations:
+            summary: Webhook delivery is failing or overdue
+            description: Final failures exist or more than 25 webhook deliveries are overdue.
+            runbook_url: docs/runbooks/RB-10_TRANSACTION_SETTLEMENT_AND_WEBHOOK.md#switchingwebhookdeliveryfailure
+
+    - name: switching-api.compliance
+      interval: 30s
+      rules:
+        - alert: SwitchingSanctionsDataStaleOrEmpty
+          expr: |
+            max by (provider) (switching_aml_sanctions_active_records{application="switching-api"}) < 1
+            or max by (provider) (switching_aml_sanctions_age_seconds{application="switching-api"}) > 108000
+          for: 5m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Sanctions data is empty or older than 30 hours
+            description: Provider {{ $labels.provider }} no longer meets the production freshness gate.
+            runbook_url: docs/runbooks/RB-11_AML_SANCTIONS_AND_STR.md#switchingsanctionsdatastaleorempty
+
+        - alert: SwitchingStrSubmissionBacklog
+          expr: max(switching_ops_aml_str_pending{application="switching-api"}) > 0
+          for: 15m
+          labels:
+            severity: critical
+            service: switching-api
+          annotations:
+            summary: Suspicious Transaction Reports are awaiting submission
+            description: One or more STR reports have remained pending or failed for fifteen minutes.
+            runbook_url: docs/runbooks/RB-11_AML_SANCTIONS_AND_STR.md#switchingstrsubmissionbacklog
+
+        - alert: SwitchingOperationalMetricsStale
+          expr: |
+            max(switching_ops_metrics_refresh_success{application="switching-api"}) < 1
+            or time() - max(switching_ops_metrics_last_success_epoch{application="switching-api"}) > 180
+          for: 3m
+          labels:
+            severity: warning
+            service: switching-api
+          annotations:
+            summary: Business operational metrics are stale
+            description: The database-backed metrics collector has not refreshed successfully for three minutes.
+            runbook_url: docs/runbooks/RB-08_MONITORING_AND_API_SLO.md#switchingoperationalmetricsstale

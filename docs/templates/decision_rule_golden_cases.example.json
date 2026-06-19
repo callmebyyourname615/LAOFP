@@ -1,0 +1,7 @@
+{
+  "cases": [
+    {"id": "allow-normal-transfer", "expected_decision": "ALLOW"},
+    {"id": "deny-velocity-breach", "expected_decision": "DENY"},
+    {"id": "review-sanctions-fuzzy", "expected_decision": "REVIEW"}
+  ]
+}

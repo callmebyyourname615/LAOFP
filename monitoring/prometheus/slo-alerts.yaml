@@ -1,0 +1,44 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-api-slo-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: switching-api.slo.burn-rate
+      interval: 30s
+      rules:
+        - alert: SwitchingSloFastBurn
+          expr: switching:sli_error_ratio:rate5m > (14.4 * 0.0005) and switching:sli_error_ratio:rate1h > (14.4 * 0.0005)
+          for: 2m
+          labels: {severity: critical, service: switching-api, slo: availability}
+          annotations:
+            summary: Availability SLO is burning 14.4x faster than budget
+            description: Both the 5-minute and 1-hour windows exceed the fast-burn threshold for the 99.95% SLO.
+            runbook_url: docs/runbooks/RB-14_SLO_ERROR_BUDGET.md#fast-burn
+        - alert: SwitchingSloSlowBurn
+          expr: switching:sli_error_ratio:rate30m > (6 * 0.0005) and switching:sli_error_ratio:rate6h > (6 * 0.0005)
+          for: 15m
+          labels: {severity: warning, service: switching-api, slo: availability}
+          annotations:
+            summary: Availability SLO is burning 6x faster than budget
+            description: Both the 30-minute and 6-hour windows exceed the slow-burn threshold.
+            runbook_url: docs/runbooks/RB-14_SLO_ERROR_BUDGET.md#slow-burn
+        - alert: SwitchingErrorBudgetNearlyExhausted
+          expr: switching:slo_error_budget_remaining:ratio30d < 0.20
+          for: 30m
+          labels: {severity: warning, service: switching-api, slo: availability}
+          annotations:
+            summary: Less than 20% of the 30-day availability budget remains
+            description: Freeze non-remediation releases until the budget recovers or an approved exception exists.
+            runbook_url: docs/runbooks/RB-14_SLO_ERROR_BUDGET.md#error-budget-policy
+        - alert: SwitchingErrorBudgetExhausted
+          expr: switching:slo_error_budget_remaining:ratio30d <= 0
+          for: 5m
+          labels: {severity: critical, service: switching-api, slo: availability}
+          annotations:
+            summary: The 30-day availability error budget is exhausted
+            description: Only reliability, security, or regulator-approved emergency changes may proceed.
+            runbook_url: docs/runbooks/RB-14_SLO_ERROR_BUDGET.md#error-budget-policy

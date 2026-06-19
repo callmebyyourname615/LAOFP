@@ -1,0 +1,14 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: switching-api-pdb
+  namespace: switching
+  labels:
+    app: switching-api
+spec:
+  # P20: Always keep at least 2 pods running during node drains / rolling updates
+  # Ensures zero-downtime maintenance for the payment switching hub
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: switching-api

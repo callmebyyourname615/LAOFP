@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: switching-participant-lifecycle-gate
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: lifecycle-gate
+          image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+          command: ["/workspace/scripts/participant/lifecycle_gate.sh"]
+          env:
+            - name: PARTICIPANT_CODE
+              value: "REPLACE_WITH_PARTICIPANT_CODE"
+          envFrom:
+            - secretRef:
+                name: switching-ops-db-secret

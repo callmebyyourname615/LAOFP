@@ -1,0 +1,12 @@
+{
+  "registryVersion": 1,
+  "schemas": [
+    {
+      "name": "switching.outbox.dispatch",
+      "version": 1,
+      "compatibility": "BACKWARD",
+      "path": "schemas/events/v1/outbox-dispatch.json",
+      "owner": "payments-platform"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "assets": [
+    {"code":"TX_DB","type":"TABLE","reference":"postgres://switching/transactions","owner":"payments","classification":"RESTRICTED","contains_pii":true},
+    {"code":"DAILY_SETTLEMENT","type":"REPORT","reference":"s3://evidence/settlement/daily/","owner":"settlement","classification":"CONFIDENTIAL","contains_pii":false}
+  ],
+  "edges": [
+    {"source":"TX_DB","target":"DAILY_SETTLEMENT","transformation":"settlement-daily-v1","version":"1","purpose":"Daily net settlement evidence","field_mapping_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+  ]
+}

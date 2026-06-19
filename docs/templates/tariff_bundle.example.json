@@ -1,0 +1,8 @@
+{
+  "planCode": "DEFAULT-P2P",
+  "version": 1,
+  "validFrom": "2026-07-01T00:00:00Z",
+  "rules": [
+    {"messageType": "TRANSFER", "currency": "LAK", "flatFee": "1000.0000", "rateBasisPoints": "0.0000"}
+  ]
+}

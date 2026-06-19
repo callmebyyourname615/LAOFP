@@ -1,0 +1,8 @@
+{
+  "packCode": "pacs008-laofp-v1",
+  "messageType": "pacs.008",
+  "version": "2026-06",
+  "files": [
+    {"path": "schemas/pacs008.json", "sha256": "REPLACE_WITH_SHA256"}
+  ]
+}

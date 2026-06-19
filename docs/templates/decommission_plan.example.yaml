@@ -1,0 +1,21 @@
+plan_reference: OFFBOARD-BANK001-2026
+target_type: PARTICIPANT
+target_code: BANK001
+reason: Participant contract ended and governed offboarding was approved
+planned_effective_at: '2026-12-31T18:00:00+07:00'
+data_exit_required: true
+rollback_reference: s3://runbooks/decommission/OFFBOARD-BANK001-2026.md
+approvals_required: [OPERATIONS, RISK, BUSINESS]
+tasks:
+  - code: STOP_NEW_TRAFFIC
+    owner_team: operations
+    blocking: true
+  - code: CLEAR_UNSETTLED_TRANSACTIONS
+    owner_team: settlement
+    blocking: true
+  - code: EXPORT_AND_ENCRYPT_DATA
+    owner_team: data-governance
+    blocking: true
+  - code: REVOKE_CERTIFICATES
+    owner_team: security
+    blocking: true

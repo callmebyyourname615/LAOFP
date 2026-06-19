@@ -1,0 +1,73 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:5432/switching_clean}
+    username: ${TEST_DB_USERNAME:macbookpro}
+    password: ${TEST_DB_PASSWORD:}   # overridden at runtime by Testcontainers via @DynamicPropertySource
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 3        # limit per-context pool to avoid "too many clients" with multiple Spring contexts
+      minimum-idle: 1
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  task:
+    scheduling:
+      enabled: false
+
+  kafka:
+    listener:
+      auto-startup: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:5432/switching_clean}
+    user: ${TEST_DB_USERNAME:macbookpro}
+    password: ${TEST_DB_PASSWORD:}   # overridden at runtime by Testcontainers via @DynamicPropertySource
+
+switching:
+  payment:
+    json-initiation:
+      enabled: true
+  mock-bank:
+    pacs002:
+      force-reject: false
+  security:
+    message-crypto-key-base64: ${TEST_MESSAGE_CRYPTO_KEY_BASE64:NImwCmFwkSIeDgy8UJtzGq86A389puEEe6gi2Wdo9MM=}
+    api-key:
+      enabled: false   # Disable auth in tests — no X-API-Key required
+    oauth:
+      enabled: false
+      jwt-secret: test-oauth-secret-with-at-least-32-bytes
+      token-ttl-seconds: 3600
+    signing:
+      enabled: false
+      timestamp-tolerance-seconds: 30
+    rate-limit:
+      enabled: false   # Disable rate limiting in tests
+  outbox:
+    worker:
+      poll-interval-ms: 5000    # Keep fast poll for integration tests
+      recovery-interval-ms: 60000
+      batch-size: 20
+      max-retry: 5   # FPRE 5-attempt schedule (P10 Step 3)
+      stuck-timeout-minutes: 2
+
+  webhook:
+    encryption:
+      provider: local
+      local:
+        master-key-base64: ${TEST_WEBHOOK_MASTER_KEY_BASE64:NImwCmFwkSIeDgy8UJtzGq86A389puEEe6gi2Wdo9MM=}
+    rotation:
+      default-grace-minutes: 60
+      max-grace-minutes: 10080

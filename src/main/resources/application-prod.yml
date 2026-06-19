@@ -1,0 +1,150 @@
+spring:
+  datasource:
+    url: ${DB_URL}           # no default — prod MUST set this explicitly
+    username: ${DB_USERNAME} # no default
+    password: ${DB_PASSWORD}
+  flyway:
+    enabled: false
+    url: ${FLYWAY_URL:${DB_URL}}
+    user: ${FLYWAY_USERNAME}
+    password: ${FLYWAY_PASSWORD}
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+    properties:
+      security.protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_SSL}
+      sasl.mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-512}
+      sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG}
+      ssl.endpoint.identification.algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
+      ssl.truststore.location: ${KAFKA_SSL_TRUSTSTORE_LOCATION:}
+      ssl.truststore.password: ${KAFKA_SSL_TRUSTSTORE_PASSWORD:}
+      ssl.truststore.type: ${KAFKA_SSL_TRUSTSTORE_TYPE:PKCS12}
+      ssl.keystore.location: ${KAFKA_SSL_KEYSTORE_LOCATION:}
+      ssl.keystore.password: ${KAFKA_SSL_KEYSTORE_PASSWORD:}
+      ssl.keystore.type: ${KAFKA_SSL_KEYSTORE_TYPE:PKCS12}
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+management:
+  server:
+    port: ${MANAGEMENT_PORT:9090}   # separate management port — never expose 9090 publicly
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        liveness:
+          include: livenessState,ping
+        readiness:
+          include: readinessState,db,sanctionsFreshness
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 100ms,250ms,500ms,1s,2s
+
+switching:
+  observability:
+    environment: ${OBSERVABILITY_ENVIRONMENT:production}
+    operational-metrics-refresh: ${OPERATIONAL_METRICS_REFRESH:PT30S}
+  account-lookup:
+    base-url: ${ACCOUNT_LOOKUP_BASE_URL}
+  payment:
+    json-initiation:
+      enabled: ${JSON_INITIATION_ENABLED:false}   # ISO-only by default in prod
+  mock-bank:
+    pacs002:
+      force-reject: false   # hardcoded — mock reject must never be active in prod
+  settlement:
+    bol-rtgs-url: ${BOL_RTGS_URL}
+    rtgs-callback-ip-whitelist: ${RTGS_CALLBACK_IP_WHITELIST}
+  archive:
+    archive-db-url: ${ARCHIVE_DB_URL}
+    archive-db-username: ${ARCHIVE_DB_USERNAME}
+    archive-db-password: ${ARCHIVE_DB_PASSWORD}
+    object-storage:
+      endpoint: ${OBJECT_STORAGE_ENDPOINT}
+      bucket: ${OBJECT_STORAGE_BUCKET}
+      access-key: ${OBJECT_STORAGE_ACCESS_KEY}
+      secret-key: ${OBJECT_STORAGE_SECRET_KEY}
+  aml:
+    bol-fiu-url: ${BOL_FIU_URL}
+    bol-fiu-api-key: ${BOL_FIU_API_KEY}
+    screening-fail-closed: true
+    sanctions:
+      fail-closed-on-stale: true
+      maximum-age: ${AML_SANCTIONS_MAXIMUM_AGE:30h}
+      bol:
+        enabled: ${AML_BOL_SANCTIONS_ENABLED:true}
+        url: ${AML_BOL_SANCTIONS_URL}
+        minimum-records: ${AML_BOL_SANCTIONS_MIN_RECORDS:1}
+        api-key: ${AML_BOL_SANCTIONS_API_KEY:${BOL_FIU_API_KEY}}
+        api-key-header: ${AML_BOL_SANCTIONS_API_KEY_HEADER:X-API-Key}
+      ofac:
+        enabled: ${AML_OFAC_SANCTIONS_ENABLED:true}
+        url: ${AML_OFAC_SANCTIONS_URL:https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML}
+        minimum-records: ${AML_OFAC_SANCTIONS_MIN_RECORDS:100}
+      un:
+        enabled: ${AML_UN_SANCTIONS_ENABLED:true}
+        url: ${AML_UN_SANCTIONS_URL:https://scsanctions.un.org/resources/xml/en/consolidated.xml}
+        minimum-records: ${AML_UN_SANCTIONS_MIN_RECORDS:100}
+  crossborder:
+    promptpay-url: ${PROMPTPAY_API_URL}
+    cnaps-url: ${CNAPS_API_URL}
+    napas-url: ${NAPAS_API_URL}
+    swift-url: ${SWIFT_API_URL}
+  webhook:
+    endpoint-policy:
+      enabled: true
+      require-https: true
+      require-allowlist: true
+      allow-private-addresses: false
+      allowed-ports: ${WEBHOOK_ALLOWED_PORTS:443}
+      allowed-hosts: ${WEBHOOK_ALLOWED_HOSTS}
+      dns-resolve-timeout-millis: ${WEBHOOK_DNS_TIMEOUT_MS:3000}
+      proxy-enabled: ${WEBHOOK_EGRESS_PROXY_ENABLED:true}
+      proxy-host: ${WEBHOOK_EGRESS_PROXY_HOST}
+      proxy-port: ${WEBHOOK_EGRESS_PROXY_PORT:3128}
+    encryption:
+      provider: ${WEBHOOK_ENCRYPTION_PROVIDER:vault-transit}
+      vault:
+        address: ${VAULT_ADDR}
+        auth-method: ${WEBHOOK_VAULT_AUTH_METHOD:kubernetes}
+        kubernetes-auth-mount: ${WEBHOOK_VAULT_KUBERNETES_AUTH_MOUNT:kubernetes}
+        kubernetes-role: ${WEBHOOK_VAULT_KUBERNETES_ROLE:switching-webhook}
+        service-account-token-file: ${WEBHOOK_VAULT_SERVICE_ACCOUNT_TOKEN_FILE:/var/run/secrets/vault/token}
+        token-renewal-skew: ${WEBHOOK_VAULT_TOKEN_RENEWAL_SKEW:30s}
+        namespace: ${VAULT_NAMESPACE:}
+        mount: ${WEBHOOK_VAULT_TRANSIT_MOUNT:transit}
+        key: ${WEBHOOK_VAULT_TRANSIT_KEY:switching-webhook}
+    rotation:
+      default-grace-minutes: ${WEBHOOK_SECRET_ROTATION_GRACE_MINUTES:60}
+      max-grace-minutes: ${WEBHOOK_SECRET_ROTATION_MAX_GRACE_MINUTES:10080}
+  outbox:
+    schema:
+      allow-legacy-messages: false
+  security:
+    message-crypto-key-base64: ${MESSAGE_CRYPTO_KEY_BASE64}   # no default — Spring fails at startup if not set
+    api-key:
+      enabled: true         # hardcoded — API key auth cannot be disabled in prod
+    oauth:
+      enabled: ${SECURITY_OAUTH_ENABLED:true}
+      jwt-secret: ${OAUTH_JWT_SECRET}
+      token-ttl-seconds: ${OAUTH_TOKEN_TTL_SECONDS:3600}
+    mtls:
+      enabled: ${SECURITY_MTLS_ENABLED:true}
+      cert-header: ${MTLS_CERT_HEADER:ssl-client-cert}
+    signing:
+      enabled: ${SECURITY_SIGNING_ENABLED:true}
+      timestamp-tolerance-seconds: ${SIGNING_TIMESTAMP_TOLERANCE:30}
+    rate-limit:
+      enabled: true         # hardcoded — rate limiting cannot be disabled in prod
+      requests-per-minute: ${RATE_LIMIT_RPM:60}

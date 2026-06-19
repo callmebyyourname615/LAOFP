@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISO 20022 Switching Demo Portal</title>
+  <style>
+    :root {
+      --bg: #05111f;
+      --bg-glow: #0a2743;
+      --panel: rgba(10, 24, 40, 0.9);
+      --panel-soft: rgba(14, 34, 56, 0.78);
+      --line: rgba(148, 188, 222, 0.18);
+      --text: #ecf6ff;
+      --muted: #92abc2;
+      --accent: #33d1c6;
+      --accent-strong: #56f2b3;
+      --warning: #ffbf69;
+      --danger: #ff7b72;
+      --success: #43d17b;
+      --pending: #f2a84b;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      --radius: 24px;
+      --font-display: "Avenir Next Condensed", "Trebuchet MS", sans-serif;
+      --font-body: "Avenir Next", "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at top left, rgba(48, 124, 193, 0.22), transparent 34%),
+        radial-gradient(circle at top right, rgba(74, 217, 185, 0.16), transparent 32%),
+        linear-gradient(180deg, #07121f 0%, var(--bg) 55%, #040b13 100%);
+      color: var(--text);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.78), transparent);
+      pointer-events: none;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr);
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-card,
+    .signal-card,
+    .panel {
+      background: linear-gradient(180deg, rgba(16, 33, 54, 0.92), rgba(8, 20, 35, 0.9));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card {
+      padding: 28px;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(51, 209, 198, 0.24), transparent 70%);
+      top: -90px;
+      right: -60px;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid rgba(86, 242, 179, 0.18);
+      border-radius: 999px;
+      color: var(--accent-strong);
+      background: rgba(12, 34, 48, 0.7);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-strong);
+      box-shadow: 0 0 12px rgba(86, 242, 179, 0.85);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: clamp(2.3rem, 3vw, 4rem);
+      line-height: 0.95;
+    }
+
+    .hero-copy {
+      margin-top: 16px;
+      max-width: 70ch;
+      color: #d5e7f6;
+      line-height: 1.65;
+      font-size: 1.02rem;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .metric {
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .signal-card {
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      background:
+        radial-gradient(circle at top right, rgba(51, 209, 198, 0.2), transparent 32%),
+        linear-gradient(180deg, rgba(12, 28, 46, 0.95), rgba(8, 20, 35, 0.94));
+    }
+
+    .signal-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .signal-box {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .signal-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .signal-value {
+      margin-top: 8px;
+      line-height: 1.55;
+      font-size: 0.97rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(380px, 0.92fr);
+      gap: 22px;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      font-size: 1.55rem;
+    }
+
+    .panel-subtitle {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .scenario-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .scenario {
+      padding: 14px 16px;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .scenario:hover,
+    .scenario:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(86, 242, 179, 0.34);
+      background: rgba(51, 209, 198, 0.08);
+      outline: none;
+    }
+
+    .scenario strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.98rem;
+    }
+
+    .scenario span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.87rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(2, 10, 18, 0.68);
+      color: var(--text);
+      transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+    }
+
+    textarea {
+      min-height: 94px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(86, 242, 179, 0.45);
+      box-shadow: 0 0 0 4px rgba(51, 209, 198, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .input-action {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      appearance: none;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .button.primary {
+      color: #04201c;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-strong), #99ffd5);
+      box-shadow: 0 16px 36px rgba(86, 242, 179, 0.24);
+    }
+
+    .button.secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .button.ghost {
+      color: var(--warning);
+      background: rgba(255, 191, 105, 0.08);
+      border: 1px solid rgba(255, 191, 105, 0.16);
+    }
+
+    .button.small {
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+    }
+
+    .button[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .monitor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      min-height: 96px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1rem;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 108px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .status-received,
+    .status-processing {
+      background: rgba(80, 166, 255, 0.16);
+      color: #9bd1ff;
+      border: 1px solid rgba(80, 166, 255, 0.3);
+    }
+
+    .status-success {
+      background: rgba(67, 209, 123, 0.14);
+      color: #8bffc0;
+      border: 1px solid rgba(67, 209, 123, 0.34);
+    }
+
+    .status-pending {
+      background: rgba(242, 168, 75, 0.14);
+      color: #ffd187;
+      border: 1px solid rgba(242, 168, 75, 0.3);
+    }
+
+    .status-failed {
+      background: rgba(255, 123, 114, 0.14);
+      color: #ffb3ad;
+      border: 1px solid rgba(255, 123, 114, 0.3);
+    }
+
+    .status-empty {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .timeline {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 14px 16px 14px 22px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 18px;
+      width: 6px;
+      height: calc(100% - 28px);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(86, 242, 179, 0.75), rgba(86, 242, 179, 0));
+    }
+
+    .timeline-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .timeline-status strong {
+      font-size: 0.98rem;
+    }
+
+    .timeline-meta {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .code-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-card h3 {
+      font-size: 1.08rem;
+      margin-bottom: 12px;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #d8f5f2;
+    }
+
+    .activity {
+      display: grid;
+      gap: 10px;
+    }
+
+    .activity-item {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #d6e8f7;
+      line-height: 1.55;
+      font-size: 0.93rem;
+    }
+
+    .activity-item strong {
+      color: var(--accent-strong);
+    }
+
+    .empty-state {
+      padding: 26px 18px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255, 255, 255, 0.14);
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.65;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .hint-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .hint-list li {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      line-height: 1.6;
+      color: #d2e4f4;
+    }
+
+    .footnote {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .signal-card {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(100% - 20px, 1440px);
+        padding-top: 20px;
+      }
+
+      .hero-card,
+      .signal-card,
+      .panel {
+        border-radius: 20px;
+      }
+
+      .hero-metrics,
+      .scenario-strip,
+      .grid.two,
+      .monitor-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <article class="hero-card">
+        <div class="eyebrow">Switching Control Room</div>
+        <h1>ISO 20022 Demo Portal for Transaction Sending</h1>
+        <p class="hero-copy">
+          หน้าเดียวสำหรับทดสอบการส่งธุรกรรมเข้า switching, ตรวจสอบ idempotency,
+          และดูสถานะการประมวลผลของ transfer แบบต่อเนื่อง เหมาะกับใช้ demo flow
+          ตั้งแต่ request intake ไปจนถึง dispatch result จาก mock connector
+        </p>
+        <div class="hero-metrics">
+          <div class="metric">
+            <div class="metric-label">API Base</div>
+            <div class="metric-value" id="metric-api-base">Loading...</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Dispatch Cycle</div>
+            <div class="metric-value">Every 5 seconds</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Active Demo Route</div>
+            <div class="metric-value">STB001 -> RCV002</div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="signal-card">
+        <div>
+          <h2 class="panel-title">Mock Connector Rules</h2>
+          <p class="panel-subtitle">
+            ใช้ threshold ของ mock bank ในระบบจริง เพื่อควบคุมผลลัพธ์ระหว่าง demo ได้ง่าย
+          </p>
+        </div>
+        <div class="signal-grid">
+          <div class="signal-box">
+            <div class="signal-label">Success</div>
+            <div class="signal-value">จำนวนเงินน้อยกว่า 100,000.00 จะตอบกลับเป็น <strong>SUCCESS</strong></div>
+          </div>
+          <div class="signal-box">
+            <div class="signal-label">Pending</div>
+            <div class="signal-value">จำนวนเงินตั้งแต่ 100,000.00 ถึง 500,000.00 จะเป็น <strong>PENDING</strong></div>
+          </div>
+          <div class="signal-box">
+            <div class="signal-label">Failed</div>
+            <div class="signal-value">จำนวนเงินมากกว่า 500,000.00 จะเป็น <strong>FAILED</strong></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="layout">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Create Transfer</h2>
+            <p class="panel-subtitle">
+              กรอกข้อมูล transaction แล้วส่งเข้า `POST /api/v1/transfers`
+              จากนั้น portal จะ poll status ให้อัตโนมัติ
+            </p>
+          </div>
+          <div class="tag">JSON Request + Auto Inquiry</div>
+        </div>
+
+        <div class="scenario-strip">
+          <button class="scenario" type="button" data-scenario="success">
+            <strong>Fast Success</strong>
+            <span>ใส่ยอด 50,000 เพื่อจบที่ SUCCESS เร็วๆ</span>
+          </button>
+          <button class="scenario" type="button" data-scenario="pending">
+            <strong>Pending Flow</strong>
+            <span>ใส่ยอด 200,000 เพื่อโชว์สถานะ PENDING</span>
+          </button>
+          <button class="scenario" type="button" data-scenario="failed">
+            <strong>Reject Case</strong>
+            <span>ใส่ยอด 600,000 เพื่อโชว์ FAILED</span>
+          </button>
+        </div>
+
+        <form id="transfer-form">
+          <div class="grid two">
+            <div class="field">
+              <label for="channelId">X-Channel-Id</label>
+              <input id="channelId" name="channelId" value="PORTAL_DEMO" required />
+            </div>
+            <div class="field">
+              <label for="currency">Currency</label>
+              <input id="currency" name="currency" value="THB" required />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="field">
+              <label for="idempotencyKey">Idempotency-Key</label>
+              <div class="input-action">
+                <input id="idempotencyKey" name="idempotencyKey" required />
+                <button class="button secondary small" type="button" id="regen-idempotency">Regenerate</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="clientTransferId">Client Transfer Id</label>
+              <div class="input-action">
+                <input id="clientTransferId" name="clientTransferId" required />
+                <button class="button secondary small" type="button" id="regen-client-id">Regenerate</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="field">
+              <label for="sourceBankCode">Source Bank Code</label>
+              <input id="sourceBankCode" name="sourceBankCode" value="STB001" required />
+            </div>
+            <div class="field">
+              <label for="sourceAccountNo">Source Account No</label>
+              <input id="sourceAccountNo" name="sourceAccountNo" value="1234567890" required />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="field">
+              <label for="destinationBankCode">Destination Bank Code</label>
+              <input id="destinationBankCode" name="destinationBankCode" value="RCV002" required />
+            </div>
+            <div class="field">
+              <label for="destinationAccountNo">Destination Account No</label>
+              <input id="destinationAccountNo" name="destinationAccountNo" value="9876543210" required />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="field">
+              <label for="destinationAccountName">Destination Account Name</label>
+              <input id="destinationAccountName" name="destinationAccountName" value="Demo Receiver" required />
+            </div>
+            <div class="field">
+              <label for="amount">Amount</label>
+              <input id="amount" name="amount" type="number" min="0.01" step="0.01" value="50000.00" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="remark">Remark</label>
+            <textarea id="remark" name="remark">ISO 20022 switching demo from web portal</textarea>
+          </div>
+
+          <div class="button-row">
+            <button class="button primary" type="submit" id="submit-button">Send Transaction</button>
+            <button class="button secondary" type="button" id="prefill-button">Generate Fresh Demo Data</button>
+            <button class="button ghost" type="button" id="clear-monitor">Clear Monitor</button>
+          </div>
+
+          <div class="helper">
+            Tip: ถ้าต้องการโชว์ idempotency ให้ส่งซ้ำด้วยค่า `Idempotency-Key` เดิมและ payload เดิม
+            ระบบจะคืน transfer เดิมกลับมาแทนการสร้างใหม่
+          </div>
+        </form>
+      </article>
+
+      <aside class="stack">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Transaction Monitor</h2>
+              <p class="panel-subtitle">
+                ใช้ดู result ล่าสุด, route ที่ถูกเลือก, และ timeline ของ status change
+              </p>
+            </div>
+            <div class="tag" id="poll-indicator">Idle</div>
+          </div>
+
+          <div class="field" style="margin-bottom: 18px;">
+            <label for="lookupTransferRef">Manual Inquiry By Transfer Ref</label>
+            <div class="input-action">
+              <input id="lookupTransferRef" name="lookupTransferRef" placeholder="เช่น TXN202604..." />
+              <button class="button secondary small" type="button" id="lookup-button">Lookup</button>
+            </div>
+          </div>
+
+          <div class="monitor-grid">
+            <div class="stat">
+              <div class="stat-label">Transfer Ref</div>
+              <div class="stat-value" id="stat-transfer-ref">-</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Current Status</div>
+              <div class="stat-value"><span class="status-pill status-empty" id="stat-status">No Data</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Route / Connector</div>
+              <div class="stat-value" id="stat-route">-</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">External Ref</div>
+              <div class="stat-value" id="stat-external-ref">-</div>
+            </div>
+          </div>
+
+          <div id="timeline-container" class="empty-state">
+            ยังไม่มี transaction ที่ถูกเลือก ลองส่งรายการจากฟอร์มด้านซ้ายก่อน
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Live Activity</h2>
+              <p class="panel-subtitle">
+                portal จะบันทึก event สำคัญระหว่างส่งคำขอและ query สถานะ
+              </p>
+            </div>
+          </div>
+          <div id="activity-log" class="activity">
+            <div class="activity-item">ยังไม่มี activity</div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Payload Inspector</h2>
+              <p class="panel-subtitle">
+                ใช้แสดง request และ response ล่าสุดเพื่ออธิบาย flow ระหว่าง demo
+              </p>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="code-card">
+              <h3>Latest Request</h3>
+              <pre id="request-preview">No request yet</pre>
+            </div>
+            <div class="code-card">
+              <h3>Latest Response</h3>
+              <pre id="response-preview">No response yet</pre>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Demo Notes</h2>
+              <p class="panel-subtitle">
+                จุดที่ควรเล่าประกอบเวลาพรีเซนต์ switching demo
+              </p>
+            </div>
+          </div>
+
+          <ul class="hint-list">
+            <li>เริ่มด้วยการอธิบายว่า request เข้ามาผ่าน channel API พร้อม `X-Channel-Id` และ `Idempotency-Key`</li>
+            <li>หลัง create สำเร็จ ระบบจะตอบ `transferRef` กลับก่อน แล้ว worker จะ dispatch ต่อแบบ asynchronous</li>
+            <li>โชว์การเปลี่ยนสถานะ `RECEIVED -> PROCESSING -> SUCCESS/PENDING/FAILED` เพื่อเล่า event-driven flow</li>
+            <li>ถ้าต้องการ demo duplicate protection ให้กดส่งซ้ำโดยไม่เปลี่ยน `Idempotency-Key`</li>
+          </ul>
+
+          <p class="footnote">
+            Portal นี้เรียก API จาก origin เดียวกับ Spring Boot app จึงเหมาะสำหรับ demo แบบ local environment
+            และขยายต่อไปเป็น portal ของ microservices ได้ภายหลัง
+          </p>
+        </article>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const terminalStatuses = new Set(["SUCCESS", "FAILED", "PENDING"]);
+    const pollingStates = new Set(["RECEIVED", "PROCESSING"]);
+
+    const state = {
+      currentTransferRef: "",
+      pollTimer: null,
+      pollAttempt: 0,
+      activity: [],
+      latestRequest: null,
+      latestResponse: null,
+    };
+
+    const elements = {
+      metricApiBase: document.getElementById("metric-api-base"),
+      form: document.getElementById("transfer-form"),
+      submitButton: document.getElementById("submit-button"),
+      prefillButton: document.getElementById("prefill-button"),
+      clearMonitorButton: document.getElementById("clear-monitor"),
+      regenIdempotencyButton: document.getElementById("regen-idempotency"),
+      regenClientIdButton: document.getElementById("regen-client-id"),
+      lookupButton: document.getElementById("lookup-button"),
+      lookupTransferRef: document.getElementById("lookupTransferRef"),
+      requestPreview: document.getElementById("request-preview"),
+      responsePreview: document.getElementById("response-preview"),
+      activityLog: document.getElementById("activity-log"),
+      timelineContainer: document.getElementById("timeline-container"),
+      pollIndicator: document.getElementById("poll-indicator"),
+      statTransferRef: document.getElementById("stat-transfer-ref"),
+      statStatus: document.getElementById("stat-status"),
+      statRoute: document.getElementById("stat-route"),
+      statExternalRef: document.getElementById("stat-external-ref"),
+      channelId: document.getElementById("channelId"),
+      idempotencyKey: document.getElementById("idempotencyKey"),
+      clientTransferId: document.getElementById("clientTransferId"),
+      sourceBankCode: document.getElementById("sourceBankCode"),
+      sourceAccountNo: document.getElementById("sourceAccountNo"),
+      destinationBankCode: document.getElementById("destinationBankCode"),
+      destinationAccountNo: document.getElementById("destinationAccountNo"),
+      destinationAccountName: document.getElementById("destinationAccountName"),
+      amount: document.getElementById("amount"),
+      currency: document.getElementById("currency"),
+      remark: document.getElementById("remark"),
+    };
+
+    function createToken(prefix) {
+      const seed = Math.random().toString(36).slice(2, 10).toUpperCase();
+      return prefix + "-" + new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14) + "-" + seed;
+    }
+
+    function prettyJson(value) {
+      return JSON.stringify(value, null, 2);
+    }
+
+    function formatDateTime(value) {
+      if (!value) {
+        return "-";
+      }
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+
+      return date.toLocaleString("th-TH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    }
+
+    function getStatusClass(status) {
+      const normalized = (status || "").toLowerCase();
+      switch (normalized) {
+        case "received":
+        case "processing":
+          return "status-" + normalized;
+        case "success":
+          return "status-success";
+        case "pending":
+          return "status-pending";
+        case "failed":
+          return "status-failed";
+        default:
+          return "status-empty";
+      }
+    }
+
+    function setStatusBadge(status) {
+      elements.statStatus.className = "status-pill " + getStatusClass(status);
+      elements.statStatus.textContent = status || "No Data";
+    }
+
+    function addActivity(message, emphasis) {
+      const entry = {
+        message,
+        emphasis: emphasis || "",
+        timestamp: new Date(),
+      };
+
+      state.activity.unshift(entry);
+      state.activity = state.activity.slice(0, 8);
+
+      elements.activityLog.innerHTML = state.activity
+        .map((item) => {
+          const strong = item.emphasis ? "<strong>" + escapeHtml(item.emphasis) + "</strong> " : "";
+          return (
+            '<div class="activity-item">' +
+            strong +
+            escapeHtml(item.message) +
+            '<br><span class="footnote">' +
+            escapeHtml(formatDateTime(item.timestamp.toISOString())) +
+            "</span></div>"
+          );
+        })
+        .join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function resetDemoData() {
+      elements.channelId.value = "PORTAL_DEMO";
+      elements.idempotencyKey.value = createToken("IDEMP");
+      elements.clientTransferId.value = createToken("CLIENT");
+      elements.sourceBankCode.value = "STB001";
+      elements.sourceAccountNo.value = "1234567890";
+      elements.destinationBankCode.value = "RCV002";
+      elements.destinationAccountNo.value = "9876543210";
+      elements.destinationAccountName.value = "Demo Receiver";
+      elements.amount.value = "50000.00";
+      elements.currency.value = "THB";
+      elements.remark.value = "ISO 20022 switching demo from web portal";
+      addActivity("สร้างค่า demo ใหม่ให้แล้ว พร้อมส่ง transaction รอบถัดไป", "Portal");
+    }
+
+    function applyScenario(type) {
+      if (type === "success") {
+        elements.amount.value = "50000.00";
+        elements.remark.value = "Success scenario from demo portal";
+      } else if (type === "pending") {
+        elements.amount.value = "200000.00";
+        elements.remark.value = "Pending scenario from demo portal";
+      } else if (type === "failed") {
+        elements.amount.value = "600000.00";
+        elements.remark.value = "Failed scenario from demo portal";
+      }
+
+      elements.clientTransferId.value = createToken("CLIENT");
+      elements.idempotencyKey.value = createToken("IDEMP");
+      addActivity("ปรับ scenario เป็น " + type.toUpperCase() + " และ regenerate identifiers ใหม่แล้ว", "Scenario");
+    }
+
+    function updatePayloadPreview() {
+      const payload = collectPayload();
+      state.latestRequest = payload;
+      elements.requestPreview.textContent = prettyJson({
+        headers: {
+          "X-Channel-Id": elements.channelId.value,
+          "Idempotency-Key": elements.idempotencyKey.value,
+        },
+        body: payload,
+      });
+    }
+
+    function collectPayload() {
+      return {
+        clientTransferId: elements.clientTransferId.value.trim(),
+        sourceBankCode: elements.sourceBankCode.value.trim(),
+        sourceAccountNo: elements.sourceAccountNo.value.trim(),
+        destinationBankCode: elements.destinationBankCode.value.trim(),
+        destinationAccountNo: elements.destinationAccountNo.value.trim(),
+        destinationAccountName: elements.destinationAccountName.value.trim(),
+        amount: Number.parseFloat(elements.amount.value),
+        currency: elements.currency.value.trim(),
+        remark: elements.remark.value.trim(),
+      };
+    }
+
+    async function parseJsonSafe(response) {
+      const text = await response.text();
+      if (!text) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(text);
+      } catch (error) {
+        return { raw: text };
+      }
+    }
+
+    function stopPolling() {
+      if (state.pollTimer) {
+        clearTimeout(state.pollTimer);
+        state.pollTimer = null;
+      }
+      elements.pollIndicator.textContent = "Idle";
+    }
+
+    function schedulePolling(transferRef) {
+      stopPolling();
+      state.currentTransferRef = transferRef;
+      state.pollAttempt = 0;
+      elements.pollIndicator.textContent = "Polling";
+      runPollingCycle();
+    }
+
+    async function runPollingCycle() {
+      if (!state.currentTransferRef) {
+        stopPolling();
+        return;
+      }
+
+      state.pollAttempt += 1;
+      const attempt = state.pollAttempt;
+
+      try {
+        const transfer = await fetchTransfer(state.currentTransferRef, false);
+        renderTransfer(transfer);
+
+        if (!transfer || terminalStatuses.has(transfer.status) || attempt >= 12) {
+          if (transfer && terminalStatuses.has(transfer.status)) {
+            addActivity("หยุด polling เพราะ transaction อยู่ที่สถานะ " + transfer.status, "Poller");
+          } else if (attempt >= 12) {
+            addActivity("หยุด polling หลังจาก query ครบ 12 รอบ", "Poller");
+          }
+          stopPolling();
+          return;
+        }
+      } catch (error) {
+        addActivity(error.message || "Polling failed", "Poller");
+      }
+
+      elements.pollIndicator.textContent = "Polling #" + attempt;
+      state.pollTimer = window.setTimeout(runPollingCycle, 2500);
+    }
+
+    async function fetchTransfer(transferRef, announce = true) {
+      if (announce) {
+        addActivity("กำลัง query transferRef " + transferRef, "Inquiry");
+      }
+
+      const response = await fetch("/api/v1/transfers/" + encodeURIComponent(transferRef));
+      const body = await parseJsonSafe(response);
+      state.latestResponse = body;
+      elements.responsePreview.textContent = prettyJson(body ?? { message: "No response body" });
+
+      if (!response.ok) {
+        const message = body && body.message ? body.message : "Unable to query transfer";
+        throw new Error(message);
+      }
+
+      return body;
+    }
+
+    function renderTransfer(transfer) {
+      elements.statTransferRef.textContent = transfer.transferRef || "-";
+      setStatusBadge(transfer.status);
+      elements.statRoute.textContent = [transfer.routeCode, transfer.connectorName].filter(Boolean).join(" / ") || "-";
+      elements.statExternalRef.textContent = transfer.externalReference || "-";
+      elements.lookupTransferRef.value = transfer.transferRef || "";
+
+      const history = Array.isArray(transfer.statusHistory) ? transfer.statusHistory : [];
+      if (!history.length) {
+        elements.timelineContainer.innerHTML = '<div class="empty-state">ไม่พบ status history สำหรับ transfer นี้</div>';
+        return;
+      }
+
+      elements.timelineContainer.innerHTML =
+        '<ol class="timeline">' +
+        history
+          .map((item) => {
+            const title = item.fromStatus
+              ? escapeHtml(item.fromStatus) + " -> " + escapeHtml(item.toStatus)
+              : "START -> " + escapeHtml(item.toStatus);
+            const details = [item.reasonCode, item.reasonMessage, item.changedBy].filter(Boolean).join(" | ");
+
+            return (
+              '<li class="timeline-item">' +
+              '<div class="timeline-status"><strong>' +
+              title +
+              "</strong><span>" +
+              escapeHtml(formatDateTime(item.changedAt)) +
+              "</span></div>" +
+              '<div class="timeline-meta">' +
+              escapeHtml(details || "No additional details") +
+              "</div></li>"
+            );
+          })
+          .join("") +
+        "</ol>";
+    }
+
+    function clearMonitor() {
+      stopPolling();
+      state.currentTransferRef = "";
+      state.latestResponse = null;
+      elements.lookupTransferRef.value = "";
+      elements.responsePreview.textContent = "No response yet";
+      elements.timelineContainer.innerHTML = '<div class="empty-state">ยังไม่มี transaction ที่ถูกเลือก ลองส่งรายการจากฟอร์มด้านซ้ายก่อน</div>';
+      elements.statTransferRef.textContent = "-";
+      elements.statRoute.textContent = "-";
+      elements.statExternalRef.textContent = "-";
+      setStatusBadge("");
+      addActivity("ล้างข้อมูล monitor แล้ว", "Portal");
+    }
+
+    async function submitTransfer(event) {
+      event.preventDefault();
+      updatePayloadPreview();
+
+      const payload = collectPayload();
+      const headers = {
+        "Content-Type": "application/json",
+        "X-Channel-Id": elements.channelId.value.trim(),
+        "Idempotency-Key": elements.idempotencyKey.value.trim(),
+      };
+
+      elements.submitButton.disabled = true;
+      addActivity("กำลังส่ง transaction ไปยัง switching API", "Submit");
+
+      try {
+        const response = await fetch("/api/v1/transfers", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload),
+        });
+
+        const body = await parseJsonSafe(response);
+        state.latestResponse = body;
+        elements.responsePreview.textContent = prettyJson(body ?? { message: "No response body" });
+
+        if (!response.ok) {
+          const message = body && body.message ? body.message : "Transfer request failed";
+          throw new Error(message);
+        }
+
+        const transferRef = body && body.transferRef ? body.transferRef : "";
+        addActivity("รับ response สำเร็จ และได้ transferRef " + transferRef, "Submit");
+
+        if (transferRef) {
+          schedulePolling(transferRef);
+        } else {
+          stopPolling();
+        }
+      } catch (error) {
+        stopPolling();
+        addActivity(error.message || "Unexpected error while sending transfer", "Error");
+      } finally {
+        elements.submitButton.disabled = false;
+      }
+    }
+
+    async function lookupTransfer() {
+      const transferRef = elements.lookupTransferRef.value.trim();
+      if (!transferRef) {
+        addActivity("กรุณาใส่ transferRef ก่อนกด lookup", "Inquiry");
+        return;
+      }
+
+      try {
+        const transfer = await fetchTransfer(transferRef);
+        renderTransfer(transfer);
+        state.currentTransferRef = transferRef;
+
+        if (pollingStates.has(transfer.status)) {
+          schedulePolling(transferRef);
+        } else {
+          stopPolling();
+        }
+
+        addActivity("โหลดข้อมูล transfer สำเร็จ สถานะล่าสุดคือ " + transfer.status, "Inquiry");
+      } catch (error) {
+        stopPolling();
+        addActivity(error.message || "Lookup failed", "Error");
+      }
+    }
+
+    function bindEvents() {
+      elements.form.addEventListener("submit", submitTransfer);
+      elements.prefillButton.addEventListener("click", resetDemoData);
+      elements.clearMonitorButton.addEventListener("click", clearMonitor);
+      elements.regenIdempotencyButton.addEventListener("click", () => {
+        elements.idempotencyKey.value = createToken("IDEMP");
+        updatePayloadPreview();
+        addActivity("Regenerate idempotency key แล้ว", "Portal");
+      });
+      elements.regenClientIdButton.addEventListener("click", () => {
+        elements.clientTransferId.value = createToken("CLIENT");
+        updatePayloadPreview();
+        addActivity("Regenerate clientTransferId แล้ว", "Portal");
+      });
+      elements.lookupButton.addEventListener("click", lookupTransfer);
+      elements.lookupTransferRef.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          lookupTransfer();
+        }
+      });
+
+      document.querySelectorAll("[data-scenario]").forEach((button) => {
+        button.addEventListener("click", () => {
+          applyScenario(button.dataset.scenario);
+          updatePayloadPreview();
+        });
+      });
+
+      [
+        elements.channelId,
+        elements.idempotencyKey,
+        elements.clientTransferId,
+        elements.sourceBankCode,
+        elements.sourceAccountNo,
+        elements.destinationBankCode,
+        elements.destinationAccountNo,
+        elements.destinationAccountName,
+        elements.amount,
+        elements.currency,
+        elements.remark,
+      ].forEach((input) => input.addEventListener("input", updatePayloadPreview));
+    }
+
+    function init() {
+      elements.metricApiBase.textContent = window.location.origin;
+      setStatusBadge("");
+      bindEvents();
+      resetDemoData();
+      updatePayloadPreview();
+      elements.responsePreview.textContent = "No response yet";
+    }
+
+    init();
+  </script>
+</body>
+</html>

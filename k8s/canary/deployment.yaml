@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: switching-api-canary
+  namespace: switching
+  labels:
+    app: switching-api-canary
+    track: canary
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: switching-api-canary
+      track: canary
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: switching-api-canary
+        track: canary
+    spec:
+      serviceAccountName: switching-api
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: switching-api
+          image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-api@sha256:REPLACE_WITH_IMAGE_DIGEST
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - {name: http, containerPort: 8080, protocol: TCP}
+            - {name: management, containerPort: 9090, protocol: TCP}
+          envFrom:
+            - configMapRef: {name: switching-config}
+            - secretRef: {name: switching-secrets}
+          env:
+            - name: JAVA_OPTS
+              value: "-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms512m -Xmx900m -XX:+UseContainerSupport"
+            - name: RELEASE_TRACK
+              value: canary
+          volumeMounts:
+            - {name: trust-bundle, mountPath: /var/run/secrets/trust, readOnly: true}
+            - {name: vault-jwt, mountPath: /var/run/secrets/vault, readOnly: true}
+            - {name: tmp, mountPath: /tmp}
+          resources:
+            requests: {cpu: "500m", memory: "768Mi"}
+            limits: {cpu: "2000m", memory: "1200Mi"}
+          startupProbe:
+            httpGet: {path: /actuator/health/liveness, port: management}
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            failureThreshold: 24
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet: {path: /actuator/health/liveness, port: management}
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet: {path: /actuator/health/readiness, port: management}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+      volumes:
+        - name: tmp
+          emptyDir: {sizeLimit: 128Mi}
+        - name: trust-bundle
+          secret: {secretName: switching-trust-bundle, defaultMode: 0440}
+        - name: vault-jwt
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken: {path: token, audience: vault, expirationSeconds: 600}

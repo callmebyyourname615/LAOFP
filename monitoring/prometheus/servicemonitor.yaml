@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: switching-api
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: switching-api
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - switching
+  selector:
+    matchLabels:
+      app: switching-api
+      monitoring: enabled
+  endpoints:
+    - port: management
+      path: /actuator/prometheus
+      scheme: http
+      interval: 30s
+      scrapeTimeout: 10s
+      honorLabels: false
+      relabelings:
+        - action: replace
+          targetLabel: application
+          replacement: switching-api
+        - action: replace
+          targetLabel: release_track
+          replacement: stable

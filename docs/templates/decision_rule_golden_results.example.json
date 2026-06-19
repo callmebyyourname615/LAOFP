@@ -1,0 +1,7 @@
+{
+  "results": [
+    {"id": "allow-normal-transfer", "decision": "ALLOW"},
+    {"id": "deny-velocity-breach", "decision": "DENY"},
+    {"id": "review-sanctions-fuzzy", "decision": "REVIEW"}
+  ]
+}

@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-reconciliation-control
+spec:
+  schedule: "15 18 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 14
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: reconciliation
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/reconciliation/run_daily_reconciliation.sh"]
+              env:
+                - name: BUSINESS_DATE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.annotations['switching.io/business-date']
+              envFrom:
+                - secretRef:
+                    name: switching-ops-db-secret

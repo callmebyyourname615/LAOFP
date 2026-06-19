@@ -1,0 +1,88 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: switching-db-migration
+  namespace: switching
+  labels:
+    app: switching-api
+    app.kubernetes.io/component: database-migration
+  annotations:
+    # Safe defaults for GitOps controllers. The deploy workflow also deletes the prior Job.
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels:
+        app: switching-api
+        app.kubernetes.io/component: database-migration
+    spec:
+      serviceAccountName: switching-api
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migration
+          image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-api@sha256:REPLACE_WITH_IMAGE_DIGEST
+          imagePullPolicy: IfNotPresent
+          command: ["java"]
+          args:
+            - "-XX:+UseContainerSupport"
+            - "-XX:MaxRAMPercentage=75.0"
+            - "-Djava.security.egd=file:/dev/./urandom"
+            - "-Dloader.main=com.example.switching.migration.MigrationApplication"
+            - "-cp"
+            - "/app/app.jar"
+            - "org.springframework.boot.loader.launch.PropertiesLauncher"
+          envFrom:
+            - configMapRef:
+                name: switching-config
+            - secretRef:
+                name: switching-flyway-secrets
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: migration
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: trust-bundle
+              mountPath: /var/run/secrets/trust
+              readOnly: true
+            - name: vault-jwt
+              mountPath: /var/run/secrets/vault
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+        - name: trust-bundle
+          secret:
+            secretName: switching-trust-bundle
+            defaultMode: 0440
+        - name: vault-jwt
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: vault
+                  expirationSeconds: 600

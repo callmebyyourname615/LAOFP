@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-region-readiness
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: region-readiness
+              image: ghcr.io/example/switching-ops@sha256:REPLACE_WITH_DIGEST
+              command: ["/workspace/scripts/resilience/region_readiness_probe.sh"]
+              envFrom:
+                - configMapRef:
+                    name: switching-region-readiness-config
+                - secretRef:
+                    name: switching-ops-db-secret

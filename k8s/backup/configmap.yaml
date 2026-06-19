@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switching-backup-config
+  namespace: switching
+  labels:
+    app.kubernetes.io/name: switching-backup
+data:
+  PGHOST: "REPLACE_WITH_BACKUP_DB_HOST"
+  PGPORT: "5432"
+  PGDATABASE: "switching_db"
+  PGSSLMODE: "verify-full"
+  PGSSLROOTCERT: "/var/run/secrets/trust/postgres-ca.crt"
+  S3_ENDPOINT: "https://REPLACE_WITH_PRIMARY_BACKUP_ENDPOINT"
+  S3_REGION: "REPLACE_WITH_PRIMARY_BACKUP_REGION"
+  S3_BUCKET: "REPLACE_WITH_PRIMARY_BACKUP_BUCKET"
+  S3_PREFIX: "switching"
+  S3_SERVER_SIDE_ENCRYPTION: "AES256"
+  S3_STORAGE_CLASS: "STANDARD"
+  SECONDARY_S3_ENABLED: "true"
+  SECONDARY_S3_ENDPOINT: "https://REPLACE_WITH_SECONDARY_BACKUP_ENDPOINT"
+  SECONDARY_S3_REGION: "REPLACE_WITH_SECONDARY_BACKUP_REGION"
+  SECONDARY_S3_BUCKET: "REPLACE_WITH_SECONDARY_BACKUP_BUCKET"
+  WAL_REPLICATION_SLOT: "switching_backup_slot"
+  WAL_UPLOAD_SCAN_SECONDS: "5"
+  PUSHGATEWAY_URL: "http://prometheus-pushgateway.monitoring.svc:9091"
+  BACKUP_INSTANCE: "switching-prod"
+  RESTORE_DRILL_TIMEOUT_SECONDS: "3600"
+  RESTORE_DRILL_RTO_TARGET_SECONDS: "3600"

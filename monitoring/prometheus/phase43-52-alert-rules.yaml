@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-phase43-52-controls
+spec:
+  groups:
+    - name: switching-phase43-52-governance
+      rules:
+        - alert: SwitchingTransactionLimitDenialsSpike
+          expr: switching_limits_denied_last15m > 100
+          for: 5m
+          labels: {severity: warning}
+          annotations: {summary: "Transaction limit denials exceed expected baseline"}
+        - alert: SwitchingManualAdjustmentsPending
+          expr: switching_adjustments_pending > 0
+          for: 4h
+          labels: {severity: critical}
+          annotations: {summary: "Manual financial adjustment remains pending"}
+        - alert: SwitchingCutoffRejectionsSpike
+          expr: switching_calendar_cutoff_rejects_last15m > 50
+          for: 5m
+          labels: {severity: warning}
+          annotations: {summary: "Settlement cutoff rejections increased"}
+        - alert: SwitchingFinalityReversalPending
+          expr: switching_finality_reversals_pending > 0
+          for: 30m
+          labels: {severity: critical}
+          annotations: {summary: "Exceptional payment reversal is pending"}
+        - alert: SwitchingCryptoRotationOverdue
+          expr: switching_crypto_rotation_overdue > 0
+          for: 15m
+          labels: {severity: critical}
+          annotations: {summary: "Cryptographic asset rotation is overdue"}
+        - alert: SwitchingThirdPartyCircuitOpen
+          expr: switching_dependencies_circuit_open > 0
+          for: 2m
+          labels: {severity: critical}
+          annotations: {summary: "Critical third-party dependency circuit is open"}
+        - alert: SwitchingCapacityForecastShortfall
+          expr: switching_capacity_forecast_shortfall > 0
+          for: 30m
+          labels: {severity: warning}
+          annotations: {summary: "Active autoscaling maximum is below forecast requirement"}
+        - alert: SwitchingControlEvidenceUnverified
+          expr: switching_evidence_unverified > 0
+          for: 30m
+          labels: {severity: warning}
+          annotations: {summary: "Control evidence has not been independently verified"}
+        - alert: SwitchingDecisionRuleApprovalPending
+          expr: switching_rules_pending_approval > 0
+          for: 24h
+          labels: {severity: warning}
+          annotations: {summary: "Decision rule version is waiting for governance approval/deployment"}
+        - alert: SwitchingDecommissionPlanOverdue
+          expr: switching_decommission_overdue > 0
+          for: 15m
+          labels: {severity: critical}
+          annotations: {summary: "Controlled decommission plan passed its effective time"}

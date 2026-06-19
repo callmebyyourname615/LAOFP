@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: switching-database-lifecycle
+  namespace: monitoring
+  labels: {release: prometheus}
+spec:
+  groups:
+    - name: switching.database.lifecycle
+      rules:
+        - alert: SwitchingDatabaseInvalidIndex
+          expr: max(switching_database_invalid_indexes) > 0
+          for: 5m
+          labels: {severity: critical, service: switching-database}
+          annotations: {summary: "PostgreSQL has invalid indexes", runbook_url: "docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#invalid-index"}
+        - alert: SwitchingDatabaseLongTransaction
+          expr: max(switching_database_long_transactions) > 0
+          for: 10m
+          labels: {severity: warning, service: switching-database}
+          annotations: {summary: "Long transaction blocks vacuum or DDL", runbook_url: "docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#long-transaction"}
+        - alert: SwitchingDatabasePartitionHorizonGap
+          expr: max(switching_database_partitions_missing_seven_days) > 0
+          for: 5m
+          labels: {severity: critical, service: switching-database}
+          annotations: {summary: "Required seven-day partition horizon has gaps", runbook_url: "docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#partition-gap"}
+        - alert: SwitchingDatabaseDeadTuplePressure
+          expr: max(switching_database_max_dead_tuple_ratio_basis_points) > 2000
+          for: 30m
+          labels: {severity: warning, service: switching-database}
+          annotations: {summary: "A table exceeds 20% dead tuples", runbook_url: "docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#dead-tuples"}
+        - alert: SwitchingDatabaseMaintenanceStale
+          expr: max(switching_database_maintenance_last_success_age_seconds) > 691200
+          for: 30m
+          labels: {severity: warning, service: switching-database}
+          annotations: {summary: "No successful database maintenance run for more than 8 days", runbook_url: "docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#maintenance-job"}
+        - alert: SwitchingDatabaseMaintenanceFailed
+          expr: max(switching_database_maintenance_last_run_failed) > 0
+          for: 5m
+          labels: {severity: critical, service: switching-database}
+          annotations: {summary: "Latest database maintenance run failed", runbook_url: "docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#maintenance-job"}

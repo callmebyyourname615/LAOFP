@@ -1,0 +1,67 @@
+# Dedicated profile for the one-shot Kubernetes migration Job.
+# Flyway auto-run is disabled because MigrationLifecycleRunner must stop at V43,
+# envelope-encrypt legacy webhook secrets, and only then apply V44.
+spring:
+  application:
+    name: switching-db-migration
+  main:
+    web-application-type: none
+    banner-mode: "off"
+  datasource:
+    url: ${FLYWAY_URL}
+    username: ${FLYWAY_USERNAME}
+    password: ${FLYWAY_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 0
+      initialization-fail-timeout: 1
+      connection-timeout: 10000
+      pool-name: SwitchingMigrationPool
+  flyway:
+    enabled: false
+    url: ${FLYWAY_URL}
+    user: ${FLYWAY_USERNAME}
+    password: ${FLYWAY_PASSWORD}
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    clean-disabled: true
+    baseline-on-migrate: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  kafka:
+    listener:
+      auto-startup: false
+  task:
+    scheduling:
+      enabled: false
+
+switching:
+  webhook:
+    encryption:
+      provider: ${WEBHOOK_ENCRYPTION_PROVIDER:vault-transit}
+      connect-timeout: ${WEBHOOK_VAULT_CONNECT_TIMEOUT:3s}
+      request-timeout: ${WEBHOOK_VAULT_REQUEST_TIMEOUT:5s}
+      vault:
+        address: ${VAULT_ADDR}
+        auth-method: ${WEBHOOK_VAULT_AUTH_METHOD:kubernetes}
+        kubernetes-auth-mount: ${WEBHOOK_VAULT_KUBERNETES_AUTH_MOUNT:kubernetes}
+        kubernetes-role: ${WEBHOOK_VAULT_KUBERNETES_ROLE:switching-webhook}
+        service-account-token-file: ${WEBHOOK_VAULT_SERVICE_ACCOUNT_TOKEN_FILE:/var/run/secrets/vault/token}
+        token-renewal-skew: ${WEBHOOK_VAULT_TOKEN_RENEWAL_SKEW:30s}
+        namespace: ${VAULT_NAMESPACE:}
+        mount: ${WEBHOOK_VAULT_TRANSIT_MOUNT:transit}
+        key: ${WEBHOOK_VAULT_TRANSIT_KEY:switching-webhook}
+      local:
+        master-key-base64: ${WEBHOOK_LOCAL_MASTER_KEY_BASE64:}
+
+management:
+  endpoints:
+    enabled-by-default: false
+
+logging:
+  level:
+    root: INFO
+    org.flywaydb: INFO
