@@ -5,41 +5,14 @@ metadata:
   namespace: switching
   labels:
     app: switching-api-canary
+    switching.example.com/policy-template: deny-only
 spec:
   podSelector:
     matchLabels:
       app: switching-api-canary
       track: canary
   policyTypes: [Ingress, Egress]
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: ingress-nginx
-      ports:
-        - {protocol: TCP, port: 8080}
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: monitoring
-      ports:
-        - {protocol: TCP, port: 9090}
-  egress:
-    - to:
-        - namespaceSelector: {}
-      ports:
-        - {protocol: TCP, port: 5432}
-        - {protocol: TCP, port: 9092}
-        - {protocol: TCP, port: 443}
-        - {protocol: TCP, port: 8200}
-    - to:
-        - ipBlock: {cidr: 0.0.0.0/0}
-      ports:
-        - {protocol: TCP, port: 443}
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-      ports:
-        - {protocol: UDP, port: 53}
-        - {protocol: TCP, port: 53}
+  # Intentionally no allow rules. Phase 55G renders and applies the production
+  # CIDR allowlist for this same object name before canary replicas receive traffic.
+  ingress: []
+  egress: []

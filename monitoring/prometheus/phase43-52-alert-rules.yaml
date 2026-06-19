@@ -2,57 +2,100 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: switching-phase43-52-controls
+  namespace: monitoring
+  labels:
+    release: prometheus
 spec:
   groups:
-    - name: switching-phase43-52-governance
-      rules:
-        - alert: SwitchingTransactionLimitDenialsSpike
-          expr: switching_limits_denied_last15m > 100
-          for: 5m
-          labels: {severity: warning}
-          annotations: {summary: "Transaction limit denials exceed expected baseline"}
-        - alert: SwitchingManualAdjustmentsPending
-          expr: switching_adjustments_pending > 0
-          for: 4h
-          labels: {severity: critical}
-          annotations: {summary: "Manual financial adjustment remains pending"}
-        - alert: SwitchingCutoffRejectionsSpike
-          expr: switching_calendar_cutoff_rejects_last15m > 50
-          for: 5m
-          labels: {severity: warning}
-          annotations: {summary: "Settlement cutoff rejections increased"}
-        - alert: SwitchingFinalityReversalPending
-          expr: switching_finality_reversals_pending > 0
-          for: 30m
-          labels: {severity: critical}
-          annotations: {summary: "Exceptional payment reversal is pending"}
-        - alert: SwitchingCryptoRotationOverdue
-          expr: switching_crypto_rotation_overdue > 0
-          for: 15m
-          labels: {severity: critical}
-          annotations: {summary: "Cryptographic asset rotation is overdue"}
-        - alert: SwitchingThirdPartyCircuitOpen
-          expr: switching_dependencies_circuit_open > 0
-          for: 2m
-          labels: {severity: critical}
-          annotations: {summary: "Critical third-party dependency circuit is open"}
-        - alert: SwitchingCapacityForecastShortfall
-          expr: switching_capacity_forecast_shortfall > 0
-          for: 30m
-          labels: {severity: warning}
-          annotations: {summary: "Active autoscaling maximum is below forecast requirement"}
-        - alert: SwitchingControlEvidenceUnverified
-          expr: switching_evidence_unverified > 0
-          for: 30m
-          labels: {severity: warning}
-          annotations: {summary: "Control evidence has not been independently verified"}
-        - alert: SwitchingDecisionRuleApprovalPending
-          expr: switching_rules_pending_approval > 0
-          for: 24h
-          labels: {severity: warning}
-          annotations: {summary: "Decision rule version is waiting for governance approval/deployment"}
-        - alert: SwitchingDecommissionPlanOverdue
-          expr: switching_decommission_overdue > 0
-          for: 15m
-          labels: {severity: critical}
-          annotations: {summary: "Controlled decommission plan passed its effective time"}
+  - name: switching-phase43-52-governance
+    rules:
+    - alert: SwitchingTransactionLimitDenialsSpike
+      expr: switching_limits_denied_last15m > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: Transaction limit denials exceed expected baseline
+        description: Transaction-limit denials exceed the established fifteen-minute baseline.
+        runbook_url: docs/runbooks/TRANSACTION_LIMIT_ENTITLEMENT.md
+    - alert: SwitchingManualAdjustmentsPending
+      expr: switching_adjustments_pending > 0
+      for: 4h
+      labels:
+        severity: critical
+      annotations:
+        summary: Manual financial adjustment remains pending
+        description: A four-eyes manual financial adjustment remains unresolved for four hours.
+        runbook_url: docs/runbooks/MANUAL_FINANCIAL_ADJUSTMENTS.md
+    - alert: SwitchingCutoffRejectionsSpike
+      expr: switching_calendar_cutoff_rejects_last15m > 50
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: Settlement cutoff rejections increased
+        description: Settlement-calendar cutoff rejections exceed the expected threshold.
+        runbook_url: docs/runbooks/SETTLEMENT_CALENDAR_CUTOFF.md
+    - alert: SwitchingFinalityReversalPending
+      expr: switching_finality_reversals_pending > 0
+      for: 30m
+      labels:
+        severity: critical
+      annotations:
+        summary: Exceptional payment reversal is pending
+        description: An exceptional payment-finality reversal is pending beyond thirty minutes.
+        runbook_url: docs/runbooks/PAYMENT_FINALITY_DUPLICATE.md
+    - alert: SwitchingCryptoRotationOverdue
+      expr: switching_crypto_rotation_overdue > 0
+      for: 15m
+      labels:
+        severity: critical
+      annotations:
+        summary: Cryptographic asset rotation is overdue
+        description: A governed cryptographic asset rotation is overdue.
+        runbook_url: docs/runbooks/CRYPTOGRAPHIC_ASSET_ROTATION.md
+    - alert: SwitchingThirdPartyCircuitOpen
+      expr: switching_dependencies_circuit_open > 0
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: Critical third-party dependency circuit is open
+        description: A critical third-party dependency circuit remains open.
+        runbook_url: docs/runbooks/THIRD_PARTY_DEPENDENCY_SLA.md
+    - alert: SwitchingCapacityForecastShortfall
+      expr: switching_capacity_forecast_shortfall > 0
+      for: 30m
+      labels:
+        severity: warning
+      annotations:
+        summary: Active autoscaling maximum is below forecast requirement
+        description: The active autoscaling ceiling is below the approved capacity forecast.
+        runbook_url: docs/runbooks/CAPACITY_AUTOSCALING.md
+    - alert: SwitchingControlEvidenceUnverified
+      expr: switching_evidence_unverified > 0
+      for: 30m
+      labels:
+        severity: warning
+      annotations:
+        summary: Control evidence has not been independently verified
+        description: Sealed control evidence is awaiting independent verification.
+        runbook_url: docs/runbooks/DATA_LINEAGE_EVIDENCE_CATALOG.md
+    - alert: SwitchingDecisionRuleApprovalPending
+      expr: switching_rules_pending_approval > 0
+      for: 24h
+      labels:
+        severity: warning
+      annotations:
+        summary: Decision rule version is waiting for governance approval/deployment
+        description: A decision-rule version is awaiting governance approval or deployment.
+        runbook_url: docs/runbooks/DECISION_RULE_GOVERNANCE.md
+    - alert: SwitchingDecommissionPlanOverdue
+      expr: switching_decommission_overdue > 0
+      for: 15m
+      labels:
+        severity: critical
+      annotations:
+        summary: Controlled decommission plan passed its effective time
+        description: A controlled-decommission plan passed its effective time without completion.
+        runbook_url: docs/runbooks/CONTROLLED_DECOMMISSIONING.md

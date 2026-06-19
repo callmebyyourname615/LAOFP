@@ -168,6 +168,12 @@ public class ProductionStartupValidator implements InitializingBean {
     @Value("${switching.security.signing.enabled}")
     private boolean signingEnabled;
 
+    @Value("${switching.observability.environment:}")
+    private String observabilityEnvironment;
+
+    @Value("${switching.observability.operational-metrics.enabled:true}")
+    private boolean operationalMetricsEnabled;
+
     @Value("${switching.payment.json-initiation.enabled}")
     private boolean jsonInitiationEnabled;
 
@@ -198,6 +204,15 @@ public class ProductionStartupValidator implements InitializingBean {
         }
         if (outboxAllowLegacyMessages) {
             violations.add("switching.outbox.schema.allow-legacy-messages must be false in production.");
+        }
+        if (!"production".equalsIgnoreCase(observabilityEnvironment)) {
+            violations.add("switching.observability.environment must be production in the prod profile.");
+        }
+        if (!operationalMetricsEnabled) {
+            violations.add("switching.observability.operational-metrics.enabled must be true in production.");
+        }
+        if (jsonInitiationEnabled) {
+            violations.add("switching.payment.json-initiation.enabled must be false in production; ISO initiation is required.");
         }
 
         rejectBlankOrPlaceholder(violations, "spring.kafka.bootstrap-servers", kafkaBootstrapServers);
@@ -330,11 +345,6 @@ public class ProductionStartupValidator implements InitializingBean {
             throw new IllegalStateException(
                     "Production startup validation failed with " + violations.size() + " violation(s):\n"
                     + String.join("\n  - ", violations));
-        }
-
-        if (jsonInitiationEnabled) {
-            log.warn("[PROD] switching.payment.json-initiation.enabled=true — "
-                    + "JSON payment path is active. Confirm this is intentional for this deployment.");
         }
 
         log.info("[PROD] Startup validation passed.");

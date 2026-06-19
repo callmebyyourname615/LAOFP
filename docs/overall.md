@@ -852,36 +852,29 @@ Gauges query `OutboxEventRepository.countByStatus()` directly (already existed i
 - Does not affect dev/test profiles
 
 ### DB Least-Privilege Users (Phase 3 ✅)
-- **`scripts/init-db-users.sh`** — auto-runs on first `docker compose up` via MySQL `docker-entrypoint-initdb.d`
-- `switching_app` → SELECT/INSERT/UPDATE/DELETE only (app runtime, no DDL)
-- `switching_flyway` → ALL PRIVILEGES (Flyway migrations only)
-- `application.yml` uses `FLYWAY_URL/USERNAME/PASSWORD` with fallback to datasource creds
+- **`scripts/init-db-users.sh`** auto-runs on first PostgreSQL container initialization.
+- `switching_app` receives DML-only runtime privileges.
+- `switching_flyway` receives migration/DDL privileges.
+- `switching_replicator` receives replication login privileges only.
+- Passwords have no committed defaults and startup fails if they are missing.
 
 ---
 
 ## 12. Configuration
 
-### Environment Variables (`.env` file required)
+### Local environment generation
+
+Do not copy passwords from documentation. Generate a local mode-0600 `.env`:
 
 ```bash
-# Required — app DB password (switching_app user after P3 setup)
-DB_PASSWORD=your_app_db_password
-TEST_DB_PASSWORD=your_test_mysql_password
-
-# Required for production (leave empty = dev fallback key used — INSECURE)
-MESSAGE_CRYPTO_KEY_BASE64=<base64-encoded 16/24/32 byte AES key>
-
-# Docker only — root password for MySQL container
-MYSQL_ROOT_PASSWORD=your_mysql_root_password
-
-# Docker DB least-privilege users (P3 hardening — created by scripts/init-db-users.sh)
-DB_APP_PASSWORD=switching_app_password_change_me     # switching_app user (DML only)
-FLYWAY_PASSWORD=switching_flyway_password_change_me  # switching_flyway user (DDL migrations)
-
-# Optional Flyway override (defaults to DB_URL/DB_USERNAME/DB_PASSWORD if not set)
-# FLYWAY_URL=jdbc:mysql://...
-# FLYWAY_USERNAME=switching_flyway
+security/scripts/generate-local-env.sh
 ```
+
+The generated file contains local-only random values for `POSTGRES_PASSWORD`,
+`DB_APP_PASSWORD`, `DB_PASSWORD`, `FLYWAY_PASSWORD`, `REPLICATION_PASSWORD`,
+archive/MinIO credentials, and development crypto keys. It is ignored by Git
+and excluded from Docker build context. Production values must be injected from
+Vault/External Secrets; see `.env.prod.example`.
 
 ### `application.yml` (production)
 

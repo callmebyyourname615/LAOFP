@@ -1,8 +1,8 @@
 # Implementation Progress
 
-> **Regenerated:** 2026-06-19 (v3)
+> **Regenerated:** 2026-06-19 (v4)
 > **Truth-of-record:** delivery notes + code in this repository.
-> Scope: original 12-item Sprint plan → expanded to **52 phases**.
+> Scope: original 12-item Sprint plan → expanded through **Phase 53B production hardening**.
 > Per user instruction, external vendor / regulator / infra-provisioning items are **excluded from readiness %**.
 
 ---
@@ -80,7 +80,14 @@
 | **51** | Decision rule + model governance | V81 | ✅ |
 | **52** | Controlled decommissioning + data exit | V82 | ✅ |
 
-**Code rollup: 42 / 52 phases verified ✅ + range 23–32 unverified**
+### Production hardening Phase 53
+
+| Phase | Capability | Migration | Status |
+|---|---|---|---|
+| **53A** | Repository security cleanup and secret-history controls | — | ✅ Code complete; operator rotation/history purge pending |
+| **53B** | JPA/Flyway payload SHA-256 schema alignment | V83 | ✅ Code complete; runtime CI/UAT evidence pending |
+
+**Migration rollup: V1–V83 contiguous. Phase 53B restores fail-fast JPA schema validation.**
 
 ---
 
@@ -164,8 +171,9 @@ External pen-test, regulator approvals (BoL, AML/CFT, PDPA), production infrastr
 - [x] Phase 43–52 static verifier 🆕
 - [x] Evidence hashing utility 🆕
 - [x] Phase 43–52 CI control gate 🆕
+- [x] Phase 53B V83 static/runtime schema alignment gate 🆕
 
-### ✅ Code-side checklist: 14/14 complete
+### ✅ Code-side checklist: 15/15 implementation controls present
 
 ---
 
@@ -173,7 +181,7 @@ External pen-test, regulator approvals (BoL, AML/CFT, PDPA), production infrastr
 
 These need a real UAT environment — code is ready, evidence still to capture:
 
-- Full Maven verify + Testcontainers migrations V1 → V82
+- Full Maven verify + Testcontainers migrations V1 → V83
 - Concurrent limit-consumption + duplicate/idempotency race tests
 - Manual adjustment posting/reconciliation with representative ledger accounts
 - Official settlement holiday/cutoff approval
@@ -217,7 +225,7 @@ Only gap: phases 23–32 documentation — everything else implementable in repo
 
 **Week 2:**
 - Run static verifiers (incl. new `verify_phases_43_52_static.py`)
-- Run `./mvnw clean test` end-to-end on merged tree (V1 → V82)
+- Run `./mvnw clean test` end-to-end on merged tree (V1 → V83)
 - Confirm `scripts/render_k8s_image.sh` substitutes digest correctly
 
 After that, **repo-side work is done**. Remaining items are deployment-time concerns (out of scope per user instruction).
@@ -230,4 +238,124 @@ After that, **repo-side work is done**. Remaining items are deployment-time conc
 - Per user instruction, external vendor / regulator / infrastructure-provisioning items are excluded from readiness %.
 - Phase 23–32 status is the single largest uncertainty — resolve before publishing externally.
 - 22 runbooks total (was 11 in prior scan).
-- 82 Flyway migrations total (was 72 in prior scan; +10 from phases 43–52).
+- 83 Flyway migrations total: V1–V82 baseline plus V83 SHA-256 schema alignment.
+
+---
+
+## Phase 53A — Repository Security Cleanup ✅ Code Complete
+
+**Implemented:** 2026-06-19
+
+Repository-side controls added before Production Go-Live:
+
+- removed known tracked env backup, logs, generated inventory, and legacy DB dump
+  through `PHASE_53A_DELETE_MANIFEST.txt` + `apply-phase53a.sh`;
+- blocked env files, logs, dumps, private keys, keystores, and generated evidence
+  from Git and Docker build context;
+- removed Docker Compose/DB-bootstrap fallback passwords, scrubbed reused credential values, and added secure local `.env` generation;
+- added tracked/staged repository hygiene scanning with redacted reports;
+- added full-history prohibited-path scanning and guarded `git-filter-repo` tooling;
+- added pre-commit hook, regression tests, PR/push CI gates, and required branch checks;
+- added credential-rotation checklist and coordinated Git history purge runbook.
+
+**Code status:** complete.
+
+**Operational closure still required:** rotate/revoke exposed credentials, classify
+DB/log exposure, rewrite remote Git history, invalidate old clones/caches, and
+collect approved redacted evidence. Production remains **NO-GO** until those
+operator actions are complete.
+
+
+## Phase 53B — V83 Schema Alignment ✅ Code Complete
+
+**Implemented:** 2026-06-19
+
+- Added forward-only V83 migration for both `payload_sha256` columns.
+- Preserved immutable V47/V51 Flyway history.
+- Restored base `spring.jpa.hibernate.ddl-auto=validate`.
+- Added bounded lock/statement timeouts, fail-closed digest validation, data-preserving conversion, validated SHA-256 constraints and postconditions.
+- Added PostgreSQL V82→V83 Testcontainers coverage and entity mapping contract tests.
+- Added dependency-free static verifier, CI gate, branch-protection context, migration-image checks, rollout runbook and evidence template.
+
+**Evidence status:** static contract validation passes in the delivered tree. The targeted Testcontainers test and full Maven suite must run in Docker-enabled CI/UAT before the production gate is closed.
+
+## Phases 53C–53J — Production Hardening Closure ✅ Code Complete
+
+**Implemented:** 2026-06-19
+
+### Phase 53C — Migration Runtime Isolation
+- [x] Exclude Kafka and task scheduling auto-configuration from `MigrationApplication`.
+- [x] Exclude all scheduled/Kafka runtime workers and queue/scheduling configuration from `migration`.
+- [x] Add source contract and PostgreSQL migration-context tests.
+
+### Phase 53D — Operational Metrics Activation
+- [x] Activate `OperationalMetricsCollector` through explicit bean configuration.
+- [x] Enable by default outside migration; support explicit disable for controlled tests only.
+- [x] Enforce production metrics activation and add context tests.
+
+### Phase 53E — Restore Migration Integration Test
+- [x] Restore Testcontainers `MigrationApplicationIntegrationTest`.
+- [x] Assert Flyway current version is **83** and no runtime workers/Kafka beans load.
+
+### Phase 53F — Restore Static Gates and Runbooks
+- [x] Restore RB-08 through RB-11, sanctions onboarding and phase 05-07 implementation notes.
+- [x] Add consolidated `verify_all_static.py` and required CI/branch-protection gates.
+
+### Phase 53G — Release Calendar / Change Freeze Gate
+- [x] Fail closed before cluster access unless an active window, valid freeze exception when needed,
+      and a recent evidence-bound ALLOW decision exist.
+- [x] Record gate evidence and consume one-time exceptions after successful rollout.
+
+### Phase 53H — Production Environment Contract
+- [x] Add machine-readable production variable/delivery contract.
+- [x] Validate rendered values, ConfigMap/ExternalSecret mapping, TLS, secret strength,
+      placeholders and separation of application/Flyway identities.
+
+### Phase 53I — Alert and Runbook Closure
+- [x] Verify 47 unique alert definitions, metadata, runbook files and anchors.
+- [x] Add controlled Alertmanager delivery drill and generated test matrix.
+
+### Phase 53J — Runtime Evidence Bundle
+- [x] Add evidence plan, schema, guarded runner, SHA-256 manifest builder and verifier.
+- [x] Add preflight/performance/soak/resilience CI workflow and formal Go-Live sign-off template.
+- [x] Fail closed when any mandatory control is `FAIL` or `NOT_RUN`.
+
+**Runtime status:** implementation complete; production remains **NO-GO** until the final evidence
+manifest verifies with `--require-go-live-ready` against the approved immutable candidate.
+
+
+## Phase 54 — Production Certification (54A-54J)
+
+- [x] 54A Build & Test Certification framework
+- [x] 54B Migration Certification framework for V1→V83 and V82→V83
+- [x] 54C UAT Deployment Rehearsal framework
+- [x] 54D Performance & Capacity Certification framework
+- [x] 54E Settlement 500k Certification framework
+- [x] 54F Backup, Restore & PITR Certification framework
+- [x] 54G DR & Failure Recovery Certification framework
+- [x] 54H Security & Supply Chain Certification framework
+- [x] 54I Observability & Alert Certification framework
+- [x] 54J Go-Live Rehearsal & Release Candidate framework
+
+Repository-side implementation is complete. Runtime statuses remain evidence-driven and must be produced on UAT/performance/DR infrastructure.
+
+## Phase 55 — Production Go-Live and BAU Handover (55A–55J)
+
+**Implemented:** 2026-06-19
+
+- [x] 55A immutable, signed, digest-pinned release-candidate assembly
+- [x] 55B fail-closed production infrastructure contract
+- [x] 55C production-like V82→V83 migration dry run and restore rollback proof
+- [x] 55D repeatable-read financial cutover baseline with immutable archive retention
+- [x] 55E production RBAC, NetworkPolicy, database privilege and secret-rotation hardening
+- [x] 55F signed command-center readiness and evidence-bound approvals
+- [x] 55G migration-first 5% production canary with automatic rollback
+- [x] 55H controlled 25%→50%→100% traffic promotion with signed stage decisions
+- [x] 55I minimum-duration hypercare, observability, incident and reconciliation validation
+- [x] 55J signed Business/Operations/Security acceptance and BAU handover manifest
+
+Repository-side implementation and static/framework validation are complete. No production
+traffic, migration, secret rotation, or acceptance action is performed by the delivery/apply
+script. Every runtime phase remains **NOT_RUN** until executed in order on approved runners
+against the immutable release identity. Production remains **NO-GO** until Phase 55A–55J
+results are PASS and the final operational-acceptance manifest verifies without tampering.

@@ -1,0 +1,26 @@
+schemaVersion: 1
+queries:
+  transactionStatus:
+    sql: "SELECT status, COUNT(*) AS count, COALESCE(SUM(amount),0) AS amount FROM transactions GROUP BY status ORDER BY status"
+    mode: aggregate-nondecreasing
+  paymentFlowStatus:
+    sql: "SELECT status, COUNT(*) AS count, COALESCE(SUM(amount),0) AS amount FROM payment_flows GROUP BY status ORDER BY status"
+    mode: aggregate-nondecreasing
+  controlLedgerBalance:
+    sql: "SELECT j.currency, COALESCE(SUM(CASE WHEN e.side='DEBIT' THEN e.amount ELSE 0 END),0) AS debit, COALESCE(SUM(CASE WHEN e.side='CREDIT' THEN e.amount ELSE 0 END),0) AS credit FROM control_journal j JOIN control_journal_entry e ON e.journal_id=j.id WHERE j.status='POSTED' GROUP BY j.currency ORDER BY j.currency"
+    mode: balanced
+  settlementPositions:
+    sql: "SELECT currency, COALESCE(SUM(debit_amount),0) AS debit, COALESCE(SUM(credit_amount),0) AS credit, COALESCE(SUM(net_position),0) AS net_position FROM settlement_positions GROUP BY currency ORDER BY currency"
+    mode: balanced
+  outboxState:
+    sql: "SELECT status, COUNT(*) AS count FROM outbox_messages GROUP BY status ORDER BY status"
+    mode: monotonic
+  deadLetters:
+    sql: "SELECT COUNT(*) AS count FROM dead_letter_messages WHERE reviewed_at IS NULL"
+    mode: no-increase
+  duplicateBusinessReferences:
+    sql: "SELECT COUNT(*) AS count FROM (SELECT transaction_ref, business_date FROM transactions GROUP BY transaction_ref, business_date HAVING COUNT(*) > 1) duplicate_refs"
+    mode: zero
+  reconciliationExceptions:
+    sql: "SELECT COUNT(*) AS count FROM reconciliation_exception_case WHERE status NOT IN ('RESOLVED','CLOSED')"
+    mode: no-increase

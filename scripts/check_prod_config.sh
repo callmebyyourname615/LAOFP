@@ -46,7 +46,7 @@ for file in "$@"; do
   [[ -f "$file" ]] || { fail "$file does not exist"; continue; }
   note "Checking $file"
 
-  contains_pattern "$file" 'REPLACE_ME|REPLACE_WITH|change_me|dev-test|dev-fiu-key|test-secret' \
+  contains_pattern "$file" 'REPLACE_ME|REPLACE_WITH|__INJECT_AT_RUNTIME__|__REQUIRED_[A-Z0-9_]+__|change_me|dev-test|dev-fiu-key|test-secret' \
     'contains placeholder/development values'
   contains_pattern "$file" 'KAFKA_SECURITY_PROTOCOL=["'\'' ]*PLAINTEXT|security\.protocol:["'\'' ]*PLAINTEXT' \
     'configures Kafka PLAINTEXT'

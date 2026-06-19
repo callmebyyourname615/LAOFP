@@ -1,0 +1,76 @@
+schemaVersion: 1
+environment: production
+placeholderPatterns:
+  - '(?i)replace[_-]?me'
+  - '(?i)replace[_-]?with'
+  - '(?i)change[_-]?me'
+  - '(?i)__INJECT_AT_RUNTIME__'
+  - '(?i)__REQUIRED_[A-Z0-9_]+__'
+  - '(?i)test[-_]?secret'
+  - '(?i)dev[-_]'
+forbiddenKeys:
+  - VAULT_TOKEN
+variables:
+  SPRING_PROFILES_ACTIVE: {delivery: configmap, type: literal, value: prod}
+  OBSERVABILITY_ENVIRONMENT: {delivery: configmap, type: literal, value: production}
+  OPERATIONAL_METRICS_ENABLED: {delivery: configmap, type: boolean, value: true}
+  OPERATIONAL_METRICS_REFRESH: {delivery: configmap, type: duration}
+  JSON_INITIATION_ENABLED: {delivery: configmap, type: boolean, value: false}
+  OUTBOX_SCHEMA_ALLOW_LEGACY: {delivery: configmap, type: boolean, value: false}
+  SECURITY_OAUTH_ENABLED: {delivery: configmap, type: boolean, value: true}
+  SECURITY_MTLS_ENABLED: {delivery: configmap, type: boolean, value: true}
+  SECURITY_SIGNING_ENABLED: {delivery: configmap, type: boolean, value: true}
+  WEBHOOK_ENDPOINT_POLICY_ENABLED: {delivery: configmap, type: boolean, value: true}
+  WEBHOOK_REQUIRE_HTTPS: {delivery: configmap, type: boolean, value: true}
+  WEBHOOK_REQUIRE_ALLOWLIST: {delivery: configmap, type: boolean, value: true}
+  WEBHOOK_ALLOW_PRIVATE_ADDRESSES: {delivery: configmap, type: boolean, value: false}
+  WEBHOOK_EGRESS_PROXY_ENABLED: {delivery: configmap, type: boolean, value: true}
+  WEBHOOK_ENCRYPTION_PROVIDER: {delivery: configmap, type: literal, value: vault-transit}
+  WEBHOOK_VAULT_AUTH_METHOD: {delivery: configmap, type: literal, value: kubernetes}
+  KAFKA_SECURITY_PROTOCOL: {delivery: configmap, type: enum, values: [SASL_SSL, SSL]}
+  KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: {delivery: configmap, type: literal, value: https}
+  KAFKA_SASL_MECHANISM: {delivery: configmap, type: enum, values: [SCRAM-SHA-512, SCRAM-SHA-256]}
+  DB_URL: {delivery: application-secret, type: postgres-jdbc-verify-full}
+  DB_USERNAME: {delivery: application-secret, type: identifier}
+  DB_PASSWORD: {delivery: application-secret, type: secret, minLength: 20}
+  FLYWAY_URL: {delivery: migration-secret, type: postgres-jdbc-verify-full}
+  FLYWAY_USERNAME: {delivery: migration-secret, type: identifier}
+  FLYWAY_PASSWORD: {delivery: migration-secret, type: secret, minLength: 20}
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: {delivery: configmap, type: kafka-bootstrap-tls}
+  KAFKA_SASL_JAAS_CONFIG: {delivery: application-secret, type: kafka-jaas-secret, minLength: 40}
+  KAFKA_SSL_TRUSTSTORE_LOCATION: {delivery: configmap, type: absolute-path}
+  KAFKA_SSL_TRUSTSTORE_PASSWORD: {delivery: application-secret, type: secret, minLength: 12}
+  KAFKA_SSL_KEYSTORE_LOCATION: {delivery: configmap, type: absolute-path}
+  KAFKA_SSL_KEYSTORE_PASSWORD: {delivery: application-secret, type: secret, minLength: 12}
+  MESSAGE_CRYPTO_KEY_BASE64: {delivery: application-secret, type: base64-bytes, decodedLength: 32}
+  OAUTH_JWT_SECRET: {delivery: application-secret, type: secret, minLength: 32}
+  ACCOUNT_LOOKUP_BASE_URL: {delivery: configmap, type: https-url}
+  BOL_RTGS_URL: {delivery: configmap, type: https-url}
+  RTGS_CALLBACK_IP_WHITELIST: {delivery: configmap, type: nonempty}
+  BOL_FIU_URL: {delivery: configmap, type: https-url}
+  BOL_FIU_API_KEY: {delivery: application-secret, type: secret, minLength: 20}
+  AML_BOL_SANCTIONS_URL: {delivery: configmap, type: https-url}
+  AML_BOL_SANCTIONS_API_KEY: {delivery: application-secret, type: secret, minLength: 20}
+  PROMPTPAY_API_URL: {delivery: configmap, type: https-url}
+  CNAPS_API_URL: {delivery: configmap, type: https-url}
+  NAPAS_API_URL: {delivery: configmap, type: https-url}
+  SWIFT_API_URL: {delivery: configmap, type: https-url}
+  ARCHIVE_DB_URL: {delivery: configmap, type: postgres-jdbc-verify-full}
+  ARCHIVE_DB_USERNAME: {delivery: configmap, type: identifier}
+  ARCHIVE_DB_PASSWORD: {delivery: application-secret, type: secret, minLength: 20}
+  OBJECT_STORAGE_ENDPOINT: {delivery: configmap, type: https-url}
+  OBJECT_STORAGE_BUCKET: {delivery: configmap, type: identifier}
+  OBJECT_STORAGE_ACCESS_KEY: {delivery: application-secret, type: secret, minLength: 12}
+  OBJECT_STORAGE_SECRET_KEY: {delivery: application-secret, type: secret, minLength: 24}
+  VAULT_ADDR: {delivery: configmap, type: https-url}
+  VAULT_NAMESPACE: {delivery: configmap, type: identifier}
+  WEBHOOK_VAULT_KUBERNETES_ROLE: {delivery: configmap, type: identifier}
+  WEBHOOK_VAULT_SERVICE_ACCOUNT_TOKEN_FILE: {delivery: configmap, type: absolute-path}
+  WEBHOOK_VAULT_TRANSIT_MOUNT: {delivery: configmap, type: identifier}
+  WEBHOOK_VAULT_TRANSIT_KEY: {delivery: configmap, type: identifier}
+  WEBHOOK_ALLOWED_HOSTS: {delivery: configmap, type: host-list}
+  WEBHOOK_EGRESS_PROXY_HOST: {delivery: configmap, type: hostname}
+crossChecks:
+  - {type: different, keys: [DB_USERNAME, FLYWAY_USERNAME]}
+  - {type: different, keys: [DB_PASSWORD, FLYWAY_PASSWORD]}
+  - {type: different, keys: [DB_PASSWORD, ARCHIVE_DB_PASSWORD]}

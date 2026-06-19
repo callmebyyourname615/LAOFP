@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -232,7 +233,13 @@ def main() -> int:
 
 if __name__ == "__main__":
     try:
-        raise SystemExit(main())
+        code = main()
     except (AssertionError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
         print(f"Phase 08 static acceptance checks: FAIL: {exc}", file=sys.stderr)
-        raise SystemExit(1)
+        code = 1
+    # A few CI/container runtimes have exhibited interpreter-shutdown stalls after
+    # the subprocess-heavy verifier. All children are synchronously reaped above;
+    # use an explicit process exit after flushing deterministic output.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code)

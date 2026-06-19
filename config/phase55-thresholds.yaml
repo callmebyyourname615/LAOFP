@@ -1,0 +1,46 @@
+schemaVersion: 1
+infrastructure:
+  minimumKafkaBrokers: 3
+  minimumCertificateValidityDays: 30
+  maximumClockSkewSeconds: 2
+  maximumDatabaseReplicationLagSeconds: 5
+  requirePostgresVerifyFull: true
+  requireObjectVersioning: true
+  requireObjectLock: true
+migration:
+  expectedFlywayVersion: '83'
+  maximumDurationSeconds: 900
+  maximumLockWaitSeconds: 15
+  requireSchemaValidation: true
+  requireZeroDataLoss: true
+canary:
+  initialWeightPercent: 5
+  observationSeconds: 900
+  minimumReadyReplicaRatio: 1.0
+  maximumErrorRate: 0.005
+  maximumP95LatencySeconds: 0.75
+  maximumP99LatencySeconds: 1.5
+  maximumKafkaLag: 1000
+  maximumOutboxBacklog: 500
+  maximumDatabasePoolUtilization: 0.85
+  maximumBalanceMismatchCount: 0
+cutover:
+  weights: [5, 25, 50, 100]
+  minimumObservationSeconds: {5: 900, 25: 1800, 50: 1800, 100: 3600}
+  automaticRollbackOnCriticalAlert: true
+  requireSignedPromotionDecision: true
+  maximumDecisionAgeSeconds: 900
+hypercare:
+  minimumDurationHours: 24
+  recommendedDurationDays: 7
+  maximumCriticalIncidents: 0
+  maximumUnresolvedHighIncidents: 0
+  maximumBalanceMismatchCount: 0
+  maximumDuplicateBusinessReferenceCount: 0
+  maximumDatabaseReplicationLagSeconds: 5
+  maximumKafkaLag: 1000
+closure:
+  requireBusinessAcceptance: true
+  requireOperationsAcceptance: true
+  requireSecurityAcceptance: true
+  requireNoOpenCriticalKnownIssues: true

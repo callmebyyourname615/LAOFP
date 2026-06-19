@@ -1,0 +1,124 @@
+schemaVersion: 1
+planId: switching-production-runtime-evidence-v1
+minimumFlywayVersion: '83'
+allowedEnvironments: [uat, performance, dr]
+controls:
+  - id: static-gates
+    phase: 53F
+    category: code-quality
+    requiredForGoLive: true
+    mode: preflight
+    command: python3 scripts/verify_all_static.py
+    evidence: [logs/static-gates.log]
+  - id: full-maven-verify
+    phase: 53E
+    category: tests
+    requiredForGoLive: true
+    mode: preflight
+    command: ./mvnw --batch-mode --no-transfer-progress clean verify
+    evidence: [logs/full-maven-verify.log, artifacts/surefire-reports.tar.gz]
+  - id: migration-v83-runtime
+    phase: 53C
+    category: migration
+    requiredForGoLive: true
+    mode: preflight
+    command: ./mvnw --batch-mode --no-transfer-progress -Dtest=MigrationApplicationIntegrationTest,V83PayloadSha256SchemaAlignmentIntegrationTest test
+    evidence: [logs/migration-v83-runtime.log]
+  - id: performance-smoke
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/run-k6.sh smoke
+    evidence: [logs/performance-smoke.log]
+  - id: performance-sustained-2k
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/run-k6.sh sustained-2k-tps
+    evidence: [logs/performance-sustained-2k.log]
+  - id: performance-burst-10k
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/run-k6.sh burst-10k-tps
+    evidence: [logs/performance-burst-10k.log]
+  - id: vpa-500-concurrent
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/run-k6.sh vpa-500-concurrent
+    evidence: [logs/vpa-500-concurrent.log]
+  - id: qr-200-concurrent
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/run-k6.sh qr-200-concurrent
+    evidence: [logs/qr-200-concurrent.log]
+  - id: webhook-10k
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/run-k6.sh webhook-10k
+    evidence: [logs/webhook-10k.log]
+  - id: settlement-500k
+    phase: 53J
+    category: settlement
+    requiredForGoLive: true
+    mode: performance
+    command: performance/settlement/run_settlement_benchmark.sh
+    evidence: [logs/settlement-500k.log]
+  - id: capacity-snapshot
+    phase: 53J
+    category: observability
+    requiredForGoLive: true
+    mode: performance
+    command: performance/scripts/capture-capacity-evidence.sh
+    evidence: [logs/capacity-snapshot.log]
+  - id: soak-8h
+    phase: 53J
+    category: performance
+    requiredForGoLive: true
+    mode: soak
+    command: performance/scripts/run-k6.sh soak-8h
+    evidence: [logs/soak-8h.log]
+  - id: backup-restore-drill
+    phase: 53J
+    category: recoverability
+    requiredForGoLive: true
+    mode: resilience
+    command: backup/bin/restore-drill.sh
+    evidence: [logs/backup-restore-drill.log]
+  - id: dr-suite
+    phase: 53J
+    category: resilience
+    requiredForGoLive: true
+    mode: resilience
+    command: dr/scripts/run-dr-suite.sh
+    evidence: [logs/dr-suite.log]
+  - id: sanctions-mock-sync
+    phase: 53J
+    category: aml
+    requiredForGoLive: true
+    mode: preflight
+    command: ./mvnw --batch-mode --no-transfer-progress -Dtest='Sanctions*' test
+    evidence: [logs/sanctions-mock-sync.log]
+  - id: vault-key-rotation
+    phase: 53J
+    category: cryptography
+    requiredForGoLive: true
+    mode: resilience
+    command: security/scripts/vault-transit-key-rotation-drill.sh
+    evidence: [logs/vault-key-rotation.log]
+  - id: alert-delivery-drill
+    phase: 53I
+    category: observability
+    requiredForGoLive: true
+    mode: resilience
+    command: scripts/monitoring/run_alert_delivery_drill.sh
+    evidence: [logs/alert-delivery-drill.log, artifacts/alert-delivery-results.json]

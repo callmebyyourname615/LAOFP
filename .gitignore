@@ -4,6 +4,42 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Secrets and runtime environment files ###
+.env
+.env.*
+!.env.example
+!.env.prod.example
+!backup/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+backup/secrets/
+secrets/
+security/evidence/
+.gitleaks-report*.json
+
+### Logs, dumps, backups, and generated evidence ###
+*.log
+logs/
+backups/
+*.dump
+*.backup
+*.sql.gz
+*.sql.zst
+*.pgdump
+new.txt
+build/security-history/
+switching-history-purge-evidence/
+
+### Operating-system metadata ###
+.DS_Store
+**/.DS_Store
+Thumbs.db
+__MACOSX/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -31,10 +67,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-
-
-
-.env
-.DS_Store
-**/.DS_Store

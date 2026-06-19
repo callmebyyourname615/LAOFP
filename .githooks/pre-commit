@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+exec python3 "$ROOT/security/scripts/verify_repository_hygiene.py" --repo "$ROOT" --staged

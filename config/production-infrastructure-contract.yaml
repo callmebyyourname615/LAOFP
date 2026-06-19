@@ -1,0 +1,43 @@
+schemaVersion: 1
+contractId: switching-production-infrastructure-v1
+requiredEnvironment: production
+checks:
+  database:
+    primaryUrlEnv: DB_URL
+    replicaUrlEnv: DB_REPLICA_URL
+    requireTlsVerifyFull: true
+    expectedDatabase: switching_db
+    applicationUserEnv: DB_USERNAME
+    flywayUserEnv: FLYWAY_USERNAME
+    maximumReplicaLagSeconds: 5
+  kafka:
+    bootstrapServersEnv: SPRING_KAFKA_BOOTSTRAP_SERVERS
+    minimumBrokers: 3
+    securityProtocolEnv: KAFKA_SECURITY_PROTOCOL
+    allowedSecurityProtocols: [SASL_SSL, SSL]
+    requireHostnameVerification: true
+  vault:
+    addressEnv: VAULT_ADDR
+    namespaceEnv: VAULT_NAMESPACE
+    authMethod: kubernetes
+    transitMountEnv: WEBHOOK_VAULT_TRANSIT_MOUNT
+    transitKeyEnv: WEBHOOK_VAULT_TRANSIT_KEY
+  objectStorage:
+    endpointEnv: OBJECT_STORAGE_ENDPOINT
+    bucketEnv: OBJECT_STORAGE_BUCKET
+    requireHttps: true
+    requireVersioning: true
+    requireObjectLock: true
+  network:
+    requiredDnsNamesEnv: PRODUCTION_REQUIRED_DNS_NAMES
+    requiredTcpTargetsEnv: PRODUCTION_REQUIRED_TCP_TARGETS
+    maximumClockSkewSeconds: 2
+  tls:
+    minimumValidityDays: 30
+    endpointsEnv: PRODUCTION_TLS_ENDPOINTS
+forbiddenHostPatterns:
+  - '(^|\\.)localhost$'
+  - '^127\\.'
+  - '^0\\.0\\.0\\.0$'
+  - '(^|\\.)example\\.(com|org|net)$'
+  - '(^|[.-])(dev|test|mock|sandbox)([.-]|$)'

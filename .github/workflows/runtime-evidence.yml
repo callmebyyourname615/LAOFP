@@ -1,0 +1,99 @@
+name: Runtime Evidence Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Evidence group to execute
+        required: true
+        type: choice
+        options: [preflight, performance, resilience, soak, full]
+      target_environment:
+        description: Isolated non-production environment
+        required: true
+        type: choice
+        options: [uat, performance, dr]
+      release_reference:
+        description: Approved immutable release/change reference
+        required: true
+        type: string
+      image_digest:
+        description: Candidate digest sha256:<64 hex>
+        required: true
+        type: string
+      git_commit:
+        description: Full 40-character candidate Git commit
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-evidence-${{ inputs.target_environment }}-${{ inputs.release_reference }}
+  cancel-in-progress: false
+
+jobs:
+  certify:
+    name: Runtime Evidence ${{ inputs.mode }}
+    runs-on: [self-hosted, switching-evidence]
+    environment: ${{ inputs.target_environment }}-evidence
+    timeout-minutes: 1500
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_commit }}
+      - name: Validate immutable release identity
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          [[ '${{ inputs.git_commit }}' =~ ^[a-f0-9]{40}$ ]]
+          [[ '${{ inputs.image_digest }}' =~ ^sha256:[a-f0-9]{64}$ ]]
+          test "$(git rev-parse HEAD)" = '${{ inputs.git_commit }}'
+      - name: Execute guarded evidence plan
+        env:
+          EVIDENCE_ENVIRONMENT: ${{ inputs.target_environment }}
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_IMAGE_DIGEST: ${{ inputs.image_digest }}
+          RELEASE_GIT_COMMIT: ${{ inputs.git_commit }}
+          EVIDENCE_ALLOW_TRAFFIC: I_UNDERSTAND_THIS_GENERATES_LOAD
+          EVIDENCE_ALLOW_DISRUPTIVE: I_UNDERSTAND_THIS_IS_DESTRUCTIVE
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ALERTMANAGER_URL: ${{ secrets.ALERTMANAGER_URL }}
+          ALERTMANAGER_BEARER_TOKEN: ${{ secrets.ALERTMANAGER_BEARER_TOKEN }}
+          ALERT_EXPECTED_RECEIVER: ${{ vars.ALERT_EXPECTED_RECEIVER }}
+          ALERT_DRILL_CONFIRMATION: I_UNDERSTAND_THIS_SENDS_TEST_ALERTS
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_TOKEN: ${{ secrets.VAULT_DRILL_TOKEN }}
+          WEBHOOK_ID: ${{ vars.WEBHOOK_DRILL_ID }}
+        run: scripts/evidence/run_runtime_evidence.sh '${{ inputs.mode }}'
+      - name: Locate and verify evidence manifest
+        if: always()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          manifest=$(find build/runtime-evidence -name manifest.json -type f -print | sort | tail -1)
+          test -n "$manifest"
+          python3 scripts/evidence/verify_runtime_evidence.py "$manifest" \
+            --expected-commit '${{ inputs.git_commit }}' \
+            --expected-digest '${{ inputs.image_digest }}' \
+            --expected-reference '${{ inputs.release_reference }}'
+      - name: Require complete Go-Live evidence for full certification
+        if: inputs.mode == 'full'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          manifest=$(find build/runtime-evidence -name manifest.json -type f -print | sort | tail -1)
+          python3 scripts/evidence/verify_runtime_evidence.py "$manifest" --require-go-live-ready             --expected-commit '${{ inputs.git_commit }}'             --expected-digest '${{ inputs.image_digest }}'             --expected-reference '${{ inputs.release_reference }}'
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: runtime-evidence-${{ inputs.release_reference }}-${{ inputs.mode }}
+          path: build/runtime-evidence/
+          if-no-files-found: error
+          retention-days: 365

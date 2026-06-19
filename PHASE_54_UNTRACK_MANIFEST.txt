@@ -1,0 +1,3 @@
+# Sensitive local paths that must never be tracked.
+# The apply script preserves the local file but removes it from the Git index.
+.env

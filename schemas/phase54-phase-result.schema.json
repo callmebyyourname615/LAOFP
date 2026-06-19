@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.internal/schemas/phase54-phase-result.schema.json",
+  "title": "Switching Phase 54 Phase Result",
+  "type": "object",
+  "required": ["schemaVersion", "phase", "name", "status", "startedAt", "endedAt", "release", "checks"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"pattern": "^54[A-J]$"},
+    "name": {"type": "string"},
+    "status": {"enum": ["PASS", "FAIL"]},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "endedAt": {"type": "string", "format": "date-time"},
+    "release": {
+      "type": "object",
+      "required": ["reference", "gitCommit", "imageDigest", "environment"]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "exitCode", "log"],
+        "properties": {
+          "id": {"type": "string"},
+          "status": {"enum": ["PASS", "FAIL"]},
+          "exitCode": {"type": "integer"},
+          "log": {"type": "string"}
+        }
+      }
+    }
+  }
+}

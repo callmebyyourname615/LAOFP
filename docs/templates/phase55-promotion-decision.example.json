@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "stage": "25",
+  "decision": "PROMOTE",
+  "releaseReference": "CHG-REQUIRED",
+  "releaseCandidateId": "switching-required",
+  "gitCommit": "0000000000000000000000000000000000000000",
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "issuedAt": "2026-06-19T00:00:00Z",
+  "approvedBy": ["release-approver-1", "business-approver-2"],
+  "evidenceSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

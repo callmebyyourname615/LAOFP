@@ -1,0 +1,65 @@
+schemaVersion: 1
+build:
+  minimumLineCoveragePercent: 60.0
+  minimumBranchCoveragePercent: 45.0
+  allowSkippedTests: false
+  maximumSkippedTests: 0
+migration:
+  expectedFlywayVersion: '83'
+  maximumMigrationDurationSeconds: 300
+performance:
+  maximumErrorRate: 0.01
+  maximumDroppedIterations: 0
+  smoke:
+    minimumRequestCount: 1
+    maximumP95Milliseconds: 1000
+  sustained-2k-tps:
+    minimumRequestRate: 1900
+    maximumP95Milliseconds: 500
+    maximumP99Milliseconds: 1000
+  burst-10k-tps:
+    minimumRequestRate: 9000
+    maximumP95Milliseconds: 1000
+    maximumP99Milliseconds: 2000
+  soak-8h:
+    minimumRequestCount: 1000000
+    maximumP95Milliseconds: 750
+    maximumP99Milliseconds: 1500
+    maximumP95DegradationPercent: 20
+    maximumJvmHeapGrowthPercent: 15
+settlement:
+  requiredTransactionCount: 500000
+  maximumDurationSeconds: 1800
+  maximumBalanceMismatchCount: 0
+backup:
+  maximumRpoSeconds: 300
+  maximumRtoSeconds: 1800
+dr:
+  maximumRecoverySeconds: 1800
+  requiredScenarios:
+    - kill-application-pod
+    - kafka-broker-failure
+    - network-partition
+    - object-storage-failure
+    - external-timeout
+    - deployment-rollback
+security:
+  failOnSeverity: HIGH
+  requireNoCritical: true
+  requireSbom: true
+  requireImageSignature: true
+  requireProvenance: true
+observability:
+  requiredMetrics:
+    - switching_transaction_success_rate
+    - switching_outbox_backlog
+    - switching_settlement_cycle_duration_seconds
+    - switching_sanctions_freshness_seconds
+    - switching_webhook_permanent_failures_total
+  requiredHealthComponents: [db, diskSpace, ping]
+  requireAllAlertRunbooks: true
+  requireAlertDelivery: true
+canary:
+  weights: [5, 25, 50, 100]
+  stageDurationSeconds: 300
+  requireRollbackRehearsal: true

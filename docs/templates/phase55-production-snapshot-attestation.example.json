@@ -1,0 +1,13 @@
+{
+  "anonymized": true,
+  "approvedBy": [
+    "database-approver-1",
+    "security-approver-2"
+  ],
+  "capturedAt": "2026-06-19T00:00:00Z",
+  "gitCommit": "0000000000000000000000000000000000000000",
+  "releaseCandidateId": "switching-required",
+  "releaseReference": "CHG-REQUIRED",
+  "schemaVersion": 1,
+  "sourceSnapshotIdHash": "0000000000000000000000000000000000000000000000000000000000000000"
+}

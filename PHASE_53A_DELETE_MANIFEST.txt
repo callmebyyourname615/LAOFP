@@ -1,0 +1,9 @@
+# Phase 53A deletion manifest.
+# These paths contain credentials, logs, generated inventories, or database data
+# and must not remain in the repository or its Git history.
+.env.bak
+app-live.log
+boot.log
+new.txt
+run-error.log
+backups/switching_db_legacy_20260521_101054.sql

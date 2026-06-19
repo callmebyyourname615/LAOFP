@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 /**
  * Low-cardinality operational gauges backed by small indexed COUNT queries.
@@ -22,8 +21,7 @@ import org.springframework.stereotype.Component;
  * success/age pair makes stale telemetry visible without turning a transient database issue into an
  * application outage.</p>
  */
-@Component
-@Profile("metrics")
+@Profile("!migration")
 public class OperationalMetricsCollector {
 
     private static final Logger log = LoggerFactory.getLogger(OperationalMetricsCollector.class);

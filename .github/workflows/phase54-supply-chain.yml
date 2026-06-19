@@ -1,0 +1,107 @@
+name: Phase 54 Supply Chain Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_reference: {required: true, type: string}
+      git_commit: {required: true, type: string}
+      image_repository: {required: true, type: string}
+      image_digest: {required: true, type: string}
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+  security-events: write
+
+jobs:
+  certify-and-sign:
+    name: Sign, Attest, Scan, Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: supply-chain
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_commit }}
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve image
+        id: image
+        env:
+          REPOSITORY: ${{ inputs.image_repository }}
+          DIGEST: ${{ inputs.image_digest }}
+          COMMIT: ${{ inputs.git_commit }}
+        run: |
+          set -Eeuo pipefail
+          [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          [[ "$COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$(git rev-parse HEAD)" == "$COMMIT" ]]
+          echo "reference=${REPOSITORY}@${DIGEST}" >> "$GITHUB_OUTPUT"
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: OWASP dependency certification
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          args=(--batch-mode --no-transfer-progress -DskipTests org.owasp:dependency-check-maven:12.2.2:check -DfailBuildOnCVSS=7 -Dformats=JSON,HTML)
+          [[ -n "${NVD_API_KEY:-}" ]] && args+=("-DnvdApiKey=${NVD_API_KEY}")
+          ./mvnw "${args[@]}"
+      - name: Trivy immutable image certification
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          image-ref: ${{ steps.image.outputs.reference }}
+          format: json
+          output: build/phase54-security/trivy-image.json
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Generate SPDX SBOM
+        uses: anchore/sbom-action@v0.24.0
+        with:
+          image: ${{ steps.image.outputs.reference }}
+          format: spdx-json
+          output-file: build/phase54-security/sbom.spdx.json
+          upload-artifact: false
+      - uses: sigstore/cosign-installer@v4
+      - name: Keyless sign and attest SBOM
+        env:
+          IMAGE: ${{ steps.image.outputs.reference }}
+        run: |
+          cosign sign --yes "$IMAGE"
+          cosign attest --yes --type spdxjson --predicate build/phase54-security/sbom.spdx.json "$IMAGE"
+      - name: Verify signature and SBOM attestation
+        env:
+          IMAGE: ${{ steps.image.outputs.reference }}
+        run: |
+          identity="^https://github.com/${GITHUB_REPOSITORY}/.github/workflows/phase54-supply-chain.yml@refs/heads/main$"
+          cosign verify --certificate-identity-regexp "$identity" --certificate-oidc-issuer https://token.actions.githubusercontent.com "$IMAGE" | tee build/phase54-security/signature-verification.txt
+          cosign verify-attestation --type spdxjson --certificate-identity-regexp "$identity" --certificate-oidc-issuer https://token.actions.githubusercontent.com "$IMAGE" | tee build/phase54-security/sbom-attestation-verification.txt
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3.2.0
+        with:
+          subject-name: ${{ inputs.image_repository }}
+          subject-digest: ${{ inputs.image_digest }}
+          push-to-registry: true
+      - name: Package supply-chain evidence
+        run: |
+          cp target/dependency-check-report.* build/phase54-security/ || true
+          (cd build/phase54-security && sha256sum * > checksums.sha256)
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: phase54-supply-chain-${{ inputs.release_reference }}
+          path: build/phase54-security/
+          if-no-files-found: error
+          retention-days: 365

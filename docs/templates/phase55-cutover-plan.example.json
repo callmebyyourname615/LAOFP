@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "releaseReference": "CHG-REQUIRED",
+  "releaseCandidateId": "switching-required",
+  "windowStart": "2026-06-19T00:00:00Z",
+  "windowEnd": "2026-06-19T04:00:00Z",
+  "steps": [
+    {
+      "id": "migration-v83",
+      "ownerRole": "databaseOwner",
+      "passCriteria": "Flyway version 83 and schema validation pass",
+      "abortCriteria": "Migration failure, lock timeout, or reconciliation mismatch",
+      "rollbackCommand": "Stop rollout and execute approved forward-fix procedure"
+    },
+    {
+      "id": "canary-5",
+      "ownerRole": "releaseCommander",
+      "passCriteria": "Metrics, synthetic transaction, and reconciliation pass",
+      "abortCriteria": "Any critical alert or failed gate",
+      "rollbackCommand": "Set canary weight to zero"
+    }
+  ]
+}

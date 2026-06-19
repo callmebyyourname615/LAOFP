@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import com.example.switching.webhook.repository.WebhookDeliveryLogRepository;
  * <p>Guarded by {@link SchedulerLockService} (lock name {@code WEBHOOK_RETRY}, 2 minutes)
  * to prevent duplicate execution across replicas.
  */
+@Profile("!migration")
 @Component
 public class WebhookRetryService {
 

@@ -1,0 +1,138 @@
+schemaVersion: 1
+planId: switching-phase55-production-golive-v1
+minimumFlywayVersion: '83'
+allowedExecutionEnvironments: [release, production-dry-run, production, hypercare]
+releaseIdentity:
+  gitCommitPattern: '^[a-f0-9]{40}$'
+  imageDigestPattern: '^sha256:[a-f0-9]{64}$'
+  referencePattern: '^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$'
+  rcIdPattern: '^switching-[A-Za-z0-9][A-Za-z0-9._-]{2,95}$'
+phases:
+  - id: 55A
+    name: Immutable Release Candidate Assembly
+    runner: scripts/golive/55a-assemble-release-candidate.sh
+    requiredForOperationalAcceptance: true
+    environments: [release]
+    evidence:
+      - phases/55A/result.json
+      - phases/55A/release-candidate/manifest.json
+      - phases/55A/release-candidate/checksums.sha256
+      - phases/55A/release-candidate-verification.json
+      - phases/55A/release-candidate.tar.gz
+      - phases/55A/release-candidate.tar.gz.sha256
+      - phases/55A/release-candidate.tar.gz.sig
+      - phases/55A/release-package-signature-verification.txt
+  - id: 55B
+    name: Production Infrastructure Contract
+    runner: scripts/golive/55b-production-infrastructure-contract.sh
+    requiredForOperationalAcceptance: true
+    environments: [production]
+    evidence:
+      - phases/55B/result.json
+      - phases/55B/infrastructure-contract.json
+      - phases/55B/tls-report.json
+      - phases/55B/connectivity-report.json
+      - phases/55B/environment-contract.txt
+  - id: 55C
+    name: Production Migration Dry Run
+    runner: scripts/golive/55c-production-migration-dry-run.sh
+    requiredForOperationalAcceptance: true
+    environments: [production-dry-run]
+    evidence:
+      - phases/55C/result.json
+      - phases/55C/migration-dry-run.json
+      - phases/55C/data-reconciliation.json
+      - phases/55C/flyway-before.txt
+      - phases/55C/flyway-after.txt
+      - phases/55C/rollback-state.json
+      - phases/55C/snapshot-attestation.json
+      - phases/55C/snapshot-attestation.sig
+  - id: 55D
+    name: Data Reconciliation and Cutover Baseline
+    runner: scripts/golive/55d-capture-cutover-baseline.sh
+    requiredForOperationalAcceptance: true
+    environments: [production]
+    evidence:
+      - phases/55D/result.json
+      - phases/55D/cutover-baseline.json
+      - phases/55D/cutover-baseline.sha256
+      - phases/55D/archive-receipt.json
+  - id: 55E
+    name: Production Access and Security Hardening
+    runner: scripts/golive/55e-access-security-hardening.sh
+    requiredForOperationalAcceptance: true
+    environments: [production]
+    evidence:
+      - phases/55E/result.json
+      - phases/55E/access-hardening.json
+      - phases/55E/kubernetes-hardening.json
+      - phases/55E/database-grants.json
+      - phases/55E/secret-rotation-attestation.json
+      - phases/55E/secret-rotation-attestation.sig
+  - id: 55F
+    name: Go-Live Command Center
+    runner: scripts/golive/55f-command-center-readiness.sh
+    requiredForOperationalAcceptance: true
+    environments: [production]
+    evidence:
+      - phases/55F/result.json
+      - phases/55F/command-center-readiness.json
+      - phases/55F/approved-cutover-plan.json
+      - phases/55F/contact-matrix-attestation.json
+      - phases/55F/command-center-approval.json
+      - phases/55F/command-center-approval.sig
+  - id: 55G
+    name: Production Canary Deployment
+    runner: scripts/golive/55g-production-canary.sh
+    requiredForOperationalAcceptance: true
+    environments: [production]
+    evidence:
+      - phases/55G/result.json
+      - phases/55G/migration-job.json
+      - phases/55G/canary-5-percent.json
+      - phases/55G/reconciliation.json
+      - phases/55G/stage-metrics.json
+  - id: 55H
+    name: Controlled Traffic Cutover
+    runner: scripts/golive/55h-controlled-cutover.sh
+    requiredForOperationalAcceptance: true
+    environments: [production]
+    evidence:
+      - phases/55H/result.json
+      - phases/55H/cutover-summary.json
+      - phases/55H/rollback-readiness.json
+      - phases/55H/stages/25.json
+      - phases/55H/stages/50.json
+      - phases/55H/stages/100.json
+      - phases/55H/stages/25-metrics.json
+      - phases/55H/stages/50-metrics.json
+      - phases/55H/stages/100-metrics.json
+  - id: 55I
+    name: Hypercare and Production Validation
+    runner: scripts/golive/55i-hypercare-validation.sh
+    requiredForOperationalAcceptance: true
+    environments: [hypercare]
+    evidence:
+      - phases/55I/result.json
+      - phases/55I/hypercare-summary.json
+      - phases/55I/reconciliation-summary.json
+      - phases/55I/alert-summary.json
+  - id: 55J
+    name: Go-Live Closure and BAU Handover
+    runner: scripts/golive/55j-close-golive.sh
+    requiredForOperationalAcceptance: true
+    environments: [hypercare]
+    evidence:
+      - phases/55J/result.json
+      - phases/55J/operational-acceptance.json
+      - phases/55J/known-issues-register.json
+      - phases/55J/post-implementation-review.md
+      - phases/55J/business-acceptance.json
+      - phases/55J/business-acceptance.sig
+      - phases/55J/operations-acceptance.json
+      - phases/55J/operations-acceptance.sig
+      - phases/55J/security-acceptance.json
+      - phases/55J/security-acceptance.sig
+      - phases/55J/evidence-secret-scan.json
+      - operational-acceptance/manifest.json
+      - operational-acceptance/checksums.sha256

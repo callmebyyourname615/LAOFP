@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
@@ -28,6 +29,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
+@Profile("!migration")
 @EnableKafka
 @ConditionalOnProperty(prefix = "switching.outbox.queue", name = "enabled", havingValue = "true")
 public class OutboxQueueConfig {

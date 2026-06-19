@@ -1,0 +1,17 @@
+# Generated/local-only paths removed by apply-phases54a-54j.sh.
+# Directory entries end with '/'. Paths are repository-relative and validated.
+.DS_Store
+docs/.DS_Store
+src/.DS_Store
+src/main/.DS_Store
+src/main/java/.DS_Store
+src/main/java/com/.DS_Store
+src/main/java/com/example/.DS_Store
+src/main/java/com/example/switching/.DS_Store
+src/main/java/com/example/switching/common/.DS_Store
+src/test/.DS_Store
+src/test/java/.DS_Store
+src/test/java/com/.DS_Store
+src/test/java/com/example/.DS_Store
+target/
+build/

@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.internal/schemas/phase54-certification-manifest.schema.json",
+  "title": "Switching Phase 54 Certification Manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "planId",
+    "generatedAt",
+    "environment",
+    "release",
+    "phases",
+    "artifacts",
+    "releaseCandidateReady"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "planId": {
+      "const": "switching-phase54-production-certification-v1"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "environment": {
+      "enum": [
+        "uat",
+        "performance",
+        "dr"
+      ]
+    },
+    "release": {
+      "type": "object",
+      "required": [
+        "reference",
+        "gitCommit",
+        "imageDigest"
+      ],
+      "properties": {
+        "reference": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$"
+        },
+        "gitCommit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "imageDigest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "status",
+          "requiredForReleaseCandidate",
+          "artifacts",
+          "requiredEvidence",
+          "missingRequiredEvidence"
+        ],
+        "properties": {
+          "id": {
+            "pattern": "^54[A-J]$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "requiredForReleaseCandidate": {
+            "type": "boolean"
+          },
+          "startedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "endedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exitCode": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredEvidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missingRequiredEvidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "size",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "releaseCandidateReady": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

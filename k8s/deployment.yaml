@@ -60,6 +60,10 @@ spec:
                 name: switching-secrets
           # P20: JVM tuning — G1GC with 100ms pause target, 512MB heap floor, 900MB ceiling
           env:
+            - name: MANAGEMENT_METRICS_TAGS_APPLICATION
+              value: switching-api
+            - name: MANAGEMENT_METRICS_TAGS_RELEASE_TRACK
+              value: stable
             - name: JAVA_OPTS
               value: "-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms512m -Xmx900m -XX:+UseContainerSupport"
           volumeMounts:

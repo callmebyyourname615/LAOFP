@@ -86,7 +86,7 @@ decommission_runtime=(ROOT/'src/main/java/com/example/switching/decommission/Con
 for needle in ('blocking decommission tasks cannot be waived','cannot execute before planned effective time',"status <> 'DONE'"):
     if needle not in decommission_runtime: raise SystemExit('decommission fail-closed invariant missing: '+needle)
 migration_test=(ROOT/'src/test/java/com/example/switching/migration/MigrationApplicationIntegrationTest.java').read_text(encoding='utf-8')
-if 'isEqualTo("82")' not in migration_test: raise SystemExit('migration integration test must assert latest version 82')
+if 'isEqualTo("83")' not in migration_test: raise SystemExit('migration integration test must assert latest version 83')
 workflow=(ROOT/'.github/workflows/phase43-52-control-gates.yml').read_text(encoding='utf-8')
 for needle in ('clean verify','verify_phases_43_52_static.py','phase43-52-control-evidence'):
     if needle not in workflow: raise SystemExit('workflow missing '+needle)

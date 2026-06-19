@@ -49,6 +49,10 @@ spec:
             - configMapRef: {name: switching-config}
             - secretRef: {name: switching-secrets}
           env:
+            - name: MANAGEMENT_METRICS_TAGS_APPLICATION
+              value: switching-api
+            - name: MANAGEMENT_METRICS_TAGS_RELEASE_TRACK
+              value: canary
             - name: JAVA_OPTS
               value: "-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms512m -Xmx900m -XX:+UseContainerSupport"
             - name: RELEASE_TRACK

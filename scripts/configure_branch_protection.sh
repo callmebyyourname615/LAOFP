@@ -22,7 +22,20 @@ gh api --method PUT "repos/${REPOSITORY}/branches/${BRANCH}/protection" --input 
     "strict": true,
     "contexts": [
       "Full Maven Test Suite",
-      "Package Executable JAR"
+      "Package Executable JAR",
+      "Repository Hygiene",
+      "Security Policy Static Checks",
+      "Gitleaks Secret Scan",
+      "OWASP Dependency Check",
+      "Trivy Repository Scan",
+      "Trivy Container Scan",
+      "CodeQL SAST",
+      "V83 Schema Alignment",
+      "Production Readiness Static Gates",
+      "Migration Runtime Isolation",
+      "Operational Metrics Activation",
+      "Phase 54 Static Contract",
+      "Phase 55 / static-contract"
     ]
   },
   "enforce_admins": true,

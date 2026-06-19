@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *   <li>Mark rows {@code SUBMITTED} or {@code SUBMISSION_FAILED} based on HTTP response.</li>
  * </ol>
  */
+@Profile("!migration")
 @Service
 public class StrGenerationService {
 

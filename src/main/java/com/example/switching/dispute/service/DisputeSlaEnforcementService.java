@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
  * <p>The method {@link #checkAndEnforceSlAs()} is public so tests can invoke
  * it directly without waiting for the scheduler.
  */
+@Profile("!migration")
 @Service
 public class DisputeSlaEnforcementService {
 

@@ -1,0 +1,92 @@
+schemaVersion: 1
+planId: switching-phase54-production-certification-v1
+minimumFlywayVersion: '83'
+allowedExecutionEnvironments: [uat, performance, dr]
+productionExecutionProhibited: true
+releaseIdentity:
+  gitCommitPattern: '^[a-f0-9]{40}$'
+  imageDigestPattern: '^sha256:[a-f0-9]{64}$'
+  referencePattern: '^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$'
+phases:
+  - id: 54A
+    name: Build & Test Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54a-build-test.sh
+    evidence:
+      - phases/54A/result.json
+      - phases/54A/test-summary.json
+      - phases/54A/dependency-tree.txt
+      - phases/54A/artifact-checksums.sha256
+  - id: 54B
+    name: Migration Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54b-migration.sh
+    evidence:
+      - phases/54B/result.json
+      - phases/54B/migration-summary.json
+      - phases/54B/flyway-version.txt
+  - id: 54C
+    name: UAT Deployment Rehearsal
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54c-uat-rehearsal.sh
+    evidence:
+      - phases/54C/result.json
+      - phases/54C/deployment-state.json
+      - phases/54C/rollback-state.json
+  - id: 54D
+    name: Performance & Capacity Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54d-performance.sh
+    evidence:
+      - phases/54D/result.json
+      - phases/54D/performance-summary.json
+  - id: 54E
+    name: Settlement 500k Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54e-settlement.sh
+    evidence:
+      - phases/54E/result.json
+      - phases/54E/settlement-summary.json
+  - id: 54F
+    name: Backup, Restore & PITR Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54f-backup-pitr.sh
+    evidence:
+      - phases/54F/result.json
+      - phases/54F/restore-evidence.json
+      - phases/54F/recovery-objectives.json
+  - id: 54G
+    name: DR & Failure Recovery Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54g-dr-recovery.sh
+    evidence:
+      - phases/54G/result.json
+      - phases/54G/dr-summary.json
+  - id: 54H
+    name: Security & Supply Chain Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54h-security-supply-chain.sh
+    evidence:
+      - phases/54H/result.json
+      - phases/54H/security-summary.json
+      - phases/54H/sbom.spdx.json
+      - phases/54H/image-signature-verification.txt
+      - phases/54H/provenance-verification.txt
+  - id: 54I
+    name: Observability & Alert Certification
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54i-observability-alerts.sh
+    evidence:
+      - phases/54I/result.json
+      - phases/54I/observability-summary.json
+      - phases/54I/alert-delivery-results.json
+  - id: 54J
+    name: Go-Live Rehearsal & Release Candidate
+    requiredForReleaseCandidate: true
+    runner: scripts/certification/54j-golive-release-candidate.sh
+    evidence:
+      - phases/54J/result.json
+      - phases/54J/canary-summary.json
+      - phases/54J/rollback-summary.json
+      - release-candidate/manifest.json
+      - release-candidate/checksums.sha256

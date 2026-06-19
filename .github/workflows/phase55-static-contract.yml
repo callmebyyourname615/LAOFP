@@ -1,0 +1,48 @@
+name: Phase 55 Static Contract
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/golive/**'
+      - 'scripts/verify_phase55_static.py'
+      - 'config/phase55-*.yaml'
+      - 'config/production-infrastructure-contract.yaml'
+      - 'k8s/deployment.yaml'
+      - 'k8s/canary/deployment.yaml'
+      - 'k8s/canary/servicemonitor.yaml'
+      - 'monitoring/prometheus/servicemonitor.yaml'
+      - 'k8s/production/**'
+      - 'docs/golive/**'
+      - 'docs/runbooks/PHASE55_PRODUCTION_GOLIVE.md'
+      - '.github/workflows/phase55-*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/golive/**'
+      - 'scripts/verify_phase55_static.py'
+      - 'config/phase55-*.yaml'
+      - 'config/production-infrastructure-contract.yaml'
+      - 'k8s/deployment.yaml'
+      - 'k8s/canary/deployment.yaml'
+      - 'k8s/canary/servicemonitor.yaml'
+      - 'monitoring/prometheus/servicemonitor.yaml'
+      - 'k8s/production/**'
+      - 'docs/golive/**'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Phase 55 / static-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: pip install --disable-pip-version-check PyYAML
+      - run: python3 scripts/verify_phase55_static.py
+      - run: python3 scripts/golive/tests/test_phase55_framework.py
+      - run: python3 security/scripts/verify_repository_hygiene.py --repo . --json-report build/phase55-repository-scan.json

@@ -1,0 +1,33 @@
+schemaVersion: 1
+policyId: switching-hypercare-v1
+schedule:
+  firstHourMinutes: 15
+  firstDayMinutes: 60
+  subsequentDaysHours: 24
+  minimumDurationHours: 24
+  recommendedDurationDays: 7
+requiredSignals:
+  - transaction-success-rate
+  - transaction-error-rate
+  - p95-latency
+  - p99-latency
+  - duplicate-business-reference-count
+  - balance-mismatch-count
+  - settlement-late-count
+  - outbox-backlog
+  - webhook-permanent-failure-count
+  - kafka-consumer-lag
+  - database-replication-lag
+  - database-pool-utilization
+  - jvm-heap-utilization
+  - gc-pause
+  - vault-error-rate
+  - critical-alert-count
+exitCriteria:
+  minimumDurationHours: 24
+  criticalIncidents: 0
+  unresolvedHighIncidents: 0
+  balanceMismatchCount: 0
+  duplicateBusinessReferenceCount: 0
+  allRequiredSignalsPresent: true
+  operationsAcceptanceRequired: true

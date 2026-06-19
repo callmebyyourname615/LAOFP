@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: switching-production-limits
+  namespace: switching
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 128Mi
+      default:
+        cpu: "2"
+        memory: 2Gi
+      max:
+        cpu: "4"
+        memory: 4Gi
+      min:
+        cpu: 25m
+        memory: 64Mi

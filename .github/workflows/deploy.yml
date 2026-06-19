@@ -1,0 +1,188 @@
+name: Deploy Immutable Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: GitHub Environment containing KUBE_CONFIG_B64
+        required: true
+        type: choice
+        options: [staging, production]
+        default: staging
+      image_sha:
+        description: Full Git commit SHA used to build the image
+        required: true
+        type: string
+      image_digest:
+        description: Registry digest in sha256:<64 hex> form
+        required: true
+        type: string
+      release_reference:
+        description: Approved release/change reference recorded by release governance
+        required: true
+        type: string
+      change_type:
+        description: Governance change classification
+        required: true
+        type: choice
+        options: [STANDARD, EMERGENCY]
+        default: STANDARD
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  migrate-and-deploy:
+    name: Migrate, Deploy, Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Check out deployment manifests
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.image_sha }}
+
+      - name: Validate immutable image input
+        id: image
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          digest='${{ inputs.image_digest }}'
+          sha='${{ inputs.image_sha }}'
+          if [[ ! "${digest}" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+            echo "Invalid image digest: ${digest}" >&2
+            exit 64
+          fi
+          if [[ ! "${sha}" =~ ^[a-f0-9]{40}$ ]]; then
+            echo "image_sha must be a full 40-character Git SHA" >&2
+            exit 64
+          fi
+          repository="ghcr.io/${GITHUB_REPOSITORY,,}/switching-api"
+          echo "repository=${repository}" >> "${GITHUB_OUTPUT}"
+          echo "reference=${repository}@${digest}" >> "${GITHUB_OUTPUT}"
+
+      - name: Enforce production change window and freeze gate
+        if: inputs.environment == 'production'
+        env:
+          RELEASE_GATE_DB_URL: ${{ secrets.RELEASE_GATE_DB_URL }}
+          DB_URL: ${{ secrets.RELEASE_GATE_DB_URL }}
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          CHANGE_TYPE: ${{ inputs.change_type }}
+          RELEASE_GATE_EVIDENCE_FILE: build/release-gate-evidence.json
+        run: |
+          set -Eeuo pipefail
+          test -n "${RELEASE_GATE_DB_URL}"
+          scripts/release/check_change_window.sh
+
+      - name: Configure kubectl
+        env:
+          KUBE_CONFIG_B64: ${{ secrets.KUBE_CONFIG_B64 }}
+        run: |
+          set -Eeuo pipefail
+          test -n "${KUBE_CONFIG_B64}"
+          mkdir -p "${HOME}/.kube"
+          printf '%s' "${KUBE_CONFIG_B64}" | base64 --decode > "${HOME}/.kube/config"
+          chmod 600 "${HOME}/.kube/config"
+          kubectl version --client
+          kubectl config current-context
+
+      - name: Verify cluster prerequisites
+        run: |
+          set -Eeuo pipefail
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/serviceaccount.yaml
+          kubectl -n switching get configmap switching-config
+          kubectl -n switching get secret switching-secrets
+
+      - name: Render digest-pinned manifests
+        env:
+          IMAGE_REPOSITORY: ${{ steps.image.outputs.repository }}
+          IMAGE_DIGEST: ${{ inputs.image_digest }}
+        run: |
+          mkdir -p build/rendered
+          ./scripts/render_k8s_image.sh k8s/migration-job.yaml build/rendered/migration-job.yaml \
+            "${IMAGE_REPOSITORY}" "${IMAGE_DIGEST}"
+          ./scripts/render_k8s_image.sh k8s/deployment.yaml build/rendered/deployment.yaml \
+            "${IMAGE_REPOSITORY}" "${IMAGE_DIGEST}"
+          grep -R "${IMAGE_REPOSITORY}@${IMAGE_DIGEST}" build/rendered
+          if grep -R -E 'REPLACE_WITH_IMAGE_DIGEST|:latest' build/rendered; then
+            echo "Mutable or unresolved image reference remains in rendered manifests" >&2
+            exit 1
+          fi
+
+      - name: Run Flyway migration Job before rollout
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          kubectl -n switching delete job switching-db-migration --ignore-not-found --wait=true
+          kubectl apply -f build/rendered/migration-job.yaml
+          if ! kubectl -n switching wait --for=condition=complete job/switching-db-migration --timeout=300s; then
+            kubectl -n switching describe job switching-db-migration || true
+            kubectl -n switching logs job/switching-db-migration --all-containers=true || true
+            exit 1
+          fi
+          kubectl -n switching logs job/switching-db-migration --all-containers=true | tee build/migration.log
+          grep -E 'Successfully applied|Schema .* is up to date|No migration necessary' build/migration.log
+
+      - name: Roll out the same digest-pinned image
+        id: rollout
+        shell: bash
+        env:
+          IMAGE_REFERENCE: ${{ steps.image.outputs.reference }}
+          IMAGE_SHA: ${{ inputs.image_sha }}
+        run: |
+          set -Eeuo pipefail
+          previous_image="$(kubectl -n switching get deployment switching-api \
+            -o jsonpath='{.spec.template.spec.containers[?(@.name=="switching-api")].image}' 2>/dev/null || true)"
+          echo "previous_image=${previous_image}" >> "${GITHUB_OUTPUT}"
+
+          kubectl apply -f build/rendered/deployment.yaml
+          kubectl -n switching annotate deployment switching-api \
+            kubernetes.io/change-cause="commit=${IMAGE_SHA} image=${IMAGE_REFERENCE}" --overwrite
+
+          if ! kubectl -n switching rollout status deployment/switching-api --timeout=600s; then
+            echo "Rollout failed; restoring prior image ${previous_image}" >&2
+            if [[ -n "${previous_image}" ]]; then
+              kubectl -n switching set image deployment/switching-api switching-api="${previous_image}"
+              kubectl -n switching rollout status deployment/switching-api --timeout=600s || true
+            fi
+            exit 1
+          fi
+
+      - name: Verify deployed digest
+        env:
+          EXPECTED_IMAGE: ${{ steps.image.outputs.reference }}
+        run: |
+          set -Eeuo pipefail
+          actual="$(kubectl -n switching get deployment switching-api \
+            -o jsonpath='{.spec.template.spec.containers[?(@.name=="switching-api")].image}')"
+          test "${actual}" = "${EXPECTED_IMAGE}"
+          kubectl -n switching get pods -l app=switching-api -o wide
+          printf '### Deployment complete\n\n- Environment: `%s`\n- Image: `%s`\n' \
+            '${{ inputs.environment }}' "${actual}" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Consume one-time freeze exception after successful production rollout
+        if: success() && inputs.environment == 'production'
+        env:
+          DB_URL: ${{ secrets.RELEASE_GATE_DB_URL }}
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: scripts/release/consume_freeze_exception.sh
+
+      - name: Upload migration evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: migration-evidence-${{ inputs.environment }}-${{ inputs.image_sha }}
+          path: |
+            build/migration.log
+            build/release-gate-evidence.json
+            build/rendered/
+          if-no-files-found: warn
+          retention-days: 90

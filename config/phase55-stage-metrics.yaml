@@ -1,0 +1,60 @@
+schemaVersion: 1
+window: 5m
+queryTimeoutSeconds: 15
+metrics:
+  - id: http-error-ratio
+    description: HTTP 5xx ratio for the release track
+    expression: 'sum(rate(http_server_requests_seconds_count{application="switching-api",release_track="{track}",status=~"5.."}[{window}])) / clamp_min(sum(rate(http_server_requests_seconds_count{application="switching-api",release_track="{track}"}[{window}])), 0.001)'
+    comparison: maximum
+    threshold: 0.005
+  - id: http-p95-seconds
+    description: HTTP p95 latency for the release track
+    expression: 'histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{application="switching-api",release_track="{track}"}[{window}])))'
+    comparison: maximum
+    threshold: 0.75
+  - id: http-p99-seconds
+    description: HTTP p99 latency for the release track
+    expression: 'histogram_quantile(0.99, sum by (le) (rate(http_server_requests_seconds_bucket{application="switching-api",release_track="{track}"}[{window}])))'
+    comparison: maximum
+    threshold: 1.5
+  - id: kafka-consumer-lag
+    description: Maximum Kafka consumer lag for switching consumers
+    expression: 'max(kafka_consumer_fetch_manager_records_lag_max{application="switching-api",release_track="{track}"})'
+    queryEnvironmentOverride: PHASE55_KAFKA_LAG_QUERY
+    comparison: maximum
+    threshold: 1000
+  - id: outbox-backlog
+    description: Pending transactional outbox records
+    expression: 'max(switching_ops_outbox_pending{application="switching-api",release_track="{track}"})'
+    comparison: maximum
+    threshold: 500
+  - id: database-pool-utilization
+    description: Hikari active/max connection ratio
+    expression: 'max(hikaricp_connections_active{application="switching-api",release_track="{track}"}) / clamp_min(max(hikaricp_connections_max{application="switching-api",release_track="{track}"}), 1)'
+    comparison: maximum
+    threshold: 0.85
+  - id: operational-metrics-refresh
+    description: Operational metrics collector must have completed successfully
+    expression: 'max(switching_ops_metrics_refresh_success{application="switching-api",release_track="{track}"})'
+    comparison: minimum
+    threshold: 1
+  - id: reconciliation-unmatched
+    description: Unmatched reconciliation entries
+    expression: 'max(switching_ops_reconciliation_unmatched{application="switching-api",release_track="{track}"})'
+    comparison: maximum
+    threshold: 0
+  - id: settlement-failures
+    description: Failed settlement cycles today
+    expression: 'max(switching_ops_settlement_failed_today{application="switching-api",release_track="{track}"})'
+    comparison: maximum
+    threshold: 0
+  - id: webhook-permanent-failures
+    description: Permanently failed webhook deliveries
+    expression: 'max(switching_ops_webhook_failed_final{application="switching-api",release_track="{track}"})'
+    comparison: maximum
+    threshold: 0
+  - id: critical-alerts
+    description: Critical Prometheus alerts currently firing
+    expression: 'sum(ALERTS{alertstate="firing",severity="critical"}) or vector(0)'
+    comparison: maximum
+    threshold: 0

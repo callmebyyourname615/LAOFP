@@ -1,0 +1,97 @@
+name: Phase 53B Schema Alignment
+
+on:
+  pull_request:
+    paths:
+      - 'pom.xml'
+      - 'mvnw'
+      - '.mvn/**'
+      - 'src/main/resources/application*.yml'
+      - 'src/main/resources/db/migration/**'
+      - 'src/main/java/com/example/switching/configchange/entity/**'
+      - 'src/main/java/com/example/switching/outbox/deadletter/entity/**'
+      - 'src/test/java/com/example/switching/migration/**'
+      - 'scripts/verify_migration_image.sh'
+      - 'scripts/verify_phase53b_schema_alignment.py'
+      - 'scripts/run_phase53b_verification.sh'
+      - 'scripts/configure_branch_protection.sh'
+      - '.github/workflows/phase53b-schema-alignment.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'pom.xml'
+      - 'mvnw'
+      - '.mvn/**'
+      - 'src/main/resources/application*.yml'
+      - 'src/main/resources/db/migration/**'
+      - 'src/main/java/com/example/switching/configchange/entity/**'
+      - 'src/main/java/com/example/switching/outbox/deadletter/entity/**'
+      - 'src/test/java/com/example/switching/migration/**'
+      - 'scripts/verify_migration_image.sh'
+      - 'scripts/verify_phase53b_schema_alignment.py'
+      - 'scripts/run_phase53b_verification.sh'
+      - 'scripts/configure_branch_protection.sh'
+      - '.github/workflows/phase53b-schema-alignment.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase53b-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  schema-alignment:
+    name: V83 Schema Alignment
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Verify immutable migrations and V83 contract
+        run: python3 scripts/verify_phase53b_schema_alignment.py
+
+      - name: Execute V82 to V83 PostgreSQL upgrade test
+        run: |
+          ./mvnw --batch-mode --no-transfer-progress \
+            -Dtest=PayloadSha256EntityMappingContractTest,V83PayloadSha256SchemaAlignmentIntegrationTest \
+            test
+
+      - name: Build redacted schema-alignment evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p build/phase53b-schema-alignment
+          python3 scripts/verify_phase53b_schema_alignment.py --json \
+            > build/phase53b-schema-alignment/static-verification.json || true
+          sha256sum \
+            src/main/resources/db/migration/V83__align_payload_sha256_to_varchar.sql \
+            src/main/resources/application.yml \
+            src/test/java/com/example/switching/migration/V83PayloadSha256SchemaAlignmentIntegrationTest.java \
+            src/test/java/com/example/switching/migration/PayloadSha256EntityMappingContractTest.java \
+            > build/phase53b-schema-alignment/SHA256SUMS
+
+      - name: Upload Phase 53B evidence
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: phase53b-schema-alignment-evidence
+          path: |
+            build/phase53b-schema-alignment
+            target/surefire-reports
+          if-no-files-found: warn
+          retention-days: 90

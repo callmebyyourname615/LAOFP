@@ -1,0 +1,170 @@
+name: Phase 55 Production Go-Live
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: Phase to execute; phases must be run in order
+        required: true
+        type: choice
+        options: [55A, 55B, 55C, 55D, 55E, 55F, 55G, 55H, 55I, 55J]
+      release_reference:
+        required: true
+        type: string
+      release_candidate_id:
+        required: true
+        type: string
+      git_commit:
+        description: Full immutable Git SHA
+        required: true
+        type: string
+      application_image_digest:
+        required: true
+        type: string
+      migration_image_digest:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: switching-phase55-production-golive
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    name: Execute ${{ inputs.phase }}
+    runs-on: [self-hosted, linux, switching-golive]
+    timeout-minutes: 180
+    environment: ${{ inputs.phase == '55A' && 'release' || (startsWith(inputs.phase, '55I') || startsWith(inputs.phase, '55J')) && 'hypercare' || inputs.phase == '55C' && 'production-dry-run' || 'production' }}
+    env:
+      RELEASE_REFERENCE: ${{ inputs.release_reference }}
+      RELEASE_RC_ID: ${{ inputs.release_candidate_id }}
+      RELEASE_GIT_COMMIT: ${{ inputs.git_commit }}
+      RELEASE_APP_IMAGE_DIGEST: ${{ inputs.application_image_digest }}
+      RELEASE_MIGRATION_IMAGE_DIGEST: ${{ inputs.migration_image_digest }}
+      GOLIVE_ROOT: ${{ vars.PHASE55_EVIDENCE_ROOT }}
+      GOLIVE_ENVIRONMENT: ${{ inputs.phase == '55A' && 'release' || (startsWith(inputs.phase, '55I') || startsWith(inputs.phase, '55J')) && 'hypercare' || inputs.phase == '55C' && 'production-dry-run' || 'production' }}
+      APPLICATION_IMAGE_REPOSITORY: ${{ vars.APPLICATION_IMAGE_REPOSITORY }}
+      MIGRATION_IMAGE_REPOSITORY: ${{ vars.MIGRATION_IMAGE_REPOSITORY }}
+      PHASE54_MANIFEST: ${{ vars.PHASE55_INPUT_ROOT }}/phase54/manifest.json
+      COSIGN_PUBLIC_KEY: ${{ vars.COSIGN_PUBLIC_KEY_PATH }}
+      RELEASE_PACKAGE_SIGNING_KEY: ${{ secrets.RELEASE_PACKAGE_SIGNING_KEY_PATH }}
+      RELEASE_PACKAGE_PUBLIC_KEY: ${{ vars.RELEASE_PACKAGE_PUBLIC_KEY_PATH }}
+      DECISION_PUBLIC_KEY: ${{ vars.DECISION_PUBLIC_KEY_PATH }}
+      ATTESTATION_PUBLIC_KEY: ${{ vars.ATTESTATION_PUBLIC_KEY_PATH }}
+      ACCEPTANCE_PUBLIC_KEY: ${{ vars.ACCEPTANCE_PUBLIC_KEY_PATH }}
+      PROMETHEUS_URL: ${{ vars.PRODUCTION_PROMETHEUS_URL }}
+      PHASE55_KAFKA_LAG_QUERY: ${{ vars.PHASE55_KAFKA_LAG_QUERY }}
+      PRODUCTION_NAMESPACE: switching
+      DB_URL: ${{ secrets.DB_URL }}
+      RELEASE_GATE_DB_URL: ${{ secrets.RELEASE_GATE_DB_URL }}
+      DB_REPLICA_URL: ${{ secrets.DB_REPLICA_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      FLYWAY_USERNAME: ${{ secrets.FLYWAY_USERNAME }}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${{ vars.SPRING_KAFKA_BOOTSTRAP_SERVERS }}
+      KAFKA_SECURITY_PROTOCOL: ${{ vars.KAFKA_SECURITY_PROTOCOL }}
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: https
+      VAULT_ADDR: ${{ vars.VAULT_ADDR }}
+      VAULT_NAMESPACE: ${{ vars.VAULT_NAMESPACE }}
+      WEBHOOK_VAULT_AUTH_METHOD: kubernetes
+      WEBHOOK_VAULT_TRANSIT_MOUNT: ${{ vars.WEBHOOK_VAULT_TRANSIT_MOUNT }}
+      WEBHOOK_VAULT_TRANSIT_KEY: ${{ vars.WEBHOOK_VAULT_TRANSIT_KEY }}
+      OBJECT_STORAGE_ENDPOINT: ${{ vars.OBJECT_STORAGE_ENDPOINT }}
+      OBJECT_STORAGE_BUCKET: ${{ vars.OBJECT_STORAGE_BUCKET }}
+      PRODUCTION_ENV_FILE: ${{ vars.PRODUCTION_ENV_FILE }}
+      PRODUCTION_REQUIRED_DNS_NAMES: ${{ vars.PRODUCTION_REQUIRED_DNS_NAMES }}
+      PRODUCTION_REQUIRED_TCP_TARGETS: ${{ vars.PRODUCTION_REQUIRED_TCP_TARGETS }}
+      PRODUCTION_TLS_ENDPOINTS: ${{ vars.PRODUCTION_TLS_ENDPOINTS }}
+      PRODUCTION_DATABASE_CIDRS: ${{ vars.PRODUCTION_DATABASE_CIDRS }}
+      PRODUCTION_KAFKA_CIDRS: ${{ vars.PRODUCTION_KAFKA_CIDRS }}
+      PRODUCTION_VAULT_CIDRS: ${{ vars.PRODUCTION_VAULT_CIDRS }}
+      PRODUCTION_OBJECT_STORAGE_CIDRS: ${{ vars.PRODUCTION_OBJECT_STORAGE_CIDRS }}
+      PRODUCTION_EXTERNAL_API_CIDRS: ${{ vars.PRODUCTION_EXTERNAL_API_CIDRS }}
+      PRODUCTION_KAFKA_PORT: ${{ vars.PRODUCTION_KAFKA_PORT }}
+      PRODUCTION_API_HOST: ${{ vars.PRODUCTION_API_HOST }}
+      PRODUCTION_TLS_SECRET: ${{ vars.PRODUCTION_TLS_SECRET }}
+      PRODUCTION_CLIENT_CA_SECRET: ${{ vars.PRODUCTION_CLIENT_CA_SECRET }}
+      PRODUCTION_INGRESS_CLASS: ${{ vars.PRODUCTION_INGRESS_CLASS }}
+      BASELINE_ARCHIVE_BUCKET: ${{ vars.BASELINE_ARCHIVE_BUCKET }}
+      BASELINE_ARCHIVE_PREFIX: ${{ vars.BASELINE_ARCHIVE_PREFIX }}
+      BASELINE_KMS_KEY_ID: ${{ vars.BASELINE_KMS_KEY_ID }}
+      BASELINE_RETENTION_UNTIL: ${{ vars.BASELINE_RETENTION_UNTIL }}
+      SECRET_ROTATION_ATTESTATION: ${{ vars.PHASE55_INPUT_ROOT }}/attestations/secret-rotation.json
+      SECRET_ROTATION_ATTESTATION_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/attestations/secret-rotation.sig
+      CUTOVER_PLAN_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/command-center/cutover-plan.json
+      CONTACT_MATRIX_ATTESTATION_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/command-center/contact-matrix.json
+      COMMAND_CENTER_APPROVAL_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/command-center/approval.json
+      COMMAND_CENTER_APPROVAL_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/command-center/approval.sig
+      CANARY_DECISION_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/decisions/5.json
+      CANARY_DECISION_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/decisions/5.sig
+      PROMOTION_DECISION_DIR: ${{ vars.PHASE55_INPUT_ROOT }}/decisions
+      PRODUCTION_SYNTHETIC_SCRIPT: ${{ vars.PRODUCTION_SYNTHETIC_SCRIPT }}
+      KAFKA_PROBE_SCRIPT: ${{ vars.KAFKA_PROBE_SCRIPT }}
+      VAULT_ACCESS_PROBE_SCRIPT: ${{ vars.VAULT_ACCESS_PROBE_SCRIPT }}
+      EXTERNAL_DEPENDENCY_PROBE_SCRIPT: ${{ vars.EXTERNAL_DEPENDENCY_PROBE_SCRIPT }}
+      DRY_RUN_RESTORE_SCRIPT: ${{ vars.DRY_RUN_RESTORE_SCRIPT }}
+      DRY_RUN_DB_URL: ${{ secrets.DRY_RUN_DB_URL }}
+      DRY_RUN_DB_USERNAME: ${{ secrets.DRY_RUN_DB_USERNAME }}
+      DRY_RUN_DB_PASSWORD: ${{ secrets.DRY_RUN_DB_PASSWORD }}
+      DRY_RUN_APP_ENV_FILE: ${{ vars.DRY_RUN_APP_ENV_FILE }}
+      PREVIOUS_APPLICATION_IMAGE_REFERENCE: ${{ vars.PREVIOUS_APPLICATION_IMAGE_REFERENCE }}
+      DRY_RUN_ROLLBACK_SCRIPT: ${{ vars.DRY_RUN_ROLLBACK_SCRIPT }}
+      DRY_RUN_SNAPSHOT_ATTESTATION_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/migration/snapshot-attestation.json
+      DRY_RUN_SNAPSHOT_ATTESTATION_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/migration/snapshot-attestation.sig
+      DRY_RUN_EXPECTED_START_VERSION: 82
+      HYPERCARE_OBSERVATIONS_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/hypercare/observations.json
+      HYPERCARE_INCIDENT_REGISTER_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/hypercare/incidents.json
+      HYPERCARE_ALERT_SUMMARY_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/hypercare/alerts.json
+      BUSINESS_ACCEPTANCE_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/business.json
+      BUSINESS_ACCEPTANCE_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/business.sig
+      OPERATIONS_ACCEPTANCE_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/operations.json
+      OPERATIONS_ACCEPTANCE_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/operations.sig
+      SECURITY_ACCEPTANCE_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/security.json
+      SECURITY_ACCEPTANCE_SIGNATURE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/security.sig
+      KNOWN_ISSUES_REGISTER_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/known-issues.json
+      POST_IMPLEMENTATION_REVIEW_FILE: ${{ vars.PHASE55_INPUT_ROOT }}/acceptance/post-implementation-review.md
+      PRODUCTION_EXECUTION_CONFIRMATION: I_UNDERSTAND_THIS_OPERATES_ON_PRODUCTION
+      MIGRATION_DRY_RUN_CONFIRMATION: I_UNDERSTAND_THIS_RESTORES_AN_ISOLATED_PRODUCTION_LIKE_DATABASE
+      CUTOVER_BASELINE_CONFIRMATION: I_UNDERSTAND_THIS_READS_PRODUCTION_FINANCIAL_AGGREGATES
+      SECURITY_HARDENING_APPLY_CONFIRMATION: I_UNDERSTAND_THIS_APPLIES_PRODUCTION_SECURITY_CONTROLS
+      PRODUCTION_CANARY_CONFIRMATION: I_UNDERSTAND_THIS_RUNS_THE_PRODUCTION_MIGRATION_AND_5_PERCENT_CANARY
+      CUTOVER_OBSERVATION_SECONDS_25: ${{ vars.CUTOVER_OBSERVATION_SECONDS_25 }}
+      CUTOVER_OBSERVATION_SECONDS_50: ${{ vars.CUTOVER_OBSERVATION_SECONDS_50 }}
+      CUTOVER_OBSERVATION_SECONDS_100: ${{ vars.CUTOVER_OBSERVATION_SECONDS_100 }}
+      CONTROLLED_CUTOVER_CONFIRMATION: I_UNDERSTAND_THIS_CAN_PROMOTE_PRODUCTION_TRAFFIC_TO_100_PERCENT
+      HYPERCARE_VALIDATION_CONFIRMATION: I_UNDERSTAND_THIS_READS_PRODUCTION_OBSERVABILITY_AND_FINANCIAL_AGGREGATES
+      BAU_HANDOVER_CONFIRMATION: I_UNDERSTAND_THIS_CLOSES_HYPERCARE_AND_RECORDS_OPERATIONAL_ACCEPTANCE
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_commit }}
+          persist-credentials: false
+      - name: Verify checked-out commit and static contract
+        run: |
+          set -Eeuo pipefail
+          test "$(git rev-parse HEAD)" = "${RELEASE_GIT_COMMIT}"
+          echo "SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)" >> "$GITHUB_ENV"
+          python3 scripts/verify_phase55_static.py
+      - name: Require protected input and evidence directories
+        run: |
+          set -Eeuo pipefail
+          test -n "${GOLIVE_ROOT}"
+          test -d "$(dirname "${GOLIVE_ROOT}")"
+          test -n "${{ vars.PHASE55_INPUT_ROOT }}"
+          test -d "${{ vars.PHASE55_INPUT_ROOT }}"
+      - name: Execute Phase 55 control
+        run: scripts/golive/run_phase55_golive.sh '${{ inputs.phase }}'
+      - name: Build status summary
+        if: always()
+        run: scripts/golive/run_phase55_golive.sh status | tee phase55-status.json
+      - name: Upload non-secret execution status
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: phase55-${{ inputs.phase }}-${{ inputs.release_candidate_id }}
+          path: phase55-status.json
+          retention-days: 90

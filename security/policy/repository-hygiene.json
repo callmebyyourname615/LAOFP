@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "allowed_env_paths": [
+    ".env.example",
+    ".env.prod.example",
+    "backup/.env.example"
+  ],
+  "allowed_sql_prefixes": [
+    "backup/config/",
+    "database/",
+    "performance/settlement/",
+    "scripts/",
+    "src/main/resources/db/migration/"
+  ],
+  "forbidden_exact_paths": [
+    ".env",
+    ".env.bak",
+    "app-live.log",
+    "boot.log",
+    "new.txt",
+    "run-error.log",
+    "backups/switching_db_legacy_20260521_101054.sql"
+  ],
+  "forbidden_path_prefixes": [
+    "backups/",
+    "security/evidence/"
+  ],
+  "forbidden_basenames": [
+    ".DS_Store"
+  ],
+  "forbidden_suffixes": [
+    ".backup",
+    ".dump",
+    ".jks",
+    ".keystore",
+    ".key",
+    ".log",
+    ".p12",
+    ".pem",
+    ".pfx",
+    ".sql.gz"
+  ],
+  "ignored_content_prefixes": [
+    ".git/",
+    "target/"
+  ],
+  "max_text_scan_bytes": 10485760
+}

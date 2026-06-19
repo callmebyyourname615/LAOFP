@@ -42,9 +42,12 @@ curl --fail-with-body -sS -X POST "$BASE_URL/api/operations/settlement/cycles/$c
   -H "X-API-Key: $API_KEY" | tee "$OUT/close.json"
 end=$(date +%s)
 
-python3 - "$cycle_ref" "$COUNT" "$((end-start))" "$BUSINESS_DATE" "$SETTLEMENT_DATE" > "$OUT/summary.json" <<'PY'
+balance_mismatch_amount="$(psql "$DB_URL" -U "$DB_USERNAME" -AtX -v ON_ERROR_STOP=1 -v cycle_ref="$cycle_ref" -c "SELECT COALESCE(ABS(SUM(p.net_position)),0)::text FROM settlement_positions p JOIN settlement_cycles c ON c.id=p.cycle_id WHERE c.cycle_ref=:'cycle_ref'")"
+balance_mismatch_count="$(python3 -c 'from decimal import Decimal; import sys; print(0 if Decimal(sys.argv[1]) == 0 else 1)' "$balance_mismatch_amount")"
+summary_path="$OUT/summary.json"
+python3 - "$cycle_ref" "$COUNT" "$((end-start))" "$BUSINESS_DATE" "$SETTLEMENT_DATE" "$balance_mismatch_amount" "$balance_mismatch_count" > "$summary_path" <<'PY'
 import json, sys
-cycle_ref, count, duration, business_date, settlement_date = sys.argv[1:]
+cycle_ref, count, duration, business_date, settlement_date, mismatch_amount, mismatch_count = sys.argv[1:]
 print(json.dumps({
     "cycleRef": cycle_ref,
     "transactions": int(count),
@@ -52,7 +55,10 @@ print(json.dumps({
     "businessDate": business_date,
     "settlementDate": settlement_date,
     "targetSeconds": 1800,
-    "passed": int(duration) < 1800,
+    "balanceMismatchAmount": mismatch_amount,
+    "balanceMismatchCount": int(mismatch_count),
+    "passed": int(duration) <= 1800 and int(mismatch_count) == 0,
 }, indent=2))
 PY
-python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d["passed"] else 1)' "$OUT/summary.json"
+if [[ -n "${SETTLEMENT_SUMMARY_OUTPUT:-}" ]]; then mkdir -p "$(dirname "$SETTLEMENT_SUMMARY_OUTPUT")"; cp "$summary_path" "$SETTLEMENT_SUMMARY_OUTPUT"; fi
+python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d["passed"] else 1)' "$summary_path"

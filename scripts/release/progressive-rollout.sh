@@ -12,6 +12,11 @@ WEIGHTS="${CANARY_WEIGHTS:-5 25 50}"
 [[ "${IMAGE_DIGEST}" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo "invalid IMAGE_DIGEST" >&2; exit 64; }
 mkdir -p build/canary
 ./scripts/render_k8s_image.sh k8s/canary/deployment.yaml build/canary/deployment.yaml "${IMAGE_REPOSITORY}" "${IMAGE_DIGEST}"
+for manifest in deployment service ingress servicemonitor; do
+  source="k8s/canary/${manifest}.yaml"
+  [[ "$manifest" == deployment ]] && source="build/canary/deployment.yaml"
+  sed "s/namespace: switching/namespace: ${NAMESPACE}/g" "$source" > "build/canary/${manifest}.rendered.yaml"
+done
 
 rollback() {
   kubectl -n "${NAMESPACE}" annotate ingress switching-api-canary nginx.ingress.kubernetes.io/canary-weight="0" --overwrite >/dev/null 2>&1 || true
@@ -19,10 +24,10 @@ rollback() {
 }
 trap 'rc=$?; if (( rc != 0 )); then rollback; fi; exit $rc' EXIT INT TERM
 
-kubectl apply -f k8s/canary/service.yaml
-kubectl apply -f k8s/canary/ingress.yaml
-kubectl apply -f k8s/canary/servicemonitor.yaml
-kubectl apply -f build/canary/deployment.yaml
+kubectl apply -f build/canary/service.rendered.yaml
+kubectl apply -f build/canary/ingress.rendered.yaml
+kubectl apply -f build/canary/servicemonitor.rendered.yaml
+kubectl apply -f build/canary/deployment.rendered.yaml
 kubectl -n "${NAMESPACE}" scale deployment switching-api-canary --replicas="${CANARY_REPLICAS}"
 kubectl -n "${NAMESPACE}" rollout status deployment/switching-api-canary --timeout=600s
 
@@ -44,3 +49,6 @@ fi
 rollback
 trap - EXIT INT TERM
 printf 'promoted %s; previous stable was %s\n' "${new_image}" "${stable_previous}"
+cat > build/canary/summary.json <<EOF
+{"namespace":"${NAMESPACE}","image":"${new_image}","previousImage":"${stable_previous}","weights":"${WEIGHTS} 100","status":"PASS"}
+EOF

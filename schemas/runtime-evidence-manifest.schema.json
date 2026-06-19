@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.internal/schemas/runtime-evidence-manifest-v1.json",
+  "title": "Switching Runtime Evidence Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "planId", "generatedAt", "environment", "release", "controls", "artifacts", "goLiveReady"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "planId": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "environment": {"enum": ["uat", "performance", "dr"]},
+    "release": {
+      "type": "object",
+      "required": ["gitCommit", "imageDigest", "reference"],
+      "additionalProperties": false,
+      "properties": {
+        "gitCommit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "imageDigest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "reference": {"type": "string", "minLength": 1}
+      }
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "requiredForGoLive", "status", "exitCode", "startedAt", "endedAt", "logPath"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+          "requiredForGoLive": {"type": "boolean"},
+          "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]},
+          "exitCode": {"type": ["integer", "null"]},
+          "startedAt": {"type": ["string", "null"], "format": "date-time"},
+          "endedAt": {"type": ["string", "null"], "format": "date-time"},
+          "logPath": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "size", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "size": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "goLiveReady": {"type": "boolean"}
+  }
+}

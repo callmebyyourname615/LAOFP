@@ -1,0 +1,80 @@
+name: Production Readiness Gates
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-readiness-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-readiness:
+    name: Production Readiness Static Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install deterministic validator dependencies
+        run: pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Run all phase, environment, alert and evidence contract gates
+        run: python3 scripts/verify_all_static.py
+      - name: Run production environment validator regression tests
+        run: python3 scripts/tests/test_validate_production_environment.py
+      - name: Run runtime evidence manifest regression tests
+        run: python3 scripts/evidence/test_runtime_evidence.py
+      - name: Validate shell syntax
+        run: |
+          find scripts security backup dr performance -type f -name '*.sh' -print0 \
+            | xargs -0 -n1 bash -n
+
+  migration-isolation:
+    name: Migration Runtime Isolation
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    needs: static-readiness
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Verify migration profile reaches V83 without runtime workers
+        run: |
+          ./mvnw --batch-mode --no-transfer-progress \
+            -Dtest=MigrationApplicationIntegrationTest,MigrationRuntimeIsolationContractTest \
+            test
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: migration-isolation-${{ github.sha }}
+          path: target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 90
+
+  operational-metrics:
+    name: Operational Metrics Activation
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: static-readiness
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Verify metrics enabled by default and excluded from migration
+        run: |
+          ./mvnw --batch-mode --no-transfer-progress \
+            -Dtest=OperationalMetricsConfigurationTest test

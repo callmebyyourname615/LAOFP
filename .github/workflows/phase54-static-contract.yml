@@ -1,0 +1,24 @@
+name: Phase 54 Static Contract
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Phase 54 Static Contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install validator dependency
+        run: pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify Phase 54 contracts
+        run: |
+          python3 scripts/verify_phases_54a_54j.py
+          python3 scripts/certification/tests/test_phase54_framework.py

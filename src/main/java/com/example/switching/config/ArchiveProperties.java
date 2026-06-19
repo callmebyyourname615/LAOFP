@@ -15,7 +15,7 @@ public class ArchiveProperties {
     private String partitionCron = "0 5 0 * * *";
     private String archiveDbUrl = "jdbc:postgresql://localhost:5434/switching_archive";
     private String archiveDbUsername = "switching_archive";
-    private String archiveDbPassword = "switching_archive_postgres_password_change_me";
+    private String archiveDbPassword = "";
     private ObjectStorage objectStorage = new ObjectStorage();
 
     public int getHotRetentionDays() {
@@ -102,7 +102,7 @@ public class ArchiveProperties {
         private String endpoint = "http://localhost:9000";
         private String bucket = "switching-archive";
         private String accessKey = "switching_minio";
-        private String secretKey = "switching_minio_password_change_me";
+        private String secretKey = "";
         private int retentionYears = 10;
 
         public String getEndpoint() {

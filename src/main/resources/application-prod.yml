@@ -54,6 +54,8 @@ management:
 switching:
   observability:
     environment: ${OBSERVABILITY_ENVIRONMENT:production}
+    operational-metrics:
+      enabled: ${OPERATIONAL_METRICS_ENABLED:true}
     operational-metrics-refresh: ${OPERATIONAL_METRICS_REFRESH:PT30S}
   account-lookup:
     base-url: ${ACCOUNT_LOOKUP_BASE_URL}

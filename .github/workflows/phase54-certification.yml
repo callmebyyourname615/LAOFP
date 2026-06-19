@@ -1,0 +1,109 @@
+name: Phase 54 Production Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: Certification phase or full sequence
+        required: true
+        type: choice
+        options: [54A, 54B, 54C, 54D, 54E, 54F, 54G, 54H, 54I, 54J, preflight, full, assemble]
+        default: preflight
+      target_environment:
+        required: true
+        type: choice
+        options: [uat, performance, dr]
+        default: uat
+      release_reference:
+        required: true
+        type: string
+      git_commit:
+        required: true
+        type: string
+      image_repository:
+        required: true
+        type: string
+      image_digest:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: phase54-${{ inputs.release_reference }}-${{ inputs.phase }}
+  cancel-in-progress: false
+
+jobs:
+  certify:
+    name: Phase 54 Certification Runner
+    runs-on: [self-hosted, linux, switching-certification]
+    timeout-minutes: 900
+    environment: ${{ inputs.target_environment }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_commit }}
+          fetch-depth: 0
+      - name: Validate immutable release identity
+        env:
+          COMMIT: ${{ inputs.git_commit }}
+          DIGEST: ${{ inputs.image_digest }}
+        run: |
+          set -Eeuo pipefail
+          [[ "${{ inputs.release_reference }}" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$ ]]
+          [[ "$COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          [[ "$(git rev-parse HEAD)" == "$COMMIT" ]]
+      - name: Install Python validator dependency
+        run: python3 -m pip install --disable-pip-version-check --user PyYAML==6.0.2
+      - name: Execute requested certification phase
+        env:
+          CERTIFICATION_ENVIRONMENT: ${{ inputs.target_environment }}
+          CERTIFICATION_ROOT: build/phase54-certification
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ inputs.git_commit }}
+          RELEASE_IMAGE_REPOSITORY: ${{ inputs.image_repository }}
+          RELEASE_IMAGE_DIGEST: ${{ inputs.image_digest }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          MANAGEMENT_BASE_URL: ${{ secrets.MANAGEMENT_BASE_URL }}
+          MANAGEMENT_BEARER_TOKEN: ${{ secrets.MANAGEMENT_BEARER_TOKEN }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          PROMETHEUS_URL: ${{ secrets.PROMETHEUS_URL }}
+          ALERTMANAGER_URL: ${{ secrets.ALERTMANAGER_URL }}
+          ALERTMANAGER_BEARER_TOKEN: ${{ secrets.ALERTMANAGER_BEARER_TOKEN }}
+          ALERT_EXPECTED_RECEIVER: ${{ vars.ALERT_EXPECTED_RECEIVER }}
+          ALERT_DRILL_CONFIRMATION: I_UNDERSTAND_THIS_SENDS_TEST_ALERTS
+          UAT_NAMESPACE: ${{ vars.UAT_NAMESPACE || 'switching-uat' }}
+          BACKUP_NAMESPACE: ${{ vars.BACKUP_NAMESPACE || 'switching' }}
+          PITR_RPO_SECONDS_OBSERVED: ${{ vars.PITR_RPO_SECONDS_OBSERVED }}
+          UAT_REHEARSAL_CONFIRMATION: I_UNDERSTAND_THIS_DEPLOYS_AND_ROLLS_BACK_UAT
+          PERFORMANCE_CERTIFICATION_CONFIRMATION: I_UNDERSTAND_THIS_GENERATES_SUSTAINED_LOAD
+          SETTLEMENT_CERTIFICATION_CONFIRMATION: I_UNDERSTAND_THIS_SEEDS_500000_TRANSACTIONS
+          BACKUP_CERTIFICATION_CONFIRMATION: I_UNDERSTAND_THIS_RUNS_BACKUP_AND_ISOLATED_RESTORE
+          DR_CERTIFICATION_CONFIRMATION: I_UNDERSTAND_THIS_IS_DESTRUCTIVE
+          GOLIVE_REHEARSAL_CONFIRMATION: I_UNDERSTAND_THIS_RUNS_CANARY_PROMOTION_AND_ROLLBACK
+        run: scripts/certification/run_phase54_certification.sh '${{ inputs.phase }}'
+      - name: Verify available evidence
+        if: always()
+        env:
+          EXPECTED_COMMIT: ${{ inputs.git_commit }}
+          EXPECTED_DIGEST: ${{ inputs.image_digest }}
+          EXPECTED_REFERENCE: ${{ inputs.release_reference }}
+        run: |
+          set -Eeuo pipefail
+          if [[ -f build/phase54-certification/manifest.json ]]; then
+            python3 scripts/certification/verify_certification_manifest.py build/phase54-certification/manifest.json \
+              --expected-commit "$EXPECTED_COMMIT" --expected-digest "$EXPECTED_DIGEST" --expected-reference "$EXPECTED_REFERENCE"
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: phase54-${{ inputs.release_reference }}-${{ inputs.phase }}
+          path: build/phase54-certification/
+          if-no-files-found: error
+          retention-days: 365

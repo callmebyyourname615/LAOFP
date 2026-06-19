@@ -70,6 +70,9 @@ cat >"${work}/evidence.json" <<EOF_EVIDENCE
 }
 EOF_EVIDENCE
 jq -e . "${work}/evidence.json" >/dev/null
+if [[ "${CERTIFICATION_EVIDENCE_STDOUT:-false}" == "true" ]]; then
+  printf 'CERTIFICATION_RESTORE_EVIDENCE=%s\n' "$(jq -c . "${work}/evidence.json")"
+fi
 key="${S3_PREFIX:-switching}/drill-evidence/${started_at:0:10}/${backup_id}-${started_epoch}.json"
 s3_upload_required_targets "${work}/evidence.json" "$key"
 

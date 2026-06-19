@@ -1,0 +1,3 @@
+# One fully qualified JUnit test or class per line.
+# Production certification defaults to zero skipped tests. Entries require an
+# approved exception reference in the same line after a whitespace separator.

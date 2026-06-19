@@ -1,0 +1,24 @@
+Phase 53B — V83 Schema Alignment
+Baseline requirement: Phase 53A overlay already applied
+Packaging mode: changed files only
+Deleted files: none
+
+ADDED
+.github/workflows/phase53b-schema-alignment.yml
+PHASE_53B_DELIVERY_NOTES.md
+PHASE_53B_VALIDATION_REPORT.md
+PHASE_53B_FILE_MANIFEST.txt
+apply-phase53b.sh
+docs/runbooks/V83_SCHEMA_ALIGNMENT.md
+docs/templates/V83_SCHEMA_ALIGNMENT_EVIDENCE.md
+scripts/run_phase53b_verification.sh
+scripts/verify_phase53b_schema_alignment.py
+src/main/resources/db/migration/V83__align_payload_sha256_to_varchar.sql
+src/test/java/com/example/switching/migration/PayloadSha256EntityMappingContractTest.java
+src/test/java/com/example/switching/migration/V83PayloadSha256SchemaAlignmentIntegrationTest.java
+
+MODIFIED
+IMPLEMENTATION_PROGRESS.md
+scripts/configure_branch_protection.sh
+scripts/verify_migration_image.sh
+src/main/resources/application.yml

@@ -3,8 +3,11 @@ title = "Switching API Gitleaks configuration"
 [extend]
 useDefault = true
 
+# This is a deterministic, non-production test fixture referenced by migration,
+# CI, documentation, and unit tests. Exception owner: Security Engineering.
+# Review/expiry date: 2026-12-31. Do not add further global regex exceptions.
 [allowlist]
-description = "Known deterministic 32-byte test fixture; never used outside tests/CI"
+description = "Approved deterministic 32-byte test fixture only"
 regexes = [
   '''NImwCmFwkSIeDgy8UJtzGq86A389puEEe6gi2Wdo9MM=''',
 ]

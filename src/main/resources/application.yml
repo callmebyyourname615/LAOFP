@@ -19,7 +19,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      # Production fail-fast guard: application startup must stop when JPA mappings
+      # do not match the schema delivered by Flyway. The dedicated migration
+      # profile keeps ddl-auto=none because Hibernate is excluded there.
+      ddl-auto: validate
     open-in-view: false
     show-sql: ${JPA_SHOW_SQL:false}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -69,6 +72,10 @@ management:
         include: health,info
 
 switching:
+  observability:
+    operational-metrics:
+      enabled: ${OPERATIONAL_METRICS_ENABLED:true}
+    operational-metrics-refresh: ${OPERATIONAL_METRICS_REFRESH:PT30S}
   api:
     v1-prefix: ${SWITCHING_API_V1_PREFIX:/v1}
   payment:
@@ -158,12 +165,12 @@ switching:
     partition-cron: ${PARTITION_CRON:0 5 0 * * *}
     archive-db-url: ${ARCHIVE_DB_URL:jdbc:postgresql://localhost:5434/switching_archive}
     archive-db-username: ${ARCHIVE_DB_USERNAME:switching_archive}
-    archive-db-password: ${ARCHIVE_DB_PASSWORD:switching_archive_postgres_password_change_me}
+    archive-db-password: ${ARCHIVE_DB_PASSWORD:}
     object-storage:
       endpoint: ${OBJECT_STORAGE_ENDPOINT:http://localhost:9000}
       bucket: ${OBJECT_STORAGE_BUCKET:switching-archive}
       access-key: ${OBJECT_STORAGE_ACCESS_KEY:switching_minio}
-      secret-key: ${OBJECT_STORAGE_SECRET_KEY:switching_minio_password_change_me}
+      secret-key: ${OBJECT_STORAGE_SECRET_KEY:}
       retention-years: ${OBJECT_STORAGE_RETENTION_YEARS:10}
   fpre:
     retry-attempts: ${FPRE_RETRY_ATTEMPTS:5}

@@ -24,6 +24,10 @@ import org.springframework.context.annotation.Profile;
         },
         exclude = {
                 HibernateJpaAutoConfiguration.class
+        },
+        excludeName = {
+                "org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration",
+                "org.springframework.boot.task.autoconfigure.TaskSchedulingAutoConfiguration"
         })
 public class MigrationApplication {
 
