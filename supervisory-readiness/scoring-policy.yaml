@@ -1,0 +1,14 @@
+schemaVersion: 1
+weights:
+  58A: 15
+  58B: 10
+  58C: 10
+  58D: 10
+  58E: 10
+  58F: 10
+  58G: 15
+  58H: 10
+  58I: 10
+minimumScore: 95
+criticalControlFailureDecision: NOT_READY
+expiredEvidenceDecision: NOT_READY

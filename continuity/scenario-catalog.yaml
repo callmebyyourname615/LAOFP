@@ -1,0 +1,20 @@
+schemaVersion: 1
+scenarios:
+  - id: rtgs-unavailable
+    dependency: bol-rtgs
+    expectedMode: QUEUE_WITH_LIMIT
+  - id: sanctions-provider-unavailable
+    dependency: bol-fiu
+    expectedMode: LAST_KNOWN_GOOD_WITH_MAX_AGE
+  - id: vault-unavailable
+    dependency: vault
+    expectedMode: CACHED_VERIFY_ONLY
+  - id: kafka-unavailable
+    dependency: kafka
+    expectedMode: OUTBOX_WITH_BACKLOG_LIMIT
+  - id: object-storage-unavailable
+    dependency: object-storage
+    expectedMode: DEFER_ARCHIVE_WITH_LIMIT
+  - id: dns-degraded
+    dependency: dns
+    expectedMode: FAIL_CLOSED

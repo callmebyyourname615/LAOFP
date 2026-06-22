@@ -1,0 +1,8 @@
+schemaVersion: 1
+maximumAgeHours: 24
+criticalAgeHours: 72
+requiredFields: [accountId, owner, openedAt, reason, linkedTransaction]
+zeroOwnerTolerance: true
+escalation:
+  high: 24h
+  critical: 72h

@@ -1,0 +1,7 @@
+schemaVersion: 1
+suppressionRequiresApproval: true
+suppressionMaximumDays: 30
+reasonRequired: true
+ownerRequired: true
+reviewRequired: true
+permanentAllowlistProhibited: true

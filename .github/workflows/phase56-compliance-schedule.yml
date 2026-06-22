@@ -1,0 +1,41 @@
+name: Phase 56 Compliance Schedule
+on:
+  schedule:
+    - cron: '20 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase56-compliance-production
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: [self-hosted, protected, compliance]
+    environment: compliance
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull release evidence
+        env: &store
+          RELEASE_REFERENCE: ${{ vars.PRODUCTION_RELEASE_REFERENCE }}
+          PHASE56_EVIDENCE_BUCKET: ${{ vars.PHASE56_EVIDENCE_BUCKET }}
+          PHASE56_EVIDENCE_PREFIX: ${{ vars.PHASE56_EVIDENCE_PREFIX }}
+          PHASE56_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE56_EVIDENCE_KMS_KEY_ID }}
+          PHASE56_S3_ENDPOINT_URL: ${{ vars.PHASE56_S3_ENDPOINT_URL }}
+        run: scripts/day2/evidence_store.sh pull
+      - name: Build, sign and verify compliance manifest
+        env:
+          DAY2_ENVIRONMENT: compliance
+          RELEASE_REFERENCE: ${{ vars.PRODUCTION_RELEASE_REFERENCE }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          EVIDENCE_SIGNING_KEY: ${{ secrets.EVIDENCE_SIGNING_KEY }}
+          EVIDENCE_PUBLIC_KEY: ${{ secrets.EVIDENCE_PUBLIC_KEY }}
+          DAY2_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+        run: scripts/day2/run_phase56_day2.sh 56F
+      - name: Push evidence
+        if: always()
+        env: *store
+        run: scripts/day2/evidence_store.sh push

@@ -1,0 +1,12 @@
+schemaVersion: 1
+certificateValidityDays: 30
+requiredApprovers:
+- dr-owner
+- operations-owner
+signatureRequired: true
+requirements:
+  zeroDataLoss: true
+  zeroDuplicateReplay: true
+  reconciliationPass: true
+  alertDeliveryPass: true
+  documentedRecoveryOnly: true

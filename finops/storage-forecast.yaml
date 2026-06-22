@@ -1,0 +1,14 @@
+schemaVersion: 1
+minimumForecastDays: 90
+forecastWindowDays: 30
+assets:
+- postgres-primary
+- postgres-replica
+- kafka
+- object-storage
+- backup
+- logs
+- metrics
+growthModels:
+- linear
+- p95-daily-growth

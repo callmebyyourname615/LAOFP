@@ -1,0 +1,23 @@
+groups:
+  - name: phase58-assurance
+    rules:
+      - alert: RegulatorySubmissionOverdue
+        expr: switching_regulatory_submission_overdue_total > 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: 'Regulatory submission is overdue', runbook_url: 'docs/runbooks/PHASE58_REGULATORY_ECOSYSTEM_ASSURANCE.md'}
+      - alert: ParticipantCertificationExpiring
+        expr: switching_participant_certificate_days_remaining < 30
+        for: 15m
+        labels: {severity: warning}
+        annotations: {summary: 'Participant certification expires within 30 days', runbook_url: 'docs/runbooks/PHASE58_REGULATORY_ECOSYSTEM_ASSURANCE.md'}
+      - alert: SettlementLiquidityLimitBreached
+        expr: switching_participant_liquidity_headroom_minor_units < 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: 'Participant liquidity headroom is negative', runbook_url: 'docs/runbooks/PHASE58_REGULATORY_ECOSYSTEM_ASSURANCE.md'}
+      - alert: CriticalVendorAssuranceExpired
+        expr: switching_vendor_assurance_age_days > 365
+        for: 30m
+        labels: {severity: critical}
+        annotations: {summary: 'Critical vendor assurance is expired', runbook_url: 'docs/runbooks/PHASE58_REGULATORY_ECOSYSTEM_ASSURANCE.md'}

@@ -1,0 +1,26 @@
+schemaVersion: 1
+rules:
+- id: authentication-failure-spike
+  eventType: AUTH_FAILURE
+  threshold: 20
+  windowSeconds: 300
+  severity: high
+  runbook: docs/runbooks/security/credential-compromise.md
+- id: api-key-new-source
+  eventType: API_KEY_NEW_SOURCE
+  threshold: 1
+  windowSeconds: 300
+  severity: high
+  runbook: docs/runbooks/security/suspicious-admin-access.md
+- id: sanctions-bypass-attempt
+  eventType: SANCTIONS_BYPASS_ATTEMPT
+  threshold: 1
+  windowSeconds: 60
+  severity: critical
+  runbook: docs/runbooks/security/transaction-fraud-spike.md
+- id: duplicate-transaction-burst
+  eventType: DUPLICATE_TRANSACTION
+  threshold: 5
+  windowSeconds: 60
+  severity: critical
+  runbook: docs/runbooks/security/transaction-fraud-spike.md

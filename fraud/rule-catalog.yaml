@@ -1,0 +1,38 @@
+schemaVersion: 1
+rules:
+  - id: transaction-velocity
+    signal: transactionVelocityRatio
+    operator: gte
+    threshold: 5
+    score: 35
+    reasonCode: VELOCITY_SPIKE
+  - id: rapid-transfer-reversal
+    signal: rapidTransferReversalCount
+    operator: gte
+    threshold: 1
+    score: 40
+    reasonCode: RAPID_REVERSAL
+  - id: structuring-pattern
+    signal: structuringPatternCount
+    operator: gte
+    threshold: 1
+    score: 50
+    reasonCode: STRUCTURING_PATTERN
+  - id: beneficiary-concentration
+    signal: beneficiaryConcentrationPercent
+    operator: gte
+    threshold: 80
+    score: 25
+    reasonCode: BENEFICIARY_CONCENTRATION
+  - id: account-takeover
+    signal: accountTakeoverIndicators
+    operator: gte
+    threshold: 1
+    score: 80
+    reasonCode: ACCOUNT_TAKEOVER
+  - id: sanctions-proximity
+    signal: sanctionsProximityIndicators
+    operator: gte
+    threshold: 1
+    score: 100
+    reasonCode: SANCTIONS_PROXIMITY

@@ -1,0 +1,11 @@
+{
+  "expiresAt": "2026-02-01T00:00:00Z",
+  "issuedAt": "2026-01-01T00:00:00Z",
+  "release": {
+    "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reference": "release-reference"
+  },
+  "signatureVerified": true,
+  "status": "PASS"
+}

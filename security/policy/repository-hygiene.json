@@ -1,5 +1,4 @@
 {
-  "schema_version": 1,
   "allowed_env_paths": [
     ".env.example",
     ".env.prod.example",
@@ -8,9 +7,14 @@
   "allowed_sql_prefixes": [
     "backup/config/",
     "database/",
+    "financial-controls/sql/",
     "performance/settlement/",
+    "reconciliation/sql/",
     "scripts/",
     "src/main/resources/db/migration/"
+  ],
+  "forbidden_basenames": [
+    ".DS_Store"
   ],
   "forbidden_exact_paths": [
     ".env",
@@ -24,9 +28,6 @@
   "forbidden_path_prefixes": [
     "backups/",
     "security/evidence/"
-  ],
-  "forbidden_basenames": [
-    ".DS_Store"
   ],
   "forbidden_suffixes": [
     ".backup",
@@ -44,5 +45,6 @@
     ".git/",
     "target/"
   ],
-  "max_text_scan_bytes": 10485760
+  "max_text_scan_bytes": 10485760,
+  "schema_version": 1
 }

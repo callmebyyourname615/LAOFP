@@ -1,0 +1,7 @@
+schemaVersion: 1
+maximumDataLossCount: 0
+maximumDuplicateReplayCount: 0
+maximumBalanceMismatchCount: 0
+minimumAlertDeliveryPercent: 100
+maximumUndocumentedRecoverySteps: 0
+minimumScenarioPassPercent: 100

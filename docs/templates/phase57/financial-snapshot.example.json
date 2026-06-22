@@ -1,0 +1,20 @@
+{
+  "balanceMismatchMinorUnits": 0,
+  "capturedAt": "2026-01-01T00:00:00Z",
+  "completedTransactionsWithoutPosting": 0,
+  "currencyPrecisionViolations": 0,
+  "duplicateReversals": 0,
+  "financialControllerOwner": "role:financial-controller",
+  "oldestSuspenseAgeHours": 0,
+  "orphanPostings": 0,
+  "outboxMissingForCommittedTransactions": 0,
+  "postingsWithoutTransaction": 0,
+  "release": {
+    "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reference": "release-reference"
+  },
+  "settlementMismatchMinorUnits": 0,
+  "snapshotIsolation": "REPEATABLE_READ",
+  "unbalancedJournals": 0
+}

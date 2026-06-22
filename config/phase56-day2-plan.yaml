@@ -1,0 +1,132 @@
+schemaVersion: 1
+planId: switching-phase56-day2-operations-v1
+allowedExecutionEnvironments:
+- production
+- operations
+- security
+- compliance
+- dr
+releaseIdentity:
+  gitCommitPattern: ^[a-f0-9]{40}$
+  imageDigestPattern: ^sha256:[a-f0-9]{64}$
+  referencePattern: ^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$
+phases:
+- id: 56A
+  name: SLO and Error Budget Governance
+  runner: scripts/day2/56a-slo-error-budget.sh
+  environments:
+  - production
+  - operations
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56A/result.json
+  - phases/56A/slo-report.json
+  - phases/56A/release-budget-decision.json
+- id: 56B
+  name: Continuous Data Integrity Reconciliation
+  runner: scripts/day2/56b-continuous-reconciliation.sh
+  environments:
+  - production
+  - operations
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56B/result.json
+  - phases/56B/reconciliation-snapshot.json
+  - phases/56B/reconciliation-report.json
+  - phases/56B/reconciliation-report.sha256
+- id: 56C
+  name: High Availability and Automated Failover
+  runner: scripts/day2/56c-ha-failover-certification.sh
+  environments:
+  - production
+  - dr
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56C/result.json
+  - phases/56C/ha-topology.json
+  - phases/56C/ha-topology-verification.json
+  - phases/56C/failover-report.json
+  - phases/56C/failback-report.json
+- id: 56D
+  name: Capacity Management and Autoscaling
+  runner: scripts/day2/56d-capacity-autoscaling.sh
+  environments:
+  - production
+  - operations
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56D/result.json
+  - phases/56D/capacity-snapshot.json
+  - phases/56D/capacity-report.json
+  - phases/56D/autoscaling-safeguards.json
+- id: 56E
+  name: Security Operations and Threat Detection
+  runner: scripts/day2/56e-security-operations.sh
+  environments:
+  - production
+  - security
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56E/result.json
+  - phases/56E/security-event-summary.json
+  - phases/56E/detection-report.json
+  - phases/56E/containment-readiness.json
+- id: 56F
+  name: Continuous Compliance and Audit Evidence
+  runner: scripts/day2/56f-compliance-evidence.sh
+  environments:
+  - production
+  - compliance
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56F/result.json
+  - phases/56F/control-report.json
+  - phases/56F/evidence-manifest.json
+  - phases/56F/evidence-manifest.sha256
+  - phases/56F/evidence-manifest.sig
+- id: 56G
+  name: Progressive Delivery and Release Automation
+  runner: scripts/day2/56g-progressive-delivery.sh
+  environments:
+  - production
+  - operations
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56G/result.json
+  - phases/56G/progressive-delivery-analysis.json
+  - phases/56G/rollback-readiness.json
+- id: 56H
+  name: Operational Incident Management
+  runner: scripts/day2/56h-incident-management.sh
+  environments:
+  - production
+  - operations
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56H/result.json
+  - phases/56H/incident-audit.json
+  - phases/56H/escalation-readiness.json
+- id: 56I
+  name: FinOps and Resource Efficiency
+  runner: scripts/day2/56i-finops-efficiency.sh
+  environments:
+  - production
+  - operations
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56I/result.json
+  - phases/56I/finops-snapshot.json
+  - phases/56I/finops-report.json
+  - phases/56I/capacity-forecast.json
+- id: 56J
+  name: Continuous Resilience Certification
+  runner: scripts/day2/56j-resilience-certification.sh
+  environments:
+  - dr
+  requiredForDay2Acceptance: true
+  evidence:
+  - phases/56J/result.json
+  - phases/56J/resilience-results.json
+  - phases/56J/resilience-certificate.json
+  - phases/56J/resilience-certificate.sha256
+  - phases/56J/resilience-certificate.sig

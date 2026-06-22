@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "certificateId": {
+      "type": "string"
+    },
+    "evidenceSha256": {
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "issuedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "release": {
+      "type": "object"
+    },
+    "scenarioResults": {
+      "minItems": 1,
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "const": "CERTIFIED"
+    },
+    "validUntil": {
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "certificateId",
+    "issuedAt",
+    "validUntil",
+    "release",
+    "status",
+    "scenarioResults",
+    "evidenceSha256"
+  ],
+  "type": "object"
+}

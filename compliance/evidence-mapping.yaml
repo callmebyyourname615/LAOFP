@@ -1,0 +1,49 @@
+schemaVersion: 1
+storageClass: compliance-object-lock
+objectLockMode: COMPLIANCE
+defaultRetentionDays: 2555
+mappings:
+- evidenceType: phase55-release-manifest
+  path: build/phase55-golive/operational-acceptance/manifest.json
+  controlIds:
+  - DEPLOY-001
+- evidenceType: deployment-audit
+  path: build/phase55-golive/phases/55H/cutover-summary.json
+  controlIds:
+  - DEPLOY-001
+- evidenceType: kubernetes-audit
+  path: build/phase56-inputs/kubernetes-audit.json
+  controlIds:
+  - ACCESS-001
+- evidenceType: database-grants
+  path: build/phase55-golive/phases/55E/database-grants.json
+  controlIds:
+  - ACCESS-001
+- evidenceType: vault-audit
+  path: build/phase56-inputs/vault-audit.json
+  controlIds:
+  - ACCESS-001
+- evidenceType: secret-rotation-attestation
+  path: build/phase55-golive/phases/55E/secret-rotation-attestation.json
+  controlIds:
+  - SECRET-001
+- evidenceType: phase56-reconciliation-report
+  path: build/phase56-day2/phases/56B/reconciliation-report.json
+  controlIds:
+  - DATA-001
+- evidenceType: backup-verification
+  path: build/phase54-certification/phases/54F/restore-evidence.json
+  controlIds:
+  - BACKUP-001
+- evidenceType: restore-drill
+  path: build/phase54-certification/phases/54F/recovery-objectives.json
+  controlIds:
+  - BACKUP-001
+- evidenceType: phase56-slo-report
+  path: build/phase56-day2/phases/56A/slo-report.json
+  controlIds:
+  - SLO-001
+- evidenceType: phase56-detection-report
+  path: build/phase56-day2/phases/56E/detection-report.json
+  controlIds:
+  - SECOPS-001

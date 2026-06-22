@@ -1,0 +1,8 @@
+schemaVersion: 1
+maximumScaleReplicas: 20
+minimumScaleReplicas: 3
+maximumDeadLetterRetryBatch: 100
+maximumOperationDurationSeconds: 900
+arbitraryShellProhibited: true
+pathTraversalProhibited: true
+productionNamespaceAllowlist: [switching-prod]

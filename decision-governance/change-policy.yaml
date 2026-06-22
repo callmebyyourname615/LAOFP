@@ -1,0 +1,12 @@
+schemaVersion: 1
+requiredStages:
+- DRAFT
+- VALIDATED
+- APPROVED
+- CANARY
+- ACTIVE
+minimumApprovers: 2
+segregationOfDutiesRequired: true
+backtestRequired: true
+adverseImpactAssessmentRequired: true
+emergencyChangeExpiryHours: 24

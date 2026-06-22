@@ -1,0 +1,52 @@
+name: Phase 57 Security and Compliance
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        required: true
+        options: [57D, 57E, 57H, 57J]
+      release_reference:
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase57-security-compliance-${{ inputs.phase }}-${{ inputs.release_reference }}
+  cancel-in-progress: false
+jobs:
+  execute:
+    runs-on: [self-hosted, protected, security-compliance]
+    environment: production-compliance
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull immutable release evidence
+        env: &store
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          PHASE57_EVIDENCE_BUCKET: ${{ vars.PHASE57_EVIDENCE_BUCKET }}
+          PHASE57_EVIDENCE_PREFIX: ${{ vars.PHASE57_EVIDENCE_PREFIX }}
+          PHASE57_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE57_EVIDENCE_KMS_KEY_ID }}
+          PHASE57_S3_ENDPOINT_URL: ${{ vars.PHASE57_S3_ENDPOINT_URL }}
+        run: scripts/enterprise/evidence_store.sh pull
+      - name: Execute selected security/compliance phase
+        env:
+          ENTERPRISE_ENVIRONMENT: ${{ (inputs.phase == '57E' || inputs.phase == '57H') && 'security' || 'compliance' }}
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          ENTERPRISE_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+          DATA_LIFECYCLE_INVENTORY: ${{ vars.PHASE57_DATA_INVENTORY_PATH }}
+          DATA_DELETION_REQUEST: ${{ vars.PHASE57_DELETION_REQUEST_PATH }}
+          FRAUD_SIGNAL_SNAPSHOT: ${{ vars.PHASE57_FRAUD_SNAPSHOT_PATH }}
+          VULNERABILITY_LIFECYCLE_SNAPSHOT: ${{ vars.PHASE57_VULNERABILITY_SNAPSHOT_PATH }}
+          ENTERPRISE_MATURITY_INPUT: ${{ vars.PHASE57_MATURITY_INPUT_PATH }}
+          ENTERPRISE_CERTIFICATE_SIGNING_KEY: ${{ secrets.ENTERPRISE_CERTIFICATE_SIGNING_KEY }}
+          ENTERPRISE_CERTIFICATE_PUBLIC_KEY: ${{ secrets.ENTERPRISE_CERTIFICATE_PUBLIC_KEY }}
+        run: scripts/enterprise/run_phase57_enterprise.sh "${{ inputs.phase }}"
+      - name: Push append-only evidence
+        if: always()
+        env: *store
+        run: scripts/enterprise/evidence_store.sh push

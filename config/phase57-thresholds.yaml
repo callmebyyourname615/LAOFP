@@ -1,0 +1,42 @@
+schemaVersion: 1
+freshness:
+  defaultSnapshotMaxAgeSeconds: 900
+  certificationMaxAgeDays: 30
+  resilienceCertificateMaxAgeDays: 90
+multiRegion:
+  maximumDatabaseReplicationLagSeconds: 30
+  maximumKafkaReplicationLagMessages: 1000
+  maximumObjectReplicationLagSeconds: 300
+  maximumVaultReplicationLagSeconds: 60
+  maximumDnsFailoverSeconds: 300
+  maximumRpoSeconds: 300
+  maximumRtoSeconds: 1800
+financial:
+  unbalancedJournalTolerance: 0
+  balanceMismatchMinorUnitsTolerance: 0
+  orphanPostingTolerance: 0
+  duplicateReversalTolerance: 0
+  completedWithoutPostingTolerance: 0
+  postingWithoutTransactionTolerance: 0
+  maximumSuspenseAgeHours: 24
+fraud:
+  criticalRiskScore: 90
+  highRiskScore: 70
+  maximumUnassignedCriticalCases: 0
+  maximumOverdueHighRiskCases: 0
+observability:
+  robustZScoreWarning: 3.5
+  robustZScoreCritical: 6.0
+  maximumUnacknowledgedCriticalAnomalies: 0
+vulnerability:
+  criticalExploitedSlaHours: 24
+  criticalSlaHours: 72
+  highSlaHours: 168
+  mediumSlaHours: 720
+  maximumExpiredExceptions: 0
+  maximumEolCriticalComponents: 0
+maturity:
+  minimumOverallScore: 90
+  minimumDomainScore: 80
+  maximumOpenCriticalExceptions: 0
+  maximumOpenHighExceptions: 3

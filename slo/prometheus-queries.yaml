@@ -1,0 +1,24 @@
+schemaVersion: 1
+objectives:
+- id: transaction-api.availability
+  promql: 100 * switching:http_requests:good / clamp_min(switching:http_requests:total, 1)
+- id: transaction-api.success-rate
+  promql: 100 * switching:transactions:successful / clamp_min(switching:transactions:total, 1)
+- id: transaction-api.p95-latency
+  promql: 100 * (switching:http_latency:p95_ms <= bool 500)
+- id: transaction-api.p99-latency
+  promql: 100 * (switching:http_latency:p99_ms <= bool 1000)
+- id: data-integrity.balance-integrity
+  promql: 100 * (switching:reconciliation:balance_mismatch_total == bool 0)
+- id: data-integrity.duplicate-prevention
+  promql: 100 * (switching:transactions:duplicate_total == bool 0)
+- id: settlement.completion
+  promql: 100 * switching:settlement:on_time / clamp_min(switching:settlement:cycles, 1)
+- id: settlement.deadline
+  promql: 100 * (switching:settlement:last_completion_before_deadline == bool 1)
+- id: event-delivery.outbox-delay
+  promql: 100 * (switching:outbox:oldest_pending_seconds <= bool 60)
+- id: event-delivery.webhook-success
+  promql: 100 * switching:webhooks:delivered / clamp_min(switching:webhooks:attempted, 1)
+- id: compliance-freshness.sanctions-freshness
+  promql: 100 * (switching:sanctions:freshness_seconds <= bool 86400)

@@ -1,0 +1,6 @@
+schemaVersion: 1
+rotationOverdueToleranceDays: 0
+dualControlForRotation: true
+keyExportProhibited: true
+hsmOrVaultBackedRequired: true
+revocationEvidenceRequired: true

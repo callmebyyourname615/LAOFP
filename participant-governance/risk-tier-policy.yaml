@@ -1,0 +1,12 @@
+schemaVersion: 1
+tiers:
+  CRITICAL:
+    reviewDays: 30
+    drTestDays: 90
+  HIGH:
+    reviewDays: 90
+    drTestDays: 180
+  STANDARD:
+    reviewDays: 180
+    drTestDays: 365
+unknownTierDecision: BLOCK

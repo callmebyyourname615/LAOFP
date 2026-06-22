@@ -1,0 +1,13 @@
+schemaVersion: 1
+roles:
+  operator: [restart-deployment, trigger-reconciliation, generate-diagnostics]
+  senior-operator: [restart-deployment, scale-application, trigger-reconciliation, retry-dead-letter, generate-diagnostics]
+  release-commander: [execute-rollback]
+separationOfDuties:
+  requesterCannotBeSoleApprover: true
+  criticalRequesterCannotApprove: true
+breakGlass:
+  allowed: true
+  expiryMinutes: 60
+  incidentRequired: true
+  auditRequired: true

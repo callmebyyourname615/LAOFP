@@ -1,0 +1,17 @@
+name: Phase 58 Static Contract
+on:
+  pull_request:
+    paths: ['config/phase58-*','scripts/assurance/**','regulatory-assurance/**','participant-governance/**','crypto-agility/**','privacy-engineering/**','decision-governance/**','iso20022/**','settlement-risk/**','digital-twin/**','third-party-risk/**','supervisory-readiness/**','.github/workflows/phase58-*']
+  push:
+    branches: [main]
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install PyYAML
+      - run: python3 scripts/verify_phase58_static.py
+      - run: python3 -m unittest scripts.assurance.tests.test_phase58_framework

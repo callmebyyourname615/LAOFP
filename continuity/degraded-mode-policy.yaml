@@ -1,0 +1,15 @@
+schemaVersion: 1
+requiredFields:
+  - timeoutSeconds
+  - retryPolicy
+  - circuitBreaker
+  - fallback
+  - backlogLimit
+  - recoveryProcedure
+  - reconciliationRequired
+defaultFailClosed: true
+manualOverride:
+  minimumApprovers: 2
+  maximumDurationMinutes: 60
+  incidentRequired: true
+  auditRequired: true

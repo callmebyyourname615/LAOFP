@@ -1,0 +1,6 @@
+schemaVersion: 1
+limitBreachDecision: HOLD_NEW_OUTBOUND
+warningPercent: 80
+criticalPercent: 100
+manualOverrideExpiryMinutes: 30
+financialControllerApprovalRequired: true

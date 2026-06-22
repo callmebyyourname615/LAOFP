@@ -1,0 +1,7 @@
+schemaVersion: 1
+maximumSuppressionHours: 4
+ownerRequired: true
+reasonRequired: true
+expiryRequired: true
+criticalSuppressionRequiresTwoApprovers: true
+indefiniteSuppressionProhibited: true

@@ -1,0 +1,9 @@
+schemaVersion: 1
+eligibleTypes:
+  CASH: 0
+  GOVERNMENT_BOND: 10
+  CENTRAL_BANK_GUARANTEE: 5
+staleValuationHours: 4
+concentrationLimitPercent: 40
+dualControlForHaircutOverride: true
+negativeCollateralValueProhibited: true

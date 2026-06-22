@@ -1,0 +1,42 @@
+name: Phase 57 Continuous Re-Certification
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase57-continuous-recertification
+  cancel-in-progress: false
+jobs:
+  recertify:
+    runs-on: [self-hosted, protected, compliance]
+    environment: production-compliance
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull immutable evidence
+        env: &store
+          RELEASE_REFERENCE: ${{ vars.PRODUCTION_RELEASE_REFERENCE }}
+          PHASE57_EVIDENCE_BUCKET: ${{ vars.PHASE57_EVIDENCE_BUCKET }}
+          PHASE57_EVIDENCE_PREFIX: ${{ vars.PHASE57_EVIDENCE_PREFIX }}
+          PHASE57_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE57_EVIDENCE_KMS_KEY_ID }}
+          PHASE57_S3_ENDPOINT_URL: ${{ vars.PHASE57_S3_ENDPOINT_URL }}
+        run: scripts/enterprise/evidence_store.sh pull
+      - name: Evaluate impacted certifications
+        env:
+          ENTERPRISE_ENVIRONMENT: compliance
+          RELEASE_REFERENCE: ${{ vars.PRODUCTION_RELEASE_REFERENCE }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          ENTERPRISE_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+          PHASE57_CHANGESET_JSON: ${{ vars.PHASE57_CHANGESET_PATH }}
+          PHASE57_CERTIFICATION_RESULTS_JSON: ${{ vars.PHASE57_CERTIFICATION_RESULTS_PATH }}
+          PHASE57_PRIOR_CERTIFICATE_JSON: ${{ vars.PHASE57_PRIOR_CERTIFICATE_PATH }}
+        run: scripts/enterprise/run_phase57_enterprise.sh 57A
+      - name: Push append-only evidence
+        if: always()
+        env: *store
+        run: scripts/enterprise/evidence_store.sh push

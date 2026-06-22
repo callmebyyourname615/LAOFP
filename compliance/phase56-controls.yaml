@@ -1,0 +1,48 @@
+schemaVersion: 1
+controls:
+- id: DEPLOY-001
+  title: Production deployment traceability
+  owner: platform
+  frequency: per-release
+  requiredEvidence:
+  - phase55-release-manifest
+  - deployment-audit
+- id: ACCESS-001
+  title: Production privileged access review
+  owner: security
+  frequency: daily
+  requiredEvidence:
+  - kubernetes-audit
+  - database-grants
+  - vault-audit
+- id: SECRET-001
+  title: Secret rotation currency
+  owner: security
+  frequency: daily
+  requiredEvidence:
+  - secret-rotation-attestation
+- id: DATA-001
+  title: Continuous data reconciliation
+  owner: operations
+  frequency: 15m
+  requiredEvidence:
+  - phase56-reconciliation-report
+- id: BACKUP-001
+  title: Backup verification and restore drill
+  owner: database
+  frequency: daily
+  requiredEvidence:
+  - backup-verification
+  - restore-drill
+- id: SLO-001
+  title: SLO and error budget governance
+  owner: platform
+  frequency: hourly
+  requiredEvidence:
+  - phase56-slo-report
+- id: SECOPS-001
+  title: Runtime threat detection
+  owner: security
+  frequency: continuous
+  requiredEvidence:
+  - phase56-detection-report

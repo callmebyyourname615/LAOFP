@@ -1,0 +1,10 @@
+schemaVersion: 1
+inventoryRequired: true
+immutableVersionRequired: true
+fourEyesApprovalRequired: true
+explainabilityRequired: true
+rollbackTestRequired: true
+ownerRequired: true
+maximumDriftScore: 0.15
+unapprovedShadowDecisioningProhibited: true
+productionDigestRequired: true

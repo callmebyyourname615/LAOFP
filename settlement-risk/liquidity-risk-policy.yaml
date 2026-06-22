@@ -1,0 +1,8 @@
+schemaVersion: 1
+minimumHeadroomMinorUnits: 0
+maximumQueueAgeSeconds: 120
+gridlockDetectionRequired: true
+prefundingRequiredForHighRiskParticipants: true
+zeroSettlementMismatchRequired: true
+intradayMonitoringRequired: true
+singleCurrencyNettingOnly: true

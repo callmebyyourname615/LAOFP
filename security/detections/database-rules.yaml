@@ -1,0 +1,14 @@
+schemaVersion: 1
+rules:
+- id: application-user-ddl
+  eventType: DB_DDL_BY_APPLICATION
+  threshold: 1
+  windowSeconds: 60
+  severity: critical
+  runbook: docs/runbooks/security/data-exfiltration.md
+- id: large-database-export
+  eventType: DB_LARGE_EXPORT
+  threshold: 1
+  windowSeconds: 300
+  severity: critical
+  runbook: docs/runbooks/security/data-exfiltration.md

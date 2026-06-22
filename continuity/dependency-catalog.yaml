@@ -1,0 +1,38 @@
+schemaVersion: 1
+dependencies:
+  bol-rtgs:
+    criticality: critical
+    maximumOutageMinutes: 15
+    transactionBehavior: QUEUE_WITH_LIMIT
+  bol-fiu:
+    criticality: critical
+    maximumOutageMinutes: 60
+    transactionBehavior: LAST_KNOWN_GOOD_WITH_MAX_AGE
+  dns:
+    criticality: critical
+    maximumOutageMinutes: 5
+    transactionBehavior: FAIL_CLOSED
+  vault:
+    criticality: critical
+    maximumOutageMinutes: 5
+    transactionBehavior: CACHED_VERIFY_ONLY
+  kafka:
+    criticality: critical
+    maximumOutageMinutes: 15
+    transactionBehavior: OUTBOX_WITH_BACKLOG_LIMIT
+  postgresql-replica:
+    criticality: high
+    maximumOutageMinutes: 60
+    transactionBehavior: PRIMARY_ONLY_DEGRADED
+  object-storage:
+    criticality: high
+    maximumOutageMinutes: 30
+    transactionBehavior: DEFER_ARCHIVE_WITH_LIMIT
+  notification-provider:
+    criticality: medium
+    maximumOutageMinutes: 120
+    transactionBehavior: QUEUE_NOTIFICATION
+  ntp:
+    criticality: critical
+    maximumOutageMinutes: 5
+    transactionBehavior: FAIL_CLOSED_ON_EXCESSIVE_SKEW

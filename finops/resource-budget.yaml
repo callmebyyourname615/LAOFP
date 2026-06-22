@@ -1,0 +1,11 @@
+schemaVersion: 1
+currency: USD
+dailyBudget: 250
+monthlyBudget: 7500
+maximumDailyIncreasePercent: 20
+resources:
+  applicationCpuUtilizationTargetPercent: 50
+  applicationMemoryUtilizationTargetPercent: 65
+  databaseStorageWarningPercent: 70
+  objectStorageGrowthWarningGiBPerDay: 20
+  logIngestionWarningGiBPerDay: 10

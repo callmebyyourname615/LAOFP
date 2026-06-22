@@ -1,0 +1,16 @@
+schemaVersion: 1
+policyId: switching-continuous-recertification-v1
+failClosed: true
+requireFullGitSha: true
+requireImmutableImageDigest: true
+requireArtifactHashBinding: true
+requireSignedPriorCertificate: true
+requireAllImpactedCertificationsPass: true
+expireCertificationWhen:
+  - sourceArtifactHashChanges
+  - policyHashChanges
+  - imageDigestChanges
+  - infrastructureTopologyChanges
+  - certificateAgeExceedsPolicy
+unmappedChangeBehavior: FULL_RECERTIFICATION
+allowedStatuses: [PASS, FAIL, NOT_RUN, EXPIRED]

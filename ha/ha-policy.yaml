@@ -1,0 +1,29 @@
+schemaVersion: 1
+application:
+  minimumReplicas: 3
+  podAntiAffinityRequired: true
+  topologySpreadKeys:
+  - topology.kubernetes.io/zone
+  - kubernetes.io/hostname
+  podDisruptionBudget:
+    minAvailable: 2
+  terminationGracePeriodSeconds: 60
+postgresql:
+  tlsRequired: true
+  maximumReplicationLagSeconds: 10
+  fencingRequired: true
+  promotionRequiresQuorum: true
+  splitBrainProtectionRequired: true
+  rpoSeconds: 0
+  rtoSeconds: 300
+kafka:
+  minimumBrokers: 3
+  minimumInSyncReplicas: 2
+  uncleanLeaderElectionEnabled: false
+  idempotentProducerRequired: true
+  maximumUnderReplicatedPartitions: 0
+failover:
+  automaticApplicationFailover: true
+  automaticDatabasePromotion: false
+  humanApprovalForPrimaryPromotion: true
+  failbackRequiresReconciliation: true

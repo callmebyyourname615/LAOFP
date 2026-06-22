@@ -1,0 +1,19 @@
+{
+  "approvers": [
+    "role:data-owner",
+    "role:compliance-owner"
+  ],
+  "archiveVerificationStatus": "PASS",
+  "dataset": "applicationLogs",
+  "deletionManifestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "legalHoldPresent": false,
+  "mode": "DRY_RUN",
+  "referentialIntegrityStatus": "PASS",
+  "release": {
+    "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reference": "release-reference"
+  },
+  "requestId": "delete-request-reference",
+  "retentionExpired": true
+}

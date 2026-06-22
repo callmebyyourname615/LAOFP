@@ -1,0 +1,9 @@
+schemaVersion: 1
+sources:
+- ISO
+- SWIFT
+- BoL
+maximumAgeHours: 24
+atomicActivationRequired: true
+lastKnownGoodAllowedHours: 24
+partialDownloadMustNotReplaceActiveSet: true

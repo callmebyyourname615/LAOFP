@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: phase56-capacity-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: switching-phase56-capacity
+      rules:
+        - alert: SwitchingDatabaseConnectionBudgetRisk
+          expr: switching_db_connection_utilization_percent > 70
+          for: 10m
+          labels: {severity: warning, phase: 56D}
+          annotations: {summary: Database connection budget at risk, runbook_url: docs/runbooks/CAPACITY_AUTOSCALING.md}
+        - alert: SwitchingStorageForecastBelow90Days
+          expr: switching_storage_forecast_days < 90
+          for: 1h
+          labels: {severity: warning, phase: 56I}
+          annotations: {summary: Storage forecast below 90 days, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}

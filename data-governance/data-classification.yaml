@@ -1,0 +1,14 @@
+schemaVersion: 1
+classes:
+  restricted:
+    encryptionRequired: true
+    maskingRequiredOutsideProduction: true
+    examples: [transaction-payload, aml-record, authentication-secret]
+  confidential:
+    encryptionRequired: true
+    examples: [ledger, settlement, audit-log]
+  internal:
+    encryptionRequired: true
+    examples: [metrics, operational-log]
+  public:
+    encryptionRequired: false

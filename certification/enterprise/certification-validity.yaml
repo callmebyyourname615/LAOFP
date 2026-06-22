@@ -1,0 +1,12 @@
+schemaVersion: 1
+validity:
+  build: {days: 14}
+  migration: {days: 30}
+  performance: {days: 30}
+  security: {days: 7}
+  resilience: {days: 90}
+  financial-integrity: {days: 1}
+  compliance: {days: 30}
+  business-continuity: {days: 30}
+requireRevalidationAfterEmergencyChange: true
+emergencyChangeMaximumGraceHours: 24

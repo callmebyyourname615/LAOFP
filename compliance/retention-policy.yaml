@@ -1,0 +1,11 @@
+schemaVersion: 1
+defaultRetentionDays: 2555
+legalHoldSupported: true
+deleteBeforeExpiry: false
+classes:
+- id: financial-control
+  retentionDays: 3650
+- id: security-audit
+  retentionDays: 2555
+- id: operational
+  retentionDays: 1095

@@ -1,0 +1,9 @@
+schemaVersion: 1
+certificateValidityDays: 30
+requireAllPhase57ResultsPass: true
+requirePhase56ResilienceCertificate: true
+requireSignedEvidenceManifest: true
+requireReleaseIdentityConsistency: true
+requireNoOpenCriticalException: true
+maximumOpenHighExceptions: 3
+signatureAlgorithm: cosign

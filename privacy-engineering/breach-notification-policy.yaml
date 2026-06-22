@@ -1,0 +1,6 @@
+schemaVersion: 1
+assessmentSlaHours: 24
+notificationSlaHours: 72
+regulatorNotificationDecisionRequired: true
+affectedSubjectAssessmentRequired: true
+evidencePreservationRequired: true

@@ -35,7 +35,9 @@ gh api --method PUT "repos/${REPOSITORY}/branches/${BRANCH}/protection" --input 
       "Migration Runtime Isolation",
       "Operational Metrics Activation",
       "Phase 54 Static Contract",
-      "Phase 55 / static-contract"
+      "Phase 55 / static-contract",
+      "Phase 56 Static Contract / verify",
+      "Phase 57 Static Contract / verify"
     ]
   },
   "enforce_admins": true,

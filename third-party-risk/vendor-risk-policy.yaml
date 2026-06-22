@@ -1,0 +1,9 @@
+schemaVersion: 1
+criticalVendorAssuranceMaxAgeDays: 365
+criticalVendorExitPlanRequired: true
+subprocessorInventoryRequired: true
+dataLocationRequired: true
+serviceOwnerRequired: true
+bcPAndDrEvidenceRequired: true
+securityAttestationRequired: true
+rightToAuditRequired: true

@@ -1,0 +1,14 @@
+schemaVersion: 1
+standardRelease:
+  minimumRemainingBudgetPercent: 25
+  requiresAllCriticalSlosHealthy: true
+  requiresNoSev1OrSev2Incident: true
+emergencyRelease:
+  allowedWhenBudgetExhausted: true
+  requiredApprovers:
+  - incident-commander
+  - service-owner
+  postReleaseObservationMinutes: 60
+configurationOnlyRelease:
+  minimumRemainingBudgetPercent: 10
+  requiresAutomatedRollback: true

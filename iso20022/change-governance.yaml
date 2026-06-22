@@ -1,0 +1,7 @@
+schemaVersion: 1
+impactAssessmentRequired: true
+participantNoticeDays: 90
+parallelRunRequired: true
+rollbackPackRequired: true
+breakingChangeRequiresSchemeApproval: true
+messagePackDigestRequired: true

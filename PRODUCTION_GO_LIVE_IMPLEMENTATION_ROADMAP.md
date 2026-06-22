@@ -612,3 +612,8 @@ Full Production Go-Live ต้องมีหลักฐาน:
 **Current decision: NO-GO for Full Production**
 
 **Next milestone: Complete all P0 items and deploy to production-like staging**
+
+
+## Phase 58A-58J — Regulatory & Ecosystem Assurance
+
+Repository controls are implemented. Execute Phase 58A through 58J on protected regulatory, operations, security, compliance, financial-control, and simulation runners. Supervisory readiness requires PASS evidence from all Phase 58 domains and a verified immutable evidence manifest.

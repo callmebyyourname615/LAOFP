@@ -1,0 +1,7 @@
+schemaVersion: 1
+monitoringFrequencyHours: 24
+falsePositiveRateTracked: true
+populationStabilityIndexTracked: true
+overrideRateTracked: true
+reasonCodeCoveragePercent: 100
+automaticRollbackOnCriticalDrift: true

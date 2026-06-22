@@ -1,0 +1,21 @@
+schemaVersion: 1
+prohibited:
+- MD5
+- SHA-1
+- RSA-1024
+- DSA-1024
+- 3DES
+- RC4
+approved:
+- SHA-256
+- SHA-384
+- SHA-512
+- AES-256-GCM
+- RSA-3072
+- ECDSA-P256
+- ECDSA-P384
+- Ed25519
+minimumTlsVersion: TLSv1.2
+preferredTlsVersion: TLSv1.3
+certificateMinimumRemainingDays: 30
+requireCryptoBom: true

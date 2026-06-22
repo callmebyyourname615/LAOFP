@@ -1,0 +1,6 @@
+schemaVersion: 1
+approvalMaximumAgeMinutes: 15
+signatureRequired: true
+evidenceHashBindingRequired: true
+minimumDistinctApproversForHighRisk: 2
+minimumDistinctApproversForCriticalRisk: 2

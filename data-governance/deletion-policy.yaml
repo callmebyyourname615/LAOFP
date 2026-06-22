@@ -1,0 +1,14 @@
+schemaVersion: 1
+allowedModes: [DRY_RUN, EXECUTE]
+executeConfirmation: I_UNDERSTAND_THIS_PERMANENTLY_DELETES_ELIGIBLE_DATA
+requiredChecks:
+  - retentionExpired
+  - legalHoldAbsent
+  - referentialIntegrityPass
+  - archiveVerified
+  - approvalsValid
+  - deletionManifestPrepared
+logging:
+  piiProhibited: true
+  payloadValuesProhibited: true
+certificateRequired: true

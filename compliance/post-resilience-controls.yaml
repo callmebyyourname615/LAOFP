@@ -1,0 +1,10 @@
+schemaVersion: 1
+controls:
+  - id: RESILIENCE-001
+    title: Resilience certification currency
+    owner: operations
+    frequency: monthly
+    requiredEvidence:
+      - resilience-certificate
+notes:
+  - This control is evaluated after Phase 56J and is intentionally excluded from Phase 56F to prevent a circular prerequisite.

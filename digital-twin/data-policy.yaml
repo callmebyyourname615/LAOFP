@@ -1,0 +1,7 @@
+schemaVersion: 1
+productionIdentifiersProhibited: true
+syntheticOrTokenizedOnly: true
+datasetManifestRequired: true
+datasetSha256Required: true
+retentionDays: 30
+networkIsolationRequired: true

@@ -1,0 +1,22 @@
+schemaVersion: 1
+windowDays: 30
+releaseGates:
+- remainingBudgetBelowPercent: 25
+  decision: BLOCK_STANDARD_RELEASES
+- remainingBudgetBelowPercent: 10
+  decision: ONLY_SEV1_FIXES
+- remainingBudgetBelowPercent: 0
+  decision: FREEZE_AND_INCIDENT_REVIEW
+burnRateWindows:
+- short: 5m
+  long: 1h
+  threshold: 14.4
+  severity: critical
+- short: 30m
+  long: 6h
+  threshold: 6.0
+  severity: warning
+exceptions:
+  requiredApprovers: 2
+  maximumDurationHours: 24
+  evidenceAndExpiryRequired: true

@@ -1,0 +1,41 @@
+schemaVersion: 1
+modes:
+  canary:
+    stages:
+    - 5
+    - 25
+    - 50
+    - 100
+    minimumObservationSeconds:
+    - 900
+    - 1800
+    - 1800
+    - 3600
+    automaticRollback: true
+  blueGreen:
+    previewValidationRequired: true
+    switchRequiresSignedDecision: true
+    rollbackWindowMinutes: 60
+  hotfix:
+    minimumApprovers: 2
+    requiresIncidentId: true
+    postDeployObservationMinutes: 60
+  configurationOnly:
+    fourEyesApproval: true
+    rollbackArtifactRequired: true
+  databaseMigration:
+    expandContractRequired: true
+    oldNewCoexistenceRequired: true
+gates:
+- error-budget
+- change-window
+- signed-decision
+- slo-analysis
+- reconciliation
+- critical-alerts
+- rollback-readiness
+prohibited:
+- mutable-image-tag
+- manual-unrecorded-patch
+- promote-with-open-critical-alert
+- rollback-incompatible-schema

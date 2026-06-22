@@ -1,0 +1,37 @@
+schemaVersion: 1
+transactionIsolation: REPEATABLE READ
+readOnly: true
+advisoryLockKey: 5602001
+statementTimeoutSeconds: 120
+lockTimeoutSeconds: 5
+rules:
+- id: duplicate-transaction-ref
+  field: duplicateTransactions
+  operator: eq
+  expected: 0
+  severity: critical
+- id: unbalanced-posted-journals
+  field: unbalancedJournals
+  operator: eq
+  expected: 0
+  severity: critical
+- id: transaction-without-outbox
+  field: orphanOutboxMessages
+  operator: eq
+  expected: 0
+  severity: critical
+- id: overdue-webhook-delivery
+  field: overdueWebhookDeliveries
+  operator: eq
+  expected: 0
+  severity: high
+- id: outbox-backlog
+  field: outboxBacklog
+  operator: lte
+  expectedFromThreshold: reconciliation.maximumOutboxBacklog
+  severity: high
+- id: open-reconciliation-exceptions
+  field: openReconciliationExceptions
+  operator: eq
+  expected: 0
+  severity: high

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: phase56-security-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: switching-phase56-security
+      rules:
+        - alert: SwitchingApplicationUserDDL
+          expr: increase(switching_security_db_ddl_by_application_total[5m]) > 0
+          for: 0m
+          labels: {severity: critical, phase: 56E}
+          annotations: {summary: Application database user executed DDL, runbook_url: docs/runbooks/security/data-exfiltration.md}
+        - alert: SwitchingProductionPodExec
+          expr: increase(switching_security_production_pod_exec_total[5m]) > 0
+          for: 0m
+          labels: {severity: high, phase: 56E}
+          annotations: {summary: Exec into production pod detected, runbook_url: docs/runbooks/security/production-pod-compromise.md}

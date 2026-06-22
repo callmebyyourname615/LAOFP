@@ -1,0 +1,14 @@
+schemaVersion: 1
+minimumRemainingDays: 30
+requiredChecks:
+- connectivity
+- iso20022
+- cryptography
+- disasterRecovery
+- sanctions
+- reconciliation
+- serviceLevel
+suspensionBlocksTraffic: true
+expiredCertificateBlocksTraffic: true
+dualControlForStatusChange: true
+riskOwnerRequired: true

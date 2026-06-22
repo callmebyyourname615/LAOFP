@@ -1,0 +1,10 @@
+schemaVersion: 1
+seasons:
+  - weekday
+  - weekend
+  - month-end
+  - settlement-window
+  - salary-payment-period
+  - public-holiday
+fallbackSeason: prohibited
+timezone: Asia/Vientiane

@@ -1,0 +1,25 @@
+name: Phase 58 Supervisory Readiness
+on:
+  workflow_dispatch:
+    inputs:
+      release_reference: {required: true}
+      git_commit: {required: true}
+      image_digest: {required: true}
+permissions: {contents: read, id-token: write}
+concurrency: {group: 'phase58-supervisory-${{ inputs.release_reference }}', cancel-in-progress: false}
+jobs:
+  certify:
+    runs-on: [self-hosted, regulatory-protected]
+    environment: supervisory-approval
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ inputs.git_commit }}'}
+      - run: scripts/assurance/run_phase58_assurance.sh 58J
+        env:
+          ASSURANCE_ENVIRONMENT: regulatory
+          RELEASE_REFERENCE: '${{ inputs.release_reference }}'
+          RELEASE_GIT_COMMIT: '${{ inputs.git_commit }}'
+          RELEASE_IMAGE_DIGEST: '${{ inputs.image_digest }}'
+          SUPERVISORY_READINESS_INPUT: build/phase58-inputs/supervisory-readiness.json
+          ASSURANCE_COSIGN_KEY_REF: ${{ secrets.ASSURANCE_COSIGN_KEY_REF }}
+          ASSURANCE_COSIGN_PUBLIC_KEY_REF: ${{ secrets.ASSURANCE_COSIGN_PUBLIC_KEY_REF }}

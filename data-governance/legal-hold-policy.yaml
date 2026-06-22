@@ -1,0 +1,7 @@
+schemaVersion: 1
+holdIdRequired: true
+ownerRequired: true
+startAndReviewDateRequired: true
+releaseApprovalRequired: true
+retentionOverride: indefinite
+purgeWhileHeld: prohibited

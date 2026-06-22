@@ -1,0 +1,75 @@
+schemaVersion: 1
+timezone: Asia/Vientiane
+services:
+- id: transaction-api
+  owner: switching-platform
+  windowDays: 30
+  objectives:
+  - id: availability
+    type: ratio
+    targetPercent: 99.95
+    goodMetric: switching:http_requests:good
+    totalMetric: switching:http_requests:total
+  - id: success-rate
+    type: ratio
+    targetPercent: 99.9
+    goodMetric: switching:transactions:successful
+    totalMetric: switching:transactions:total
+  - id: p95-latency
+    type: threshold
+    targetPercent: 99.0
+    thresholdMs: 500
+    metric: switching:http_latency:p95_ms
+  - id: p99-latency
+    type: threshold
+    targetPercent: 99.0
+    thresholdMs: 1000
+    metric: switching:http_latency:p99_ms
+- id: data-integrity
+  owner: switching-operations
+  windowDays: 30
+  objectives:
+  - id: balance-integrity
+    type: zero-tolerance
+    targetPercent: 100.0
+    metric: switching:reconciliation:balance_mismatch_total
+  - id: duplicate-prevention
+    type: zero-tolerance
+    targetPercent: 100.0
+    metric: switching:transactions:duplicate_total
+- id: settlement
+  owner: settlement-operations
+  windowDays: 30
+  objectives:
+  - id: completion
+    type: ratio
+    targetPercent: 100.0
+    goodMetric: switching:settlement:on_time
+    totalMetric: switching:settlement:cycles
+  - id: deadline
+    type: deadline
+    targetPercent: 100.0
+    deadlineLocalTime: 06:00
+- id: event-delivery
+  owner: switching-platform
+  windowDays: 30
+  objectives:
+  - id: outbox-delay
+    type: threshold
+    targetPercent: 99.9
+    thresholdSeconds: 60
+    metric: switching:outbox:oldest_pending_seconds
+  - id: webhook-success
+    type: ratio
+    targetPercent: 99.5
+    goodMetric: switching:webhooks:delivered
+    totalMetric: switching:webhooks:attempted
+- id: compliance-freshness
+  owner: financial-crime-operations
+  windowDays: 30
+  objectives:
+  - id: sanctions-freshness
+    type: threshold
+    targetPercent: 100.0
+    thresholdSeconds: 86400
+    metric: switching:sanctions:freshness_seconds

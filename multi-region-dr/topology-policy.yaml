@@ -1,0 +1,30 @@
+schemaVersion: 1
+primaryRegionRequired: true
+drRegionRequired: true
+minimumRegionCount: 2
+fencing:
+  required: true
+  splitBrainPreventionRequired: true
+  singleWriterEnforced: true
+components:
+  postgresql:
+    crossRegionReplicationRequired: true
+    synchronousWithinPrimaryRegion: true
+  kafka:
+    replicationRequired: true
+    topicAllowlistRequired: true
+  vault:
+    drReplicationRequired: true
+  objectStorage:
+    versioningRequired: true
+    objectLockRequired: true
+    crossRegionReplicationRequired: true
+  dns:
+    healthCheckedFailoverRequired: true
+  application:
+    warmCapacityMinimumPercent: 25
+    configurationParityRequired: true
+failback:
+  reconciliationRequired: true
+  explicitApprovalRequired: true
+  dataDivergenceTolerance: 0

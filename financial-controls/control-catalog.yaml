@@ -1,0 +1,37 @@
+schemaVersion: 1
+controls:
+  - id: double-entry-balanced
+    metric: unbalancedJournals
+    operator: eq
+    threshold: 0
+    severity: CRITICAL
+  - id: balance-conservation
+    metric: balanceMismatchMinorUnits
+    operator: eq
+    threshold: 0
+    severity: CRITICAL
+  - id: orphan-postings
+    metric: orphanPostings
+    operator: eq
+    threshold: 0
+    severity: CRITICAL
+  - id: duplicate-reversals
+    metric: duplicateReversals
+    operator: eq
+    threshold: 0
+    severity: CRITICAL
+  - id: completed-without-posting
+    metric: completedTransactionsWithoutPosting
+    operator: eq
+    threshold: 0
+    severity: CRITICAL
+  - id: posting-without-transaction
+    metric: postingsWithoutTransaction
+    operator: eq
+    threshold: 0
+    severity: CRITICAL
+  - id: suspense-age
+    metric: oldestSuspenseAgeHours
+    operator: lte
+    thresholdFrom: financial.maximumSuspenseAgeHours
+    severity: HIGH

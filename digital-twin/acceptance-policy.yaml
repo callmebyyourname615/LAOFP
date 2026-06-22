@@ -1,0 +1,6 @@
+schemaVersion: 1
+allCriticalScenariosMustPass: true
+baselineComparisonRequired: true
+capacityRegressionTolerancePercent: 5
+financialInvariantToleranceMinorUnits: 0
+certificateValidityDays: 30

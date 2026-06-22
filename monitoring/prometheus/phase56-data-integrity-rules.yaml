@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: phase56-data-integrity-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: switching-phase56-data-integrity
+      rules:
+        - alert: SwitchingContinuousReconciliationFailed
+          expr: switching_reconciliation_last_success_timestamp_seconds < time() - 1800
+          for: 5m
+          labels: {severity: critical, phase: 56B}
+          annotations: {summary: Continuous reconciliation stale or failed, runbook_url: docs/runbooks/CROSS_SYSTEM_RECONCILIATION.md}
+        - alert: SwitchingBalanceMismatchDetected
+          expr: switching_reconciliation_balance_mismatch_total > 0
+          for: 0m
+          labels: {severity: critical, phase: 56B}
+          annotations: {summary: Balance mismatch detected, runbook_url: docs/runbooks/DOUBLE_ENTRY_LEDGER.md}

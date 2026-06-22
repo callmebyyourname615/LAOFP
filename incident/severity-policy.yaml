@@ -1,0 +1,31 @@
+schemaVersion: 1
+severities:
+- id: SEV1
+  examples:
+  - transaction-processing-stopped
+  - balance-mismatch
+  - data-loss
+  acknowledgeSeconds: 300
+  updateMinutes: 15
+  executiveNotification: true
+- id: SEV2
+  examples:
+  - settlement-delayed
+  - major-dependency-failure
+  acknowledgeSeconds: 900
+  updateMinutes: 30
+  executiveNotification: true
+- id: SEV3
+  examples:
+  - degraded-latency
+  - partial-feature-failure
+  acknowledgeSeconds: 1800
+  updateMinutes: 60
+  executiveNotification: false
+- id: SEV4
+  examples:
+  - warning
+  - no-customer-impact
+  acknowledgeSeconds: 14400
+  updateMinutes: 240
+  executiveNotification: false

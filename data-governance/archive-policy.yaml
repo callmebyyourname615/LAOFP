@@ -1,0 +1,7 @@
+schemaVersion: 1
+objectLockMode: COMPLIANCE
+versioningRequired: true
+checksumAlgorithm: SHA-256
+serverSideEncryption: aws:kms
+crossRegionReplicationRequired: true
+restoreVerificationRequired: true

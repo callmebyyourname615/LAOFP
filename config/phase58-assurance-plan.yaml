@@ -1,0 +1,142 @@
+schemaVersion: 1
+allowedExecutionEnvironments:
+- production
+- regulatory
+- operations
+- security
+- compliance
+- financial-control
+- simulation
+phases:
+- id: 58A
+  name: Regulatory Reporting & Submission Assurance
+  runner: scripts/assurance/58a-regulatory-reporting.sh
+  environments:
+  - regulatory
+  - compliance
+  prerequisites: []
+  evidence:
+  - phases/58A/regulatory-report.json
+  - phases/58A/submission-decision.json
+  - phases/58A/result.json
+- id: 58B
+  name: Participant & Scheme Governance
+  runner: scripts/assurance/58b-participant-governance.sh
+  environments:
+  - operations
+  - compliance
+  prerequisites:
+  - 58A
+  evidence:
+  - phases/58B/participant-governance.json
+  - phases/58B/certification-decision.json
+  - phases/58B/result.json
+- id: 58C
+  name: Cryptographic Agility & Post-Quantum Readiness
+  runner: scripts/assurance/58c-crypto-agility.sh
+  environments:
+  - security
+  - compliance
+  prerequisites:
+  - 58A
+  evidence:
+  - phases/58C/crypto-agility.json
+  - phases/58C/migration-plan.json
+  - phases/58C/result.json
+- id: 58D
+  name: Privacy Engineering & Data Subject Rights
+  runner: scripts/assurance/58d-privacy-engineering.sh
+  environments:
+  - compliance
+  - security
+  prerequisites:
+  - 58A
+  evidence:
+  - phases/58D/privacy-assurance.json
+  - phases/58D/rights-case-decision.json
+  - phases/58D/result.json
+- id: 58E
+  name: Decision Model & Rule Governance
+  runner: scripts/assurance/58e-decision-governance.sh
+  environments:
+  - security
+  - compliance
+  prerequisites:
+  - 58D
+  evidence:
+  - phases/58E/decision-governance.json
+  - phases/58E/rollout-decision.json
+  - phases/58E/result.json
+- id: 58F
+  name: ISO 20022 & Market Practice Lifecycle
+  runner: scripts/assurance/58f-iso20022-lifecycle.sh
+  environments:
+  - operations
+  - regulatory
+  prerequisites:
+  - 58B
+  evidence:
+  - phases/58F/iso20022-lifecycle.json
+  - phases/58F/compatibility-decision.json
+  - phases/58F/result.json
+- id: 58G
+  name: Liquidity, Collateral & Settlement Risk
+  runner: scripts/assurance/58g-settlement-risk.sh
+  environments:
+  - financial-control
+  - operations
+  prerequisites:
+  - 58F
+  evidence:
+  - phases/58G/settlement-risk.json
+  - phases/58G/liquidity-decision.json
+  - phases/58G/result.json
+- id: 58H
+  name: Operational Digital Twin & Scenario Simulation
+  runner: scripts/assurance/58h-digital-twin.sh
+  environments:
+  - simulation
+  - operations
+  prerequisites:
+  - 58G
+  evidence:
+  - phases/58H/digital-twin.json
+  - phases/58H/scenario-certificate.json
+  - phases/58H/result.json
+- id: 58I
+  name: Third-Party & Concentration Risk
+  runner: scripts/assurance/58i-third-party-risk.sh
+  environments:
+  - compliance
+  - security
+  prerequisites:
+  - 58C
+  - 58D
+  evidence:
+  - phases/58I/third-party-risk.json
+  - phases/58I/concentration-decision.json
+  - phases/58I/result.json
+- id: 58J
+  name: Supervisory Readiness & Continuous Control Validation
+  runner: scripts/assurance/58j-supervisory-readiness.sh
+  environments:
+  - regulatory
+  - compliance
+  prerequisites:
+  - 58A
+  - 58B
+  - 58C
+  - 58D
+  - 58E
+  - 58F
+  - 58G
+  - 58H
+  - 58I
+  evidence:
+  - phases/58J/control-results.json
+  - phases/58J/readiness-score.json
+  - phases/58J/supervisory-certificate.json
+  - phases/58J/evidence-manifest.json
+  - phases/58J/result.json
+  - phases/58J/evidence-manifest.sig
+  - phases/58J/evidence-manifest-verification.txt

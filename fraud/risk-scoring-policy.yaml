@@ -1,0 +1,11 @@
+schemaVersion: 1
+scoreRange: {minimum: 0, maximum: 100}
+actions:
+  - {minimumScore: 90, action: AUTO_HOLD_AND_CASE, humanReviewRequired: true}
+  - {minimumScore: 70, action: CASE_AND_ENHANCED_MONITORING, humanReviewRequired: true}
+  - {minimumScore: 40, action: ENHANCED_MONITORING, humanReviewRequired: false}
+  - {minimumScore: 0, action: ALLOW, humanReviewRequired: false}
+explainability:
+  reasonCodesRequired: true
+  contributingSignalsRequired: true
+  modelVersionRequired: true

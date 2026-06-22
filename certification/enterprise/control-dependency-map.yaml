@@ -1,0 +1,14 @@
+schemaVersion: 1
+controls:
+  build: [54A]
+  migration: [54B, 55C]
+  deployment: [54C, 55G, 55H]
+  performance: [54D, 54E]
+  backup-dr: [54F, 54G, 56J, 57B]
+  supply-chain: [54H, 57H]
+  observability: [54I, 56A, 57F]
+  reconciliation: [55D, 56B, 57C]
+  security: [55E, 56E, 57H]
+  compliance: [56F, 57D]
+  capacity: [56D, 56I]
+  continuity: [57I]

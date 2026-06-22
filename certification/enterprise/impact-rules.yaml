@@ -1,0 +1,30 @@
+schemaVersion: 1
+rules:
+  - id: source-code
+    pathPatterns: ['src/main/**', 'src/test/**', 'pom.xml']
+    controls: [build, test, security, performance, financial-integrity, observability]
+    certifications: [54A, 54D, 54H, 56A, 56B, 57C]
+  - id: database-migration
+    pathPatterns: ['src/main/resources/db/migration/**']
+    controls: [migration, rollback, reconciliation, financial-integrity]
+    certifications: [54B, 55C, 55D, 57C]
+  - id: runtime-config
+    pathPatterns: ['src/main/resources/application*.yml', 'config/**', '.env.prod.example']
+    controls: [configuration, security, availability, business-continuity]
+    certifications: [53H, 54C, 55B, 56A, 57I]
+  - id: kubernetes
+    pathPatterns: ['k8s/**']
+    controls: [deployment, security, availability, capacity]
+    certifications: [54C, 54I, 55E, 56C, 56D]
+  - id: dependency
+    pathPatterns: ['pom.xml', 'Dockerfile', '.github/actions/**']
+    controls: [supply-chain, vulnerability, compatibility]
+    certifications: [54A, 54H, 57H]
+  - id: financial-control
+    pathPatterns: ['financial-controls/**', 'reconciliation/**', 'settlement/**']
+    controls: [financial-integrity, settlement, accounting]
+    certifications: [54E, 55D, 56B, 57C]
+  - id: policy
+    pathPatterns: ['slo/**', 'security/**', 'compliance/**', 'data-governance/**', 'continuity/**']
+    controls: [governance, compliance, security, continuity]
+    certifications: [56A, 56E, 56F, 57D, 57I]

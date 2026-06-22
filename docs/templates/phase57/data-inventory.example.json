@@ -1,0 +1,120 @@
+{
+  "capturedAt": "2026-01-01T00:00:00Z",
+  "datasets": [
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "restricted",
+      "dataset": "transactionRecords",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 3650
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "restricted",
+      "dataset": "ledgerEntries",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 3650
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "restricted",
+      "dataset": "settlementData",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 3650
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "restricted",
+      "dataset": "isoMessages",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 2555
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "restricted",
+      "dataset": "amlStrRecords",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 3650
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "confidential",
+      "dataset": "auditLogs",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 2555
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "confidential",
+      "dataset": "authenticationLogs",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 365
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "internal",
+      "dataset": "applicationLogs",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 90
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "internal",
+      "dataset": "metrics",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 395
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "internal",
+      "dataset": "traces",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 30
+    },
+    {
+      "archiveChecksumVerified": true,
+      "archiveObjectCount": 0,
+      "classification": "restricted",
+      "dataset": "backups",
+      "encryptedAtRest": true,
+      "legalHoldCount": 0,
+      "purgeEligibleCount": 0,
+      "retentionDays": 35
+    }
+  ],
+  "release": {
+    "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reference": "release-reference"
+  }
+}

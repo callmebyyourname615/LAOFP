@@ -1,0 +1,52 @@
+name: Phase 57 Enterprise Operations
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        required: true
+        options: [57A, 57C, 57F, 57G, 57I]
+      release_reference:
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase57-${{ inputs.phase }}-${{ inputs.release_reference }}
+  cancel-in-progress: false
+jobs:
+  execute:
+    runs-on: [self-hosted, protected, production-operations]
+    environment: production-operations
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull immutable release evidence
+        env: &store
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          PHASE57_EVIDENCE_BUCKET: ${{ vars.PHASE57_EVIDENCE_BUCKET }}
+          PHASE57_EVIDENCE_PREFIX: ${{ vars.PHASE57_EVIDENCE_PREFIX }}
+          PHASE57_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE57_EVIDENCE_KMS_KEY_ID }}
+          PHASE57_S3_ENDPOINT_URL: ${{ vars.PHASE57_S3_ENDPOINT_URL }}
+        run: scripts/enterprise/evidence_store.sh pull
+      - name: Execute selected enterprise operation
+        env:
+          ENTERPRISE_ENVIRONMENT: ${{ inputs.phase == '57C' && 'financial-control' || 'operations' }}
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          ENTERPRISE_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+          PHASE57_CHANGESET_JSON: ${{ vars.PHASE57_CHANGESET_PATH }}
+          PHASE57_CERTIFICATION_RESULTS_JSON: ${{ vars.PHASE57_CERTIFICATION_RESULTS_PATH }}
+          PHASE57_PRIOR_CERTIFICATE_JSON: ${{ vars.PHASE57_PRIOR_CERTIFICATE_PATH }}
+          FINANCIAL_CONTROL_SNAPSHOT: ${{ vars.PHASE57_FINANCIAL_SNAPSHOT_PATH }}
+          OBSERVABILITY_INTELLIGENCE_SNAPSHOT: ${{ vars.PHASE57_OBSERVABILITY_SNAPSHOT_PATH }}
+          OPERATION_REQUEST_JSON: ${{ vars.PHASE57_OPERATION_REQUEST_PATH }}
+          DEPENDENCY_RESILIENCE_SNAPSHOT: ${{ vars.PHASE57_DEPENDENCY_SNAPSHOT_PATH }}
+        run: scripts/enterprise/run_phase57_enterprise.sh "${{ inputs.phase }}"
+      - name: Push append-only evidence
+        if: always()
+        env: *store
+        run: scripts/enterprise/evidence_store.sh push

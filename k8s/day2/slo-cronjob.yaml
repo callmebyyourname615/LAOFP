@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: switching-slo-control
+  namespace: switching
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/component: day2-control
+            switching.io/phase: 56A
+        spec:
+          restartPolicy: Never
+          serviceAccountName: switching-day2-controls
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: control
+              image: ghcr.io/REPLACE_WITH_GITHUB_REPOSITORY/switching-ops@sha256:REPLACE_WITH_OPS_IMAGE_DIGEST
+              args: ["scripts/day2/run_phase56_day2.sh", "56A"]
+              envFrom:
+                - secretRef: {name: switching-day2-runtime}
+              env:
+                - {name: DAY2_ENVIRONMENT, value: "operations"}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: ["ALL"]}
+              resources:
+                requests: {cpu: 100m, memory: 128Mi}
+                limits: {cpu: 500m, memory: 512Mi}

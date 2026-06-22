@@ -1,0 +1,15 @@
+schemaVersion: 1
+domains:
+  software-quality: {weight: 8, requiredPhases: [54A, 57A]}
+  migration-safety: {weight: 8, requiredPhases: [54B, 55C]}
+  security: {weight: 10, requiredPhases: [54H, 55E, 56E, 57H]}
+  financial-integrity: {weight: 12, requiredPhases: [55D, 56B, 57C]}
+  availability: {weight: 8, requiredPhases: [56C, 57B]}
+  disaster-recovery: {weight: 10, requiredPhases: [54G, 56J, 57B]}
+  data-governance: {weight: 8, requiredPhases: [56F, 57D]}
+  observability: {weight: 7, requiredPhases: [54I, 56A, 57F]}
+  incident-response: {weight: 6, requiredPhases: [56H]}
+  capacity-finops: {weight: 6, requiredPhases: [56D, 56I]}
+  fraud-aml: {weight: 7, requiredPhases: [57E]}
+  business-continuity: {weight: 7, requiredPhases: [57I]}
+  operational-ownership: {weight: 3, requiredPhases: [55F, 55J, 57G]}

@@ -1,0 +1,9 @@
+schemaVersion: 1
+minimumOverallScore: 90
+minimumDomainScore: 80
+criticalControlFailureBlocksCertificate: true
+financialMismatchBlocksCertificate: true
+expiredDrCertificateBlocksCertificate: true
+openCriticalVulnerabilityBlocksCertificate: true
+staleSloDataBlocksCertificate: true
+expiredRiskAcceptanceBlocksCertificate: true

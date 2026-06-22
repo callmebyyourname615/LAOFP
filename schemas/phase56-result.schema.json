@@ -1,0 +1,103 @@
+{
+  "$id": "https://switching.internal/schemas/phase56-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "exitCode": {
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "log": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "exitCode",
+          "log"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "endedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "name": {
+      "minLength": 3,
+      "type": "string"
+    },
+    "phase": {
+      "pattern": "^56[A-J]$"
+    },
+    "release": {
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "enum": [
+            "production",
+            "operations",
+            "security",
+            "compliance",
+            "dr"
+          ]
+        },
+        "gitCommit": {
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "imageDigest": {
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "reference": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference",
+        "gitCommit",
+        "imageDigest",
+        "environment"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "startedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "phase",
+    "name",
+    "status",
+    "startedAt",
+    "endedAt",
+    "release",
+    "checks"
+  ],
+  "type": "object"
+}

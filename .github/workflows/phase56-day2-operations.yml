@@ -1,0 +1,53 @@
+name: Phase 56 Day-2 Operations
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        required: true
+        options: [56A, 56B, 56D, 56G, 56H, 56I]
+      release_reference:
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase56-${{ inputs.phase }}-${{ inputs.release_reference }}
+  cancel-in-progress: false
+jobs:
+  execute:
+    runs-on: [self-hosted, protected, production-operations]
+    environment: production-operations
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ vars.PRODUCTION_GIT_COMMIT }}
+      - name: Pull immutable release evidence
+        env: &evidence_store
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          PHASE56_EVIDENCE_BUCKET: ${{ vars.PHASE56_EVIDENCE_BUCKET }}
+          PHASE56_EVIDENCE_PREFIX: ${{ vars.PHASE56_EVIDENCE_PREFIX }}
+          PHASE56_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE56_EVIDENCE_KMS_KEY_ID }}
+          PHASE56_S3_ENDPOINT_URL: ${{ vars.PHASE56_S3_ENDPOINT_URL }}
+        run: scripts/day2/evidence_store.sh pull
+      - name: Execute selected operational phase
+        env:
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          DAY2_ENVIRONMENT: operations
+          PROMETHEUS_URL: ${{ vars.PRODUCTION_PROMETHEUS_URL }}
+          DAY2_DATABASE_URL: ${{ secrets.DAY2_DATABASE_URL }}
+          PRODUCTION_EXECUTION_CONFIRMATION: I_UNDERSTAND_THIS_OPERATES_ON_PRODUCTION
+          DAY2_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+          CAPACITY_SNAPSHOT: ${{ vars.CAPACITY_SNAPSHOT_PATH }}
+          ROLLOUT_METRICS_SNAPSHOT: ${{ vars.ROLLOUT_METRICS_SNAPSHOT_PATH }}
+          INCIDENT_RECORD: ${{ vars.INCIDENT_RECORD_PATH }}
+          FINOPS_SNAPSHOT: ${{ vars.FINOPS_SNAPSHOT_PATH }}
+        run: scripts/day2/run_phase56_day2.sh "${{ inputs.phase }}"
+      - name: Push append-only evidence
+        if: always()
+        env: *evidence_store
+        run: scripts/day2/evidence_store.sh push

@@ -1,0 +1,18 @@
+schemaVersion: 1
+criticalControls:
+- regulatory.submissions.complete
+- participant.certification.current
+- crypto.prohibited.none
+- privacy.overdue.none
+- decision.unapproved.none
+- iso.compatibility.pass
+- settlement.mismatch.zero
+- digitalTwin.coverage.complete
+- thirdParty.critical.assured
+highControls:
+- regulatory.ack.sla
+- crypto.pqc.plan
+- privacy.transfer.safeguards
+- decision.rollback.tested
+- liquidity.headroom.nonnegative
+- vendor.exit.tested

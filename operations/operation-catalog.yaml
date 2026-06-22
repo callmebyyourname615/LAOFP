@@ -1,0 +1,40 @@
+schemaVersion: 1
+operations:
+  restart-deployment:
+    risk: medium
+    commandTemplate: kubectl rollout restart deployment/{target}
+    allowedTargetPattern: '^[a-z0-9]([-a-z0-9]*[a-z0-9])?$'
+    approvalCount: 1
+    dryRunRequired: true
+    maximumScope: one-deployment
+  scale-application:
+    risk: high
+    commandTemplate: kubectl scale deployment/{target} --replicas={replicas}
+    allowedTargetPattern: '^[a-z0-9]([-a-z0-9]*[a-z0-9])?$'
+    approvalCount: 2
+    dryRunRequired: true
+    maximumScope: one-deployment
+  trigger-reconciliation:
+    risk: low
+    commandTemplate: internal:trigger-reconciliation
+    approvalCount: 0
+    dryRunRequired: false
+    maximumScope: one-business-date
+  retry-dead-letter:
+    risk: high
+    commandTemplate: internal:retry-dead-letter
+    approvalCount: 2
+    dryRunRequired: true
+    maximumScope: 100-records
+  generate-diagnostics:
+    risk: low
+    commandTemplate: internal:generate-redacted-diagnostics
+    approvalCount: 0
+    dryRunRequired: false
+    maximumScope: one-namespace
+  execute-rollback:
+    risk: critical
+    commandTemplate: internal:execute-approved-rollback
+    approvalCount: 2
+    dryRunRequired: true
+    maximumScope: one-release

@@ -1,0 +1,48 @@
+name: Phase 57 Multi-Region DR
+on:
+  workflow_dispatch:
+    inputs:
+      release_reference: {required: true, type: string}
+      execution_confirmation:
+        description: Type I_UNDERSTAND_THIS_CERTIFIES_CROSS_REGION_FAILOVER_AND_FAILBACK
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase57-multi-region-dr-${{ inputs.release_reference }}
+  cancel-in-progress: false
+jobs:
+  certify:
+    if: inputs.execution_confirmation == 'I_UNDERSTAND_THIS_CERTIFIES_CROSS_REGION_FAILOVER_AND_FAILBACK'
+    runs-on: [self-hosted, protected, dr]
+    environment: disaster-recovery
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull immutable release evidence
+        env: &store
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          PHASE57_EVIDENCE_BUCKET: ${{ vars.PHASE57_EVIDENCE_BUCKET }}
+          PHASE57_EVIDENCE_PREFIX: ${{ vars.PHASE57_EVIDENCE_PREFIX }}
+          PHASE57_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE57_EVIDENCE_KMS_KEY_ID }}
+          PHASE57_S3_ENDPOINT_URL: ${{ vars.PHASE57_S3_ENDPOINT_URL }}
+        run: scripts/enterprise/evidence_store.sh pull
+      - name: Certify multi-region failover and failback
+        env:
+          ENTERPRISE_ENVIRONMENT: dr
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          ENTERPRISE_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+          MULTI_REGION_DR_EXECUTION_CONFIRMATION: ${{ inputs.execution_confirmation }}
+          MULTI_REGION_TOPOLOGY_SNAPSHOT: ${{ vars.PHASE57_MULTI_REGION_TOPOLOGY_PATH }}
+          MULTI_REGION_FAILOVER_REPORT: ${{ vars.PHASE57_MULTI_REGION_FAILOVER_PATH }}
+          MULTI_REGION_FAILBACK_REPORT: ${{ vars.PHASE57_MULTI_REGION_FAILBACK_PATH }}
+        run: scripts/enterprise/run_phase57_enterprise.sh 57B
+      - name: Push append-only evidence
+        if: always()
+        env: *store
+        run: scripts/enterprise/evidence_store.sh push

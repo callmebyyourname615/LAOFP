@@ -1,0 +1,6 @@
+schemaVersion: 1
+maximumCriticalVendorConcentrationPercent: 40
+singleCloudCriticalWorkloadPercent: 40
+singleTelecomCriticalPathPercent: 50
+fourthPartyVisibilityRequired: true
+exitTestRequiredForCriticalVendors: true

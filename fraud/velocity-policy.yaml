@@ -1,0 +1,7 @@
+schemaVersion: 1
+windows:
+  - {name: fiveMinute, seconds: 300}
+  - {name: oneHour, seconds: 3600}
+  - {name: oneDay, seconds: 86400}
+minimumHistoricalDays: 30
+seasonalityRequired: true

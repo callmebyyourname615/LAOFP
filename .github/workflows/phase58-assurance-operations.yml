@@ -1,0 +1,35 @@
+name: Phase 58 Assurance Operations
+on:
+  workflow_dispatch:
+    inputs:
+      phase: {type: choice, options: [58A,58B,58C,58D,58E,58F,58G,58H,58I], required: true}
+      release_reference: {required: true}
+      git_commit: {required: true}
+      image_digest: {required: true}
+permissions: {contents: read, id-token: write}
+concurrency: {group: 'phase58-${{ inputs.release_reference }}-${{ inputs.phase }}', cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: [self-hosted, phase58-protected]
+    environment: phase58-assurance
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ inputs.git_commit }}'}
+      - name: Resolve protected execution domain
+        shell: bash
+        run: |
+          case '${{ inputs.phase }}' in
+            58A) domain=regulatory ;;
+            58B|58F) domain=operations ;;
+            58C|58E) domain=security ;;
+            58D|58I) domain=compliance ;;
+            58G) domain=financial-control ;;
+            58H) domain=simulation ;;
+            *) exit 2 ;;
+          esac
+          echo "ASSURANCE_ENVIRONMENT=$domain" >> "$GITHUB_ENV"
+      - run: scripts/assurance/run_phase58_assurance.sh '${{ inputs.phase }}'
+        env:
+          RELEASE_REFERENCE: '${{ inputs.release_reference }}'
+          RELEASE_GIT_COMMIT: '${{ inputs.git_commit }}'
+          RELEASE_IMAGE_DIGEST: '${{ inputs.image_digest }}'

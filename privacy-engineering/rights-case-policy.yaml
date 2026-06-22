@@ -1,0 +1,12 @@
+schemaVersion: 1
+caseSlaHours: 72
+identityVerificationRequired: true
+dualControlForDisclosure: true
+legalHoldOverridesErasure: true
+evidenceHashRequired: true
+supportedRights:
+- ACCESS
+- CORRECTION
+- RESTRICTION
+- ERASURE
+- PORTABILITY

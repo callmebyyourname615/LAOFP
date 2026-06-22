@@ -1,0 +1,17 @@
+schemaVersion: 1
+requiredScenarios:
+- normal-day
+- salary-peak
+- month-end
+- participant-outage
+- rtgs-timeout
+- kafka-lag
+- db-failover
+- liquidity-gridlock
+- fraud-burst
+- certificate-expiry
+minimumCoveragePercent: 100
+deterministicReplayRequired: true
+productionSideEffectsProhibited: true
+sanitizedDatasetRequired: true
+maximumForecastErrorPercent: 10

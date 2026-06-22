@@ -1,0 +1,17 @@
+schemaVersion: 1
+roles:
+  incidentCommander:
+    required: true
+  technicalLead:
+    required: true
+  communicationsLead:
+    requiredFor:
+    - SEV1
+    - SEV2
+  scribe:
+    requiredFor:
+    - SEV1
+    - SEV2
+  businessOwner:
+    requiredFor:
+    - SEV1

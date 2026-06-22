@@ -1,0 +1,25 @@
+{
+  "approvalRecords": [
+    {
+      "approvedAt": "2026-01-01T00:00:00Z",
+      "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "signatureVerified": true
+    }
+  ],
+  "approvers": [
+    "role:senior-operator"
+  ],
+  "dryRunStatus": "PASS",
+  "namespace": "switching-prod",
+  "operation": "restart-deployment",
+  "parameters": {
+    "target": "switching-app"
+  },
+  "release": {
+    "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reference": "release-reference"
+  },
+  "requester": "role:operator",
+  "requesterRole": "operator"
+}

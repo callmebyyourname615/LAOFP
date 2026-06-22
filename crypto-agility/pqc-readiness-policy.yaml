@@ -1,0 +1,10 @@
+schemaVersion: 1
+inventoryCoveragePercent: 100
+hybridPilotRequired: true
+migrationPlanRequired: true
+migrationOwnerRequired: true
+targetAlgorithms:
+- ML-KEM-768
+- ML-DSA-65
+prohibitUnreviewedPqcInProduction: true
+dataHarvestNowDecryptLaterAssessmentRequired: true

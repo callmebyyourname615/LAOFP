@@ -1,0 +1,6 @@
+schemaVersion: 1
+currencyMinorUnitTolerance: 0
+journalImbalanceTolerance: 0
+settlementMismatchTolerance: 0
+orphanRecordTolerance: 0
+duplicateReferenceTolerance: 0

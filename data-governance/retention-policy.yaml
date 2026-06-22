@@ -1,0 +1,16 @@
+schemaVersion: 1
+datasets:
+  transactionRecords: {classification: restricted, retentionDays: 3650, legalHoldEligible: true}
+  ledgerEntries: {classification: restricted, retentionDays: 3650, legalHoldEligible: true}
+  settlementData: {classification: restricted, retentionDays: 3650, legalHoldEligible: true}
+  isoMessages: {classification: restricted, retentionDays: 2555, legalHoldEligible: true}
+  amlStrRecords: {classification: restricted, retentionDays: 3650, legalHoldEligible: true}
+  auditLogs: {classification: confidential, retentionDays: 2555, legalHoldEligible: true}
+  authenticationLogs: {classification: confidential, retentionDays: 365, legalHoldEligible: true}
+  applicationLogs: {classification: internal, retentionDays: 90, legalHoldEligible: false}
+  metrics: {classification: internal, retentionDays: 395, legalHoldEligible: false}
+  traces: {classification: internal, retentionDays: 30, legalHoldEligible: false}
+  backups: {classification: restricted, retentionDays: 35, legalHoldEligible: true}
+minimumApproversForDeletion: 2
+deleteDryRunRequired: true
+cryptographicDeletionEvidenceRequired: true

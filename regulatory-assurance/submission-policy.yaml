@@ -1,0 +1,9 @@
+schemaVersion: 1
+dualControlRequired: true
+minimumApprovers: 2
+transportAcknowledgementRequired: true
+schemaValidationRequired: true
+sourceReconciliationRequired: true
+rejectionRequiresResubmissionPlan: true
+submissionEvidenceHashRequired: true
+prohibitManualPayloadMutationAfterApproval: true

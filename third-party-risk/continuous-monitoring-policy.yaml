@@ -1,0 +1,6 @@
+schemaVersion: 1
+criticalReviewFrequencyDays: 30
+highReviewFrequencyDays: 90
+incidentNotificationHours: 4
+slaBreachEscalation: SEV-2
+expiredAssuranceDecision: BLOCK_NEW_DEPENDENCY_USAGE

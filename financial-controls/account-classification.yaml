@@ -1,0 +1,16 @@
+schemaVersion: 1
+classes:
+  - code: ASSET
+    normalBalance: DEBIT
+  - code: LIABILITY
+    normalBalance: CREDIT
+  - code: EQUITY
+    normalBalance: CREDIT
+  - code: REVENUE
+    normalBalance: CREDIT
+  - code: EXPENSE
+    normalBalance: DEBIT
+suspenseAccounts:
+  ownershipRequired: true
+  ageingRequired: true
+  automaticWriteOffProhibited: true

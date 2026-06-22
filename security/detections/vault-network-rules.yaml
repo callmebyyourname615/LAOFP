@@ -1,0 +1,20 @@
+schemaVersion: 1
+rules:
+- id: break-glass-use
+  eventType: BREAK_GLASS_USED
+  threshold: 1
+  windowSeconds: 60
+  severity: high
+  runbook: docs/runbooks/RB-18_BREAK_GLASS_ACCESS.md
+- id: vault-secret-read-spike
+  eventType: VAULT_READ_SPIKE
+  threshold: 100
+  windowSeconds: 300
+  severity: high
+  runbook: docs/runbooks/security/credential-compromise.md
+- id: unexpected-egress
+  eventType: UNEXPECTED_EGRESS
+  threshold: 1
+  windowSeconds: 60
+  severity: critical
+  runbook: docs/runbooks/security/production-pod-compromise.md

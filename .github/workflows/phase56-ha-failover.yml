@@ -1,0 +1,48 @@
+name: Phase 56 HA Failover Certification
+on:
+  workflow_dispatch:
+    inputs:
+      release_reference: {required: true, type: string}
+      execution_confirmation:
+        description: Type I_UNDERSTAND_THIS_OPERATES_ON_PRODUCTION
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase56-ha-${{ inputs.release_reference }}
+  cancel-in-progress: false
+jobs:
+  certify:
+    if: inputs.execution_confirmation == 'I_UNDERSTAND_THIS_OPERATES_ON_PRODUCTION'
+    runs-on: [self-hosted, protected, dr]
+    environment: disaster-recovery
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull release evidence
+        env: &store
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          PHASE56_EVIDENCE_BUCKET: ${{ vars.PHASE56_EVIDENCE_BUCKET }}
+          PHASE56_EVIDENCE_PREFIX: ${{ vars.PHASE56_EVIDENCE_PREFIX }}
+          PHASE56_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE56_EVIDENCE_KMS_KEY_ID }}
+          PHASE56_S3_ENDPOINT_URL: ${{ vars.PHASE56_S3_ENDPOINT_URL }}
+        run: scripts/day2/evidence_store.sh pull
+      - name: Verify failover and failback evidence
+        env:
+          DAY2_ENVIRONMENT: dr
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          HA_TOPOLOGY_SNAPSHOT: ${{ vars.HA_TOPOLOGY_SNAPSHOT_PATH }}
+          HA_FAILOVER_REPORT: ${{ vars.HA_FAILOVER_REPORT_PATH }}
+          HA_FAILBACK_REPORT: ${{ vars.HA_FAILBACK_REPORT_PATH }}
+          PRODUCTION_EXECUTION_CONFIRMATION: ${{ inputs.execution_confirmation }}
+          DAY2_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+        run: scripts/day2/run_phase56_day2.sh 56C
+      - name: Push evidence
+        if: always()
+        env: *store
+        run: scripts/day2/evidence_store.sh push

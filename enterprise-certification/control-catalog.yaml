@@ -1,0 +1,17 @@
+schemaVersion: 1
+criticalControls:
+  - immutable-release-identity
+  - migration-version-83
+  - zero-financial-mismatch
+  - zero-data-loss
+  - backup-restore-certified
+  - dr-certificate-current
+  - no-open-critical-vulnerability
+  - legal-hold-enforced
+  - operational-owner-assigned
+  - evidence-chain-valid
+highControls:
+  - slo-data-current
+  - dependency-degraded-modes-tested
+  - fraud-critical-case-routing
+  - multi-region-replication-current

@@ -1,0 +1,8 @@
+schemaVersion: 1
+purposeLimitationRequired: true
+dataMinimizationRequired: true
+maskingRequiredOutsideProduction: true
+encryptionRequired: true
+legalBasisRequired: true
+crossBorderTransferSafeguardRequired: true
+privacyByDesignReviewRequired: true

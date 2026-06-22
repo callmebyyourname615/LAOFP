@@ -1,0 +1,14 @@
+schemaVersion: 1
+rules:
+  - id: database-saturation
+    signals: [databaseConnectionUtilization, apiLatencyP99, transactionErrorRate]
+    minimumMatches: 2
+    severity: CRITICAL
+  - id: kafka-delivery-degradation
+    signals: [kafkaConsumerLag, outboxBacklog, webhookRetryRate]
+    minimumMatches: 2
+    severity: HIGH
+  - id: secret-platform-degradation
+    signals: [vaultErrorRate, authenticationFailureRate]
+    minimumMatches: 2
+    severity: CRITICAL

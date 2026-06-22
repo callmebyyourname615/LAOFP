@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+import argparse,json,pathlib,sys,yaml
+
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--snapshot',required=True);p.add_argument('--policy',required=True);p.add_argument('--output',required=True);a=p.parse_args();s=json.loads(pathlib.Path(a.snapshot).read_text());pol=yaml.safe_load(pathlib.Path(a.policy).read_text());checks=[]
+ def add(i,ok,actual,expected):checks.append({'id':i,'status':'PASS' if ok else 'FAIL','actual':actual,'expected':expected})
+ app=pol['application'];db=pol['database'];jvm=pol['jvm'];rep=int(s['application']['desiredReplicas']);connections=rep*int(s['application']['maxDbConnectionsPerPod']);add('replica-bounds',app['minReplicas']<=rep<=app['maxReplicas'],rep,[app['minReplicas'],app['maxReplicas']]);add('db-connection-budget',connections<=db['maximumApplicationConnections'],connections,db['maximumApplicationConnections']);add('db-utilization',s['database']['connectionUtilizationPercent']<=db['maximumUtilizationPercent'],s['database']['connectionUtilizationPercent'],db['maximumUtilizationPercent']);add('consumer-partition-bound',s['kafka']['consumerReplicas']<=s['kafka']['partitions'],s['kafka']['consumerReplicas'],s['kafka']['partitions']);heap_pct=s['application']['jvmHeapMiB']/s['application']['containerMemoryLimitMiB']*100;add('jvm-headroom',heap_pct<=jvm['heapToContainerLimitMaximumPercent'],round(heap_pct,2),jvm['heapToContainerLimitMaximumPercent']);add('storage-forecast',s['storage']['forecastDays']>=pol['storage']['minimumForecastDays'],s['storage']['forecastDays'],pol['storage']['minimumForecastDays'])
+ status='PASS' if all(x['status']=='PASS' for x in checks) else 'FAIL';pathlib.Path(a.output).write_text(json.dumps({'schemaVersion':1,'status':status,'checks':checks,'calculatedApplicationConnections':connections},indent=2,sort_keys=True)+'\n');return 0 if status=='PASS' else 1
+if __name__=='__main__':sys.exit(main())

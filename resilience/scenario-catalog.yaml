@@ -1,0 +1,34 @@
+schemaVersion: 1
+scenarios:
+- id: application-pod-failure
+  frequency: weekly
+  rtoSeconds: 300
+  rpoSeconds: 0
+- id: kafka-broker-failure
+  frequency: monthly
+  rtoSeconds: 600
+  rpoSeconds: 0
+- id: database-failover
+  frequency: quarterly
+  rtoSeconds: 900
+  rpoSeconds: 300
+- id: backup-restore
+  frequency: monthly
+  rtoSeconds: 1800
+  rpoSeconds: 300
+- id: pitr
+  frequency: quarterly
+  rtoSeconds: 1800
+  rpoSeconds: 300
+- id: external-dependency-timeout
+  frequency: monthly
+  rtoSeconds: 300
+  rpoSeconds: 0
+- id: object-storage-failure
+  frequency: quarterly
+  rtoSeconds: 900
+  rpoSeconds: 0
+- id: full-site-failure
+  frequency: yearly
+  rtoSeconds: 3600
+  rpoSeconds: 300

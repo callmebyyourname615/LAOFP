@@ -1,0 +1,18 @@
+schemaVersion: 1
+levels:
+- afterMinutes: 0
+  roles:
+  - on-call-engineer
+- afterMinutes: 15
+  roles:
+  - incident-commander
+  - service-owner
+- afterMinutes: 30
+  roles:
+  - operations-manager
+  - security-lead
+- afterMinutes: 60
+  roles:
+  - executive-sponsor
+  - business-owner
+missedAcknowledgementAction: page-next-level

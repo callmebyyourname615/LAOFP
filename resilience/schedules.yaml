@@ -1,0 +1,15 @@
+schemaVersion: 1
+timezone: Asia/Vientiane
+schedules:
+- scenario: application-pod-failure
+  cron: 0 2 * * 2
+- scenario: kafka-broker-failure
+  cron: 0 2 1 * *
+- scenario: backup-restore
+  cron: 0 3 5 * *
+- scenario: database-failover
+  cron: 0 2 1 */3 *
+- scenario: pitr
+  cron: 0 3 8 */3 *
+- scenario: full-site-failure
+  cron: 0 1 15 1 *

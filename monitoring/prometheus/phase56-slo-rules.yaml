@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: phase56-slo-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: switching-phase56-slo
+      rules:
+        - alert: SwitchingFastErrorBudgetBurn
+          expr: switching_slo_burn_rate_5m > 14.4 and switching_slo_burn_rate_1h > 14.4
+          for: 2m
+          labels: {severity: critical, phase: 56A}
+          annotations: {summary: Fast SLO error-budget burn, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
+        - alert: SwitchingSlowErrorBudgetBurn
+          expr: switching_slo_burn_rate_30m > 6 and switching_slo_burn_rate_6h > 6
+          for: 15m
+          labels: {severity: warning, phase: 56A}
+          annotations: {summary: Slow SLO error-budget burn, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}

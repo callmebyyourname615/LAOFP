@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "currency": {
+      "pattern": "^[A-Z]{3}$",
+      "type": "string"
+    },
+    "generatedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "periodEnd": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "periodStart": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "recordCount": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "reportId": {
+      "type": "string"
+    },
+    "sourceSnapshotSha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "totalAmountMinorUnits": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "reportId",
+    "periodStart",
+    "periodEnd",
+    "generatedAt",
+    "recordCount",
+    "totalAmountMinorUnits",
+    "currency",
+    "sourceSnapshotSha256"
+  ],
+  "title": "daily-transaction-v1",
+  "type": "object"
+}

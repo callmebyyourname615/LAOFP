@@ -1,0 +1,14 @@
+schemaVersion: 1
+rules:
+- id: production-pod-exec
+  eventType: K8S_POD_EXEC
+  threshold: 1
+  windowSeconds: 60
+  severity: high
+  runbook: docs/runbooks/security/production-pod-compromise.md
+- id: container-binary-change
+  eventType: CONTAINER_BINARY_MODIFICATION
+  threshold: 1
+  windowSeconds: 60
+  severity: critical
+  runbook: docs/runbooks/security/production-pod-compromise.md

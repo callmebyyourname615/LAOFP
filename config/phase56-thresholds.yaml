@@ -1,0 +1,53 @@
+schemaVersion: 1
+slo:
+  minimumRemainingErrorBudgetPercent: 25.0
+  fastBurnThreshold: 14.4
+  slowBurnThreshold: 6.0
+  maximumDataAgeSeconds: 900
+reconciliation:
+  duplicateTransactions: 0
+  unbalancedJournals: 0
+  orphanOutboxMessages: 0
+  overdueWebhookDeliveries: 0
+  maximumOutboxBacklog: 500
+  maximumReportAgeSeconds: 900
+ha:
+  minimumApplicationReplicas: 3
+  maximumDatabaseReplicationLagSeconds: 10
+  minimumKafkaInSyncReplicas: 2
+  maximumFailoverRtoSeconds: 300
+  maximumFailoverRpoSeconds: 0
+capacity:
+  maximumCpuUtilizationPercent: 75
+  maximumMemoryUtilizationPercent: 80
+  minimumHeadroomPercent: 25
+  maximumDbConnectionUtilizationPercent: 70
+  minimumStorageForecastDays: 90
+security:
+  criticalOpenDetections: 0
+  highOpenDetections: 0
+  maximumDetectionLatencySeconds: 300
+compliance:
+  maximumEvidenceAgeHours: 24
+  minimumControlCoveragePercent: 100
+  signatureRequired: true
+progressiveDelivery:
+  maximumErrorRatePercent: 0.5
+  maximumP95LatencyMs: 500
+  maximumP99LatencyMs: 1000
+  minimumObservationSeconds: 900
+incident:
+  sev1AcknowledgeSeconds: 300
+  sev2AcknowledgeSeconds: 900
+  maximumOverdueCorrectiveActions: 0
+finops:
+  maximumDailyCostIncreasePercent: 20
+  minimumStorageForecastDays: 90
+  minimumCpuUtilizationPercent: 20
+  maximumUnusedResourceDays: 14
+resilience:
+  maximumRpoSeconds: 300
+  maximumRtoSeconds: 1800
+  maximumDataLossCount: 0
+  maximumDuplicateReplayCount: 0
+  minimumScenarioPassPercent: 100

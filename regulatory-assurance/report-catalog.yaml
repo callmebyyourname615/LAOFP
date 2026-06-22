@@ -1,0 +1,22 @@
+schemaVersion: 1
+reports:
+  REG-DAILY-TRANSACTION:
+    frequency: DAILY
+    schema: schemas/regulatory/daily-transaction-v1.json
+    reconciliationRequired: true
+    acknowledgementRequired: true
+  REG-SETTLEMENT-FINALITY:
+    frequency: DAILY
+    schema: schemas/regulatory/settlement-finality-v1.json
+    reconciliationRequired: true
+    acknowledgementRequired: true
+  REG-AML-OPERATIONS:
+    frequency: DAILY
+    schema: schemas/regulatory/aml-operations-v1.json
+    reconciliationRequired: true
+    acknowledgementRequired: true
+  REG-LIQUIDITY-RISK:
+    frequency: INTRADAY
+    schema: schemas/regulatory/liquidity-risk-v1.json
+    reconciliationRequired: true
+    acknowledgementRequired: true

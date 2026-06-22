@@ -1,0 +1,15 @@
+schemaVersion: 1
+algorithm: robust-z-score
+minimumBaselineSamples: 30
+warningThreshold: 3.5
+criticalThreshold: 6.0
+criticalSignals:
+  - transactionSuccessRate
+  - balanceMismatchCount
+  - settlementDurationSeconds
+  - kafkaConsumerLag
+  - databaseConnectionUtilization
+  - outboxBacklog
+  - vaultErrorRate
+requireSeasonalBaseline: true
+staleBaselineBehavior: BLOCK

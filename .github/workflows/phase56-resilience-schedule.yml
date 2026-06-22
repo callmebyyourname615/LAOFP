@@ -1,0 +1,42 @@
+name: Phase 56 Resilience Schedule
+on:
+  schedule:
+    - cron: '0 2 5 * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: phase56-resilience-production
+  cancel-in-progress: false
+jobs:
+  certify:
+    runs-on: [self-hosted, protected, dr]
+    environment: disaster-recovery
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ vars.PRODUCTION_GIT_COMMIT }}"}
+      - name: Pull all prerequisite evidence for the immutable release
+        env: &store
+          RELEASE_REFERENCE: ${{ vars.PRODUCTION_RELEASE_REFERENCE }}
+          PHASE56_EVIDENCE_BUCKET: ${{ vars.PHASE56_EVIDENCE_BUCKET }}
+          PHASE56_EVIDENCE_PREFIX: ${{ vars.PHASE56_EVIDENCE_PREFIX }}
+          PHASE56_EVIDENCE_KMS_KEY_ID: ${{ vars.PHASE56_EVIDENCE_KMS_KEY_ID }}
+          PHASE56_S3_ENDPOINT_URL: ${{ vars.PHASE56_S3_ENDPOINT_URL }}
+        run: scripts/day2/evidence_store.sh pull
+      - name: Issue and verify resilience certificate
+        env:
+          DAY2_ENVIRONMENT: dr
+          RELEASE_REFERENCE: ${{ vars.PRODUCTION_RELEASE_REFERENCE }}
+          RELEASE_GIT_COMMIT: ${{ vars.PRODUCTION_GIT_COMMIT }}
+          RELEASE_IMAGE_DIGEST: ${{ vars.PRODUCTION_IMAGE_DIGEST }}
+          RESILIENCE_RESULTS: ${{ vars.RESILIENCE_RESULTS_PATH }}
+          RESILIENCE_SIGNING_KEY: ${{ secrets.RESILIENCE_SIGNING_KEY }}
+          RESILIENCE_PUBLIC_KEY: ${{ secrets.RESILIENCE_PUBLIC_KEY }}
+          DAY2_RERUN_CONFIRMATION: I_UNDERSTAND_THIS_ARCHIVES_THE_PREVIOUS_ATTEMPT
+        run: scripts/day2/run_phase56_day2.sh 56J
+      - name: Push certificate and evidence
+        if: always()
+        env: *store
+        run: scripts/day2/evidence_store.sh push

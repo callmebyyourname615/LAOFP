@@ -1,0 +1,6 @@
+schemaVersion: 1
+mappings:
+  - evidenceType: resilience-certificate
+    path: build/phase56-day2/phases/56J/resilience-certificate.json
+    controlIds:
+      - RESILIENCE-001

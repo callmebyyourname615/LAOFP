@@ -1,0 +1,10 @@
+schemaVersion: 1
+requireAllPhase58ResultsPass: true
+requireSignedEvidenceManifest: true
+requireReleaseIdentityMatch: true
+requireNoOpenCriticalExceptions: true
+minimumOperationalOwners: 3
+certificateValidityDays: 30
+requireRegulatoryOwner: true
+requireBusinessOwner: true
+requireSecurityOwner: true

@@ -1,0 +1,12 @@
+schemaVersion: 1
+supportedMessagePacks:
+- pacs.008.001.08
+- pacs.002.001.10
+- pacs.004.001.09
+- camt.056.001.08
+schemaValidationRequired: true
+marketPracticeValidationRequired: true
+negativeTestPackRequired: true
+backwardCompatibilityRequired: true
+externalCodeSetFreshnessHours: 24
+signedValidationPackRequired: true

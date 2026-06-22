@@ -1,0 +1,9 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: day2-controls-default-deny
+  namespace: switching
+spec:
+  podSelector:
+    matchLabels: {app.kubernetes.io/component: day2-control}
+  policyTypes: [Ingress, Egress]

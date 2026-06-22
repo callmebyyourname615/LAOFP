@@ -1,0 +1,17 @@
+schemaVersion: 1
+policies:
+- asset: application-logs
+  hotDays: 14
+  archiveDays: 90
+  deleteDays: 365
+- asset: kafka-events
+  hotDays: 7
+  deleteDays: 30
+- asset: metrics
+  hotDays: 30
+  archiveDays: 395
+- asset: backups
+  daily: 35
+  monthly: 12
+  yearly: 7
+exceptionsRequireApproval: true

@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-01-01T00:00:00Z",
+  "configurationParity": true,
+  "databaseReplicationLagSeconds": 0,
+  "fencing": {
+    "enabled": true,
+    "singleWriterEnforced": true
+  },
+  "kafkaReplicationLagMessages": 0,
+  "objectReplicationLagSeconds": 0,
+  "objectStorage": {
+    "objectLockCompliance": true,
+    "versioningEnabled": true
+  },
+  "regions": [
+    {
+      "name": "primary",
+      "role": "primary"
+    },
+    {
+      "name": "dr",
+      "role": "dr"
+    }
+  ],
+  "release": {
+    "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "imageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reference": "release-reference"
+  },
+  "secretsParityVerified": true,
+  "vaultReplicationLagSeconds": 0,
+  "warmCapacityPercent": 25
+}
