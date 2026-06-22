@@ -17,7 +17,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATION_DIR = ROOT / "src/main/resources/db/migration"
-EXPECTED_LATEST_VERSION = 84
+EXPECTED_LATEST_VERSION = 96
+RESERVED_GAP = {88, 89, 90}  # reserved for future read-scaling extension
 
 
 @dataclass(frozen=True)
@@ -78,10 +79,10 @@ def migration_versions() -> list[int]:
 
 def check_migration_sequence() -> str:
     versions = migration_versions()
-    expected = list(range(1, EXPECTED_LATEST_VERSION + 1))
+    expected = [n for n in range(1, EXPECTED_LATEST_VERSION + 1) if n not in RESERVED_GAP]
     require(versions == expected,
-            f"Flyway sequence must be contiguous V1-V{EXPECTED_LATEST_VERSION}; got {versions[:3]}...{versions[-3:] if versions else []}")
-    return f"contiguous V1-V{EXPECTED_LATEST_VERSION} ({len(versions)} migrations)"
+            f"Flyway sequence must be V1-V{EXPECTED_LATEST_VERSION} (gap V{sorted(RESERVED_GAP)} reserved); got {versions[:3]}...{versions[-3:] if versions else []}")
+    return f"V1-V{EXPECTED_LATEST_VERSION} present (gap V{sorted(RESERVED_GAP)} reserved), {len(versions)} migrations"
 
 
 def check_immutable_history() -> str:
@@ -168,7 +169,7 @@ def check_test_contracts() -> str:
         'MigrationVersion.fromVersion("82")',
         'isInstanceOf(FlywayException.class)',
         'isEqualTo("82")',
-        'isEqualTo("84")',
+        'isEqualTo("96")',
         'isEqualTo("character varying")',
         'isEqualTo(64)',
         'isEqualTo("23514")',

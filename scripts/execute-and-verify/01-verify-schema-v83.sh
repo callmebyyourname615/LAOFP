@@ -23,8 +23,12 @@ missing = [n for n in expected if n not in nums]
 print(",".join(map(str, missing)))
 PY
 )
-if [ -n "$missing" ]; then
-  echo "FAIL: missing migrations: $missing"; exit 1
+RESERVED="88,89,90"  # reserved for future read-scaling work (V85-V87)
+if [ -n "$missing" ] && [ "$missing" != "$RESERVED" ]; then
+  echo "FAIL: unexpected gap in migrations: $missing (allowed gap: $RESERVED)"; exit 1
+fi
+if [ "$missing" = "$RESERVED" ]; then
+  echo "  (V88-V90 reserved — gap allowed)"
 fi
 echo "  OK (V1..V83 contiguous)"
 

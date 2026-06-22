@@ -1,4 +1,0 @@
-min_replicas: 3
-max_replicas: 20
-forecast_required_replicas: 8
-minimum_scale_down_stabilization_seconds: 300

@@ -37,14 +37,14 @@ class V83CleanInstallCertificationIntegrationTest {
         flyway.validate();
 
         assertThat(result.success).isTrue();
-        assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("84");
+        assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("96");
         assertThat(flyway.info().pending()).isEmpty();
 
         try (Connection connection = DriverManager.getConnection(
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())) {
             assertThat(queryLong(connection,
                     "SELECT count(*) FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
-                    .isEqualTo(84L);
+                    .isEqualTo(93L);
             assertThat(queryLong(connection,
                     "SELECT count(*) FROM flyway_schema_history WHERE NOT success"))
                     .isZero();

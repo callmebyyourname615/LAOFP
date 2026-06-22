@@ -1,1 +1,0 @@
-{"capturedAt":"2026-01-01T00:00:00Z","externalPhaseResults":[],"criticalControls":{},"exceptions":[],"resilienceCertificate":{"status":"PASS","signatureVerified":true,"evidenceSha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expiresAt":"2026-02-01T00:00:00Z"},"operationalOwners":["role:operations-owner","role:security-owner","role:business-owner"]}
