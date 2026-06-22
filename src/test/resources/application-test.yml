@@ -36,6 +36,14 @@ spring:
     password: ${TEST_DB_PASSWORD:}   # overridden at runtime by Testcontainers via @DynamicPropertySource
 
 switching:
+  archive:
+    worker-enabled: false
+    partition-maintenance-enabled: false
+    object-storage:
+      endpoint: http://localhost:9000
+      bucket: test-bucket
+      access-key: test-access-key
+      secret-key: test-secret-key
   payment:
     json-initiation:
       enabled: true
@@ -56,6 +64,10 @@ switching:
     rate-limit:
       enabled: false   # Disable rate limiting in tests
   outbox:
+    queue:
+      enabled: true
+      topic: switching.outbox.dispatch
+      group-id: switching-outbox-dispatcher-test
     worker:
       poll-interval-ms: 5000    # Keep fast poll for integration tests
       recovery-interval-ms: 60000
