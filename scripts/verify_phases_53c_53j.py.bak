@@ -44,7 +44,7 @@ require("src/main/resources/application.yml", "OPERATIONAL_METRICS_ENABLED:true"
 
 # 53E migration integration test at version 83
 require("src/test/java/com/example/switching/migration/MigrationApplicationIntegrationTest.java",
-        'isEqualTo("84")', "KafkaTemplate", "outboxDispatchWorker")
+        'isEqualTo("83")', "KafkaTemplate", "outboxDispatchWorker")
 
 # 53F unified gates and restored runbooks
 for path in [

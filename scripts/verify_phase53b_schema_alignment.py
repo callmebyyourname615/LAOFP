@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATION_DIR = ROOT / "src/main/resources/db/migration"
-EXPECTED_LATEST_VERSION = 83
+EXPECTED_LATEST_VERSION = 84
 
 
 @dataclass(frozen=True)
@@ -168,7 +168,7 @@ def check_test_contracts() -> str:
         'MigrationVersion.fromVersion("82")',
         'isInstanceOf(FlywayException.class)',
         'isEqualTo("82")',
-        'isEqualTo("83")',
+        'isEqualTo("84")',
         'isEqualTo("character varying")',
         'isEqualTo(64)',
         'isEqualTo("23514")',
