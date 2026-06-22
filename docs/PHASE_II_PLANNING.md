@@ -8,6 +8,69 @@
 
 ---
 
+## Implementation Status — last updated 2026-06-22
+
+> 🟢 = Done · 🟡 = In progress · ⚪ = Not started · ⛔ = Blocked
+
+| Phase | Step | Deliverable | Status | Evidence |
+|---|---|---|---|---|
+| II-A RTP | A.3.1 | V85 migration (rtp_request / rtp_authorisation / rtp_installment_schedule) | ⚪ | – |
+| II-A RTP | A.3.2 | Entities + repositories (`src/main/java/.../rtp/`) | ⚪ | – |
+| II-A RTP | A.3.3 | State machine + `RtpRequestService` | ⚪ | – |
+| II-A RTP | A.3.4 | `RequestToPayController` + DTOs | ⚪ | – |
+| II-A RTP | A.3.5 | Outbox events `rtp.*` | ⚪ | – |
+| II-A RTP | A.3.6 | `RtpExpiryScheduler` | ⚪ | – |
+| II-A RTP | A.3.7 | Integration tests (Testcontainers) | ⚪ | – |
+| II-A RTP | A.3.8 | OpenAPI docs + `curl_rtp_tests.sh` | ⚪ | – |
+| II-B Promotion | B.3.1 | V86 migration | ⚪ | – |
+| II-B Promotion | B.3.2 | Entity + JSON-DSL evaluator | ⚪ | – |
+| II-B Promotion | B.3.3 | `FeeAssessmentService` refactor | ⚪ | – |
+| II-B Promotion | B.3.4 | `PromotionSettlementService` | ⚪ | – |
+| II-B Promotion | B.3.5 | Operator REST endpoints | ⚪ | – |
+| II-B Promotion | B.3.6 | Daily promotion reports | ⚪ | – |
+| II-B Promotion | B.3.7 | Concurrency / budget-cap tests | ⚪ | – |
+| II-C Cross-Border | Bakong | NBC adapter implementation | ⚪ | – |
+| II-C Cross-Border | NAPAS | ISO 20022 adapter | ⚪ | – |
+| II-C Cross-Border | UPI | NPCI adapter (inward first) | ⚪ | – |
+| II-C Cross-Border | NITMX | Finalise PromptPay inbound flow | ⚪ | – |
+| II-D Push Orch | D.3.1 | Extract `PaymentLifecycle` interface | ⚪ | – |
+| II-D Push Orch | D.3.2 | `PushPaymentOrchestrator` | ⚪ | – |
+| II-D Push Orch | D.3.3–5 | Refactor Transfer/QR/Bill services | ⚪ | – |
+| II-D Push Orch | D.3.6 | V87 `push_payment_policy` config table | ⚪ | – |
+| II-D Push Orch | D.3.7 | Operator endpoint via ConfigChange flow | ⚪ | – |
+| II-D Push Orch | D.3.8 | Parity test report | ⚪ | – |
+| II-E Reporting | E.3.1 | V88 schedule + run + artifact tables | ⚪ | – |
+| II-E Reporting | E.3.2 | `ReportDeliveryScheduler` | ⚪ | – |
+| II-E Reporting | E.3.3 | `SftpDeliveryService` (MINA SSHD) | ⚪ | – |
+| II-E Reporting | E.3.4 | `S3DeliveryService` | ⚪ | – |
+| II-E Reporting | E.3.5 | `EmailLinkDeliveryService` | ⚪ | – |
+| II-E Reporting | E.3.6 | Operator REST + portal UI | ⚪ | – |
+| II-E Reporting | E.3.7 | Testcontainers SFTP + MinIO IT | ⚪ | – |
+
+### Overall progress
+- II-A RTP: **0/8** (0%)
+- II-B Promotion: **0/7** (0%)
+- II-C Cross-Border: **0/4** (0%)
+- II-D Push Orchestrator: **0/8** (0%)
+- II-E Reporting Delivery: **0/7** (0%)
+- **Phase II overall: 0/34 (0%)**
+
+### Migration version reservations
+| Version | Phase | Status |
+|---|---|---|
+| V85 | II-A RTP tables | ⚪ reserved |
+| V86 | II-B Promotion tables | ⚪ reserved |
+| V87 | II-D push_payment_policy | ⚪ reserved |
+| V88 | II-E report_delivery_schedule + run + artifact | ⚪ reserved |
+| V89–V99 | — | reserved for unforeseen patches |
+
+### Update procedure
+When a step is finished, replace its ⚪ with 🟢 (or 🟡 if mid-flight) and add the
+evidence link (file path, PR, or commit SHA). Update the "Overall progress"
+percentages and the "last updated" line at the top.
+
+---
+
 ## 0. Executive Summary
 
 Phase I (V1–V84, phases 1–55J) delivered the production-ready core of the Lao Fast

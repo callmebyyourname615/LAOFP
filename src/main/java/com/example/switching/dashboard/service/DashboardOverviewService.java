@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,8 @@ import com.example.switching.dashboard.dto.HourlyTrendPoint;
 import com.example.switching.dashboard.dto.PoolHealthSummary;
 import com.example.switching.dashboard.dto.StatusCountResponse;
 import com.example.switching.inquiry.enums.InquiryStatus;
-import com.example.switching.inquiry.repository.InquiryRepository;
 import com.example.switching.outbox.enums.OutboxStatus;
-import com.example.switching.outbox.repository.OutboxEventRepository;
 import com.example.switching.transfer.enums.TransferStatus;
-import com.example.switching.transfer.repository.TransferRepository;
 
 /**
  * Builds the enriched operations dashboard overview.
@@ -35,18 +33,9 @@ import com.example.switching.transfer.repository.TransferRepository;
 @Service
 public class DashboardOverviewService {
 
-    private final InquiryRepository     inquiryRepository;
-    private final TransferRepository    transferRepository;
-    private final OutboxEventRepository outboxEventRepository;
     private final JdbcTemplate          jdbcTemplate;
 
-    public DashboardOverviewService(InquiryRepository inquiryRepository,
-                                    TransferRepository transferRepository,
-                                    OutboxEventRepository outboxEventRepository,
-                                    JdbcTemplate jdbcTemplate) {
-        this.inquiryRepository     = inquiryRepository;
-        this.transferRepository    = transferRepository;
-        this.outboxEventRepository = outboxEventRepository;
+    public DashboardOverviewService(@Qualifier("reportingJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate          = jdbcTemplate;
     }
 
@@ -126,21 +115,16 @@ public class DashboardOverviewService {
                 "SELECT COUNT(*) FROM outbox_messages WHERE status = 'PENDING'", Long.class);
         resp.setPendingOutboxCount(pendingOutbox != null ? pendingOutbox : 0L);
 
-        // ── Legacy status counts ─────────────────────────────────────────────
-        resp.setInquiriesTotal(inquiryRepository.count());
-        resp.setInquiryStatusCounts(Arrays.stream(InquiryStatus.values())
-                .map(s -> new StatusCountResponse(s.name(), inquiryRepository.countByStatus(s)))
-                .toList());
-
-        resp.setTransfersTotal(transferRepository.count());
-        resp.setTransferStatusCounts(Arrays.stream(TransferStatus.values())
-                .map(s -> new StatusCountResponse(s.name(), transferRepository.countByStatus(s)))
-                .toList());
-
-        resp.setOutboxEventsTotal(outboxEventRepository.count());
-        resp.setOutboxStatusCounts(Arrays.stream(OutboxStatus.values())
-                .map(s -> new StatusCountResponse(s.name(), outboxEventRepository.countByStatus(s)))
-                .toList());
+        // ── Status counts — replica-safe reporting aggregates; never scan OLTP tables. ──
+        List<StatusCountResponse> inquiryStatuses = loadStatusCounts("reporting.current_inquiry_status", InquiryStatus.values());
+        List<StatusCountResponse> transactionStatuses = loadStatusCounts("reporting.current_transaction_status", TransferStatus.values());
+        List<StatusCountResponse> outboxStatuses = loadStatusCounts("reporting.current_outbox_status", OutboxStatus.values());
+        resp.setInquiryStatusCounts(inquiryStatuses);
+        resp.setTransferStatusCounts(transactionStatuses);
+        resp.setOutboxStatusCounts(outboxStatuses);
+        resp.setInquiriesTotal(sumCounts(inquiryStatuses));
+        resp.setTransfersTotal(sumCounts(transactionStatuses));
+        resp.setOutboxEventsTotal(sumCounts(outboxStatuses));
 
         return resp;
     }
@@ -156,5 +140,20 @@ public class DashboardOverviewService {
         if (value == null) return BigDecimal.ZERO;
         if (value instanceof BigDecimal bd) return bd;
         return new BigDecimal(value.toString());
+    }
+
+    private List<StatusCountResponse> loadStatusCounts(String tableName, Enum<?>[] statuses) {
+        Map<String, Long> counts = jdbcTemplate.queryForList(
+                "SELECT status, COALESCE(SUM(total_count), 0) AS total_count FROM " + tableName + " GROUP BY status")
+                .stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        row -> (String) row.get("status"), row -> toLong(row.get("total_count"))));
+        return Arrays.stream(statuses)
+                .map(status -> new StatusCountResponse(status.name(), counts.getOrDefault(status.name(), 0L)))
+                .toList();
+    }
+
+    private static long sumCounts(List<StatusCountResponse> counts) {
+        return counts.stream().mapToLong(StatusCountResponse::getCount).sum();
     }
 }

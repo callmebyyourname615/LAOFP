@@ -23,12 +23,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.example.switching.dashboard.dto.DashboardOverviewResponse;
 import com.example.switching.dashboard.service.DashboardOverviewService;
-import com.example.switching.inquiry.enums.InquiryStatus;
-import com.example.switching.inquiry.repository.InquiryRepository;
-import com.example.switching.outbox.enums.OutboxStatus;
-import com.example.switching.outbox.repository.OutboxEventRepository;
-import com.example.switching.transfer.enums.TransferStatus;
-import com.example.switching.transfer.repository.TransferRepository;
 
 /**
  * Pure unit tests for {@link DashboardOverviewService}.
@@ -38,10 +32,6 @@ import com.example.switching.transfer.repository.TransferRepository;
 class DashboardOverviewServiceTest {
 
     @Mock JdbcTemplate          jdbcTemplate;
-    @Mock InquiryRepository     inquiryRepository;
-    @Mock TransferRepository    transferRepository;
-    @Mock OutboxEventRepository outboxEventRepository;
-
     @InjectMocks DashboardOverviewService service;
 
     // ── helpers ───────────────────────────────────────────────────────────────
@@ -78,12 +68,7 @@ class DashboardOverviewServiceTest {
     }
 
     private void stubRepositoryCounts() {
-        when(inquiryRepository.count()).thenReturn(0L);
-        when(transferRepository.count()).thenReturn(0L);
-        when(outboxEventRepository.count()).thenReturn(0L);
-        for (InquiryStatus s  : InquiryStatus.values())  when(inquiryRepository.countByStatus(s)).thenReturn(0L);
-        for (TransferStatus s : TransferStatus.values())  when(transferRepository.countByStatus(s)).thenReturn(0L);
-        for (OutboxStatus s   : OutboxStatus.values())    when(outboxEventRepository.countByStatus(s)).thenReturn(0L);
+        when(jdbcTemplate.queryForList(contains("reporting."))).thenReturn(List.of());
     }
 
     // ── TC-DASH-001 ───────────────────────────────────────────────────────────

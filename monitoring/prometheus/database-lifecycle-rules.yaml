@@ -69,3 +69,13 @@ spec:
         summary: Latest database maintenance run failed
         runbook_url: docs/runbooks/RB-16_DATABASE_LIFECYCLE.md#maintenance-job
         description: Latest database maintenance run failed
+    - alert: SwitchingReportingAggregateStale
+      expr: max(switching_database_reporting_refresh_age_seconds) > 7200
+      for: 15m
+      labels:
+        severity: warning
+        service: switching-database
+      annotations:
+        summary: Reporting aggregates have not refreshed for more than two hours
+        runbook_url: docs/PHASE_DB_READ_SCALING.md
+        description: Dashboard data may be stale; inspect aggregation scheduler and replica lag.

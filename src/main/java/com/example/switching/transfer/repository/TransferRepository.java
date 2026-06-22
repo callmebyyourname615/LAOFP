@@ -14,11 +14,30 @@ import com.example.switching.transfer.enums.TransferStatus;
 
 public interface TransferRepository extends JpaRepository<TransferEntity, Long> {
 
-    Optional<TransferEntity> findByTransferRef(String transferRef);
+    @Query(value = """
+            SELECT t.* FROM transaction_lookup l
+            JOIN transactions t ON t.transaction_ref = l.transaction_ref
+                               AND t.business_date = l.business_date
+            WHERE l.transaction_ref = :transferRef
+            """, nativeQuery = true)
+    Optional<TransferEntity> findByTransferRef(@Param("transferRef") String transferRef);
 
-    Optional<TransferEntity> findByInquiryRef(String inquiryRef);
+    @Query(value = """
+            SELECT t.* FROM transaction_lookup l
+            JOIN transactions t ON t.transaction_ref = l.transaction_ref
+                               AND t.business_date = l.business_date
+            WHERE l.inquiry_ref = :inquiryRef
+            ORDER BY t.id DESC LIMIT 1
+            """, nativeQuery = true)
+    Optional<TransferEntity> findByInquiryRef(@Param("inquiryRef") String inquiryRef);
 
-    List<TransferEntity> findAllByInquiryRefOrderByIdAsc(String inquiryRef);
+    @Query(value = """
+            SELECT t.* FROM transaction_lookup l
+            JOIN transactions t ON t.transaction_ref = l.transaction_ref
+                               AND t.business_date = l.business_date
+            WHERE l.inquiry_ref = :inquiryRef ORDER BY t.id ASC
+            """, nativeQuery = true)
+    List<TransferEntity> findAllByInquiryRefOrderByIdAsc(@Param("inquiryRef") String inquiryRef);
 
     long countByStatus(TransferStatus status);
 

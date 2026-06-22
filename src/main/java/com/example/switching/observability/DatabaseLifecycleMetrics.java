@@ -30,6 +30,7 @@ public class DatabaseLifecycleMetrics {
     private final AtomicLong maximumDeadTupleRatioBasisPoints = new AtomicLong();
     private final AtomicLong maintenanceLastSuccessAgeSeconds = new AtomicLong(Long.MAX_VALUE);
     private final AtomicLong maintenanceLastRunFailed = new AtomicLong();
+    private final AtomicLong reportingRefreshAgeSeconds = new AtomicLong(Long.MAX_VALUE);
 
     public DatabaseLifecycleMetrics(JdbcTemplate jdbcTemplate, MeterRegistry registry) {
         this.jdbcTemplate = jdbcTemplate;
@@ -39,6 +40,7 @@ public class DatabaseLifecycleMetrics {
         Gauge.builder("switching.database.max.dead.tuple.ratio.basis.points", maximumDeadTupleRatioBasisPoints, AtomicLong::get).register(registry);
         Gauge.builder("switching.database.maintenance.last.success.age.seconds", maintenanceLastSuccessAgeSeconds, AtomicLong::get).register(registry);
         Gauge.builder("switching.database.maintenance.last.run.failed", maintenanceLastRunFailed, AtomicLong::get).register(registry);
+        Gauge.builder("switching.database.reporting.refresh.age.seconds", reportingRefreshAgeSeconds, AtomicLong::get).register(registry);
     }
 
     @Scheduled(fixedDelayString = "${switching.observability.database-lifecycle-refresh:PT5M}")
@@ -72,6 +74,11 @@ public class DatabaseLifecycleMetrics {
                   ORDER BY started_at DESC LIMIT 1), FALSE)
                 """, Boolean.class);
         maintenanceLastRunFailed.set(Boolean.TRUE.equals(failed) ? 1 : 0);
+        Long reportingAge = jdbcTemplate.queryForObject("""
+                SELECT COALESCE(EXTRACT(EPOCH FROM (NOW() - MIN(refreshed_at)))::bigint, 9223372036854775807)
+                FROM reporting.refresh_state
+                """, Long.class);
+        reportingRefreshAgeSeconds.set(reportingAge == null ? Long.MAX_VALUE : reportingAge);
     }
 
     private long value(String sql) {
