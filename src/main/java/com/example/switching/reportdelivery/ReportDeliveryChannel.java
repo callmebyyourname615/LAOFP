@@ -1,0 +1,1 @@
+package com.example.switching.reportdelivery;import java.util.Map;public interface ReportDeliveryChannel{DeliveryChannel channel();DeliveryResult deliver(ReportArtifactService.StoredArtifact artifact,Map<String,Object> destination);record DeliveryResult(String remoteReference) {}}

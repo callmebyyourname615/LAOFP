@@ -199,6 +199,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, v1("/qr/pay")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/qr/refund")).hasAnyRole("BANK", "ADMIN")
 
+                        // ── Phase II Request-to-Pay ─────────────────────────────
+                        .requestMatchers(HttpMethod.POST, v1("/rtp/requests")).hasAnyRole("BANK", "ADMIN")
+                        .requestMatchers(HttpMethod.GET,  v1("/rtp/requests/*")).hasAnyRole("BANK", "OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/cancel")).hasAnyRole("BANK", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/authorise")).hasAnyRole("BANK", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/decline")).hasAnyRole("BANK", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/settlements")).hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers("/v1/promotions/**").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers("/v1/operator/push-payment-policies/**").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers("/v1/operator/report-delivery-schedules/**").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/v1/reports/download/**").permitAll()
+
                         // ── Bill Payment Service (P16) ────────────────────────────
                         .requestMatchers(HttpMethod.GET,  v1("/billers")).hasAnyRole("BANK", "OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET,  v1("/billers/*")).hasAnyRole("BANK", "OPS", "ADMIN")
@@ -217,6 +229,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,  v1("/crossborder/fx-rates")).hasAnyRole("BANK", "OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/crossborder/quote")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/crossborder/initiate")).hasAnyRole("BANK", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, v1("/crossborder/inbound/*")).permitAll()
+                        .requestMatchers(HttpMethod.POST, v1("/operator/crossborder/reconciliation/*/*")).hasAnyRole("OPS", "ADMIN")
 
                         // ── ADMIN only — P9 credential management ────────────────
                         .requestMatchers(HttpMethod.POST,   v1("/participants/*/credentials/rotate")).hasRole("ADMIN")

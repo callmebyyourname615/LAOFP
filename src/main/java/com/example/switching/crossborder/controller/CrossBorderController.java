@@ -17,7 +17,7 @@ import com.example.switching.crossborder.dto.CrossBorderInitiateResponse;
 import com.example.switching.crossborder.dto.FxQuoteRequest;
 import com.example.switching.crossborder.dto.FxQuoteResponse;
 import com.example.switching.crossborder.dto.FxRateResponse;
-import com.example.switching.crossborder.service.CrossBorderTransferService;
+import com.example.switching.crossborder.service.CrossBorderSubmissionService;
 import com.example.switching.crossborder.service.FxQuoteService;
 
 /**
@@ -35,10 +35,10 @@ import com.example.switching.crossborder.service.FxQuoteService;
 public class CrossBorderController {
 
     private final FxQuoteService            fxQuoteService;
-    private final CrossBorderTransferService transferService;
+    private final CrossBorderSubmissionService transferService;
 
     public CrossBorderController(FxQuoteService fxQuoteService,
-                                 CrossBorderTransferService transferService) {
+                                 CrossBorderSubmissionService transferService) {
         this.fxQuoteService  = fxQuoteService;
         this.transferService = transferService;
     }

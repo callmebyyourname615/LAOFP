@@ -1,0 +1,22 @@
+version: 1
+phase: "II"
+sourceBaseline:
+  observedLatestMigration: 82
+  plannedPredecessorMigration: 84
+  missingPredecessors:
+    - 83
+    - 84
+  productionPolicy: "BLOCK_UNTIL_PREDECESSORS_MERGED"
+allocations:
+  rtp: 85
+  promotion: 86
+  pushPaymentPolicy: 87
+  reportDelivery: 88
+  crossBorderRailJournal: 89
+reservedPatchRange:
+  from: 90
+  to: 99
+rules:
+  immutableAppliedMigrations: true
+  sha256ColumnType: "VARCHAR(64)"
+  allowOutOfOrderInProduction: false

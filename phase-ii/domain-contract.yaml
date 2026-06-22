@@ -1,0 +1,29 @@
+version: 1
+phase: "II"
+boundedContexts:
+  - rtp
+  - promotion
+  - paymentorchestration
+  - crossborder
+  - reportdelivery
+sharedContracts:
+  idempotency:
+    keyScope: "operation + participant"
+    sameKeySamePayload: "RETURN_ORIGINAL_RESULT"
+    sameKeyDifferentPayload: "HTTP_409"
+    payloadFingerprint: "SHA-256"
+  stateTransition:
+    concurrency: "OPTIMISTIC_LOCK_OR_EXPLICIT_ROW_LOCK"
+    terminalStateMutation: "DENY"
+    evidence: "PERSIST_TRANSITION"
+  audit:
+    required: true
+    signedEventRequiredBeforeProductionEnablement: true
+  outbox:
+    requiredForExternalSideEffects: true
+  errors:
+    format: "ApiErrorResponse"
+    noSensitivePayloads: true
+featureFlags:
+  defaultEnabled: false
+  productionEnablementRequiresCertification: true

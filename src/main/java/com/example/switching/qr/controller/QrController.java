@@ -20,7 +20,7 @@ import com.example.switching.qr.dto.RefundQrRequest;
 import com.example.switching.qr.entity.QrCodeEntity;
 import com.example.switching.qr.service.QrDecodeService;
 import com.example.switching.qr.service.QrGeneratorService;
-import com.example.switching.qr.service.QrPaymentService;
+import com.example.switching.qr.service.QrPaymentSubmissionService;
 import com.example.switching.qr.service.QrRefundService;
 
 /**
@@ -40,12 +40,12 @@ public class QrController {
 
     private final QrGeneratorService generatorService;
     private final QrDecodeService    decodeService;
-    private final QrPaymentService   paymentService;
+    private final QrPaymentSubmissionService   paymentService;
     private final QrRefundService    refundService;
 
     public QrController(QrGeneratorService generatorService,
                          QrDecodeService    decodeService,
-                         QrPaymentService   paymentService,
+                         QrPaymentSubmissionService   paymentService,
                          QrRefundService    refundService) {
         this.generatorService = generatorService;
         this.decodeService    = decodeService;

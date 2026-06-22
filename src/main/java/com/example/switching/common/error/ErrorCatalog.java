@@ -642,6 +642,58 @@ public enum ErrorCatalog {
                         false,
                         "purposeCode and sourceOfFunds are required for large cross-border transfers"),
 
+        // ── Phase II Request-to-Pay ─────────────────────────────────────────
+
+        RTP_001(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "RTP-001",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.RTP,
+                        ErrorPhase.READ_RESOURCE,
+                        false,
+                        "RTP request not found"),
+
+        RTP_002(
+                        HttpStatus.CONFLICT,
+                        "CONFLICT",
+                        "RTP-002",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.RTP,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "RTP idempotency key was reused with a different payload"),
+
+        RTP_003(
+                        HttpStatus.CONFLICT,
+                        "CONFLICT",
+                        "RTP-003",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.RTP,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "RTP state transition is not allowed"),
+
+        RTP_004(
+                        HttpStatus.FORBIDDEN,
+                        "FORBIDDEN",
+                        "RTP-004",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.RTP,
+                        ErrorPhase.READ_RESOURCE,
+                        false,
+                        "Caller is not permitted to access this RTP request"),
+
+        RTP_005(
+                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        "UNPROCESSABLE_ENTITY",
+                        "RTP-005",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.RTP,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "RTP expiry is invalid"),
+
         SYS_001(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         "INTERNAL_SERVER_ERROR",

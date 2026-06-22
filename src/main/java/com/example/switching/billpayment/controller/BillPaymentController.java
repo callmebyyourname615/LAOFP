@@ -17,7 +17,7 @@ import com.example.switching.billpayment.dto.BillFetchResponse;
 import com.example.switching.billpayment.dto.BillPayRequest;
 import com.example.switching.billpayment.dto.BillPayResponse;
 import com.example.switching.billpayment.dto.BillerResponse;
-import com.example.switching.billpayment.service.BillPaymentService;
+import com.example.switching.billpayment.service.BillPaymentSubmissionService;
 import com.example.switching.billpayment.service.BillerService;
 
 /**
@@ -35,10 +35,10 @@ import com.example.switching.billpayment.service.BillerService;
 public class BillPaymentController {
 
     private final BillerService       billerService;
-    private final BillPaymentService  paymentService;
+    private final BillPaymentSubmissionService  paymentService;
 
     public BillPaymentController(BillerService billerService,
-                                 BillPaymentService paymentService) {
+                                 BillPaymentSubmissionService paymentService) {
         this.billerService  = billerService;
         this.paymentService = paymentService;
     }

@@ -11,11 +11,16 @@ import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;
+import org.springframework.beans.factory.ObjectProvider;
+import com.example.switching.promotion.service.PromotionApplicationService;
+import com.example.switching.promotion.service.PromotionContext;
 
 @Service
 public class FeeAssessmentService {
     private final JdbcTemplate jdbc;
-    public FeeAssessmentService(JdbcTemplate jdbc){this.jdbc=jdbc;}
+    private final ObjectProvider<PromotionApplicationService> promotionApplications;
+    public FeeAssessmentService(JdbcTemplate jdbc,ObjectProvider<PromotionApplicationService> promotionApplications){this.jdbc=jdbc;this.promotionApplications=promotionApplications;}
 
     @Transactional
     public FeeAssessmentResult assess(String transactionReference,String participantCode,String messageType,String currency,BigDecimal amount){
@@ -38,7 +43,11 @@ public class FeeAssessmentService {
             INSERT INTO fee_assessment(id,transaction_reference,tariff_version_id,tariff_rule_id,amount,assessed_fee,currency,evidence_hash)
             VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(transaction_reference) DO NOTHING
             """,UUID.randomUUID(),transactionReference,version,ruleId,amount,fee,currency,hash);
-        return new FeeAssessmentResult(version,ruleId,fee,currency);
+        var service=promotionApplications.getIfAvailable();
+        if(service==null) return FeeAssessmentResult.withoutPromotions(version,ruleId,fee,currency);
+        var promotions=service.apply(new PromotionContext(transactionReference,participantCode,messageType,messageType,currency,amount,fee,null,java.time.Instant.now(),java.util.Map.of()));
+        BigDecimal discount=promotions.stream().map(com.example.switching.promotion.dto.PromotionApplicationView::discountAmount).reduce(BigDecimal.ZERO,BigDecimal::add);
+        return new FeeAssessmentResult(version,ruleId,fee,discount,fee.subtract(discount).max(BigDecimal.ZERO),currency,List.copyOf(promotions));
     }
 
     public static BigDecimal calculate(BigDecimal amount,BigDecimal flat,BigDecimal basisPoints,BigDecimal minimum,BigDecimal maximum){

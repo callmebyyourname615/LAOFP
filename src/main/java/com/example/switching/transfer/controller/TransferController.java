@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.switching.transfer.dto.CreateTransferRequest;
 import com.example.switching.transfer.dto.CreateTransferResponse;
-import com.example.switching.transfer.service.CreateTransferService;
+import com.example.switching.transfer.service.TransferSubmissionService;
 
 @RestController
 @RequestMapping("/api/transfers")
 public class TransferController {
 
-    private final CreateTransferService createTransferService;
+    private final TransferSubmissionService createTransferService;
 
-    public TransferController(CreateTransferService createTransferService) {
+    public TransferController(TransferSubmissionService createTransferService) {
         this.createTransferService = createTransferService;
     }
 

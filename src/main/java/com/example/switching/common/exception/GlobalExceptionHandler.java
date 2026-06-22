@@ -68,6 +68,11 @@ import com.example.switching.dispute.exception.DisputeWindowExpiredException;
 import com.example.switching.crossborder.exception.CorridorNotAvailableException;
 import com.example.switching.crossborder.exception.FxQuoteExpiredException;
 import com.example.switching.crossborder.exception.PurposeCodeRequiredException;
+import com.example.switching.rtp.exception.RtpAccessDeniedException;
+import com.example.switching.rtp.exception.RtpExpiryInvalidException;
+import com.example.switching.rtp.exception.RtpIdempotencyConflictException;
+import com.example.switching.rtp.exception.RtpInvalidTransitionException;
+import com.example.switching.rtp.exception.RtpNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -209,6 +214,18 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(AuthorizationDeniedException.class)
         public ResponseEntity<ApiErrorResponse> handleAuthorizationDenied(
                         AuthorizationDeniedException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.LFP_2004,
+                                "Access denied",
+                                request,
+                                null);
+        }
+
+        @ExceptionHandler(SecurityException.class)
+        public ResponseEntity<ApiErrorResponse> handleSecurityException(
+                        SecurityException ex,
                         HttpServletRequest request) {
 
                 return buildResponse(
@@ -702,6 +719,38 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ApiErrorResponse> handlePurposeCodeRequired(
                         PurposeCodeRequiredException ex, HttpServletRequest request) {
                 return buildResponse(ErrorCatalog.LFP_CB_003, ex.getMessage(), request, null);
+        }
+
+        // ── Phase II Request-to-Pay ─────────────────────────────────────────
+
+        @ExceptionHandler(RtpNotFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpNotFound(
+                        RtpNotFoundException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_001, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpIdempotencyConflictException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpIdempotencyConflict(
+                        RtpIdempotencyConflictException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_002, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpInvalidTransitionException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpInvalidTransition(
+                        RtpInvalidTransitionException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_003, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpAccessDeniedException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpAccessDenied(
+                        RtpAccessDeniedException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_004, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpExpiryInvalidException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpExpiryInvalid(
+                        RtpExpiryInvalidException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_005, ex.getMessage(), request, null);
         }
 
         private ResponseEntity<ApiErrorResponse> buildResponse(
