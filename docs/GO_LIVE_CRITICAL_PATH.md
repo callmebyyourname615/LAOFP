@@ -1,6 +1,6 @@
 # Go-Live Critical Path — Master Checklist
 
-> **Last updated:** 2026-06-23 (after Phase 62+63+64 merge — commit `ef17d57`)
+> **Last updated:** 2026-06-23 (after Phase 65+66+67 merge — commit `5075fe4`)
 > **Audience:** Engineering, QA, SecOps, SRE, Change Manager
 > **Purpose:** Single checklist สำหรับพา Switching ขึ้น production
 > **Convention:**
@@ -16,17 +16,20 @@
 | Section | Progress | Note |
 |---|---|---|
 | 1. Code Foundation | 🟢 **100%** | 99 migrations (V1–V106) |
-| 2. P0 Critical Fixes | 🟡 **80%** | code done + Phase 62 hardening |
+| 2. P0 Critical Fixes | 🟡 **85%** | code done + Phase 65A sanctions fix |
 | 3. P1 Operational | 🟢 **90%** | 3 dashboards + DSL + promotion budget |
 | 4. P2 Nice-to-have | 🔴 **0%** | deferred |
 | 5. Runtime Evidence | 🔴 **0%** | UAT drills not executed |
 | 6. Operator Actions | 🔴 **0%** | secrets not rotated |
 | 7. Phase 61 UAT Preflight | 🟢 **scripts ready** | not executed |
 | 8. Phase 64 Entry Gate | 🟢 **scripts ready** | not executed |
-| 9. Phase 54 UAT Cert | 🔴 **0%** | depends on Phase 64 handoff |
-| 10. Phase 55 Production Go-Live | 🔴 **0%** | depends on Phase 54 |
-| 11. Post Go-Live BAU | 🔴 **0%** | hypercare not started |
-| **OVERALL** | **🟡 ~55%** | **2–3 weeks to Go-Live** |
+| 9. 🆕 Phase 65 Phase-54 Handoff | 🟢 **scripts ready** | not executed |
+| 10. 🆕 Phase 66 UAT Runtime Closure | 🟢 **scripts ready** | not executed |
+| 11. Phase 54 UAT Cert | 🔴 **0%** | gated by Phase 65/66 |
+| 12. 🆕 Phase 67 Production Cutover | 🟢 **scripts ready** | not executed |
+| 13. Phase 55 Production Go-Live | 🔴 **0%** | depends on Phase 67 |
+| 14. Post Go-Live BAU | 🔴 **0%** | hypercare not started |
+| **OVERALL** | **🟡 ~60%** | **2–3 weeks to Go-Live** |
 
 ---
 
@@ -75,7 +78,7 @@
 - [x] Update static verifiers to expect V106 (verify_phase53b, 53c-j, 43-52, 54a-j, 60, 61)
 - [x] Phase 62 added static regression guards for 4 historical blockers
 - [ ] Fix vault `ObjectMapper` missing in `WebhookEncryptionConfiguration`
-- [ ] Add `provider_uid` seed in `SanctionsScreeningIntegrationTest`
+- [x] Add `provider_uid` seed in `SanctionsScreeningIntegrationTest` (Phase 65A)
 - [ ] Fix FK cleanup order in `OperationsGenerateRoutesForBankIntegrationTest`
 - [ ] Fix `setObject(Instant)` → `setObject(idx, instant, Types.TIMESTAMP_WITH_TIMEZONE)` in cross-border
 - [ ] **Run `./mvnw verify` → 0 errors, 0 failures**
@@ -311,7 +314,51 @@ Orchestrator: `scripts/phase64/` + preflight `scripts/execute-and-verify/08-phas
 
 ---
 
-# 9. Phase 54 — UAT Certification
+# 9. 🆕 Phase 65 — Phase 54 Handoff
+
+Orchestrator: `scripts/phase65/` + preflight `scripts/execute-and-verify/09-phase65-preflight.sh`
+
+- [x] 65A Maven test blocker closure (fixes `provider_uid` in SanctionsScreeningIntegrationTest)
+- [x] 65B Full build + migration certification scripts
+- [x] 65C SMOS runtime provisioning + security audit scripts
+- [x] 65D Secret rotation + git history purge scripts (`generate_phase65_rotated_secrets.sh`)
+- [x] 65E–65J UAT infrastructure attestation + Phase 54 handoff bundle
+- [x] CI workflow `phase65-certification.yml`
+- [x] 6 attestation templates (DECISIONS, PHASE54_HANDOFF, SECRET_ROTATION, SMOS, SMOS_PROVISIONING, UAT_INFRA)
+- [x] `config/phase65-uat-infrastructure-contract.yaml`
+- [ ] **Execute** Phase 65 against UAT
+- [ ] Build Phase 54 handoff bundle
+- [ ] Phase 54 handoff sign-off
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 10. 🆕 Phase 66 — UAT Runtime Closure (10 step)
+
+Orchestrator: `scripts/phase66/` + verifier `scripts/verify_phase66_static.py`
+
+- [x] 66A Phase 65 handoff + collision guard
+- [x] 66B UAT dependency matrix
+- [x] 66C Build & test closure
+- [x] 66D Migration & data integrity certification (`sql/phase66/data-integrity-checks.sql`)
+- [x] 66E Performance & capacity certification
+- [x] 66F Backup & PITR certification
+- [x] 66G DR runtime certification
+- [x] 66H Secret rotation ceremony
+- [x] 66I SMOS runtime security certification
+- [x] 66J Runtime closure & Phase 54 decision
+- [x] 5 JSON schemas + 5 YAML configs
+- [x] CI workflow `phase66-runtime-closure.yml`
+- [ ] **Execute** Phase 66 against UAT
+- [ ] Build runtime closure manifest
+- [ ] Phase 54 decision (GO / NO-GO)
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 11. Phase 54 — UAT Certification
 
 - [ ] 54A Build & Test certification
 - [ ] 54B Migration certification (V1→V106)
@@ -327,7 +374,32 @@ Orchestrator: `scripts/phase64/` + preflight `scripts/execute-and-verify/08-phas
 
 ---
 
-# 10. Phase 55 — Production Go-Live
+# 12. 🆕 Phase 67 — Production Cutover (10 step)
+
+Orchestrator: `scripts/phase67/`
+
+- [x] 67A Release identity freeze gate
+- [x] 67B Production infrastructure gate
+- [x] 67C Immutable RC provenance
+- [x] 67D Financial cutover baseline
+- [x] 67E Canary health gate
+- [x] 67F Progressive traffic gate
+- [x] 67G–67J Hypercare + BAU acceptance manifests
+- [x] 4 JSON schemas (cutover-decision, command-center-event, bau-acceptance, result)
+- [x] 5 attestation templates (CHANGE_FREEZE, COMMAND_CENTER, HEALTHY_CUTOVER, HYPERCARE_14_DAY, ROLLBACK)
+- [x] CI workflow `phase67-production-cutover.yml`
+- [x] `config/phase67-production-cutover-policy.yaml`
+- [x] Operator runbook `docs/phase67/PHASE67_OPERATOR_RUNBOOK.md`
+- [x] Exit criteria `docs/phase67/PHASE67_EXIT_CRITERIA.md`
+- [ ] **Execute** Phase 67 in production
+- [ ] Sign cutover decision
+- [ ] Complete 14-day hypercare
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 13. Phase 55 — Production Go-Live
 
 - [ ] 55A Assemble immutable signed RC
 - [ ] 55B Validate production infrastructure contract
@@ -343,7 +415,7 @@ Orchestrator: `scripts/phase64/` + preflight `scripts/execute-and-verify/08-phas
 
 ---
 
-# 11. Post Go-Live BAU (Hypercare 14 days)
+# 14. Post Go-Live BAU (Hypercare 14 days)
 
 - [ ] Day 1: 24/7 SRE coverage
 - [ ] Day 1: Watch all 47 alerts firing as expected
@@ -458,7 +530,10 @@ phase_61_executed: false
 phase_64_executed: false
 mvn_compile: passing
 mvn_verify: pending
-last_merge_commit: ef17d57 (Phase 62 + 63 + 64)
+last_merge_commit: 5075fe4 (Phase 65 + 66 + 67)
+phase_65_scripts_ready: true
+phase_66_scripts_ready: true
+phase_67_scripts_ready: true
 ```
 
 ---
@@ -466,7 +541,7 @@ last_merge_commit: ef17d57 (Phase 62 + 63 + 64)
 # 📈 Overall Progress
 
 ```
-████████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░  55%
+█████████████████████████████████████░░░░░░░░░░░░░░░░░░░  60%
 ```
 
 | Tier | Progress |
