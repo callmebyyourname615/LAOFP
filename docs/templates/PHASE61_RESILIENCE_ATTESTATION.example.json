@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "recovery": {
+    "backupVerified": true,
+    "pitrVerified": true,
+    "approvedRpoSeconds": 300,
+    "actualRpoSeconds": 120,
+    "approvedRtoSeconds": 300,
+    "actualRtoSeconds": 240,
+    "financialTransactionLoss": 0
+  },
+  "drills": [
+    {"name": "application-pod-kill", "passed": true, "transactionLoss": 0},
+    {"name": "postgres-primary-failover", "passed": true, "transactionLoss": 0},
+    {"name": "postgres-failback", "passed": true, "transactionLoss": 0},
+    {"name": "kafka-broker-fail", "passed": true, "transactionLoss": 0},
+    {"name": "vault-leader-fail", "passed": true, "transactionLoss": 0},
+    {"name": "object-storage-node-fail", "passed": true, "transactionLoss": 0},
+    {"name": "network-partition", "passed": true, "transactionLoss": 0},
+    {"name": "external-api-timeout", "passed": true, "transactionLoss": 0},
+    {"name": "deployment-rollback", "passed": true, "transactionLoss": 0}
+  ],
+  "alerts": {
+    "allCriticalAlertsFired": true,
+    "allCriticalAlertsRouted": true,
+    "acknowledgementVerified": true
+  },
+  "sreLead": "sre-lead",
+  "operationsLead": "operations-lead",
+  "securityLead": "security-lead",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Phase 61 UAT Entry Evidence Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "status", "gitCommit", "applicationImageDigest", "migrationImageDigest", "phases", "approval", "artifacts"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "status": {"const": "PASS"},
+    "gitCommit": {"pattern": "^[0-9a-f]{40}$"},
+    "applicationImageDigest": {"pattern": "^sha256:[0-9a-f]{64}$"},
+    "migrationImageDigest": {"pattern": "^sha256:[0-9a-f]{64}$"},
+    "phases": {"type": "object", "minProperties": 10, "maxProperties": 10},
+    "approval": {"type": "object"},
+    "artifacts": {"type": "array"}
+  },
+  "additionalProperties": true
+}

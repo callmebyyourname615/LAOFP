@@ -1,0 +1,44 @@
+schemaVersion: 1
+name: switching-phase61-uat
+maximumClockSkewSeconds: 5
+requiredVariables:
+  - APPLICATION_IMAGE_DIGEST
+  - MIGRATION_IMAGE_DIGEST
+  - DB_HOST
+  - DB_PORT
+  - DB_USERNAME
+  - KAFKA_BOOTSTRAP_SERVERS
+  - KAFKA_HOST
+  - KAFKA_PORT
+  - VAULT_ADDR
+  - VAULT_HOST
+  - VAULT_PORT
+  - MINIO_ENDPOINT
+  - MINIO_HOST
+  - MINIO_PORT
+  - MANAGEMENT_BASE_URL
+  - TLS_CA_FILE
+tcpEndpoints:
+  - name: postgres-primary
+    hostVariable: DB_HOST
+    portVariable: DB_PORT
+  - name: kafka-bootstrap
+    hostVariable: KAFKA_HOST
+    portVariable: KAFKA_PORT
+  - name: vault
+    hostVariable: VAULT_HOST
+    portVariable: VAULT_PORT
+  - name: object-storage
+    hostVariable: MINIO_HOST
+    portVariable: MINIO_PORT
+requirements:
+  immutableImages: true
+  tlsRequired: true
+  mtlsForParticipants: true
+  nonRoot: true
+  readOnlyRootFilesystem: true
+  resourceLimits: true
+  podDisruptionBudget: true
+  horizontalPodAutoscaler: true
+  networkPolicy: true
+  separateMigrationServiceAccount: true

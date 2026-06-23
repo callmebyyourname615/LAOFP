@@ -1,0 +1,60 @@
+name: Phase 61 certification gates
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'scripts/phase61/**'
+      - 'security/**'
+      - 'performance/**'
+      - 'backup/**'
+      - 'dr/**'
+      - 'monitoring/**'
+      - 'schemas/**'
+      - 'config/**'
+      - 'pom.xml'
+      - '.github/workflows/phase61-certification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-certification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install verifier dependencies
+        run: python -m pip install --disable-pip-version-check --no-cache-dir PyYAML==6.0.2
+      - name: Phase 61 static contract
+        run: python3 scripts/verify_phase61_static.py
+      - name: Maven clean verify
+        run: ./mvnw -B clean verify
+      - name: Phase 61 repository gates
+        env:
+          PHASE61_RUN_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}
+          PHASE61_EVIDENCE_ROOT: build/phase61-evidence
+        run: scripts/phase61/run_phase61.sh --repo
+      - name: Upload Phase 61 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase61-repository-evidence-${{ github.sha }}
+          path: |
+            build/phase61-evidence/
+            target/surefire-reports/
+            target/failsafe-reports/
+            target/site/jacoco/
+          if-no-files-found: warn
+          retention-days: 90

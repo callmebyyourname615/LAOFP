@@ -13,6 +13,9 @@ public record UserResponse(
         UserStatus status,
         boolean mfaEnabled,
         Set<RoleType> roles,
+        Long participantId,
         Instant lastLoginAt,
+        Instant passwordChangedAt,
+        Instant lockedAt,
         Instant createdAt,
         String mfaEnrollmentSecret) {}

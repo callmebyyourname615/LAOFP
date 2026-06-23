@@ -53,6 +53,7 @@ public class SmosJwtAuthenticationFilter extends OncePerRequestFilter {
             var authentication = new UsernamePasswordAuthenticationToken(claims.username(), null, authorities);
             Map<String, Object> details = new LinkedHashMap<>();
             details.put("userId", claims.userId()); details.put("roles", currentRoles); details.put("permissions", currentPermissions);
+            if (user.getParticipantId() != null) details.put("participantId", user.getParticipantId());
             authentication.setDetails(Map.copyOf(details));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
@@ -73,6 +74,8 @@ public class SmosJwtAuthenticationFilter extends OncePerRequestFilter {
                 || roles.contains("RISK_OFFICER") || roles.contains("AUDITOR") || roles.contains("READ_ONLY")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_OPS"));
         }
-        if (roles.contains("PARTICIPANT_ADMIN")) authorities.add(new SimpleGrantedAuthority("ROLE_BANK"));
+        // PARTICIPANT_ADMIN is intentionally not mapped to ROLE_BANK. PSP credentials and
+        // operator identities are separate trust domains; participant-scoped operator APIs
+        // must explicitly enforce participantId rather than inheriting payment-path access.
     }
 }

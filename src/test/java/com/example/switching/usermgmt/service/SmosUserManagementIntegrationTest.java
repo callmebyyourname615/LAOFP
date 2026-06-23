@@ -29,7 +29,7 @@ class SmosUserManagementIntegrationTest extends AbstractIntegrationTest {
     private static final String MAKER = "smos.integration.maker";
     private static final String CHECKER = "smos.integration.checker";
     private static final String READ_ONLY = "smos.integration.readonly";
-    private static final String PASSWORD = "Integration-Password-2026!";
+    private static final String PASSWORD = "Integration-Secure-2026!";
     private static final String CYCLE_REF = "SMOS-IT-CYCLE";
     private static final String INSTRUCTION_REF = "SMOS-IT-INSTRUCTION";
 
@@ -59,7 +59,8 @@ class SmosUserManagementIntegrationTest extends AbstractIntegrationTest {
                 "SMOS Integration Operator",
                 PASSWORD,
                 Set.of(RoleType.SETTLEMENT_OFFICER),
-                true), "integration-test");
+                true,
+                null), "integration-test");
 
         assertThat(created.mfaEnrollmentSecret()).isNotBlank();
         AuthResponse challenge = authentication.login(USERNAME, PASSWORD);
@@ -123,7 +124,7 @@ class SmosUserManagementIntegrationTest extends AbstractIntegrationTest {
 
     private UserResponse createUser(String username, String email, RoleType role) {
         return userManagement.create(new CreateUserRequest(
-                username, email, "SMOS Integration User", PASSWORD, Set.of(role), true), "integration-test");
+                username, email, "SMOS Integration User", PASSWORD, Set.of(role), true, null), "integration-test");
     }
 
     private void seedSettlementInstruction() {

@@ -15,6 +15,8 @@ class SmosTokenServiceTest {
     void issuesAndValidatesNamespacedOperatorToken() {
         SmosTokenService service = new SmosTokenService(new ObjectMapper(), SECRET, 3600);
         UserEntity user = new UserEntity();
+        user.setId(101L);
+        user.setParticipantId(7L);
         user.setUsername("settlement.operator");
 
         String token = service.issue(user, Set.of("SETTLEMENT_OFFICER"),
@@ -22,7 +24,11 @@ class SmosTokenServiceTest {
         SmosTokenClaims claims = service.validate(token);
 
         assertThat(token).startsWith(SmosTokenService.TOKEN_PREFIX);
+        assertThat(claims.userId()).isEqualTo(101L);
         assertThat(claims.username()).isEqualTo("settlement.operator");
+        assertThat(claims.tokenId()).isNotBlank();
+        assertThat(claims.participantId()).isEqualTo(7L);
+        assertThat(claims.issuedAt()).isBefore(claims.expiresAt());
         assertThat(claims.roles()).containsExactly("SETTLEMENT_OFFICER");
         assertThat(claims.permissions()).contains("settlement.view", "settlement.approve");
     }
@@ -31,6 +37,7 @@ class SmosTokenServiceTest {
     void rejectsTamperedTokenAndWeakSigningSecret() {
         SmosTokenService service = new SmosTokenService(new ObjectMapper(), SECRET, 3600);
         UserEntity user = new UserEntity();
+        user.setId(102L);
         user.setUsername("risk.operator");
         String token = service.issue(user, Set.of("RISK_OFFICER"), Set.of("risk.view"));
 

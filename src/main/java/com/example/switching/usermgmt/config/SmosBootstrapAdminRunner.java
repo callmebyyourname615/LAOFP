@@ -1,5 +1,6 @@
 package com.example.switching.usermgmt.config;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ public class SmosBootstrapAdminRunner implements ApplicationRunner {
     private final UserRepository users;
     private final RoleRepository roles;
     private final PasswordEncoder passwords;
+    private final com.example.switching.usermgmt.service.PasswordPolicyService passwordPolicy;
     private final SecretEncryptionService encryption;
     private final AuditLogService audit;
     private final String username;
@@ -33,13 +35,14 @@ public class SmosBootstrapAdminRunner implements ApplicationRunner {
     private final String mfaSecret;
 
     public SmosBootstrapAdminRunner(UserRepository users, RoleRepository roles, PasswordEncoder passwords,
+            com.example.switching.usermgmt.service.PasswordPolicyService passwordPolicy,
             SecretEncryptionService encryption, AuditLogService audit,
             @Value("${switching.smos.bootstrap.username:}") String username,
             @Value("${switching.smos.bootstrap.email:}") String email,
             @Value("${switching.smos.bootstrap.full-name:Initial System Administrator}") String fullName,
             @Value("${switching.smos.bootstrap.password:}") String password,
             @Value("${switching.smos.bootstrap.mfa-secret:}") String mfaSecret) {
-        this.users = users; this.roles = roles; this.passwords = passwords; this.encryption = encryption;
+        this.users = users; this.roles = roles; this.passwords = passwords; this.passwordPolicy = passwordPolicy; this.encryption = encryption;
         this.audit = audit; this.username = username; this.email = email; this.fullName = fullName;
         this.password = password; this.mfaSecret = mfaSecret;
     }
@@ -50,12 +53,14 @@ public class SmosBootstrapAdminRunner implements ApplicationRunner {
         if (username.isBlank() || email.isBlank() || password.length() < 16 || mfaSecret.length() < 16) {
             throw new IllegalStateException("SMOS bootstrap requires username, email, 16+ character password and TOTP secret");
         }
+        passwordPolicy.validate(password, username, email);
         RoleEntity adminRole = roles.findByName(RoleType.SYSTEM_ADMIN)
                 .orElseThrow(() -> new IllegalStateException("SYSTEM_ADMIN role seed is missing"));
         UserEntity user = new UserEntity();
         user.setUsername(username.trim().toLowerCase()); user.setEmail(email.trim().toLowerCase());
         user.setFullName(fullName.trim()); user.setPasswordHash(passwords.encode(password));
         user.setStatus(UserStatus.ACTIVE); user.setRoles(Set.of(adminRole));
+        user.setPasswordChangedAt(Instant.now()); user.setMfaEnrolledAt(Instant.now());
         user.setMfaSecretCiphertext(encryption.encrypt(mfaSecret).ciphertext());
         UserEntity saved = users.save(user);
         audit.log("SMOS_BOOTSTRAP_ADMIN_CREATED", "SMOS_USER", String.valueOf(saved.getId()), "SYSTEM_BOOTSTRAP",

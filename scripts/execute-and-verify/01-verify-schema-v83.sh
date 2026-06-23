@@ -30,7 +30,7 @@ fi
 if [ "$missing" = "$RESERVED" ]; then
   echo "  (V88-V90 and V98-V99 reserved — gaps allowed)"
 fi
-echo "  OK (V1..V100 present; V88-V90 and V98-V99 reserved)"
+echo "  OK (V1..V101 present; V88-V90 and V98-V99 reserved)"
 
 echo "[3/3] Running V83 integration tests (requires Docker for Testcontainers)…"
 if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then

@@ -34,6 +34,7 @@ run 03-run-static-and-tests       "Action #3 — Static verifiers + Maven test s
 run 04-credential-rotation-check  "Action #4 — Credential rotation checklist (read-only)"
 run 05-runtime-evidence-check     "Action #5 — Runtime evidence inventory (read-only)"
 run 06-phase60-preflight          "Action #6 — Phase 60A-60J repository preflight"
+run 07-phase61-preflight          "Action #7 — Phase 61A-61J certification preflight"
 
 echo
 echo "=========================================="

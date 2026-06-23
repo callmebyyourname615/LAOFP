@@ -169,7 +169,7 @@ def check_test_contracts() -> str:
         'MigrationVersion.fromVersion("82")',
         'isInstanceOf(FlywayException.class)',
         'isEqualTo("82")',
-        'isEqualTo("100")',
+        'isEqualTo("101")',
         'isEqualTo("character varying")',
         'isEqualTo(64)',
         'isEqualTo("23514")',

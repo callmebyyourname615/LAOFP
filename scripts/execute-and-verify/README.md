@@ -97,3 +97,7 @@ python3 --version
 
 - ไม่ได้แตะ `docker-compose.yml`, `init-db-users.sh`, `.env*` ตามนโยบายที่ตกลงไว้ (DB credential เดิม)
 - Evidence โฟลเดอร์ถูก `.gitignore` ได้ตามต้องการ (เพิ่มเองภายหลัง)
+
+## Step 07 — Phase 61 certification preflight
+
+Runs `scripts/verify_phase61_static.py` and all Phase 61 gates in non-destructive preflight mode.

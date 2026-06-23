@@ -13,16 +13,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dashboard.crossborder.dto.CrossBorderDashboardResponse;
+import com.example.switching.dashboard.common.DashboardQueryGuard;
 
 @Service
 @ConditionalOnProperty(name = "switching.smos.enabled", havingValue = "true")
 public class CrossBorderDashboardService {
     private static final List<String> EXPECTED_RAILS = List.of("PROMPTPAY", "BAKONG", "NAPAS", "UPI");
     private final JdbcTemplate jdbc;
-    public CrossBorderDashboardService(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    private final DashboardQueryGuard queryGuard;
+    public CrossBorderDashboardService(JdbcTemplate jdbc, DashboardQueryGuard queryGuard) { this.jdbc = jdbc; this.queryGuard = queryGuard; }
 
     @Transactional(readOnly = true)
     public CrossBorderDashboardResponse load() {
+        queryGuard.apply();
         CrossBorderDashboardResponse.Summary summary = jdbc.queryForObject("""
                 SELECT
                   (SELECT count(*) FROM crossborder_transfers WHERE status = 'COMPLETED' AND initiated_at::date = current_date) AS completed_today,
@@ -62,6 +65,7 @@ public class CrossBorderDashboardService {
                        count(*) FILTER (WHERE status = 'FAILED') AS failed_count
                 FROM crossborder_transfers WHERE initiated_at::date = current_date
                 GROUP BY target_network ORDER BY transaction_count DESC
+                LIMIT 20
                 """, (rs, rowNum) -> new CrossBorderDashboardResponse.CorridorVolume(
                 rs.getString("target_network"), rs.getLong("transaction_count"),
                 rs.getLong("completed_count"), rs.getLong("failed_count")));
@@ -69,6 +73,7 @@ public class CrossBorderDashboardService {
         List<CrossBorderDashboardResponse.FxRate> rates = jdbc.query("""
                 SELECT source_currency, dest_currency, target_network, indicative_rate, status
                 FROM fx_corridors ORDER BY source_currency, dest_currency, target_network
+                LIMIT 100
                 """, (rs, rowNum) -> new CrossBorderDashboardResponse.FxRate(
                 rs.getString("source_currency"), rs.getString("dest_currency"),
                 rs.getString("target_network"), nonNull(rs.getBigDecimal("indicative_rate")), rs.getString("status")));
@@ -78,6 +83,7 @@ public class CrossBorderDashboardService {
                 FROM cross_border_rail_reconciliation
                 WHERE statement_date >= current_date - 7
                 GROUP BY rail, status ORDER BY rail, status
+                LIMIT 100
                 """, (rs, rowNum) -> new CrossBorderDashboardResponse.ReconciliationStatus(
                 rs.getString("rail"), rs.getString("status"), rs.getLong("total")));
 

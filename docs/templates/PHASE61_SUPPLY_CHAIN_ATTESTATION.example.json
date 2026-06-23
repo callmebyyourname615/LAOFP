@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "rotatedCredentials": ["POSTGRES_PASSWORD", "REPLICATION_PASSWORD", "DB_APP_PASSWORD", "FLYWAY_PASSWORD", "ARCHIVE_POSTGRES_PASSWORD", "MINIO_ROOT_PASSWORD"],
+  "oldCredentialsDisabled": true,
+  "gitHistoryPurged": true,
+  "ciCachesInvalidated": true,
+  "oldClonesInvalidated": true,
+  "allBranchesAndTagsScanned": true,
+  "artifacts": {
+    "applicationImageDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "migrationImageDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sbomSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "provenanceSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "gitleaksPassed": true,
+    "trivyPassed": true,
+    "grypePassed": true,
+    "cosignVerified": true,
+    "provenanceVerified": true,
+    "manifestsDigestPinned": true,
+    "criticalVulnerabilities": 0,
+    "highVulnerabilities": 0
+  },
+  "repoCoordinator": "repository-coordinator",
+  "securityLead": "security-lead",
+  "signedAt": "2026-06-23T00:00:00Z",
+  "changeReference": "CHG-000000"
+}

@@ -10,16 +10,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dashboard.settlement.dto.SettlementDashboardResponse;
+import com.example.switching.dashboard.common.DashboardQueryGuard;
 
 @Service
 @ConditionalOnProperty(name = "switching.smos.enabled", havingValue = "true")
 public class SettlementDashboardService {
     private final JdbcTemplate jdbc;
+    private final DashboardQueryGuard queryGuard;
 
-    public SettlementDashboardService(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    public SettlementDashboardService(JdbcTemplate jdbc, DashboardQueryGuard queryGuard) { this.jdbc = jdbc; this.queryGuard = queryGuard; }
 
     @Transactional(readOnly = true)
     public SettlementDashboardResponse load() {
+        queryGuard.apply();
         SettlementDashboardResponse.Summary summary = jdbc.queryForObject("""
                 SELECT
                   count(*) FILTER (WHERE status = 'PENDING_APPROVAL') AS pending_count,
@@ -37,6 +40,7 @@ public class SettlementDashboardService {
                 SELECT cycle_ref, settlement_date, cycle_number, status, opened_at, closed_at, settled_at
                 FROM settlement_cycles WHERE settlement_date = current_date
                 ORDER BY cycle_number
+                LIMIT 20
                 """, (rs, rowNum) -> new SettlementDashboardResponse.Cycle(
                 rs.getString("cycle_ref"), rs.getObject("settlement_date", java.time.LocalDate.class),
                 rs.getInt("cycle_number"), rs.getString("status"), instant(rs, "opened_at"),

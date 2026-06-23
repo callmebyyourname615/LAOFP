@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "settlementSlaSeconds": 1800,
+  "debitEqualsCredit": true,
+  "reconciliationDifference": 0,
+  "rebatchIdempotent": true,
+  "retryIdempotent": true,
+  "reversalAndRefundVerified": true,
+  "participantFailureVerified": true,
+  "outboxFullyDrained": true,
+  "settlementLead": "settlement-lead",
+  "financeControlLead": "finance-control-lead",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

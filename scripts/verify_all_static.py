@@ -21,6 +21,7 @@ VERIFIERS = [
     "scripts/verify_smos_user_management_static.py",
     "scripts/verify_critical_dashboards_static.py",
     "scripts/verify_phase60_static.py",
+    "scripts/verify_phase61_static.py",
 ]
 
 

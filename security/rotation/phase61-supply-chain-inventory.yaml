@@ -1,0 +1,21 @@
+schemaVersion: 1
+credentials:
+  - id: POSTGRES_PASSWORD
+    owner: Database Operations
+  - id: REPLICATION_PASSWORD
+    owner: Database Operations
+  - id: DB_APP_PASSWORD
+    owner: Application Operations
+  - id: FLYWAY_PASSWORD
+    owner: Release Engineering
+  - id: ARCHIVE_POSTGRES_PASSWORD
+    owner: Database Operations
+  - id: MINIO_ROOT_PASSWORD
+    owner: Storage Operations
+artifacts:
+  - application-image
+  - migration-image
+  - sbom
+  - vulnerability-reports
+  - cosign-signature
+  - provenance

@@ -137,6 +137,9 @@ switching:
     mfa-challenge-ttl-seconds: ${SMOS_MFA_CHALLENGE_TTL_SECONDS:60}
     max-failed-logins: ${SMOS_MAX_FAILED_LOGINS:5}
     mfa-required: ${SMOS_MFA_REQUIRED:true}
+    password-policy:
+      minimum-length: ${SMOS_PASSWORD_MINIMUM_LENGTH:14}
+    dashboard-query-timeout-ms: ${SMOS_DASHBOARD_QUERY_TIMEOUT_MS:3000}
     bootstrap:
       enabled: ${SMOS_BOOTSTRAP_ENABLED:false}
       username: ${SMOS_BOOTSTRAP_USERNAME:}

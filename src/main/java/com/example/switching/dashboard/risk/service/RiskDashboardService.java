@@ -10,15 +10,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dashboard.risk.dto.RiskDashboardResponse;
+import com.example.switching.dashboard.common.DashboardQueryGuard;
 
 @Service
 @ConditionalOnProperty(name = "switching.smos.enabled", havingValue = "true")
 public class RiskDashboardService {
     private final JdbcTemplate jdbc;
-    public RiskDashboardService(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    private final DashboardQueryGuard queryGuard;
+    public RiskDashboardService(JdbcTemplate jdbc, DashboardQueryGuard queryGuard) { this.jdbc = jdbc; this.queryGuard = queryGuard; }
 
     @Transactional(readOnly = true)
     public RiskDashboardResponse load() {
+        queryGuard.apply();
         RiskDashboardResponse.Summary summary = jdbc.queryForObject("""
                 SELECT
                   (SELECT count(*) FROM fraud_scores WHERE action_taken IN ('FLAG','BLOCK')
@@ -39,6 +42,7 @@ public class RiskDashboardService {
                 WHERE action_taken IN ('FLAG','BLOCK') AND scored_at >= now() - interval '24 hours'
                 GROUP BY risk_tier
                 ORDER BY CASE risk_tier WHEN 'CRITICAL' THEN 1 WHEN 'HIGH' THEN 2 WHEN 'MEDIUM' THEN 3 ELSE 4 END
+                LIMIT 20
                 """, (rs, rowNum) -> new RiskDashboardResponse.SeverityCount(
                 rs.getString("risk_tier"), rs.getLong("total")));
 

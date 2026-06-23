@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 })
 class SmosSecurityCertificationIntegrationTest extends AbstractIntegrationTest {
     private static final String PREFIX = "phase60.security.";
-    private static final String PASSWORD = "Phase60-Security-Password!";
+    private static final String PASSWORD = "Phase60-Secure-Operator7!";
     private static final String CYCLE_REF = "PHASE60-SEC-CYCLE";
     private static final String INSTRUCTION_REF = "PHASE60-SEC-INSTRUCTION";
 
@@ -155,7 +155,8 @@ class SmosSecurityCertificationIntegrationTest extends AbstractIntegrationTest {
                 "Phase 60 Security User",
                 PASSWORD,
                 Set.of(role),
-                true), "phase60-certifier");
+                true,
+                null), "phase60-certifier");
     }
 
     private AuthResponse authenticate(UserResponse user) {

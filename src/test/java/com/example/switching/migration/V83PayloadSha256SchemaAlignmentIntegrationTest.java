@@ -74,7 +74,7 @@ class V83PayloadSha256SchemaAlignmentIntegrationTest {
         throughLatest.validate();
 
         try (Connection connection = connection()) {
-            assertThat(currentFlywayVersion(connection)).isEqualTo("100");
+            assertThat(currentFlywayVersion(connection)).isEqualTo("101");
 
             assertVarchar64NotNull(connection, "configuration_change_requests");
             assertVarchar64NotNull(connection, "outbox_dead_letters");
