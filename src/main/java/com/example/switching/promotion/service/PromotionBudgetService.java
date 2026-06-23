@@ -28,6 +28,51 @@ public class PromotionBudgetService {
         this.jdbc = jdbc;
     }
 
+    // ── Legacy two-arg overloads kept for callers not yet migrated to the explicit
+    // reservation lifecycle. They auto-generate transaction reference, default currency
+    // and 5-minute expiry, swallow failures into a boolean for back-compat.
+
+    @Transactional
+    public boolean reserve(long promotionId, BigDecimal amount) {
+        try {
+            String txRef = "LEGACY-" + UUID.randomUUID();
+            reserve(promotionId, txRef, amount, "LAK", Instant.now().plusSeconds(300));
+            return true;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean reserve(UUID promotionId, BigDecimal amount) {
+        return reserve(promotionId.getMostSignificantBits(), amount);
+    }
+
+    @Transactional
+    public void release(long promotionId, BigDecimal amount) {
+        jdbc.update(
+                "UPDATE promotion_budget_account SET reserved_amount = GREATEST(reserved_amount - ?, 0),"
+                        + " version = version + 1, updated_at = now() WHERE promotion_id = ?",
+                amount, promotionId);
+    }
+
+    @Transactional
+    public void release(UUID promotionId, BigDecimal amount) {
+        release(promotionId.getMostSignificantBits(), amount);
+    }
+
+    @Transactional
+    public void consume(UUID promotionId, BigDecimal amount) {
+        // Legacy bulk-consume by promotionId — the explicit per-reservation flow is
+        // preferred. This overload only adjusts aggregated counters for back-compat.
+        long pid = promotionId.getMostSignificantBits();
+        jdbc.update(
+                "UPDATE promotion_budget_account SET reserved_amount = GREATEST(reserved_amount - ?, 0),"
+                        + " consumed_amount = consumed_amount + ?, version = version + 1, updated_at = now()"
+                        + " WHERE promotion_id = ?",
+                amount, amount, pid);
+    }
+
     @Transactional
     public PromotionBudgetReservation reserve(long promotionId, String transactionRef,
             BigDecimal amount, String currency, Instant expiresAt) {
