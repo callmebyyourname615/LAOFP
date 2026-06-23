@@ -1,0 +1,23 @@
+{
+  "applicationImageDigest": null,
+  "artifacts": [
+    {
+      "path": "scripts/phase61/evidence/20260623T075644Z/61A/phase.log",
+      "sha256": "6d1af162bf02c82292a64deec7231a9894976fa611d1e28e58e64cf8ab62878b",
+      "sizeBytes": 370
+    }
+  ],
+  "exitCode": 1,
+  "finishedAt": "2026-06-23T07:56:45Z",
+  "generatedAt": "2026-06-23T07:56:45.543846Z",
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "gitTreeState": "dirty",
+  "message": "build/test certification failed",
+  "migrationImageDigest": null,
+  "name": "Build and test green closure",
+  "phase": "61A",
+  "schemaVersion": 1,
+  "startedAt": "2026-06-23T07:56:45Z",
+  "status": "FAIL",
+  "targetEnvironment": "repository"
+}
