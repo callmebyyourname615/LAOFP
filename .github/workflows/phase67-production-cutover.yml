@@ -1,0 +1,45 @@
+name: Phase 67 Production Cutover Controls
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'AGENT/PHASE_67A_67J_IMPLEMENTATION_CHECKLIST.md'
+      - 'config/phase67-production-cutover-policy.yaml'
+      - 'scripts/phase67/**'
+      - 'schemas/phase67/**'
+      - 'docs/phase67/**'
+      - 'docs/templates/phase67/**'
+      - '.github/workflows/phase67-production-cutover.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install validation dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Static verification
+        run: python scripts/phase67/phase67_control.py static --repository . --output build/phase67-static.json
+      - name: Unit tests
+        run: python -m unittest discover -s scripts/phase67/tests -p 'test_*.py' -v
+      - name: Safe preflight
+        env:
+          PHASE67_MODE: preflight
+        run: scripts/phase67/run_phase67.sh
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase67-validation-evidence
+          path: |
+            build/phase67-static.json
+            build/phase67-production-cutover/
+          if-no-files-found: error

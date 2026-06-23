@@ -1,0 +1,38 @@
+Phase 67A-67J Changed Files Manifest
+Generated: 2026-06-23
+Scope: additive-only production cutover control and hypercare evidence gate
+
+.github/workflows/phase67-production-cutover.yml
+AGENT/PHASE_67A_67J_IMPLEMENTATION_CHECKLIST.md
+PHASE67_VALIDATION.log
+config/phase67-production-cutover-policy.yaml
+docs/phase67/PHASE67_EXIT_CRITERIA.md
+docs/phase67/PHASE67_IMPLEMENTATION_GUIDE.md
+docs/phase67/PHASE67_IMPLEMENTATION_REPORT.md
+docs/phase67/PHASE67_OPERATOR_RUNBOOK.md
+docs/phase67/PHASE67_VALIDATION_REPORT.md
+docs/templates/phase67/CHANGE_FREEZE_ATTESTATION.example.json
+docs/templates/phase67/COMMAND_CENTER_EVENT.example.json
+docs/templates/phase67/HEALTHY_CUTOVER_SIGNALS.example.json
+docs/templates/phase67/HYPERCARE_14_DAY.example.json
+docs/templates/phase67/ROLLBACK_CUTOVER_SIGNALS.example.json
+schemas/phase67/bau-acceptance-manifest.schema.json
+schemas/phase67/command-center-event.schema.json
+schemas/phase67/cutover-decision.schema.json
+schemas/phase67/phase67-result.schema.json
+scripts/phase67/67A-release-identity-freeze-gate.sh
+scripts/phase67/67B-production-infrastructure-gate.sh
+scripts/phase67/67C-immutable-rc-provenance.sh
+scripts/phase67/67D-financial-cutover-baseline.sh
+scripts/phase67/67E-canary-health-gate.sh
+scripts/phase67/67F-progressive-traffic-gate.sh
+scripts/phase67/67G-rollback-decision-engine.sh
+scripts/phase67/67H-command-center-recorder.sh
+scripts/phase67/67I-hypercare-tracker.sh
+scripts/phase67/67J-bau-acceptance-bundle.sh
+scripts/phase67/common.sh
+scripts/phase67/phase67_control.py
+scripts/phase67/run_phase67.sh
+scripts/phase67/tests/test_phase67_framework.py
+scripts/phase67/verify_phase67_static.py
+PHASE67_CHANGED_FILES_MANIFEST.txt

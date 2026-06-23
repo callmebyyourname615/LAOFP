@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "durationDays": 14,
+  "checkpoints": [
+    {
+      "day": 1,
+      "criticalIncidents": 0,
+      "unresolvedHighIncidents": 0,
+      "balanceMismatchCount": 0,
+      "duplicateBusinessReferenceCount": 0,
+      "allSignalsPresent": true
+    },
+    {
+      "day": 3,
+      "criticalIncidents": 0,
+      "unresolvedHighIncidents": 0,
+      "balanceMismatchCount": 0,
+      "duplicateBusinessReferenceCount": 0,
+      "allSignalsPresent": true
+    },
+    {
+      "day": 7,
+      "criticalIncidents": 0,
+      "unresolvedHighIncidents": 0,
+      "balanceMismatchCount": 0,
+      "duplicateBusinessReferenceCount": 0,
+      "allSignalsPresent": true
+    },
+    {
+      "day": 14,
+      "criticalIncidents": 0,
+      "unresolvedHighIncidents": 0,
+      "balanceMismatchCount": 0,
+      "duplicateBusinessReferenceCount": 0,
+      "allSignalsPresent": true
+    }
+  ]
+}

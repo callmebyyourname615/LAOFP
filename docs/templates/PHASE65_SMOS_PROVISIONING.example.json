@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "apiBaseUrl": "https://uat.example.invalid",
+  "users": [
+    {"username":"uat-system-admin","email":"system-admin@example.invalid","fullName":"UAT System Administrator","role":"SYSTEM_ADMIN","passwordEnv":"PHASE65_SYSTEM_ADMIN_PASSWORD"},
+    {"username":"uat-ops-admin","email":"ops-admin@example.invalid","fullName":"UAT Operations Administrator","role":"OPS_ADMIN","passwordEnv":"PHASE65_OPS_ADMIN_PASSWORD"},
+    {"username":"uat-settlement","email":"settlement@example.invalid","fullName":"UAT Settlement Officer","role":"SETTLEMENT_OFFICER","passwordEnv":"PHASE65_SETTLEMENT_PASSWORD"},
+    {"username":"uat-risk","email":"risk@example.invalid","fullName":"UAT Risk Officer","role":"RISK_OFFICER","passwordEnv":"PHASE65_RISK_PASSWORD"},
+    {"username":"uat-auditor","email":"auditor@example.invalid","fullName":"UAT Auditor","role":"AUDITOR","passwordEnv":"PHASE65_AUDITOR_PASSWORD"}
+  ]
+}

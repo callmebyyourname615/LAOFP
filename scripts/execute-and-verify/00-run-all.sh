@@ -36,6 +36,7 @@ run 05-runtime-evidence-check     "Action #5 — Runtime evidence inventory (rea
 run 06-phase60-preflight          "Action #6 — Phase 60A-60J repository preflight"
 run 07-phase61-preflight          "Action #7 — Phase 61A-61J certification preflight"
 run 08-phase62-preflight          "Action #8 — Phase 62A-62J implementation preflight"
+run 09-phase65-preflight          "Action #9 — Phase 65A-65J execution and handoff preflight"
 
 echo
 echo "=========================================="

@@ -1,0 +1,49 @@
+name: Phase 65 Certification
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: preflight or repo
+        required: true
+        default: preflight
+permissions:
+  contents: read
+jobs:
+  static-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install PyYAML
+      - run: python3 scripts/verify_phase65_static.py
+      - run: PHASE65_ALLOW_MISSING_AUTHORITATIVE_PHASE_II=false scripts/phase65/run_phase65.sh --preflight
+  maven-repository-certification:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'repo'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.9-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 10s
+          --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '21', cache: maven}
+      - run: ./mvnw -B clean verify
+      - run: scripts/phase65/run_phase65.sh --repo
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase65-evidence
+          path: |
+            scripts/phase65/evidence/
+            target/surefire-reports/
+            target/failsafe-reports/

@@ -1,0 +1,5 @@
+{
+  "eventType": "GATE_APPROVED",
+  "actor": "change-manager",
+  "message": "Canary health and financial reconciliation gates approved for traffic promotion"
+}

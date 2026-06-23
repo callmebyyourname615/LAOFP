@@ -1,0 +1,8 @@
+schemaVersion: 1
+strictSla: true
+scenarios:
+  smoke: {maxP95Ms: 200, maxErrorRate: 0.0, minRequestRate: 1}
+  sustained-2k-tps: {maxP95Ms: 300, maxErrorRate: 0.001, minRequestRate: 1900}
+  sustained-10k-tps: {maxP95Ms: 500, maxErrorRate: 0.001, minRequestRate: 9500}
+  burst-20k-tps: {maxP95Ms: 500, maxErrorRate: 0.005, minRequestRate: 18000}
+  soak-8h: {maxP95Ms: 500, maxErrorRate: 0.001, minRequestRate: 1900}

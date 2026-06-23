@@ -42,6 +42,10 @@ class SanctionsScreeningIntegrationTest extends AbstractIntegrationTest {
     void seedSanctionsList() {
         // Seed one blocked entity into the OFAC list
         syncService.seedTestEntry(KNOWN_BLOCKED, "OFAC", "PERSON", "TEST-SEED");
+        Integer seeded = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM sanctions_lists WHERE source_ref = 'TEST-SEED' AND provider_uid IS NOT NULL",
+                Integer.class);
+        assertEquals(1, seeded, "Sanctions test seed must always populate provider_uid");
     }
 
     @AfterEach

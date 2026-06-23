@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.example/schemas/phase67-result.schema.json",
+  "title": "Phase 67 Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "phase", "name", "status", "startedAt", "endedAt", "release", "checks"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"pattern": "^67[A-J]$"},
+    "name": {"type": "string", "minLength": 3},
+    "status": {"enum": ["PASS", "FAIL", "PREPARED"]},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "endedAt": {"type": "string", "format": "date-time"},
+    "release": {"$ref": "#/$defs/release"},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/check"}
+    }
+  },
+  "$defs": {
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "releaseCandidateId", "gitCommit", "applicationImageDigest", "migrationImageDigest", "environment", "mode"],
+      "properties": {
+        "reference": {"type": "string"},
+        "releaseCandidateId": {"type": "string"},
+        "gitCommit": {"pattern": "^[a-f0-9]{40}$"},
+        "applicationImageDigest": {"pattern": "^sha256:[a-f0-9]{64}$"},
+        "migrationImageDigest": {"pattern": "^sha256:[a-f0-9]{64}$"},
+        "environment": {"enum": ["release", "production", "hypercare"]},
+        "mode": {"enum": ["preflight", "import", "execute"]}
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "exitCode", "log"],
+      "properties": {
+        "id": {"pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "status": {"enum": ["PASS", "FAIL", "PREPARED"]},
+        "exitCode": {"type": "integer"},
+        "log": {"type": "string"}
+      }
+    }
+  }
+}

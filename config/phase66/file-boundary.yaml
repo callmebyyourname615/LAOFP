@@ -1,0 +1,20 @@
+schemaVersion: 1
+allowedPhase66Paths:
+  - AGENT/PHASE66_IMPLEMENTATION_CHECKLIST.md
+  - scripts/phase66/**
+  - scripts/verify_phase66_static.py
+  - scripts/execute-and-verify/09-phase66-runtime-closure.sh
+  - docs/phase66/**
+  - schemas/phase66/**
+  - config/phase66/**
+  - sql/phase66/**
+  - .github/workflows/phase66-runtime-closure.yml
+protectedPaths:
+  - src/main/**
+  - src/test/**
+  - src/main/resources/db/migration/**
+  - pom.xml
+  - scripts/phase65/**
+  - docs/phase65/**
+  - schemas/phase65/**
+  - config/phase65/**

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "environment": "uat",
+  "initialUsersCreated": 5,
+  "mfaMandatory": true,
+  "allUsersEnrolledTotp": true,
+  "bootstrapDisabledAfterProvisioning": true,
+  "adminEndpointAuditPassed": true,
+  "crossParticipantIsolationPassed": true,
+  "makerCheckerPassed": true,
+  "openApiValidated": true,
+  "evidenceReferences": ["replace-with-evidence-path"],
+  "qaLead": "replace-me",
+  "securityLead": "replace-me",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

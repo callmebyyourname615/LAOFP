@@ -1,0 +1,99 @@
+schemaVersion: 1
+policyId: switching-phase67-production-cutover-control-v1
+execution:
+  allowedModes: [preflight, import, execute]
+  allowedEnvironments: [release, production, hypercare]
+  productionConfirmation: I_UNDERSTAND_THIS_OPERATES_ON_PRODUCTION
+  failClosed: true
+releaseIdentity:
+  referencePattern: '^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$'
+  rcIdPattern: '^switching-[A-Za-z0-9][A-Za-z0-9._-]{2,95}$'
+  gitCommitPattern: '^[a-f0-9]{40}$'
+  imageDigestPattern: '^sha256:[a-f0-9]{64}$'
+changeFreeze:
+  minimumApprovers: 2
+  maximumAttestationAgeSeconds: 1800
+  requireRepositoryClean: true
+  requireHeadMatch: true
+  requireSignedAttestationInExecuteMode: true
+infrastructure:
+  prerequisitePhase: 55B
+  requirePass: true
+  maximumCertificateExpiryRiskDays: 30
+  maximumDatabaseReplicationLagSeconds: 5
+releaseCandidate:
+  prerequisitePhase: 55A
+  requirePass: true
+  requireChecksumVerification: true
+  requireSignatureVerification: true
+financialBaseline:
+  prerequisitePhase: 55D
+  requirePass: true
+  maximumBalanceMismatchCount: 0
+  maximumDuplicateBusinessReferenceCount: 0
+  maximumOpenReconciliationExceptions: 0
+canary:
+  prerequisitePhase: 55G
+  weightPercent: 5
+  maximumErrorRate: 0.005
+  maximumP95LatencySeconds: 0.75
+  maximumP99LatencySeconds: 1.5
+  maximumKafkaLag: 1000
+  maximumOutboxBacklog: 500
+  maximumDatabasePoolUtilization: 0.85
+  maximumBalanceMismatchCount: 0
+  maximumCriticalAlerts: 0
+progressiveTraffic:
+  prerequisitePhase: 55H
+  orderedWeights: [5, 25, 50, 100]
+  requireSignedPromotionDecision: true
+  minimumApprovers: 2
+  maximumDecisionAgeSeconds: 900
+rollback:
+  criticalSignals:
+    - financialMismatch
+    - criticalSecurityIncident
+    - dataLossSuspected
+    - duplicateBusinessReference
+    - reconciliationMismatch
+  holdSignals:
+    - errorRateExceeded
+    - p95LatencyExceeded
+    - p99LatencyExceeded
+    - kafkaLagExceeded
+    - outboxBacklogExceeded
+    - databasePoolExceeded
+    - criticalAlertFiring
+  criticalDecision: ROLLBACK_REQUIRED
+  holdDecision: HOLD
+  healthyDecision: CONTINUE
+commandCenter:
+  prerequisitePhase: 55F
+  requirePass: true
+  hashChainAlgorithm: SHA-256
+  allowedEventTypes:
+    - GATE_OPENED
+    - GATE_APPROVED
+    - GATE_REJECTED
+    - TRAFFIC_PROMOTION_REQUESTED
+    - TRAFFIC_PROMOTION_APPROVED
+    - ROLLBACK_DECLARED
+    - INCIDENT_OPENED
+    - INCIDENT_RESOLVED
+    - NOTE
+hypercare:
+  prerequisitePhase: 55I
+  minimumDurationDays: 14
+  requiredCheckpoints: [1, 3, 7, 14]
+  maximumCriticalIncidents: 0
+  maximumUnresolvedHighIncidents: 0
+  maximumBalanceMismatchCount: 0
+  maximumDuplicateBusinessReferenceCount: 0
+  requireAllSignalsPresent: true
+closure:
+  prerequisitePhase: 55J
+  requireBusinessAcceptance: true
+  requireOperationsAcceptance: true
+  requireSecurityAcceptance: true
+  requireNoOpenCriticalKnownIssues: true
+  requireSignedBundleInExecuteMode: true

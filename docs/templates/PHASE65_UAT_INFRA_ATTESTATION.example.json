@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "environment": "uat",
+  "applicationReplicas": 4,
+  "applicationImageDigest": "sha256:replace-me",
+  "migrationImageDigest": "sha256:replace-me",
+  "tlsVerified": true,
+  "primaryInRecovery": false,
+  "replicaInRecovery": true,
+  "replicaLagSeconds": 0,
+  "kafkaHealthy": true,
+  "vaultHealthy": true,
+  "objectStorageChecksumVerified": true,
+  "monitoringHealthy": true,
+  "timeSyncHealthy": true,
+  "stableHours": 24,
+  "sreLead": "replace-me",
+  "qaLead": "replace-me",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

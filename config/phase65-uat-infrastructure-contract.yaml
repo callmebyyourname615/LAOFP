@@ -1,0 +1,23 @@
+schemaVersion: 1
+environment: uat
+minimumApplicationReplicas: 4
+requiredControls:
+  - application-image-digest
+  - migration-image-digest
+  - https-health
+  - postgres-primary
+  - postgres-streaming-replica
+  - kafka-cluster
+  - vault
+  - object-storage
+  - prometheus
+  - alertmanager
+  - tempo
+  - time-synchronization
+  - backup-target
+forbiddenPatterns:
+  - change_me
+  - example.com
+  - :latest
+  - SNAPSHOT
+  - trust-all

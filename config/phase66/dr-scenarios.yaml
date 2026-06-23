@@ -1,0 +1,11 @@
+schemaVersion: 1
+rpoMinutes: 5
+rtoMinutes: 30
+scenarios:
+  - {id: pod-kill, required: true}
+  - {id: kafka-broker-failure, required: true}
+  - {id: network-partition, required: true}
+  - {id: object-storage-failure, required: true}
+  - {id: external-timeout, required: true}
+  - {id: database-failover, required: true}
+  - {id: region-failover, required: false}

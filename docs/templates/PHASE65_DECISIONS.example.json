@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "mfaMethod": "TOTP",
+  "performanceSlaHardGate": true,
+  "approvedDrRpoSeconds": 300,
+  "smosRolePolicy": "BRD_8_FIXED_ROLES",
+  "promotionLaunch": "DEFERRED_DISABLED",
+  "multiRegionMode": "ACTIVE_STANDBY",
+  "goLiveDate": "2026-07-31",
+  "decisionReferences": ["replace-with-approved-ADR"],
+  "productOwner": "replace-me",
+  "operationsLead": "replace-me",
+  "securityLead": "replace-me",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

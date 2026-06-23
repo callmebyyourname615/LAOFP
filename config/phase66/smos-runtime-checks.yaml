@@ -1,0 +1,7 @@
+schemaVersion: 1
+checks:
+  - {id: auth-session-valid, method: GET, path: /api/auth/me, expectedStatus: [200]}
+  - {id: admin-users-authorized, method: GET, path: "/api/admin/users?page=0&size=1", expectedStatus: [200]}
+  - {id: admin-users-bounded-pagination, method: GET, path: "/api/admin/users?page=0&size=501", expectedStatus: [400]}
+  - {id: refresh-token-not-get, method: GET, path: /api/auth/refresh, expectedStatus: [405]}
+  - {id: maker-checker-separation, method: GET, path: "/api/admin/maker-checker/pending?page=0&size=1", expectedStatus: [200]}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "contractOnly": {
+      "type": "boolean"
+    },
+    "passed": {
+      "type": "boolean"
+    },
+    "results": {
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "contractOnly",
+    "results",
+    "passed"
+  ],
+  "type": "object"
+}

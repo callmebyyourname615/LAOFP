@@ -1,0 +1,13 @@
+schemaVersion: 1
+dependencies:
+  - {id: application-health, type: http, url: "${APP_HEALTH_URL}", expectedStatus: [200], timeoutSeconds: 10, required: true}
+  - {id: postgres-primary, type: tcp, host: "${DB_PRIMARY_HOST}", port: "${DB_PRIMARY_PORT}", timeoutSeconds: 5, required: true}
+  - {id: postgres-replica, type: tcp, host: "${DB_REPLICA_HOST}", port: "${DB_REPLICA_PORT}", timeoutSeconds: 5, required: true}
+  - {id: postgres-primary-role, type: postgres-role, urlEnv: DB_PRIMARY_URL, userEnv: DB_USERNAME, passwordEnv: DB_PASSWORD, expectRecovery: false, timeoutSeconds: 10, required: true}
+  - {id: postgres-replica-role, type: postgres-role, urlEnv: DB_REPLICA_URL, userEnv: DB_USERNAME, passwordEnv: DB_PASSWORD, expectRecovery: true, timeoutSeconds: 10, required: true}
+  - {id: application-tls, type: tls, host: "${APP_TLS_HOST}", port: "${APP_TLS_PORT}", minDaysRemaining: 30, timeoutSeconds: 10, required: false}
+  - {id: kafka, type: tcp, host: "${KAFKA_HOST}", port: "${KAFKA_PORT}", timeoutSeconds: 5, required: true}
+  - {id: minio, type: http, url: "${MINIO_HEALTH_URL}", expectedStatus: [200], timeoutSeconds: 10, required: true}
+  - {id: vault, type: http, url: "${VAULT_HEALTH_URL}", expectedStatus: [200, 429, 472, 473], timeoutSeconds: 10, required: true}
+  - {id: prometheus, type: http, url: "${PROMETHEUS_READY_URL}", expectedStatus: [200], timeoutSeconds: 10, required: true}
+  - {id: grafana, type: http, url: "${GRAFANA_HEALTH_URL}", expectedStatus: [200], timeoutSeconds: 10, required: true}

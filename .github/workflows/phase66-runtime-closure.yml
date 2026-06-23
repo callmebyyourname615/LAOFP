@@ -1,0 +1,83 @@
+name: Phase 66 runtime closure
+on:
+  pull_request:
+    paths:
+      - 'scripts/phase66/**'
+      - 'scripts/verify_phase66_static.py'
+      - 'scripts/execute-and-verify/09-phase66-runtime-closure.sh'
+      - 'docs/phase66/**'
+      - 'schemas/phase66/**'
+      - 'config/phase66/**'
+      - 'sql/phase66/**'
+      - '.github/workflows/phase66-runtime-closure.yml'
+  workflow_dispatch:
+    inputs:
+      execute_full_uat:
+        description: Execute full UAT runtime campaign
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2 jsonschema==4.23.0
+      - run: scripts/execute-and-verify/09-phase66-runtime-closure.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase66-preflight-${{ github.sha }}
+          path: build/phase66-evidence/
+          if-no-files-found: error
+          retention-days: 90
+  full-uat:
+    if: github.event_name == 'workflow_dispatch' && inputs.execute_full_uat
+    needs: contract
+    runs-on: [self-hosted, switching-evidence]
+    environment: uat-evidence
+    timeout-minutes: 1500
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Full guarded runtime closure
+        env:
+          TARGET_ENVIRONMENT: uat
+          PHASE66_EXECUTE_RUNTIME: 'true'
+          CONFIRM_UAT_RUNTIME: 'yes'
+          CONFIRM_UAT_LOAD: I_UNDERSTAND_THIS_GENERATES_LOAD
+          CONFIRM_UAT_DESTRUCTIVE: I_UNDERSTAND_THIS_IS_DESTRUCTIVE
+          CONFIRM_SECRET_ROTATION_CEREMONY: I_UNDERSTAND_THIS_ROTATES_CREDENTIALS
+          APP_HEALTH_URL: ${{ vars.APP_HEALTH_URL }}
+          DB_PRIMARY_HOST: ${{ secrets.DB_PRIMARY_HOST }}
+          DB_PRIMARY_PORT: ${{ vars.DB_PRIMARY_PORT }}
+          DB_REPLICA_HOST: ${{ secrets.DB_REPLICA_HOST }}
+          DB_REPLICA_PORT: ${{ vars.DB_REPLICA_PORT }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          KAFKA_HOST: ${{ secrets.KAFKA_HOST }}
+          KAFKA_PORT: ${{ vars.KAFKA_PORT }}
+          MINIO_HEALTH_URL: ${{ vars.MINIO_HEALTH_URL }}
+          VAULT_HEALTH_URL: ${{ vars.VAULT_HEALTH_URL }}
+          PROMETHEUS_READY_URL: ${{ vars.PROMETHEUS_READY_URL }}
+          GRAFANA_HEALTH_URL: ${{ vars.GRAFANA_HEALTH_URL }}
+          SMOS_BASE_URL: ${{ vars.SMOS_BASE_URL }}
+          SMOS_OPERATOR_TOKEN: ${{ secrets.SMOS_OPERATOR_TOKEN }}
+          SECRET_ROTATION_ATTESTATION: ${{ vars.SECRET_ROTATION_ATTESTATION }}
+          PHASE66_APPROVAL_FILE: ${{ vars.PHASE66_APPROVAL_FILE }}
+          DR_EVIDENCE_DIR: ${{ vars.DR_EVIDENCE_DIR }}
+          BASE_URL: ${{ vars.BASE_URL }}
+        run: scripts/phase66/run_phase66.sh --full
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase66-runtime-${{ github.sha }}
+          path: build/phase66-evidence/
+          if-no-files-found: error
+          retention-days: 365

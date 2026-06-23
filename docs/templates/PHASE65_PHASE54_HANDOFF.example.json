@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "phase64Bundle": "/secure/evidence/phase64-signed-bundle",
+  "engineeringLead": "replace-me",
+  "qaLead": "replace-me",
+  "securityLead": "replace-me",
+  "sreLead": "replace-me",
+  "productOwner": "replace-me",
+  "changeManager": "replace-me",
+  "approved": true,
+  "signedAt": "2026-06-23T00:00:00Z"
+}

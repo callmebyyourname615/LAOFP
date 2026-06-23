@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "signals": {
+    "errorRateExceeded": false,
+    "p95LatencyExceeded": false,
+    "p99LatencyExceeded": false,
+    "kafkaLagExceeded": false,
+    "outboxBacklogExceeded": false,
+    "databasePoolExceeded": false,
+    "criticalAlertFiring": false,
+    "financialMismatch": false,
+    "reconciliationMismatch": false,
+    "duplicateBusinessReference": false,
+    "criticalSecurityIncident": false,
+    "dataLossSuspected": false
+  }
+}

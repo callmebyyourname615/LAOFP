@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "status": "ACTIVE",
+  "releaseReference": "CHG-2026-0001",
+  "gitCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "issuedAt": "2026-06-23T12:00:00Z",
+  "approvedBy": ["engineering-lead", "change-manager"]
+}
