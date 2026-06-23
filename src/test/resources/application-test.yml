@@ -36,6 +36,8 @@ spring:
     password: ${TEST_DB_PASSWORD:}   # overridden at runtime by Testcontainers via @DynamicPropertySource
 
 switching:
+  read-replica:
+    max-lag: PT5S
   archive:
     worker-enabled: false
     partition-maintenance-enabled: false

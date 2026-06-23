@@ -1,0 +1,20 @@
+{
+  "version": "phase70-v1",
+  "defaultQuota": {
+    "capacity": 100,
+    "refillTokens": 100,
+    "refillPeriodSeconds": 60
+  },
+  "participants": {
+    "BANK_A": {
+      "capacity": 300,
+      "refillTokens": 300,
+      "refillPeriodSeconds": 60
+    },
+    "BANK_B": {
+      "capacity": 200,
+      "refillTokens": 200,
+      "refillPeriodSeconds": 60
+    }
+  }
+}

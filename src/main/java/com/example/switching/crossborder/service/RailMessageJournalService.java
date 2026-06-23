@@ -2,6 +2,8 @@ package com.example.switching.crossborder.service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.sql.PreparedStatement;
+import java.time.Instant;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.switching.crossborder.jdbc.PostgresTemporalBinder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -121,27 +124,31 @@ public class RailMessageJournalService {
             String json = mapper.writeValueAsString(request);
             String requestHash = sha256(json);
             UUID proposedId = UUID.randomUUID();
-            int inserted = jdbc.update("""
-                    INSERT INTO cross_border_rail_message(
-                        id, rail, direction, external_ref, internal_ref,
-                        message_type, request_payload, request_sha256,
-                        status, received_at, sent_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?,
-                        CASE WHEN ?='INBOUND' THEN now() ELSE NULL END,
-                        CASE WHEN ?='OUTBOUND' THEN now() ELSE NULL END)
-                    ON CONFLICT(rail, direction, external_ref) DO NOTHING
-                    """,
-                    proposedId,
-                    rail,
-                    direction,
-                    externalReference,
-                    internalReference,
-                    messageType,
-                    json,
-                    requestHash,
-                    status,
-                    direction,
-                    direction);
+            Instant journaledAt = Instant.now();
+            int inserted = jdbc.update(connection -> {
+                PreparedStatement statement = connection.prepareStatement("""
+                        INSERT INTO cross_border_rail_message(
+                            id, rail, direction, external_ref, internal_ref,
+                            message_type, request_payload, request_sha256,
+                            status, received_at, sent_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?)
+                        ON CONFLICT(rail, direction, external_ref) DO NOTHING
+                        """);
+                statement.setObject(1, proposedId);
+                statement.setString(2, rail);
+                statement.setString(3, direction);
+                statement.setString(4, externalReference);
+                statement.setString(5, internalReference);
+                statement.setString(6, messageType);
+                statement.setString(7, json);
+                statement.setString(8, requestHash);
+                statement.setString(9, status);
+                PostgresTemporalBinder.setInstant(
+                        statement, 10, "INBOUND".equals(direction) ? journaledAt : null);
+                PostgresTemporalBinder.setInstant(
+                        statement, 11, "OUTBOUND".equals(direction) ? journaledAt : null);
+                return statement;
+            });
 
             List<Map<String, Object>> persisted = jdbc.queryForList("""
                     SELECT id, request_sha256, internal_ref, message_type

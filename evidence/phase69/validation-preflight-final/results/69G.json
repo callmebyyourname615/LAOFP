@@ -1,0 +1,11 @@
+{
+  "evidence": [],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Maven clean verify is configured; full mode is required for execution",
+  "metrics": {},
+  "mode": "preflight",
+  "phase": "69G",
+  "schemaVersion": 1,
+  "status": "PREPARED",
+  "timestamp": "2026-06-23T13:32:24.381660+00:00"
+}

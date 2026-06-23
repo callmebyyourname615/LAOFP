@@ -1,0 +1,13 @@
+{
+  "evidence": [
+    "scripts/execute-and-verify/00-run-all.sh"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Repository gate orchestrator exists; full mode is required for execution",
+  "metrics": {},
+  "mode": "preflight",
+  "phase": "69H",
+  "schemaVersion": 1,
+  "status": "PREPARED",
+  "timestamp": "2026-06-23T13:32:26.602227+00:00"
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.local/schemas/phase70-result.schema.json",
+  "title": "Phase 70 verification result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "phase",
+    "mode",
+    "status",
+    "runId",
+    "generatedAt",
+    "evidenceDirectory",
+    "completedSteps",
+    "failedStep"
+  ],
+  "properties": {
+    "phase": {
+      "const": "70A-70J"
+    },
+    "mode": {
+      "enum": [
+        "preflight",
+        "verify"
+      ]
+    },
+    "status": {
+      "enum": [
+        "PREPARED",
+        "PASS",
+        "FAIL"
+      ]
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidenceDirectory": {
+      "type": "string",
+      "minLength": 1
+    },
+    "completedSteps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "failedStep": {
+      "type": "string",
+      "maxLength": 128
+    }
+  }
+}

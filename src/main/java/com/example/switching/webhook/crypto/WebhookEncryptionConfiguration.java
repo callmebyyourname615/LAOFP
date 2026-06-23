@@ -6,11 +6,14 @@ import java.security.SecureRandom;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(WebhookEncryptionProperties.class)
@@ -27,7 +30,9 @@ public class WebhookEncryptionConfiguration {
             havingValue = "vault-transit")
     KeyEncryptionService vaultTransitKeyEncryptionService(
             WebhookEncryptionProperties properties,
-            ObjectMapper objectMapper) {
+            ObjectProvider<ObjectMapper> objectMapperProvider) {
+        ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(
+                WebhookEncryptionConfiguration::fallbackObjectMapper);
         HttpClient httpClient = HttpClient.newBuilder()
                 .connectTimeout(properties.getConnectTimeout())
                 .build();
@@ -61,8 +66,17 @@ public class WebhookEncryptionConfiguration {
     @ConditionalOnMissingBean(SecretEncryptionService.class)
     SecretEncryptionService envelopeSecretEncryptionService(
             KeyEncryptionService keyEncryptionService,
-            ObjectMapper objectMapper,
+            ObjectProvider<ObjectMapper> objectMapperProvider,
             SecureRandom secureRandom) {
+        ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(
+                WebhookEncryptionConfiguration::fallbackObjectMapper);
         return new EnvelopeSecretEncryptionService(keyEncryptionService, objectMapper, secureRandom);
+    }
+
+    private static ObjectMapper fallbackObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
     }
 }

@@ -1,0 +1,14 @@
+{
+  "adminEndpointAuditPassed": true,
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvedAt": "2026-06-23T00:00:00Z",
+  "approvedBy": "REPLACE_WITH_APPROVER",
+  "commit": "REPLACE_WITH_GIT_COMMIT",
+  "initialAdminsSeeded": true,
+  "makerCheckerVerified": true,
+  "mfaEnforced": true,
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "participantIsolationVerified": true,
+  "rbacVerified": true,
+  "schemaVersion": 1
+}

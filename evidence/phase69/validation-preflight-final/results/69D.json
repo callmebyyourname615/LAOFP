@@ -1,0 +1,13 @@
+{
+  "evidence": [
+    "logs/69D-temporal-binding.log"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Cross-border Instant bindings require Types.TIMESTAMP_WITH_TIMEZONE",
+  "metrics": {},
+  "mode": "preflight",
+  "phase": "69D",
+  "schemaVersion": 1,
+  "status": "PASS",
+  "timestamp": "2026-06-23T13:32:16.175534+00:00"
+}

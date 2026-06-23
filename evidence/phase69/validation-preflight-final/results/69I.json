@@ -1,0 +1,13 @@
+{
+  "evidence": [
+    "logs/69I-migration-config.log"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Migration inventory passes; Docker Compose validation is deferred to full mode",
+  "metrics": {},
+  "mode": "preflight",
+  "phase": "69I",
+  "schemaVersion": 1,
+  "status": "PREPARED",
+  "timestamp": "2026-06-23T13:32:31.296010+00:00"
+}

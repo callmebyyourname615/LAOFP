@@ -193,10 +193,15 @@ public class OperationsGenerateRoutesForBankService {
     private List<ParticipantRow> findActiveParticipants() {
         return jdbcTemplate.query(
                 """
-                SELECT bank_code
-                FROM participants
-                WHERE status = 'ACTIVE'
-                ORDER BY bank_code ASC
+                SELECT p.bank_code
+                FROM participants p
+                WHERE p.status = 'ACTIVE'
+                  AND EXISTS (
+                      SELECT 1
+                      FROM connector_configs cc
+                      WHERE cc.bank_code = p.bank_code
+                        AND cc.enabled = TRUE)
+                ORDER BY p.bank_code ASC
                 """,
                 (rs, rowNum) -> mapParticipant(rs)
         );

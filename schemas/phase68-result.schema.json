@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.local/schemas/phase68-result.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "phase", "name", "status", "exitCode", "message", "startedAt", "finishedAt", "commit"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"pattern": "^68[A-J]$"},
+    "status": {"enum": ["PASS", "PREPARED", "BLOCKED", "FAIL"]},
+    "exitCode": {"type": "integer"},
+    "applicationImageDigest": {"type": "string"},
+    "migrationImageDigest": {"type": "string"}
+  },
+  "additionalProperties": true
+}

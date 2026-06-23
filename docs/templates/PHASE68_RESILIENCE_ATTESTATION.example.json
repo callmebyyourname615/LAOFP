@@ -1,0 +1,20 @@
+{
+  "alertRoutingPassed": true,
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvedAt": "2026-06-23T00:00:00Z",
+  "approvedBy": "REPLACE_WITH_APPROVER",
+  "backupVerified": true,
+  "commit": "REPLACE_WITH_GIT_COMMIT",
+  "kafkaFailurePassed": true,
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "networkPartitionPassed": true,
+  "objectStorageFailurePassed": true,
+  "pitrPassed": true,
+  "postgresFailbackPassed": true,
+  "postgresFailoverPassed": true,
+  "rpoSeconds": 300,
+  "rtoSeconds": 1800,
+  "schemaVersion": 1,
+  "transactionLossCount": 0,
+  "vaultFailoverPassed": true
+}

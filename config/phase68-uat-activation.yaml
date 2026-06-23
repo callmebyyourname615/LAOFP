@@ -1,0 +1,37 @@
+schemaVersion: 1
+phase: 68C
+environment: uat
+minimumStableHours: 24
+application:
+  minimumReplicas: 4
+  requireImageDigest: true
+  requireHttps: true
+  requireReadiness: true
+  requireLiveness: true
+  requireStartupProbe: true
+postgresql:
+  requirePrimary: true
+  requireReadReplica: true
+  maximumReplicaLagSeconds: 5
+  requireTls: true
+kafka:
+  minimumBrokers: 3
+  requireTls: true
+vault:
+  requireHealthy: true
+  requireKubernetesAuth: true
+objectStorage:
+  requireHealthy: true
+  requireChecksumRoundTrip: true
+observability:
+  requirePrometheus: true
+  requireGrafana: true
+  requireLoki: true
+  requireTempo: true
+  requireAlertmanager: true
+security:
+  rejectLatestTag: true
+  rejectSnapshotArtifact: true
+  rejectPlaintextSecrets: true
+  requireNetworkPolicy: true
+  requireDedicatedMigrationServiceAccount: true

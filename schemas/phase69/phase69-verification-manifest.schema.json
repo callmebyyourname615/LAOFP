@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.local/schemas/phase69-verification-manifest.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "phase", "decision", "mode", "generatedAt", "gitCommit", "missingPhases", "phaseStatuses", "attestationApproved", "attestationCommitMatches", "artifacts"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"const": "69J"},
+    "decision": {"enum": ["PREPARED", "BLOCKED", "VERIFIED"]},
+    "mode": {"enum": ["preflight", "full"]},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "gitCommit": {"type": "string"},
+    "missingPhases": {"type": "array", "items": {"pattern": "^69[A-I]$"}},
+    "phaseStatuses": {"type": "object", "additionalProperties": {"enum": ["PASS", "FAIL", "BLOCKED", "PREPARED"]}},
+    "attestationApproved": {"type": "boolean"},
+    "attestationCommitMatches": {"type": "boolean"},
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "size"],
+        "properties": {
+          "path": {"type": "string"},
+          "sha256": {"pattern": "^[a-f0-9]{64}$"},
+          "size": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

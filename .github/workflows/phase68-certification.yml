@@ -1,0 +1,47 @@
+name: Phase 68 Certification
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Certification mode
+        required: true
+        default: repo
+        type: choice
+        options: [preflight, repo]
+  pull_request:
+    paths:
+      - 'scripts/phase68/**'
+      - 'config/phase68-*.yaml'
+      - 'schemas/phase68-*.json'
+      - 'src/main/java/com/example/switching/settlement/controller/**'
+      - 'src/main/java/com/example/switching/participant/controller/**'
+permissions:
+  contents: read
+jobs:
+  phase68:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install verifier dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Static contract
+        run: python3 scripts/verify_phase68_static.py
+      - name: Execute repository gate
+        env:
+          PHASE68_MODE: ${{ inputs.mode || 'preflight' }}
+        run: |
+          if [[ "${PHASE68_MODE}" == "repo" ]]; then
+            scripts/phase68/run_phase68.sh --repo
+          else
+            scripts/phase68/run_phase68.sh --preflight
+          fi
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase68-evidence
+          path: scripts/phase68/evidence/
+          if-no-files-found: warn

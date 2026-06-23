@@ -1,0 +1,89 @@
+{
+  "artifacts": [
+    {
+      "path": "logs/69A-boundary.log",
+      "sha256": "d678d79481fefc32259bc78f493439a4a8e31219ab4ee3143f38b6864b6bcdef",
+      "size": 34
+    },
+    {
+      "path": "logs/69D-temporal-binding.log",
+      "sha256": "c0747cc69c0769e5c27507da3a07d702e428b29de7c9e6a5e369e7511b03a37e",
+      "size": 82
+    },
+    {
+      "path": "logs/69E-self-test.log",
+      "sha256": "c0747cc69c0769e5c27507da3a07d702e428b29de7c9e6a5e369e7511b03a37e",
+      "size": 82
+    },
+    {
+      "path": "logs/69I-migration-config.log",
+      "sha256": "af27eecf2764e0b40916f35523f0ac14cb594c7cdcf960b64f2003afc868905e",
+      "size": 108
+    },
+    {
+      "path": "results/69A.json",
+      "sha256": "f4ddd36cf39a39cc7a47e761abd2ad2fb6991a9c8f02826c95970ddec545fc51",
+      "size": 457
+    },
+    {
+      "path": "results/69B.json",
+      "sha256": "1c6829db632da3bf278e36559ea9405329bc8ef5324bba5bbd3991dd6e6bc96f",
+      "size": 538
+    },
+    {
+      "path": "results/69C.json",
+      "sha256": "7268fec66e5c16860629912c38d42f7e8499f13a59c4a197649e11f2f7c75295",
+      "size": 450
+    },
+    {
+      "path": "results/69D.json",
+      "sha256": "7ee50080433644ce1f474f114b64fc12d0f332060666e6ec8d9d628e6088316d",
+      "size": 354
+    },
+    {
+      "path": "results/69E.json",
+      "sha256": "ca3a9bcd1d31911b1091419a70589e468ab0ecfbffac9df7c042ac0cca153535",
+      "size": 392
+    },
+    {
+      "path": "results/69F.json",
+      "sha256": "224f9d5a34f5a30c49e4ab4b5369e8edc8f686d86eff4efa8b4a61d9b50b3620",
+      "size": 324
+    },
+    {
+      "path": "results/69G.json",
+      "sha256": "55730b139ed10c7bf838d0271396a1d782039464309ce4bcd043f243b122f73b",
+      "size": 321
+    },
+    {
+      "path": "results/69H.json",
+      "sha256": "19be60883ebadc18da3bb4b477b04e382f52b4113425f8133413b99a7a094223",
+      "size": 374
+    },
+    {
+      "path": "results/69I.json",
+      "sha256": "1c7386c31edb7d538beb7de9a504ada6867a029efdef8e8e81ac94cfbcb261a1",
+      "size": 369
+    }
+  ],
+  "attestationApproved": false,
+  "attestationCommitMatches": false,
+  "decision": "PREPARED",
+  "generatedAt": "2026-06-23T13:39:22.390492+00:00",
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "missingPhases": [],
+  "mode": "preflight",
+  "phase": "69J",
+  "phaseStatuses": {
+    "69A": "PREPARED",
+    "69B": "PASS",
+    "69C": "PASS",
+    "69D": "PASS",
+    "69E": "PASS",
+    "69F": "PREPARED",
+    "69G": "PREPARED",
+    "69H": "PREPARED",
+    "69I": "PREPARED"
+  },
+  "schemaVersion": 1
+}

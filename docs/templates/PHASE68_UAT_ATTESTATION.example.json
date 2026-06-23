@@ -1,0 +1,18 @@
+{
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "applicationReplicas": 4,
+  "approvedAt": "2026-06-23T00:00:00Z",
+  "approvedBy": "REPLACE_WITH_APPROVER",
+  "commit": "REPLACE_WITH_GIT_COMMIT",
+  "environment": "uat",
+  "kafkaHealthy": true,
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "monitoringHealthy": true,
+  "objectStorageHealthy": true,
+  "postgresPrimaryHealthy": true,
+  "postgresReplicaHealthy": true,
+  "schemaVersion": 1,
+  "stableHours": 24,
+  "tlsVerified": true,
+  "vaultHealthy": true
+}

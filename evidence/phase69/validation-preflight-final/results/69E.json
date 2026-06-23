@@ -1,0 +1,15 @@
+{
+  "evidence": [
+    "logs/69E-self-test.log"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "P0 blocker regression artifacts are present and temporal scanner self-tests pass",
+  "metrics": {
+    "regressionArtifacts": 3
+  },
+  "mode": "preflight",
+  "phase": "69E",
+  "schemaVersion": 1,
+  "status": "PASS",
+  "timestamp": "2026-06-23T13:32:20.124708+00:00"
+}

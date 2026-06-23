@@ -1,0 +1,15 @@
+schemaVersion: 1
+phase: 68G
+scenarios:
+  smoke: {minimumTps: 95, maximumP95Ms: 200, maximumErrorRate: 0.0, durationMinutes: 5}
+  sustained2k: {minimumTps: 1900, maximumP95Ms: 300, maximumErrorRate: 0.001, durationMinutes: 30}
+  sustained10k: {minimumTps: 9500, maximumP95Ms: 500, maximumErrorRate: 0.001, durationMinutes: 60}
+  burst20k: {minimumTps: 18000, maximumP95Ms: 750, maximumErrorRate: 0.005, durationMinutes: 15}
+  soak8h: {minimumTps: 4750, maximumGcPauseMs: 100, maximumKafkaLagGrowth: 0, durationMinutes: 480}
+settlement:
+  transactionCount: 500000
+  maximumDurationSeconds: 1800
+  requireBalancedPositions: true
+  requireZeroDuplicatePostings: true
+  requireZeroMissingTransactions: true
+  requireZeroUndeliveredOutbox: true

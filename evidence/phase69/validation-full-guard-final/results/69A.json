@@ -1,0 +1,15 @@
+{
+  "evidence": [
+    "logs/69A-boundary.log"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Phase 68 is absent from the supplied baseline; merge Phase 68 before full verification",
+  "metrics": {
+    "phase68Present": false
+  },
+  "mode": "full",
+  "phase": "69A",
+  "schemaVersion": 1,
+  "status": "BLOCKED",
+  "timestamp": "2026-06-23T13:33:26.833876+00:00"
+}

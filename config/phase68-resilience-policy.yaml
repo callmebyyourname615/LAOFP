@@ -1,0 +1,31 @@
+schemaVersion: 1
+phase: 68H
+maximumRpoSeconds: 300
+maximumRestoreRtoSeconds: 1800
+maximumServiceRecoverySeconds: 300
+requireZeroTransactionLoss: true
+requireOutboxReplay: true
+requireFailback: true
+scenarios:
+  - application-pod-kill
+  - postgresql-primary-failure
+  - postgresql-failback
+  - kafka-broker-failure
+  - network-partition
+  - object-storage-failure
+  - external-api-timeout
+  - vault-failover
+  - application-rollback
+alerts:
+  - database-unavailable
+  - replica-lag
+  - kafka-lag
+  - outbox-backlog
+  - payment-error-rate
+  - settlement-sla
+  - reconciliation-mismatch
+  - hikari-saturation
+  - backup-stale
+  - certificate-expiry
+  - vault-unavailable
+  - sanctions-feed-stale

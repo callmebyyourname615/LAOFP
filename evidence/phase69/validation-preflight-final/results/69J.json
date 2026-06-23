@@ -1,0 +1,16 @@
+{
+  "evidence": [
+    "phase69-verification-manifest.json",
+    "SHA256SUMS"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Phase 69 verification framework is PREPARED; runtime gates are not yet executed",
+  "metrics": {
+    "decision": "PREPARED"
+  },
+  "mode": "preflight",
+  "phase": "69J",
+  "schemaVersion": 1,
+  "status": "PREPARED",
+  "timestamp": "2026-06-23T13:39:24.498399+00:00"
+}

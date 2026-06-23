@@ -1,0 +1,17 @@
+{
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvedAt": "2026-06-23T00:00:00Z",
+  "approvedBy": "REPLACE_WITH_APPROVER",
+  "changeRequestId": "CHG-REPLACE",
+  "commit": "REPLACE_WITH_GIT_COMMIT",
+  "cosignVerified": true,
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "p0Blockers": 0,
+  "phase64Passed": true,
+  "phase65Passed": true,
+  "phase66Passed": true,
+  "provenanceVerified": true,
+  "releaseTag": "v1.0.0-rc.1",
+  "sbomDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "schemaVersion": 1
+}

@@ -1,0 +1,15 @@
+{
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvedAt": "2026-06-23T00:00:00Z",
+  "approvedBy": "REPLACE_WITH_APPROVER",
+  "burst20kPassed": true,
+  "capacityPlanApproved": true,
+  "commit": "REPLACE_WITH_GIT_COMMIT",
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "schemaVersion": 1,
+  "settlement500kPassed": true,
+  "smokePassed": true,
+  "soak8hPassed": true,
+  "sustained10kPassed": true,
+  "sustained2kPassed": true
+}

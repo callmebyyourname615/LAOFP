@@ -1,0 +1,36 @@
+schemaVersion: 1
+phase: 69
+requiredBaseline:
+  phase68RequiredForFullMode: true
+  migrationInventory: dynamic
+ownership:
+  forbiddenPrefixes:
+    - scripts/phase68/
+    - docs/phase68/
+    - config/phase68/
+    - schemas/phase68/
+    - evidence/phase68/
+  inheritedDirtyPaths:
+    - docs/GO_LIVE_CRITICAL_PATH.md
+    - scripts/phase61/evidence/
+  allowedPhase69Prefixes:
+    - AGENT/PHASE69A-69J_CHECKLIST.md
+    - scripts/phase69/
+    - scripts/verify_phase69_static.py
+    - scripts/execute-and-verify/11-phase69-verification-closure.sh
+    - docs/phase69/
+    - docs/templates/PHASE69_RELEASE_VERIFICATION_ATTESTATION.example.json
+    - schemas/phase69/
+    - config/phase69/
+    - evidence/phase69/
+    - .github/workflows/phase69-verification-closure.yml
+  allowedSourceFiles:
+    - src/main/java/com/example/switching/webhook/crypto/WebhookEncryptionConfiguration.java
+    - src/test/java/com/example/switching/webhook/crypto/WebhookEncryptionConfigurationTest.java
+    - src/test/java/com/example/switching/operations/service/OperationsGenerateRoutesForBankIntegrationTest.java
+verification:
+  strictP95Milliseconds: 500
+  requireZeroFailures: true
+  requireZeroErrors: true
+  requireRepositoryGate: true
+  requireSignedAttestation: true

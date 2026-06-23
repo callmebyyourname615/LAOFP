@@ -33,6 +33,7 @@ import com.example.switching.settlement.service.RtgsGatewayService;
 import com.example.switching.settlement.service.SettlementInstructionService;
 import com.example.switching.settlement.service.SettlementNetPositionService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Operations API for the settlement engine.
@@ -49,6 +50,7 @@ import org.springframework.security.core.Authentication;
  */
 @RestController
 @RequestMapping("/api/operations/settlement")
+@PreAuthorize("hasAuthority('PERM_SETTLEMENT_VIEW')")
 public class SettlementController {
 
     private static final Logger log = LoggerFactory.getLogger(SettlementController.class);
@@ -76,6 +78,7 @@ public class SettlementController {
 
     // ── Open a new cycle ─────────────────────────────────────────────────────
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/cycles")
     public ResponseEntity<SettlementCycleResponse> openCycle(@RequestBody OpenCycleRequest request) {
         SettlementCycleEntity cycle = cycleService.openCycle(request.getSettlementDate());
@@ -114,6 +117,7 @@ public class SettlementController {
 
     // ── Batch transactions into cycle ────────────────────────────────────────
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/cycles/{cycleRef}/batch")
     public ResponseEntity<BatchResult> batchTransactions(@PathVariable String cycleRef) {
         int count = batchService.batchTransactions(cycleRef);
@@ -122,6 +126,7 @@ public class SettlementController {
 
     // ── Close cycle ──────────────────────────────────────────────────────────
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/cycles/{cycleRef}/close")
     public ResponseEntity<SettlementCycleResponse> closeCycle(@PathVariable String cycleRef) {
         SettlementCycleEntity cycle = cycleService.closeCycle(cycleRef);
@@ -130,6 +135,7 @@ public class SettlementController {
 
     // ── Settle (netting) ─────────────────────────────────────────────────────
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/cycles/{cycleRef}/settle")
     public ResponseEntity<SettleResult> settleCycle(@PathVariable String cycleRef) {
         // Step 1: apply multilateral netting (own transaction — commits here)
@@ -148,6 +154,7 @@ public class SettlementController {
         return ResponseEntity.ok(new SettleResult(cycleRef, "SETTLED", posResponses));
     }
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/cycles/{cycleRef}/instructions/generate")
     public ResponseEntity<List<SettlementInstructionResponse>> generateInstructions(@PathVariable String cycleRef) {
         List<SettlementInstructionEntity> instructions = instructionService.generateForCycle(cycleRef);
@@ -164,6 +171,7 @@ public class SettlementController {
                 .toList());
     }
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/instructions/{instructionRef}/approve")
     public ResponseEntity<SettlementInstructionResponse> approveInstruction(
             @PathVariable String instructionRef,
@@ -176,6 +184,7 @@ public class SettlementController {
         return ResponseEntity.ok(toInstructionResponse(cycleRefFor(instruction), instruction));
     }
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/instructions/{instructionRef}/reject")
     public ResponseEntity<SettlementInstructionResponse> rejectInstruction(
             @PathVariable String instructionRef,
@@ -188,6 +197,7 @@ public class SettlementController {
         return ResponseEntity.ok(toInstructionResponse(cycleRefFor(instruction), instruction));
     }
 
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/instructions/{instructionRef}/send-rtgs")
     public ResponseEntity<SettlementInstructionResponse> sendInstructionToRtgs(
             @PathVariable String instructionRef,

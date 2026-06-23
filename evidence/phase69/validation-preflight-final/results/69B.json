@@ -1,0 +1,14 @@
+{
+  "evidence": [
+    "src/main/java/com/example/switching/webhook/crypto/WebhookEncryptionConfiguration.java",
+    "src/test/java/com/example/switching/webhook/crypto/WebhookEncryptionConfigurationTest.java"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Webhook crypto supplies a conditional fallback ObjectMapper and preserves the application mapper",
+  "metrics": {},
+  "mode": "preflight",
+  "phase": "69B",
+  "schemaVersion": 1,
+  "status": "PASS",
+  "timestamp": "2026-06-23T13:32:09.365660+00:00"
+}

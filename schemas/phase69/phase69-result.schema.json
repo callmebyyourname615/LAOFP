@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.local/schemas/phase69-result.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "phase", "status", "mode", "message", "timestamp", "gitCommit", "evidence", "metrics"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"pattern": "^69[A-J]$"},
+    "status": {"enum": ["PASS", "FAIL", "BLOCKED", "PREPARED"]},
+    "mode": {"enum": ["preflight", "full"]},
+    "message": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "gitCommit": {"type": "string", "minLength": 1},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "metrics": {"type": "object"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,53 @@
+Phase 70A-70J changed-files delivery
+Source baseline: supplied Switching.zip (git f5a2453)
+Certification: static/preflight PASS; Maven verification blocked by distribution bootstrap access
+Changed repository files: 48
+
+.github/workflows/phase70-traffic-financial-safety.yml
+AGENT/PHASE_70A_70J_IMPLEMENTATION_CHECKLIST.md
+config/phase70-participant-traffic-policy.yaml
+docs/phase70/PARTICIPANT_RATE_LIMIT_POLICY.md
+docs/phase70/PHASE70_EXIT_CRITERIA.md
+docs/phase70/PHASE70_IMPLEMENTATION_REPORT.md
+docs/phase70/PHASE70_OPERATOR_RUNBOOK.md
+docs/phase70/PHASE70_OVERVIEW.md
+docs/phase70/PHASE70_VALIDATION_REPORT.md
+docs/phase70/READ_YOUR_WRITES_CONSISTENCY_POLICY.md
+schemas/phase70/phase70-result.schema.json
+scripts/phase70/run_phase70.sh
+scripts/phase70/verify_phase70_static.py
+src/main/java/com/example/switching/consistency/ConsistencyAwareReportingJdbcOperations.java
+src/main/java/com/example/switching/consistency/ReadConsistency.java
+src/main/java/com/example/switching/consistency/ReplicaFreshness.java
+src/main/java/com/example/switching/consistency/ReplicaFreshnessProbe.java
+src/main/java/com/example/switching/crossborder/jdbc/PostgresTemporalBinder.java
+src/main/java/com/example/switching/crossborder/service/RailMessageJournalService.java
+src/main/java/com/example/switching/operations/service/OperationsGenerateRoutesForBankService.java
+src/main/java/com/example/switching/promotion/reconciliation/PromotionFunderLedgerReconciliationController.java
+src/main/java/com/example/switching/promotion/reconciliation/PromotionFunderLedgerReconciliationReport.java
+src/main/java/com/example/switching/promotion/reconciliation/PromotionFunderLedgerReconciliationService.java
+src/main/java/com/example/switching/security/filter/RateLimitFilter.java
+src/main/java/com/example/switching/traffic/ratelimit/ParticipantIdentityResolver.java
+src/main/java/com/example/switching/traffic/ratelimit/ParticipantQuota.java
+src/main/java/com/example/switching/traffic/ratelimit/ParticipantRateLimitPolicy.java
+src/main/java/com/example/switching/traffic/ratelimit/ParticipantRateLimitPolicyService.java
+src/main/java/com/example/switching/traffic/ratelimit/ParticipantRateLimitPolicySnapshot.java
+src/main/java/com/example/switching/traffic/ratelimit/ParticipantTokenBucketService.java
+src/main/java/com/example/switching/traffic/ratelimit/RateLimitDecision.java
+src/main/java/com/example/switching/webhook/crypto/WebhookEncryptionConfiguration.java
+src/main/resources/application-prod.yml
+src/main/resources/application-staging.yml
+src/main/resources/application.yml
+src/main/resources/phase70/participant-traffic-policy.json
+src/test/java/com/example/switching/consistency/ConsistencyAwareReportingJdbcOperationsTest.java
+src/test/java/com/example/switching/crossborder/jdbc/PostgresTemporalBinderTest.java
+src/test/java/com/example/switching/operations/service/OperationsGenerateRoutesForBankIntegrationTest.java
+src/test/java/com/example/switching/phaseii/PromotionBudgetConcurrencyIntegrationTest.java
+src/test/java/com/example/switching/promotion/reconciliation/PromotionFunderLedgerReconciliationIntegrationTest.java
+src/test/java/com/example/switching/promotion/reconciliation/PromotionFunderLedgerReconciliationServiceTest.java
+src/test/java/com/example/switching/security/filter/RateLimitFilterTest.java
+src/test/java/com/example/switching/traffic/ratelimit/ParticipantIdentityResolverTest.java
+src/test/java/com/example/switching/traffic/ratelimit/ParticipantRateLimitPolicyServiceTest.java
+src/test/java/com/example/switching/traffic/ratelimit/ParticipantTokenBucketServiceTest.java
+src/test/java/com/example/switching/webhook/crypto/WebhookEncryptionConfigurationContextTest.java
+src/test/resources/application-test.yml

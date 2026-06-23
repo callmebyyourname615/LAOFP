@@ -41,55 +41,8 @@ class OperationsGenerateRoutesForBankIntegrationTest extends AbstractIntegration
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .build();
-        removeConnectorlessParticipants();
     }
 
-    /**
-     * Removes participants that have no connector configured.
-     *
-     * In the shared Testcontainers DB, other integration-test classes
-     * (e.g. IsoInquiryConcurrentIdempotencyIntegrationTest) seed banks like
-     * BANK_CI_A / BANK_CI_B without connector_configs.  When
-     * generateForBank() fetches ALL active participants it tries to create
-     * outbound routes to those connector-less banks, gets SKIPPED for every
-     * one of them, and returns PARTIALLY_CREATED instead of CREATED.
-     *
-     * Deleting connector-less participants here is safe: every class that
-     * needs them re-seeds with ON DUPLICATE KEY UPDATE in its own @BeforeEach.
-     */
-    private void removeConnectorlessParticipants() {
-        // P14 added settlement_instructions with FKs to participants.
-        // Purge instructions that reference connector-less participants first
-        // so the subsequent participant DELETE does not violate the FK constraint.
-        jdbcTemplate.update("""
-                DELETE FROM psp_suspension_log
-                WHERE psp_id IN (
-                    SELECT bank_code FROM participants
-                    WHERE NOT EXISTS (
-                        SELECT 1 FROM connector_configs cc
-                        WHERE cc.bank_code = participants.bank_code))
-                """);
-        jdbcTemplate.update("""
-                DELETE FROM settlement_instructions
-                WHERE debtor_psp_id IN (
-                    SELECT bank_code FROM participants
-                    WHERE NOT EXISTS (
-                        SELECT 1 FROM connector_configs cc
-                        WHERE cc.bank_code = participants.bank_code))
-                   OR creditor_psp_id IN (
-                    SELECT bank_code FROM participants
-                    WHERE NOT EXISTS (
-                        SELECT 1 FROM connector_configs cc
-                        WHERE cc.bank_code = participants.bank_code))
-                """);
-        jdbcTemplate.update("""
-                DELETE FROM participants
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM connector_configs cc
-                    WHERE cc.bank_code = participants.bank_code
-                )
-                """);
-    }
 
     @Test
     void generateRoutesForBankCreatesInboundAndOutboundRoutes() throws Exception {

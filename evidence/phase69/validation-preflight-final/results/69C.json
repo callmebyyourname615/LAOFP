@@ -1,0 +1,13 @@
+{
+  "evidence": [
+    "src/test/java/com/example/switching/operations/service/OperationsGenerateRoutesForBankIntegrationTest.java"
+  ],
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "Shared integration-test setup isolates connector-less participants without FK deletion",
+  "metrics": {},
+  "mode": "preflight",
+  "phase": "69C",
+  "schemaVersion": 1,
+  "status": "PASS",
+  "timestamp": "2026-06-23T13:32:11.557288+00:00"
+}
