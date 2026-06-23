@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "allCriticalFindingsClosed": true,
+  "runtimeEvidenceReviewed": true,
+  "goNoGoApproved": true,
+  "engineeringLead": "REPLACE_WITH_NAME",
+  "qaLead": "REPLACE_WITH_NAME",
+  "sreLead": "REPLACE_WITH_NAME",
+  "securityLead": "REPLACE_WITH_NAME",
+  "changeManager": "REPLACE_WITH_NAME",
+  "signedAt": "REPLACE_WITH_UTC_TIMESTAMP",
+  "changeReference": "REPLACE_WITH_CHANGE_ID"
+}

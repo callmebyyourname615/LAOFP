@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "decision": "APPROVE_PHASE54_ENTRY",
+  "changeReference": "CHG-000000",
+  "engineeringLead": "name",
+  "qaLead": "name",
+  "securityLead": "name",
+  "sreLead": "name",
+  "changeManager": "name",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

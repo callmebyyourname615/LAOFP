@@ -20,8 +20,8 @@ class V97SmosUserAccessMigrationIntegrationTest extends AbstractIntegrationTest 
         String currentVersion = jdbc.queryForObject(
                 "SELECT max(version) FROM flyway_schema_history WHERE success", String.class);
 
-        assertThat(migrationCount).isEqualTo(90);
-        assertThat(currentVersion).isEqualTo("101");
+        assertThat(migrationCount).isEqualTo(99);
+        assertThat(currentVersion).isEqualTo("106");
 
         List<String> roles = jdbc.queryForList(
                 "SELECT name FROM smos_roles ORDER BY name", String.class);

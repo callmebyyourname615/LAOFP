@@ -1,0 +1,173 @@
+name: Phase 64 UAT evidence and Phase 54 entry gate
+
+on:
+  pull_request:
+    paths:
+      - 'AGENT/PHASE_64A_64J_IMPLEMENTATION_CHECKLIST.md'
+      - 'scripts/phase64/**'
+      - 'scripts/verify_phase64_static.py'
+      - 'scripts/execute-and-verify/08-phase64-preflight.sh'
+      - 'docs/phase64/**'
+      - 'docs/templates/PHASE64_*'
+      - 'config/phase64-entry-gate.yaml'
+      - 'schemas/phase64-*'
+      - '.github/workflows/phase64-uat-evidence.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Contract-only preflight or full UAT evidence execution
+        required: true
+        default: preflight
+        type: choice
+        options: [preflight, full]
+      release_reference:
+        description: Immutable release/change reference for full mode
+        required: false
+        type: string
+      release_git_commit:
+        description: Full lowercase 40-character Git commit for full mode
+        required: false
+        type: string
+      application_image_digest:
+        description: Application sha256 digest for full mode
+        required: false
+        type: string
+      migration_image_digest:
+        description: Migration sha256 digest for full mode
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase64-${{ github.event.pull_request.number || inputs.release_reference || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repository-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check --no-cache-dir PyYAML==6.0.2
+      - name: Shell syntax
+        run: find scripts/phase64 -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
+      - name: Phase 64 static contract
+        run: python3 scripts/verify_phase64_static.py
+      - name: Phase 64 unit tests
+        run: python3 -m unittest discover -s scripts/phase64/tests -p 'test_*.py' -v
+      - name: Phase 64 preflight
+        env:
+          PHASE64_RUN_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}
+          PHASE64_EVIDENCE_ROOT: build/phase64-preflight
+        run: scripts/phase64/run_phase64.sh --preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase64-preflight-${{ github.sha }}
+          path: build/phase64-preflight/
+          if-no-files-found: error
+          retention-days: 90
+
+  full-uat-evidence:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'full'
+    needs: repository-contract
+    runs-on: [self-hosted, switching-evidence]
+    environment: uat-evidence
+    timeout-minutes: 1500
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_git_commit }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check --no-cache-dir PyYAML==6.0.2
+      - name: Materialize protected inputs
+        shell: bash
+        env:
+          UAT_ENV_B64: ${{ secrets.PHASE64_UAT_ENV_B64 }}
+          BACKUP_ATTESTATION_B64: ${{ secrets.PHASE64_BACKUP_ATTESTATION_B64 }}
+          DR_ATTESTATION_B64: ${{ secrets.PHASE64_DR_ATTESTATION_B64 }}
+          ALERT_ATTESTATION_B64: ${{ secrets.PHASE64_ALERT_ATTESTATION_B64 }}
+          HANDOFF_APPROVAL_B64: ${{ secrets.PHASE64_HANDOFF_APPROVAL_B64 }}
+          SIGNING_KEY_B64: ${{ secrets.PHASE64_SIGNING_KEY_B64 }}
+          SIGNING_PUBLIC_KEY_B64: ${{ secrets.PHASE64_SIGNING_PUBLIC_KEY_B64 }}
+        run: |
+          set -Eeuo pipefail
+          install -d -m 0700 build/phase64-protected
+          printf '%s' "$UAT_ENV_B64" | base64 -d > build/phase64-protected/uat.env
+          printf '%s' "$BACKUP_ATTESTATION_B64" | base64 -d > build/phase64-protected/backup.json
+          printf '%s' "$DR_ATTESTATION_B64" | base64 -d > build/phase64-protected/dr.json
+          printf '%s' "$ALERT_ATTESTATION_B64" | base64 -d > build/phase64-protected/alerts.json
+          printf '%s' "$HANDOFF_APPROVAL_B64" | base64 -d > build/phase64-protected/approval.json
+          printf '%s' "$SIGNING_KEY_B64" | base64 -d > build/phase64-protected/signing-key.pem
+          printf '%s' "$SIGNING_PUBLIC_KEY_B64" | base64 -d > build/phase64-protected/signing-public.pem
+          chmod 0600 build/phase64-protected/*
+      - name: Execute Phase 64 full UAT evidence
+        env:
+          TARGET_ENVIRONMENT: uat
+          PHASE64_EXECUTE_RUNTIME: 'true'
+          CONFIRM_UAT_EVIDENCE: 'yes'
+          RELEASE_REFERENCE: ${{ inputs.release_reference }}
+          RELEASE_GIT_COMMIT: ${{ inputs.release_git_commit }}
+          APPLICATION_IMAGE_DIGEST: ${{ inputs.application_image_digest }}
+          MIGRATION_IMAGE_DIGEST: ${{ inputs.migration_image_digest }}
+          PHASE64_PHASE61_MODE: execute
+          PHASE64_RUNTIME_MODE: execute
+          PHASE64_RUN_SUPPLEMENTAL_PERFORMANCE: 'true'
+          UAT_ENV_FILE: build/phase64-protected/uat.env
+          MANAGEMENT_BASE_URL: ${{ secrets.MANAGEMENT_BASE_URL }}
+          MANAGEMENT_BEARER_TOKEN: ${{ secrets.MANAGEMENT_BEARER_TOKEN }}
+          BACKUP_PITR_ATTESTATION: build/phase64-protected/backup.json
+          DR_ATTESTATION: build/phase64-protected/dr.json
+          ALERT_ATTESTATION: build/phase64-protected/alerts.json
+          PHASE64_HANDOFF_APPROVAL: build/phase64-protected/approval.json
+          PHASE64_SIGNING_KEY: build/phase64-protected/signing-key.pem
+          PHASE64_SIGNING_PUBLIC_KEY: build/phase64-protected/signing-public.pem
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ALERTMANAGER_URL: ${{ secrets.ALERTMANAGER_URL }}
+          ALERTMANAGER_BEARER_TOKEN: ${{ secrets.ALERTMANAGER_BEARER_TOKEN }}
+          ALERT_EXPECTED_RECEIVER: ${{ vars.ALERT_EXPECTED_RECEIVER }}
+          ALERT_DRILL_CONFIRMATION: I_UNDERSTAND_THIS_SENDS_TEST_ALERTS
+          EVIDENCE_ALLOW_TRAFFIC: I_UNDERSTAND_THIS_GENERATES_LOAD
+          EVIDENCE_ALLOW_DISRUPTIVE: I_UNDERSTAND_THIS_IS_DESTRUCTIVE
+          CONFIRM_UAT_DRILLS: 'yes'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          expected_reference="$RELEASE_REFERENCE"
+          expected_commit="$RELEASE_GIT_COMMIT"
+          expected_application_digest="$APPLICATION_IMAGE_DIGEST"
+          expected_migration_digest="$MIGRATION_IMAGE_DIGEST"
+          set -a
+          # Protected repository secret; values are not echoed.
+          source "$UAT_ENV_FILE"
+          set +a
+          # Re-assert immutable workflow inputs and safety guards after loading UAT connectivity variables.
+          export TARGET_ENVIRONMENT=uat
+          export PHASE64_EXECUTE_RUNTIME=true
+          export CONFIRM_UAT_EVIDENCE=yes
+          export RELEASE_REFERENCE="$expected_reference"
+          export RELEASE_GIT_COMMIT="$expected_commit"
+          export APPLICATION_IMAGE_DIGEST="$expected_application_digest"
+          export MIGRATION_IMAGE_DIGEST="$expected_migration_digest"
+          scripts/phase64/run_phase64.sh --full
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase64-uat-evidence-${{ inputs.release_reference }}
+          path: build/phase64-evidence/
+          if-no-files-found: error
+          retention-days: 365

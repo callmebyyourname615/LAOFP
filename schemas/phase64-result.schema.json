@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Phase 64 Result",
+  "type": "object",
+  "required": ["schemaVersion", "phase", "status", "exitCode", "targetEnvironment", "release", "artifacts"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"pattern": "^64[A-J]$"},
+    "status": {"enum": ["PASS", "FAIL", "PREPARED", "SKIPPED"]},
+    "exitCode": {"type": "integer"},
+    "targetEnvironment": {"enum": ["repository", "uat"]},
+    "release": {"type": "object"},
+    "artifacts": {"type": "array"}
+  },
+  "additionalProperties": true
+}

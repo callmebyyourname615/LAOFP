@@ -36,7 +36,16 @@ variables:
   FLYWAY_URL: {delivery: migration-secret, type: postgres-jdbc-verify-full}
   FLYWAY_USERNAME: {delivery: migration-secret, type: identifier}
   FLYWAY_PASSWORD: {delivery: migration-secret, type: secret, minLength: 20}
+  READ_REPLICA_ENABLED: {delivery: configmap, type: boolean, value: true}
+  READ_REPLICA_URL: {delivery: application-secret, type: postgres-jdbc-verify-full}
+  READ_REPLICA_USERNAME: {delivery: application-secret, type: identifier}
+  READ_REPLICA_PASSWORD: {delivery: application-secret, type: secret, minLength: 20}
+  TRACING_ENABLED: {delivery: configmap, type: boolean, value: true}
+  TRACING_SAMPLING_PROBABILITY: {delivery: configmap, type: nonempty}
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: {delivery: configmap, type: https-url}
+  SQL_INSPECTION_ENABLED: {delivery: configmap, type: boolean, value: false}
   SPRING_KAFKA_BOOTSTRAP_SERVERS: {delivery: configmap, type: kafka-bootstrap-tls}
+  KAFKA_OBSERVATION_ENABLED: {delivery: configmap, type: boolean, value: true}
   KAFKA_SASL_JAAS_CONFIG: {delivery: application-secret, type: kafka-jaas-secret, minLength: 40}
   KAFKA_SSL_TRUSTSTORE_LOCATION: {delivery: configmap, type: absolute-path}
   KAFKA_SSL_TRUSTSTORE_PASSWORD: {delivery: application-secret, type: secret, minLength: 12}
@@ -78,3 +87,4 @@ crossChecks:
   - {type: different, keys: [DB_USERNAME, FLYWAY_USERNAME]}
   - {type: different, keys: [DB_PASSWORD, FLYWAY_PASSWORD]}
   - {type: different, keys: [DB_PASSWORD, ARCHIVE_DB_PASSWORD]}
+  - {type: different, keys: [DB_PASSWORD, READ_REPLICA_PASSWORD]}

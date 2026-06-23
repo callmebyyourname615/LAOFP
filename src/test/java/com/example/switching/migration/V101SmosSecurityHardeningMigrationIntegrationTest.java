@@ -14,9 +14,9 @@ class V101SmosSecurityHardeningMigrationIntegrationTest extends AbstractIntegrat
     @Test
     void cleanInstallContainsV101IdentityAndSessionHardening() {
         assertThat(jdbc.queryForObject(
-                "SELECT max(version) FROM flyway_schema_history WHERE success", String.class)).isEqualTo("101");
+                "SELECT max(version) FROM flyway_schema_history WHERE success", String.class)).isEqualTo("106");
         assertThat(jdbc.queryForObject(
-                "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(90);
+                "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(99);
 
         List<String> userColumns = jdbc.queryForList("""
                 SELECT column_name FROM information_schema.columns

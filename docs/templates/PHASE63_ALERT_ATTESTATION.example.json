@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "repositoryAlertCount": 62,
+  "prometheusRuleAlertCount": 58,
+  "pendingFiringResolvedVerified": true,
+  "receiverDeliveryVerified": true,
+  "recoveryNotificationVerified": true,
+  "runbooksOpened": true,
+  "sreLead": "REPLACE_WITH_NAME",
+  "onCallLead": "REPLACE_WITH_NAME",
+  "signedAt": "REPLACE_WITH_UTC_TIMESTAMP",
+  "changeReference": "REPLACE_WITH_CHANGE_ID"
+}

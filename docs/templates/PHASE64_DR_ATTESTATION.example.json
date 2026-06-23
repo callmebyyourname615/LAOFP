@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "reference": "uat-rc-2026-001",
+    "gitCommit": "0000000000000000000000000000000000000000",
+    "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "scenarios": {
+    "kill-application-pod": {"status": "PASS", "recoverySeconds": 90, "evidence": "dr/pod-kill.log"},
+    "kafka-broker-failure": {"status": "PASS", "recoverySeconds": 180, "evidence": "dr/kafka-fail.log"},
+    "network-partition": {"status": "PASS", "recoverySeconds": 240, "evidence": "dr/network-partition.log"},
+    "object-storage-failure": {"status": "PASS", "recoverySeconds": 120, "evidence": "dr/object-storage.log"},
+    "external-timeout": {"status": "PASS", "recoverySeconds": 60, "evidence": "dr/external-timeout.log"},
+    "deployment-rollback": {"status": "PASS", "recoverySeconds": 300, "evidence": "dr/deployment-rollback.log"}
+  },
+  "committedTransactionLoss": 0,
+  "duplicateReplayCount": 0,
+  "outboxReplayIdempotent": true,
+  "postRecoveryHealth": "UP",
+  "signedBy": "SRE Lead",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

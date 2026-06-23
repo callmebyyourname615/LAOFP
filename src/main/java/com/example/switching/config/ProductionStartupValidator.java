@@ -195,6 +195,27 @@ public class ProductionStartupValidator implements InitializingBean {
     @Value("${switching.outbox.schema.allow-legacy-messages:false}")
     private boolean outboxAllowLegacyMessages;
 
+    @Value("${switching.read-replica.enabled:false}")
+    private boolean readReplicaEnabled;
+
+    @Value("${switching.read-replica.url:}")
+    private String readReplicaUrl;
+
+    @Value("${switching.read-replica.username:}")
+    private String readReplicaUsername;
+
+    @Value("${switching.read-replica.password:}")
+    private String readReplicaPassword;
+
+    @Value("${management.tracing.enabled:false}")
+    private boolean tracingEnabled;
+
+    @Value("${management.otlp.tracing.endpoint:}")
+    private String otlpTracingEndpoint;
+
+    @Value("${switching.sql-inspection.enabled:false}")
+    private boolean sqlInspectionEnabled;
+
     public ProductionStartupValidator(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -205,6 +226,24 @@ public class ProductionStartupValidator implements InitializingBean {
 
         requirePostgresVerifyFull(violations, "spring.datasource.url", dbUrl);
         requirePostgresVerifyFull(violations, "switching.archive.archive-db-url", archiveDbUrl);
+        if (!readReplicaEnabled) {
+            violations.add("switching.read-replica.enabled must be true in production.");
+        } else {
+            requirePostgresVerifyFull(violations, "switching.read-replica.url", readReplicaUrl);
+            rejectBlankOrPlaceholder(violations, "switching.read-replica.username", readReplicaUsername);
+            rejectBlankOrPlaceholder(violations, "switching.read-replica.password", readReplicaPassword);
+            if (dbUrl.equals(readReplicaUrl)) {
+                violations.add("Read replica URL must not be identical to the primary DB URL.");
+            }
+        }
+        if (!tracingEnabled) {
+            violations.add("management.tracing.enabled must be true in production.");
+        }
+        rejectBlankOrPlaceholder(violations, "management.otlp.tracing.endpoint", otlpTracingEndpoint);
+        rejectHttpsUrl(violations, "management.otlp.tracing.endpoint", otlpTracingEndpoint);
+        if (sqlInspectionEnabled) {
+            violations.add("switching.sql-inspection.enabled must be false in production; enable it only during controlled UAT diagnostics.");
+        }
 
         if (dbUrl.contains("localhost") || dbUrl.contains("127.0.0.1")) {
             violations.add("DB URL points to localhost — production must use a remote database host.");

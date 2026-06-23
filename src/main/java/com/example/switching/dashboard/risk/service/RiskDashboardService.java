@@ -5,22 +5,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dashboard.risk.dto.RiskDashboardResponse;
 import com.example.switching.dashboard.common.DashboardQueryGuard;
+import com.example.switching.dashboard.common.DashboardAccessScope;
 
 @Service
 @ConditionalOnProperty(name = "switching.smos.enabled", havingValue = "true")
 public class RiskDashboardService {
     private final JdbcTemplate jdbc;
     private final DashboardQueryGuard queryGuard;
-    public RiskDashboardService(JdbcTemplate jdbc, DashboardQueryGuard queryGuard) { this.jdbc = jdbc; this.queryGuard = queryGuard; }
+    private final DashboardAccessScope accessScope;
+    public RiskDashboardService(@Qualifier("reportingJdbcTemplate") JdbcTemplate jdbc, DashboardQueryGuard queryGuard, DashboardAccessScope accessScope) {
+        this.jdbc = jdbc;
+        this.queryGuard = queryGuard;
+        this.accessScope = accessScope;
+    }
 
     @Transactional(readOnly = true)
     public RiskDashboardResponse load() {
+        accessScope.requireSchemeWideOperator();
         queryGuard.apply();
         RiskDashboardResponse.Summary summary = jdbc.queryForObject("""
                 SELECT

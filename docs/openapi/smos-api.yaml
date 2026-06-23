@@ -1,0 +1,112 @@
+openapi: 3.1.0
+info:
+  title: Switching SMOS API
+  version: 1.0.0
+  description: Operator authentication, session, user and maker-checker API.
+servers:
+  - url: /api
+paths:
+  /auth/login:
+    post:
+      operationId: smosLogin
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/LoginRequest'}
+      responses:
+        '200': {description: MFA challenge or issued tokens}
+        '401': {description: Invalid credentials or locked account}
+  /auth/mfa:
+    post:
+      operationId: smosVerifyMfa
+      tags: [Authentication]
+      responses:
+        '200': {description: Access and refresh tokens issued}
+        '401': {description: Invalid or expired challenge}
+  /auth/refresh:
+    post:
+      operationId: smosRefresh
+      tags: [Authentication]
+      responses:
+        '200': {description: Rotated access and refresh tokens}
+        '401': {description: Invalid, expired or replayed refresh token}
+  /auth/logout:
+    post:
+      operationId: smosLogout
+      tags: [Authentication]
+      responses:
+        '204': {description: Session revoked}
+  /auth/sessions:
+    get:
+      operationId: listOwnSessions
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Active sessions}
+    delete:
+      operationId: revokeOwnSessions
+      security: [{bearerAuth: []}]
+      responses:
+        '204': {description: Sessions revoked}
+  /admin/users:
+    get:
+      operationId: listSmosUsers
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: page, in: query, schema: {type: integer, minimum: 0, default: 0}}
+        - {name: size, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 50}}
+      responses:
+        '200': {description: Paged users}
+    post:
+      operationId: createSmosUser
+      security: [{bearerAuth: []}]
+      responses:
+        '201': {description: User created}
+        '403': {description: SYSTEM_ADMIN required}
+  /admin/users/{id}/roles:
+    put:
+      operationId: assignSmosRoles
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: integer, format: int64}}
+      responses:
+        '200': {description: Roles updated and sessions revoked}
+  /admin/users/{id}/status:
+    put:
+      operationId: updateSmosUserStatus
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: integer, format: int64}}
+      responses:
+        '200': {description: Status updated}
+  /admin/requests:
+    get:
+      operationId: listPendingMakerCheckerRequests
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Pending requests}
+    post:
+      operationId: submitMakerCheckerRequest
+      security: [{bearerAuth: []}]
+      responses:
+        '201': {description: Request submitted}
+  /admin/requests/{id}/approve:
+    post:
+      operationId: approveMakerCheckerRequest
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Approved and action executed}
+        '409': {description: Maker-checker or state conflict}
+components:
+  securitySchemes:
+    bearerAuth: {type: http, scheme: bearer, bearerFormat: JWT}
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: {type: string, maxLength: 64}
+        password: {type: string, format: password}

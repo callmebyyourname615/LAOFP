@@ -58,7 +58,7 @@ class MigrationApplicationIntegrationTest {
                     .load();
 
             assertThat(flyway.info().current()).isNotNull();
-            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("101");
+            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("106");
             assertThat(flyway.info().pending()).isEmpty();
             flyway.validate();
 

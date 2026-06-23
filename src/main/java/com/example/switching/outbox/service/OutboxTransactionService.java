@@ -11,6 +11,7 @@ import com.example.switching.outbox.entity.OutboxEventEntity;
 import com.example.switching.outbox.enums.OutboxStatus;
 import com.example.switching.outbox.event.OutboxCreatedEvent;
 import com.example.switching.outbox.repository.OutboxEventRepository;
+import com.example.switching.observability.tracing.TraceContextSupport;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,13 +23,16 @@ public class OutboxTransactionService {
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final TraceContextSupport traceContext;
 
     public OutboxTransactionService(OutboxEventRepository outboxEventRepository,
                                     ObjectMapper objectMapper,
-                                    ApplicationEventPublisher eventPublisher) {
+                                    ApplicationEventPublisher eventPublisher,
+                                    TraceContextSupport traceContext) {
         this.outboxEventRepository = outboxEventRepository;
         this.objectMapper = objectMapper;
         this.eventPublisher = eventPublisher;
+        this.traceContext = traceContext;
     }
 
     @Transactional
@@ -44,6 +48,7 @@ public class OutboxTransactionService {
             event.setStatus(OutboxStatus.PENDING);
             event.setRetryCount(0);
             event.setCreatedAt(now);
+            event.setTraceId(traceContext.currentTraceId().orElse(null));
 
             OutboxEventEntity saved = outboxEventRepository.save(event);
 

@@ -1,0 +1,31 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Hikari Pool Utilization",
+      "targets": [{"expr": "hikaricp_connections_active / clamp_min(hikaricp_connections_max, 1)", "legendFormat": "{{pool}}"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Pending Connection Requests",
+      "targets": [{"expr": "hikaricp_connections_pending", "legendFormat": "{{pool}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Connection Acquisition P95",
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, pool) (rate(hikaricp_connections_acquire_seconds_bucket[5m])))", "legendFormat": "{{pool}}"}],
+      "fieldConfig": {"defaults": {"unit": "s"}}
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["switching", "database", "hikari", "phase62"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "title": "Switching Database Pools",
+  "uid": "switching-db-pools",
+  "version": 1
+}

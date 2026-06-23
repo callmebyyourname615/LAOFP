@@ -6,13 +6,15 @@
 
 ```
 scripts/execute-and-verify/
-├── 00-run-all.sh                 # orchestrator — รันทั้ง 6 step ตามลำดับ
+├── 00-run-all.sh                 # orchestrator — รัน readiness steps ตามลำดับ ตามลำดับ
 ├── 01-verify-schema-v83.sh       # Action #1 — ddl-auto + V83 migration
 ├── 02-verify-metrics-activation.sh # Action #2 — metrics profile
 ├── 03-run-static-and-tests.sh    # Action #3 — verifiers + mvn verify
 ├── 04-credential-rotation-check.sh # Action #4 — credential audit (read-only)
 ├── 05-runtime-evidence-check.sh  # Action #5 — runtime evidence inventory
 ├── 06-phase60-preflight.sh       # Action #6 — Phase 60A-60J repository preflight
+├── 07-phase61-preflight.sh       # Action #7 — Phase 61A-61J certification preflight
+├── 08-phase62-preflight.sh       # Action #8 — Phase 62A-62J implementation preflight
 └── evidence/                     # log + artifact ของแต่ละรอบรัน
     └── YYYYMMDD_HHMMSS/
         ├── 01-verify-schema-v83.log
@@ -41,6 +43,8 @@ scripts/execute-and-verify/
 ./scripts/execute-and-verify/04-credential-rotation-check.sh
 ./scripts/execute-and-verify/05-runtime-evidence-check.sh
 ./scripts/execute-and-verify/06-phase60-preflight.sh
+./scripts/execute-and-verify/07-phase61-preflight.sh
+./scripts/execute-and-verify/08-phase62-preflight.sh
 ```
 
 ## สถานะแต่ละ Step
@@ -53,6 +57,8 @@ scripts/execute-and-verify/
 | **04** | audit `.env.prod.example` ไม่มี placeholder + reminder operator | <1 นาที | – |
 | **05** | inventory ว่า B1–B8 ของ evidence ครบไหม | <1 นาที | – |
 | **06** | Phase 60 static contract + 60A–60J preflight | ~1–3 นาที | Python 3 |
+| **07** | Phase 61 UAT certification preflight | ~1–3 นาที | Python 3 |
+| **08** | Phase 62 implementation/static preflight | ~1–3 นาที | Python 3 |
 
 ## Pre-requisite ก่อนรัน
 
@@ -95,9 +101,13 @@ python3 --version
 
 ## หมายเหตุ
 
-- ไม่ได้แตะ `docker-compose.yml`, `init-db-users.sh`, `.env*` ตามนโยบายที่ตกลงไว้ (DB credential เดิม)
+- Production templates contain no usable credentials; populate runtime secrets only through Vault/External Secrets.
 - Evidence โฟลเดอร์ถูก `.gitignore` ได้ตามต้องการ (เพิ่มเองภายหลัง)
 
 ## Step 07 — Phase 61 certification preflight
 
 Runs `scripts/verify_phase61_static.py` and all Phase 61 gates in non-destructive preflight mode.
+
+## Step 08 — Phase 62 implementation preflight
+
+Runs `scripts/phase62/run_phase62.sh --preflight`. Strict mode requires authoritative Phase II migrations V91–V96.

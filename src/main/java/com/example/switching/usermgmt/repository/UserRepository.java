@@ -1,7 +1,8 @@
 package com.example.switching.usermgmt.repository;
 
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.switching.usermgmt.entity.UserEntity;
@@ -9,7 +10,7 @@ import com.example.switching.usermgmt.entity.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Override
     @EntityGraph(attributePaths = {"roles", "roles.permissions"})
-    List<UserEntity> findAll();
+    Page<UserEntity> findAll(Pageable pageable);
     @Override
     @EntityGraph(attributePaths = {"roles", "roles.permissions"})
     Optional<UserEntity> findById(Long id);

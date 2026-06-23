@@ -47,8 +47,8 @@ versions=[]
 for p in (ROOT/'src/main/resources/db/migration').glob('V*__*.sql'):
  m=re.match(r'V(\d+)__',p.name)
  if m: versions.append(int(m.group(1)))
-if len(versions)!=90 or max(versions,default=0)!=101: failures.append(f'migrations must be 90 through V101, got {len(versions)} through V{max(versions,default=0)}')
-if sorted(set(range(1,102))-set(versions))!=[88,89,90,91,92,93,94,95,96,98,99]: failures.append('migration gaps must match the uploaded baseline reservations')
+if len(versions)!=99 or max(versions,default=0)!=106: failures.append(f'migrations must be 99 through V106, got {len(versions)} through V{max(versions,default=0)}')
+if sorted(set(range(1,107))-set(versions))!=[88,89,90,98,99,102,103]: failures.append('migration gaps must be V88-V90, V98-V99 and V102-V103')
 for verifier in ('scripts/phase61/verify_smos_hardening.py','scripts/phase61/verify_dashboard_promotion_readiness.py','scripts/phase61/verify_phase61_evidence_tools.py'):
  r=subprocess.run([sys.executable,str(ROOT/verifier)],cwd=ROOT,text=True,capture_output=True)
  if r.returncode: failures.append(f'{verifier}: {r.stdout.strip()} {r.stderr.strip()}')

@@ -22,6 +22,7 @@ VERIFIERS = [
     "scripts/verify_critical_dashboards_static.py",
     "scripts/verify_phase60_static.py",
     "scripts/verify_phase61_static.py",
+    "scripts/verify_phase62_static.py",
 ]
 
 

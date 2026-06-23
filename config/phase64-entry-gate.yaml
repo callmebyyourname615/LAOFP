@@ -1,0 +1,66 @@
+schemaVersion: 1
+planId: switching-phase64-uat-evidence-entry-gate-v1
+allowedEnvironments: [uat]
+requiredPhases: [64A, 64B, 64C, 64D, 64E, 64F, 64G, 64H]
+performance:
+  scenarios:
+    smoke:
+      filePrefix: smoke-
+      minimumRequestRate: 1
+      maximumP95Milliseconds: 200
+      maximumFailureRate: 0.0
+      maximumDroppedIterations: 0
+    sustained-2k-tps:
+      filePrefix: sustained-2k-tps-
+      minimumRequestRate: 1900
+      maximumP95Milliseconds: 300
+      maximumFailureRate: 0.001
+      maximumDroppedIterations: 0
+    sustained-10k-tps:
+      filePrefix: sustained-10k-tps-
+      minimumRequestRate: 9500
+      maximumP95Milliseconds: 500
+      maximumFailureRate: 0.001
+      maximumDroppedIterations: 0
+    burst-20k-tps:
+      filePrefix: burst-20k-tps-
+      minimumRequestRate: 18000
+      maximumP95Milliseconds: 750
+      maximumFailureRate: 0.005
+      maximumDroppedIterations: 0
+    soak-8h:
+      filePrefix: soak-8h-
+      minimumRequestRate: 4500
+      maximumP95Milliseconds: 750
+      maximumFailureRate: 0.001
+      maximumDroppedIterations: 0
+backup:
+  maximumRpoSeconds: 300
+  maximumRtoSeconds: 1800
+  requireChecksumVerified: true
+  requireRowCountVerified: true
+  requireRestoreCompleted: true
+  requirePitrCompleted: true
+  maximumTransactionLoss: 0
+dr:
+  maximumRecoverySeconds: 1800
+  requiredScenarios:
+    - kill-application-pod
+    - kafka-broker-failure
+    - network-partition
+    - object-storage-failure
+    - external-timeout
+    - deployment-rollback
+  maximumCommittedTransactionLoss: 0
+  maximumDuplicateReplayCount: 0
+  requireOutboxReplayIdempotent: true
+  requiredPostRecoveryHealth: UP
+alerts:
+  ruleDirectory: monitoring/prometheus
+  requireEveryCurrentAlert: true
+  requireFired: true
+  requireRouted: true
+  requireResolved: true
+signing:
+  algorithm: openssl-dgst-sha256
+  requireSignatureForFullMode: true

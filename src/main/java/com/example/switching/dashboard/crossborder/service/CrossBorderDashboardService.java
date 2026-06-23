@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dashboard.crossborder.dto.CrossBorderDashboardResponse;
 import com.example.switching.dashboard.common.DashboardQueryGuard;
+import com.example.switching.dashboard.common.DashboardAccessScope;
 
 @Service
 @ConditionalOnProperty(name = "switching.smos.enabled", havingValue = "true")
@@ -21,10 +23,16 @@ public class CrossBorderDashboardService {
     private static final List<String> EXPECTED_RAILS = List.of("PROMPTPAY", "BAKONG", "NAPAS", "UPI");
     private final JdbcTemplate jdbc;
     private final DashboardQueryGuard queryGuard;
-    public CrossBorderDashboardService(JdbcTemplate jdbc, DashboardQueryGuard queryGuard) { this.jdbc = jdbc; this.queryGuard = queryGuard; }
+    private final DashboardAccessScope accessScope;
+    public CrossBorderDashboardService(@Qualifier("reportingJdbcTemplate") JdbcTemplate jdbc, DashboardQueryGuard queryGuard, DashboardAccessScope accessScope) {
+        this.jdbc = jdbc;
+        this.queryGuard = queryGuard;
+        this.accessScope = accessScope;
+    }
 
     @Transactional(readOnly = true)
     public CrossBorderDashboardResponse load() {
+        accessScope.requireSchemeWideOperator();
         queryGuard.apply();
         CrossBorderDashboardResponse.Summary summary = jdbc.queryForObject("""
                 SELECT

@@ -8,9 +8,9 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-EXPECTED_COUNT = 90
-EXPECTED_LATEST = 101
-RESERVED_GAPS = [88, 89, 90, 91, 92, 93, 94, 95, 96, 98, 99]
+EXPECTED_COUNT = 99
+EXPECTED_LATEST = 106
+RESERVED_GAPS = [88, 89, 90, 98, 99, 102, 103]
 
 
 def digest(path: Path) -> str:

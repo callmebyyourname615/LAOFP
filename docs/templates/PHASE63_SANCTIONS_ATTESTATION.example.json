@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "provider": "REPLACE_WITH_PROVIDER",
+  "datasetVersion": "REPLACE_WITH_DATASET_VERSION",
+  "providerRecordCount": 1,
+  "duplicateProviderUidCount": 0,
+  "syncCompleted": true,
+  "providerUidUnique": true,
+  "laoNormalizationVerified": true,
+  "duplicateHandlingVerified": true,
+  "staleDataAlertVerified": true,
+  "screeningRegressionPassed": true,
+  "complianceLead": "REPLACE_WITH_NAME",
+  "qaLead": "REPLACE_WITH_NAME",
+  "signedAt": "REPLACE_WITH_UTC_TIMESTAMP",
+  "changeReference": "REPLACE_WITH_CHANGE_ID"
+}

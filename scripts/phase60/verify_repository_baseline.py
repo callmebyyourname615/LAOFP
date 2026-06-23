@@ -9,9 +9,9 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-EXPECTED_LATEST_MIGRATION = 100
-EXPECTED_MIGRATION_COUNT = 95
-RESERVED_MIGRATION_GAPS = {88, 89, 90, 98, 99}
+EXPECTED_LATEST_MIGRATION = 106
+EXPECTED_MIGRATION_COUNT = 99
+RESERVED_MIGRATION_GAPS = {88, 89, 90, 98, 99, 102, 103}
 ALLOWED_PENDING_DELETIONS = {".env.bak", "new.txt"}
 PROHIBITED_TRACKED_EXACT = {
     ".env", ".env.bak", "new.txt", "app-live.log", "boot.log", "run-error.log"

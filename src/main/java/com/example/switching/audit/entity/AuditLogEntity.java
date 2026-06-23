@@ -42,6 +42,9 @@ public class AuditLogEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "trace_id", length = 32)
+    private String traceId;
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
@@ -81,6 +84,8 @@ public class AuditLogEntity {
         return createdAt;
     }
 
+    public String getTraceId() { return traceId; }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -112,4 +117,6 @@ public class AuditLogEntity {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public void setTraceId(String traceId) { this.traceId = traceId; }
 }

@@ -5,23 +5,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dashboard.settlement.dto.SettlementDashboardResponse;
 import com.example.switching.dashboard.common.DashboardQueryGuard;
+import com.example.switching.dashboard.common.DashboardAccessScope;
 
 @Service
 @ConditionalOnProperty(name = "switching.smos.enabled", havingValue = "true")
 public class SettlementDashboardService {
     private final JdbcTemplate jdbc;
     private final DashboardQueryGuard queryGuard;
+    private final DashboardAccessScope accessScope;
 
-    public SettlementDashboardService(JdbcTemplate jdbc, DashboardQueryGuard queryGuard) { this.jdbc = jdbc; this.queryGuard = queryGuard; }
+    public SettlementDashboardService(@Qualifier("reportingJdbcTemplate") JdbcTemplate jdbc, DashboardQueryGuard queryGuard, DashboardAccessScope accessScope) {
+        this.jdbc = jdbc;
+        this.queryGuard = queryGuard;
+        this.accessScope = accessScope;
+    }
 
     @Transactional(readOnly = true)
     public SettlementDashboardResponse load() {
+        accessScope.requireSchemeWideOperator();
         queryGuard.apply();
         SettlementDashboardResponse.Summary summary = jdbc.queryForObject("""
                 SELECT

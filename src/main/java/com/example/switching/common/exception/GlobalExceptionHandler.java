@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.switching.common.dto.ApiErrorResponse;
 import com.example.switching.common.error.ErrorCatalog;
 import com.example.switching.common.filter.RequestIdFilter;
+import com.example.switching.observability.tracing.TraceContextSupport;
 import com.example.switching.connector.exception.ConnectorConfigAlreadyExistsException;
 import com.example.switching.connector.exception.ConnectorConfigNotFoundException;
 import com.example.switching.fpre.exception.AmbiguousStateException;
@@ -68,11 +69,6 @@ import com.example.switching.dispute.exception.DisputeWindowExpiredException;
 import com.example.switching.crossborder.exception.CorridorNotAvailableException;
 import com.example.switching.crossborder.exception.FxQuoteExpiredException;
 import com.example.switching.crossborder.exception.PurposeCodeRequiredException;
-import com.example.switching.rtp.exception.RtpAccessDeniedException;
-import com.example.switching.rtp.exception.RtpExpiryInvalidException;
-import com.example.switching.rtp.exception.RtpIdempotencyConflictException;
-import com.example.switching.rtp.exception.RtpInvalidTransitionException;
-import com.example.switching.rtp.exception.RtpNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -84,6 +80,11 @@ import org.slf4j.LoggerFactory;
 public class GlobalExceptionHandler {
 
         private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+        private final TraceContextSupport traceContext;
+
+        public GlobalExceptionHandler(TraceContextSupport traceContext) {
+                this.traceContext = traceContext;
+        }
 
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
@@ -214,18 +215,6 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(AuthorizationDeniedException.class)
         public ResponseEntity<ApiErrorResponse> handleAuthorizationDenied(
                         AuthorizationDeniedException ex,
-                        HttpServletRequest request) {
-
-                return buildResponse(
-                                ErrorCatalog.LFP_2004,
-                                "Access denied",
-                                request,
-                                null);
-        }
-
-        @ExceptionHandler(SecurityException.class)
-        public ResponseEntity<ApiErrorResponse> handleSecurityException(
-                        SecurityException ex,
                         HttpServletRequest request) {
 
                 return buildResponse(
@@ -721,38 +710,6 @@ public class GlobalExceptionHandler {
                 return buildResponse(ErrorCatalog.LFP_CB_003, ex.getMessage(), request, null);
         }
 
-        // ── Phase II Request-to-Pay ─────────────────────────────────────────
-
-        @ExceptionHandler(RtpNotFoundException.class)
-        public ResponseEntity<ApiErrorResponse> handleRtpNotFound(
-                        RtpNotFoundException ex, HttpServletRequest request) {
-                return buildResponse(ErrorCatalog.RTP_001, ex.getMessage(), request, null);
-        }
-
-        @ExceptionHandler(RtpIdempotencyConflictException.class)
-        public ResponseEntity<ApiErrorResponse> handleRtpIdempotencyConflict(
-                        RtpIdempotencyConflictException ex, HttpServletRequest request) {
-                return buildResponse(ErrorCatalog.RTP_002, ex.getMessage(), request, null);
-        }
-
-        @ExceptionHandler(RtpInvalidTransitionException.class)
-        public ResponseEntity<ApiErrorResponse> handleRtpInvalidTransition(
-                        RtpInvalidTransitionException ex, HttpServletRequest request) {
-                return buildResponse(ErrorCatalog.RTP_003, ex.getMessage(), request, null);
-        }
-
-        @ExceptionHandler(RtpAccessDeniedException.class)
-        public ResponseEntity<ApiErrorResponse> handleRtpAccessDenied(
-                        RtpAccessDeniedException ex, HttpServletRequest request) {
-                return buildResponse(ErrorCatalog.RTP_004, ex.getMessage(), request, null);
-        }
-
-        @ExceptionHandler(RtpExpiryInvalidException.class)
-        public ResponseEntity<ApiErrorResponse> handleRtpExpiryInvalid(
-                        RtpExpiryInvalidException ex, HttpServletRequest request) {
-                return buildResponse(ErrorCatalog.RTP_005, ex.getMessage(), request, null);
-        }
-
         private ResponseEntity<ApiErrorResponse> buildResponse(
                         ErrorCatalog catalog,
                         String message,
@@ -771,6 +728,7 @@ public class GlobalExceptionHandler {
                 body.setMessage(message != null ? message : catalog.getDefaultMessage());
                 body.setPath(request.getRequestURI());
                 body.setRequestId((String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE));
+                body.setTraceId(traceContext.currentTraceId().orElse(null));
                 body.setDetails(details);
 
                 return ResponseEntity.status(catalog.getHttpStatus()).body(body);

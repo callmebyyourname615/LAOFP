@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.switching.observability.tracing.TraceContextSupport;
 
 /**
  * Publishes lifecycle events into the partitioned {@code transaction_events} table.
@@ -34,16 +35,19 @@ public class TransactionEventPublisher {
 
     private static final String INSERT_SQL = """
             INSERT INTO transaction_events
-                (transaction_ref, event_type, payload, actor, business_date)
-            VALUES (?, ?, ?::jsonb, ?, ?)
+                (transaction_ref, event_type, payload, actor, business_date, trace_id)
+            VALUES (?, ?, ?::jsonb, ?, ?, ?)
             """;
 
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final TraceContextSupport traceContext;
 
-    public TransactionEventPublisher(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    public TransactionEventPublisher(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper,
+                                     TraceContextSupport traceContext) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
+        this.traceContext = traceContext;
     }
 
     /**
@@ -62,7 +66,8 @@ public class TransactionEventPublisher {
                                 String actor) {
         try {
             String payloadJson = toJson(payload);
-            jdbcTemplate.update(INSERT_SQL, transactionRef, eventType, payloadJson, actor, businessDate);
+            jdbcTemplate.update(INSERT_SQL, transactionRef, eventType, payloadJson, actor, businessDate,
+                    traceContext.currentTraceId().orElse(null));
         } catch (Exception ex) {
             log.warn("Failed to publish transaction event txnRef={} type={} — {}",
                     transactionRef, eventType, ex.getMessage());

@@ -7,6 +7,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +91,12 @@ public class UserManagementService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserResponse> list() { return users.findAll().stream().map(user -> response(user, null)).toList(); }
+    public Page<UserResponse> list(int page, int size) {
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        return users.findAll(PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.ASC, "username")))
+                .map(user -> response(user, null));
+    }
     @Transactional(readOnly = true)
     public UserResponse get(Long id) { return response(require(id), null); }
 

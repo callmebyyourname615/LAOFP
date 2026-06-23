@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "reference": "uat-rc-2026-001",
+    "gitCommit": "0000000000000000000000000000000000000000",
+    "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "backupId": "uat-full-20260623T000000Z",
+  "backupChecksumVerified": true,
+  "rowCountVerified": true,
+  "restoreCompleted": true,
+  "pitrCompleted": true,
+  "rpoSeconds": 120,
+  "rtoSeconds": 900,
+  "transactionLoss": 0,
+  "evidence": ["backup/checksum.sha256", "backup/restore.log", "backup/row-counts.json"],
+  "signedBy": "SRE Lead",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

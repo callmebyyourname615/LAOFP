@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "scenarios": {
+    "podKill": "PASS",
+    "kafkaBrokerFailure": "PASS",
+    "objectStorageFailure": "PASS",
+    "networkPartition": "PASS",
+    "externalApiTimeout": "PASS",
+    "deploymentRollback": "PASS",
+    "postgresFailover": "PASS",
+    "postgresFailback": "PASS"
+  },
+  "rpoMinutes": 4.9,
+  "rtoMinutes": 29.9,
+  "transactionLossCount": 0,
+  "outboxReplayIdempotent": true,
+  "failbackVerified": true,
+  "sreLead": "REPLACE_WITH_NAME",
+  "applicationLead": "REPLACE_WITH_NAME",
+  "databaseLead": "REPLACE_WITH_NAME",
+  "signedAt": "REPLACE_WITH_UTC_TIMESTAMP",
+  "changeReference": "REPLACE_WITH_CHANGE_ID"
+}

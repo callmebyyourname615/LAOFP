@@ -14,6 +14,7 @@ import com.example.switching.audit.repository.AuditLogRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.switching.security.util.SensitiveDataSanitizer;
+import com.example.switching.observability.tracing.TraceContextSupport;
 
 @Service
 public class AuditLogService {
@@ -23,15 +24,18 @@ public class AuditLogService {
     private final ObjectMapper objectMapper;
     private final SensitiveDataSanitizer sanitizer;
     private final JdbcTemplate jdbcTemplate;
+    private final TraceContextSupport traceContext;
 
     public AuditLogService(AuditLogRepository auditLogRepository,
                            ObjectMapper objectMapper,
                            SensitiveDataSanitizer sanitizer,
-                           JdbcTemplate jdbcTemplate) {
+                           JdbcTemplate jdbcTemplate,
+                           TraceContextSupport traceContext) {
         this.auditLogRepository = auditLogRepository;
         this.objectMapper = objectMapper;
         this.sanitizer = sanitizer;
         this.jdbcTemplate = jdbcTemplate;
+        this.traceContext = traceContext;
     }
 
     @Transactional
@@ -47,6 +51,7 @@ public class AuditLogService {
         entity.setActor(actor);
         entity.setPayload(sanitizer.sanitizeJson(toJson(payload)));
         entity.setCreatedAt(LocalDateTime.now());
+        entity.setTraceId(traceContext.currentTraceId().orElse(null));
 
         return saveChained(entity);
     }
@@ -72,6 +77,7 @@ public class AuditLogService {
         entity.setActor(actor);
         entity.setPayload(sanitizer.sanitizeJson(buildErrorPayload(exception)));
         entity.setCreatedAt(LocalDateTime.now());
+        entity.setTraceId(traceContext.currentTraceId().orElse(null));
 
         return saveChained(entity);
     }
@@ -89,6 +95,7 @@ public class AuditLogService {
                 safe(entity.getReferenceId()),
                 safe(entity.getActor()),
                 safe(entity.getPayload()),
+                safe(entity.getTraceId()),
                 previous)));
         return auditLogRepository.save(entity);
     }

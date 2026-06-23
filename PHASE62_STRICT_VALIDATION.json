@@ -1,0 +1,67 @@
+{
+  "deliveryBaselineMode": false,
+  "details": {
+    "migrationInventory": {
+      "count": 93,
+      "gaps": [
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        98,
+        99,
+        102,
+        103
+      ],
+      "latest": 106
+    },
+    "verify_dashboard_hardening.py": {
+      "exitCode": 0,
+      "output": "PASS: critical dashboard RBAC, replica, timeout and response hardening"
+    },
+    "verify_distributed_tracing.py": {
+      "exitCode": 0,
+      "output": "PASS: OTLP tracing and durable outbox/audit correlation"
+    },
+    "verify_financial_precision.py": {
+      "exitCode": 0,
+      "output": "PASS: financial precision migration and Java policy"
+    },
+    "verify_hikari_monitoring.py": {
+      "exitCode": 0,
+      "output": "PASS: Hikari metrics, alerts, dashboard and runbook"
+    },
+    "verify_pagination_and_nplus1.py": {
+      "exitCode": 0,
+      "output": "PASS: N+1 instrumentation and bounded user pagination"
+    },
+    "verify_promotion_integrity.py": {
+      "exitCode": 0,
+      "output": "PASS: promotion budget cap, idempotency and funder ledger controls"
+    },
+    "verify_read_replica_routing.py": {
+      "exitCode": 0,
+      "output": "PASS: read-replica routing and primary consistency override contract"
+    },
+    "verify_smos_endpoint_security.py": {
+      "exitCode": 0,
+      "output": "PASS: SMOS endpoint security, permission matrix and OpenAPI contract"
+    },
+    "verify_test_blocker_fixes.py": {
+      "exitCode": 0,
+      "output": "PASS: historic test blockers have regression guards"
+    }
+  },
+  "errors": [
+    "migration gaps are [88, 89, 90, 91, 92, 93, 94, 95, 96, 98, 99, 102, 103], expected reserved gaps [88, 89, 90, 98, 99, 102, 103]",
+    "migration count is 93, expected 99"
+  ],
+  "phase": "62A-62J",
+  "status": "FAIL",
+  "warnings": []
+}

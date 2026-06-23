@@ -1,0 +1,38 @@
+name: Phase 63 Contract Certification
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/phase63/**'
+      - 'scripts/verify_phase63_static.py'
+      - 'config/phase63/**'
+      - 'docs/phase63/**'
+      - 'docs/templates/PHASE63_*.json'
+      - '.github/workflows/phase63-certification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase63-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --disable-pip-version-check PyYAML
+      - name: Static contract
+        run: python3 scripts/verify_phase63_static.py
+      - name: Safe preflight
+        run: scripts/phase63/run_phase63.sh --preflight
+      - name: Upload preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase63-preflight-evidence
+          path: evidence/phase63/
+          if-no-files-found: error
+          retention-days: 14

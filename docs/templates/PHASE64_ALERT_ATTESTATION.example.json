@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "reference": "uat-rc-2026-001",
+    "gitCommit": "0000000000000000000000000000000000000000",
+    "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "alerts": [
+    {
+      "name": "ReplaceWithCurrentRepositoryAlertName",
+      "fired": true,
+      "routed": true,
+      "resolved": true,
+      "receiver": "uat-oncall",
+      "evidence": "alerts/ReplaceWithCurrentRepositoryAlertName.json"
+    }
+  ],
+  "signedBy": "SRE Lead",
+  "signedAt": "2026-06-23T00:00:00Z"
+}

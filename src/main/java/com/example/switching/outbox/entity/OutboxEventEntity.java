@@ -54,6 +54,9 @@ public class OutboxEventEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "trace_id", length = 32)
+    private String traceId;
+
     public OutboxEventEntity() {
     }
 
@@ -137,7 +140,15 @@ public class OutboxEventEntity {
         return createdAt;
     }
 
+    public String getTraceId() {
+        return traceId;
+    }
+
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 }

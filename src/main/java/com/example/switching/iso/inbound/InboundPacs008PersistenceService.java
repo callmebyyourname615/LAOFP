@@ -28,6 +28,7 @@ import com.example.switching.transfer.entity.TransferStatusHistoryEntity;
 import com.example.switching.transfer.enums.TransferStatus;
 import com.example.switching.transfer.repository.TransferRepository;
 import com.example.switching.transfer.repository.TransferStatusHistoryRepository;
+import com.example.switching.observability.tracing.TraceContextSupport;
 
 @Service
 public class InboundPacs008PersistenceService {
@@ -43,6 +44,7 @@ public class InboundPacs008PersistenceService {
     private final Pacs008XmlBuilder pacs008XmlBuilder;
     private final JdbcTemplate jdbcTemplate;
     private final AuditLogService auditLogService;
+    private final TraceContextSupport traceContext;
 
     public InboundPacs008PersistenceService(
             TransferRefGenerator transferRefGenerator,
@@ -52,7 +54,8 @@ public class InboundPacs008PersistenceService {
             IsoMessageCryptoService isoMessageCryptoService,
             Pacs008XmlBuilder pacs008XmlBuilder,
             JdbcTemplate jdbcTemplate,
-            AuditLogService auditLogService
+            AuditLogService auditLogService,
+            TraceContextSupport traceContext
     ) {
         this.transferRefGenerator = transferRefGenerator;
         this.transferRepository = transferRepository;
@@ -62,6 +65,7 @@ public class InboundPacs008PersistenceService {
         this.pacs008XmlBuilder = pacs008XmlBuilder;
         this.jdbcTemplate = jdbcTemplate;
         this.auditLogService = auditLogService;
+        this.traceContext = traceContext;
     }
 
     @Transactional
@@ -359,6 +363,7 @@ public class InboundPacs008PersistenceService {
 
         putIfColumnExists(values, "created_at", now);
         putIfColumnExists(values, "updated_at", now);
+        putIfColumnExists(values, "trace_id", traceContext.currentTraceId().orElse(null));
 
         if (values.isEmpty()) {
             throw new IllegalStateException("Cannot enqueue outbox event because no known outbox_messages columns were found");

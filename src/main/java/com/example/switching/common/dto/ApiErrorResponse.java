@@ -16,6 +16,7 @@ public class ApiErrorResponse {
     private String message;
     private String path;
     private String requestId;
+    private String traceId;
     private Map<String, Object> details;
 
     public LocalDateTime getTimestamp() {
@@ -104,6 +105,14 @@ public class ApiErrorResponse {
 
     public void setRequestId(String requestId) {
         this.requestId = requestId;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 
     public Map<String, Object> getDetails() {

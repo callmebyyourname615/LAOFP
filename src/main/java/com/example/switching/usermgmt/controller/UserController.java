@@ -1,7 +1,7 @@
 package com.example.switching.usermgmt.controller;
 
-import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +19,12 @@ public class UserController {
     private final UserManagementService users;
     public UserController(UserManagementService users) { this.users = users; }
 
-    @GetMapping public ResponseEntity<List<UserResponse>> list() { return ResponseEntity.ok(users.list()); }
+    @GetMapping
+    public ResponseEntity<Page<UserResponse>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size) {
+        return ResponseEntity.ok(users.list(page, size));
+    }
     @GetMapping("/{id}") public ResponseEntity<UserResponse> get(@PathVariable Long id) { return ResponseEntity.ok(users.get(id)); }
     @PostMapping public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request, Authentication authentication) {
         return ResponseEntity.status(HttpStatus.CREATED).body(users.create(request, authentication.getName()));

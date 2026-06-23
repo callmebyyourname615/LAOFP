@@ -33,6 +33,7 @@ public class SmosBootstrapAdminRunner implements ApplicationRunner {
     private final String fullName;
     private final String password;
     private final String mfaSecret;
+    private final boolean oneTimeAcknowledged;
 
     public SmosBootstrapAdminRunner(UserRepository users, RoleRepository roles, PasswordEncoder passwords,
             com.example.switching.usermgmt.service.PasswordPolicyService passwordPolicy,
@@ -41,15 +42,19 @@ public class SmosBootstrapAdminRunner implements ApplicationRunner {
             @Value("${switching.smos.bootstrap.email:}") String email,
             @Value("${switching.smos.bootstrap.full-name:Initial System Administrator}") String fullName,
             @Value("${switching.smos.bootstrap.password:}") String password,
-            @Value("${switching.smos.bootstrap.mfa-secret:}") String mfaSecret) {
+            @Value("${switching.smos.bootstrap.mfa-secret:}") String mfaSecret,
+            @Value("${switching.smos.bootstrap.acknowledge-one-time:false}") boolean oneTimeAcknowledged) {
         this.users = users; this.roles = roles; this.passwords = passwords; this.passwordPolicy = passwordPolicy; this.encryption = encryption;
         this.audit = audit; this.username = username; this.email = email; this.fullName = fullName;
-        this.password = password; this.mfaSecret = mfaSecret;
+        this.password = password; this.mfaSecret = mfaSecret; this.oneTimeAcknowledged = oneTimeAcknowledged;
     }
 
     @Override @Transactional
     public void run(ApplicationArguments args) {
         if (users.count() > 0) return;
+        if (!oneTimeAcknowledged) {
+            throw new IllegalStateException("SMOS bootstrap requires explicit one-time acknowledgement");
+        }
         if (username.isBlank() || email.isBlank() || password.length() < 16 || mfaSecret.length() < 16) {
             throw new IllegalStateException("SMOS bootstrap requires username, email, 16+ character password and TOTP secret");
         }

@@ -11,6 +11,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.example.switching.outbox.event.OutboxCreatedEvent;
+import com.example.switching.observability.tracing.TraceContextSupport;
 
 @Component
 @ConditionalOnProperty(prefix = "switching.outbox.queue", name = "enabled", havingValue = "true")
@@ -20,11 +21,14 @@ public class OutboxQueuePublisher {
 
     private final KafkaTemplate<String, OutboxQueueMessage> kafkaTemplate;
     private final OutboxQueueProperties properties;
+    private final TraceContextSupport traceContext;
 
     public OutboxQueuePublisher(KafkaTemplate<String, OutboxQueueMessage> kafkaTemplate,
-                                OutboxQueueProperties properties) {
+                                OutboxQueueProperties properties,
+                                TraceContextSupport traceContext) {
         this.kafkaTemplate = kafkaTemplate;
         this.properties = properties;
+        this.traceContext = traceContext;
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -32,7 +36,8 @@ public class OutboxQueuePublisher {
         OutboxQueueMessage message = OutboxQueueMessage.versionOne(
                 event.outboxEventId(),
                 event.transferRef(),
-                LocalDateTime.now());
+                LocalDateTime.now(),
+                traceContext.currentTraceId().orElse(null));
 
         kafkaTemplate.send(properties.topic(), String.valueOf(event.outboxEventId()), message)
                 .whenComplete((result, ex) -> {
