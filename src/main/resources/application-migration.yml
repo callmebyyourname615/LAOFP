@@ -41,11 +41,11 @@ spring:
 switching:
   webhook:
     encryption:
-      provider: ${WEBHOOK_ENCRYPTION_PROVIDER:vault-transit}
+      provider: ${WEBHOOK_ENCRYPTION_PROVIDER:local}
       connect-timeout: ${WEBHOOK_VAULT_CONNECT_TIMEOUT:3s}
       request-timeout: ${WEBHOOK_VAULT_REQUEST_TIMEOUT:5s}
       vault:
-        address: ${VAULT_ADDR}
+        address: ${VAULT_ADDR:}
         auth-method: ${WEBHOOK_VAULT_AUTH_METHOD:kubernetes}
         kubernetes-auth-mount: ${WEBHOOK_VAULT_KUBERNETES_AUTH_MOUNT:kubernetes}
         kubernetes-role: ${WEBHOOK_VAULT_KUBERNETES_ROLE:switching-webhook}

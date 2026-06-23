@@ -39,6 +39,13 @@ public class ParticipantRateLimitPolicyService {
         this(objectMapper, Path.of(policyFile), fallbackRequestsPerMinute);
     }
 
+    /** Required for CGLIB proxy ({@code @Scheduled} forces method-level interception). */
+    protected ParticipantRateLimitPolicyService() {
+        this.objectMapper = null;
+        this.policyPath = null;
+        this.fallbackRequestsPerMinute = 1;
+    }
+
     ParticipantRateLimitPolicyService(
             ObjectMapper objectMapper,
             Path policyPath,

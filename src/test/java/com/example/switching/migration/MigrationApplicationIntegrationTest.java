@@ -32,24 +32,24 @@ class MigrationApplicationIntegrationTest {
 
     @Test
     void appliesAllMigrationsThroughLatestVersionWithoutLoadingKafkaOrRuntimeWorkers() {
-        Map<String, Object> properties = Map.ofEntries(
-                Map.entry("spring.datasource.url", POSTGRES.getJdbcUrl()),
-                Map.entry("spring.datasource.username", POSTGRES.getUsername()),
-                Map.entry("spring.datasource.password", POSTGRES.getPassword()),
-                Map.entry("spring.flyway.url", POSTGRES.getJdbcUrl()),
-                Map.entry("spring.flyway.user", POSTGRES.getUsername()),
-                Map.entry("spring.flyway.password", POSTGRES.getPassword()),
-                Map.entry("spring.flyway.enabled", "false"),
-                Map.entry("switching.webhook.encryption.provider", "local"),
-                Map.entry("switching.webhook.encryption.local.master-key-base64", LOCAL_MASTER_KEY),
-                Map.entry("spring.main.banner-mode", "off"),
-                Map.entry("logging.level.root", "WARN"));
+        String[] args = new String[] {
+                "--spring.datasource.url=" + POSTGRES.getJdbcUrl(),
+                "--spring.datasource.username=" + POSTGRES.getUsername(),
+                "--spring.datasource.password=" + POSTGRES.getPassword(),
+                "--spring.flyway.url=" + POSTGRES.getJdbcUrl(),
+                "--spring.flyway.user=" + POSTGRES.getUsername(),
+                "--spring.flyway.password=" + POSTGRES.getPassword(),
+                "--spring.flyway.enabled=false",
+                "--switching.webhook.encryption.provider=local",
+                "--switching.webhook.encryption.local.master-key-base64=" + LOCAL_MASTER_KEY,
+                "--spring.main.banner-mode=off",
+                "--logging.level.root=WARN",
+        };
 
         try (ConfigurableApplicationContext context = new SpringApplicationBuilder(MigrationApplication.class)
                 .profiles("migration")
                 .web(WebApplicationType.NONE)
-                .properties(properties)
-                .run()) {
+                .run(args)) {
 
             Flyway flyway = Flyway.configure()
                     .dataSource(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())
