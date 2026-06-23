@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.example/schemas/phase60-result.schema.json",
+  "title": "Phase 60 Result",
+  "type": "object",
+  "required": [
+    "schemaVersion", "phase", "name", "status", "exitCode",
+    "startedAt", "finishedAt", "generatedAt", "gitCommit",
+    "gitTreeState", "targetEnvironment", "artifacts"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "phase": {"pattern": "^60[A-J]$"},
+    "name": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PASS", "FAIL", "PREPARED", "SKIPPED"]},
+    "exitCode": {"type": "integer"},
+    "message": {"type": "string"},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "finishedAt": {"type": "string", "format": "date-time"},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "gitCommit": {"type": "string", "minLength": 7},
+    "gitTreeState": {"enum": ["clean", "dirty"]},
+    "targetEnvironment": {"type": "string", "minLength": 1},
+    "applicationImageDigest": {"type": ["string", "null"]},
+    "migrationImageDigest": {"type": ["string", "null"]},
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sizeBytes", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sizeBytes": {"type": "integer", "minimum": 0},
+          "sha256": {"pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

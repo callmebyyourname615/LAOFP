@@ -1,6 +1,7 @@
 package com.example.switching.aml.service;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -94,6 +95,7 @@ public class SanctionsListSyncService {
                 (sourceRef + ':' + entityName).getBytes(StandardCharsets.UTF_8)).substring(0, 20);
         String hash = SanctionsHashing.sha256(
                 (uid + ':' + normalized + ':' + entityType).getBytes(StandardCharsets.UTF_8));
+        Timestamp now = Timestamp.from(Instant.now());
         jdbcTemplate.update("""
                 INSERT INTO sanctions_lists
                     (list_type, provider_uid, entity_name, normalized_name, entity_type,
@@ -108,6 +110,6 @@ public class SanctionsListSyncService {
                     last_seen_at = EXCLUDED.last_seen_at,
                     updated_at = EXCLUDED.updated_at
                 """, listType, uid, entityName, normalized, entityType, sourceRef, hash,
-                Instant.now(), Instant.now(), Instant.now());
+                now, now, now);
     }
 }

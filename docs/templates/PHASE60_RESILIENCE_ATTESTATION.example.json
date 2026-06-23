@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "runId": "replace-me",
+  "backup": {
+    "backupId": "replace-me",
+    "archiveSha256": "replace-with-64-lowercase-hex",
+    "fullBackupVerified": true,
+    "crossRegionCopyVerified": true,
+    "completedAt": "2026-06-22T00:00:00Z"
+  },
+  "restore": {
+    "passed": true,
+    "actualRtoSeconds": 1799,
+    "targetRtoSeconds": 1800,
+    "actualRpoSeconds": 299,
+    "targetRpoSeconds": 300,
+    "rowCountAndChecksumMatch": true
+  },
+  "drScenarios": [
+    {"name": "pod-kill", "passed": true, "recoverySeconds": 299, "transactionLoss": 0},
+    {"name": "kafka-fail", "passed": true, "recoverySeconds": 299, "transactionLoss": 0},
+    {"name": "net-partition", "passed": true, "recoverySeconds": 299, "transactionLoss": 0},
+    {"name": "s3-down", "passed": true, "recoverySeconds": 299, "transactionLoss": 0},
+    {"name": "ext-timeout", "passed": true, "recoverySeconds": 299, "transactionLoss": 0},
+    {"name": "deployment-rollback", "passed": true, "recoverySeconds": 299, "transactionLoss": 0}
+  ],
+  "alerts": {
+    "staticRuleInventoryCount": 62,
+    "staticValidationPassed": true,
+    "syntheticRouteDelivered": true,
+    "receiverReference": "replace-me",
+    "acknowledgedAt": "2026-06-22T00:00:00Z"
+  },
+  "signOff": {
+    "sreLead": "replace-me",
+    "operationsLead": "replace-me",
+    "signedAt": "2026-06-22T00:00:00Z"
+  }
+}

@@ -11,9 +11,9 @@ spec:
           expr: switching_resilience_certificate_valid_until_timestamp_seconds < time()
           for: 5m
           labels: {severity: critical, phase: 56J}
-          annotations: {summary: Resilience certificate expired, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
+          annotations: {summary: Resilience certificate expired, description: The current resilience certification has expired and failure recovery must be re-certified., runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
         - alert: SwitchingBackupRestoreCertificationStale
           expr: switching_restore_drill_last_success_timestamp_seconds < time() - 2678400
           for: 1h
           labels: {severity: warning, phase: 56J}
-          annotations: {summary: Restore certification older than 31 days, runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md}
+          annotations: {summary: Restore certification older than 31 days, description: No successful restore drill has been recorded within the required 31-day certification interval., runbook_url: docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md}

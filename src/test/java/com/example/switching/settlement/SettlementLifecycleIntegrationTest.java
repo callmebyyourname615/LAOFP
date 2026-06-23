@@ -246,13 +246,11 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
     // ── Test 7 ───────────────────────────────────────────────────────────────
 
     /**
-     * Batching is idempotent-safe: positions are accumulated, not duplicated.
-     * Re-batching an OPEN or CLOSED cycle adds the same transfers twice, so
-     * the service must be called only once in normal operation.
-     * This test verifies the UPSERT correctly accumulates on re-batch.
+     * Batching is idempotent-safe: immutable item rows and positions are not
+     * duplicated when an OPEN cycle is retried.
      */
     @Test
-    void batchTransactions_onRebatch_openCycle_accumulatesPositions() {
+    void batchTransactions_onRebatch_openCycle_isIdempotent() {
         LocalDate businessDate   = safeBusinessDate();
         LocalDate settlementDate = settlementDateService.nextBusinessDay(businessDate);
 
@@ -265,17 +263,19 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
         int first = batchService.batchTransactions(cycle.getCycleRef());
         assertTrue(first >= 1);
 
-        // Second batch on OPEN cycle — same transfers re-batched (positions upserted again)
-        int second = batchService.batchTransactions(cycle.getCycleRef());
-        assertEquals(first, second, "Same transfers returned on re-batch of OPEN cycle");
+        int itemCountAfterFirst = batchService.countItems(cycle.getId());
+        Map<String, BigDecimal> netAfterFirst = netPositionService.getPositions(cycle.getCycleRef()).stream()
+                .collect(Collectors.toMap(SettlementPositionEntity::getBankCode, SettlementPositionEntity::getNetPosition));
 
-        // Positions should be doubled (upsert accumulates)
-        List<SettlementPositionEntity> positions =
-                netPositionService.getPositions(cycle.getCycleRef());
-        positions.forEach(p ->
-                assertTrue(p.getDebitAmount().compareTo(BigDecimal.ZERO) >= 0
-                        || p.getCreditAmount().compareTo(BigDecimal.ZERO) >= 0,
-                        "Positions must have non-negative amounts"));
+        // Second batch on OPEN cycle — all item keys already exist.
+        int second = batchService.batchTransactions(cycle.getCycleRef());
+        assertEquals(0, second, "A clean re-batch must not report or post duplicate transfers");
+        assertEquals(itemCountAfterFirst, batchService.countItems(cycle.getId()),
+                "Settlement item count must remain stable on retry");
+
+        Map<String, BigDecimal> netAfterSecond = netPositionService.getPositions(cycle.getCycleRef()).stream()
+                .collect(Collectors.toMap(SettlementPositionEntity::getBankCode, SettlementPositionEntity::getNetPosition));
+        assertEquals(netAfterFirst, netAfterSecond, "Net positions must remain unchanged on retry");
     }
 
     // ── Test 8 ───────────────────────────────────────────────────────────────

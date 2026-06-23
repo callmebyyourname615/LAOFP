@@ -51,10 +51,12 @@ values = {
     "REPLICATION_PASSWORD": secrets.token_hex(24),
     "ARCHIVE_POSTGRES_PASSWORD": secrets.token_hex(24),
     "MINIO_ROOT_PASSWORD": secrets.token_urlsafe(30),
+    "SMOS_JWT_SECRET": secrets.token_urlsafe(48),
     "MESSAGE_CRYPTO_KEY_BASE64": base64.b64encode(secrets.token_bytes(32)).decode("ascii"),
     "WEBHOOK_LOCAL_MASTER_KEY_BASE64": base64.b64encode(secrets.token_bytes(32)).decode("ascii"),
 }
 values["DB_PASSWORD"] = values["DB_APP_PASSWORD"]
+values["READ_REPLICA_DB_PASSWORD"] = values["DB_APP_PASSWORD"]
 
 lines = Path(".env.example").read_text(encoding="utf-8").splitlines()
 rendered: list[str] = []

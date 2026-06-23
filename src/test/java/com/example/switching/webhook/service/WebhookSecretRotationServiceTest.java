@@ -54,12 +54,12 @@ class WebhookSecretRotationServiceTest {
 
         when(repository.findByWebhookIdForUpdate("hook-1"))
                 .thenReturn(Optional.of(registration));
-        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @Test
     void rotateMovesCurrentCiphertextIntoGraceSlotAndWritesAuditLog() {
         String newSecret = "new-secret-value-with-at-least-32-characters";
+        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(encryptionService.encrypt(newSecret)).thenReturn(new EncryptedSecret(
                 "env:v1:new",
                 "vault-transit:transit/switching-webhook",

@@ -159,6 +159,18 @@ public class ProductionStartupValidator implements InitializingBean {
     @Value("${switching.webhook.encryption.vault.key:}")
     private String webhookVaultKey;
 
+    @Value("${switching.smos.enabled:false}")
+    private boolean smosEnabled;
+
+    @Value("${switching.smos.mfa-required:true}")
+    private boolean smosMfaRequired;
+
+    @Value("${switching.smos.jwt-secret:}")
+    private String smosJwtSecret;
+
+    @Value("${switching.smos.bootstrap.enabled:false}")
+    private boolean smosBootstrapEnabled;
+
     @Value("${switching.security.oauth.enabled}")
     private boolean oauthEnabled;
 
@@ -249,6 +261,13 @@ public class ProductionStartupValidator implements InitializingBean {
         rejectBlankOrPlaceholder(violations, "switching.crossborder.swift-url", swiftUrl);
         rejectBlankOrPlaceholder(violations, "switching.security.message-crypto-key-base64", messageCryptoKeyBase64);
         rejectBlankOrPlaceholder(violations, "switching.security.oauth.jwt-secret", oauthJwtSecret);
+        rejectBlankOrPlaceholder(violations, "switching.smos.jwt-secret", smosJwtSecret);
+        if (smosJwtSecret != null && smosJwtSecret.length() < 32) {
+            violations.add("switching.smos.jwt-secret must contain at least 32 characters in production.");
+        }
+        if (smosJwtSecret != null && smosJwtSecret.equals(oauthJwtSecret)) {
+            violations.add("switching.smos.jwt-secret must be different from the PSP OAuth signing secret.");
+        }
         rejectBlankOrPlaceholder(violations, "switching.webhook.encryption.provider", webhookEncryptionProvider);
         rejectBlankOrPlaceholder(violations, "switching.webhook.encryption.vault.address", webhookVaultAddress);
         rejectBlankOrPlaceholder(violations, "switching.webhook.encryption.vault.auth-method", webhookVaultAuthMethod);
@@ -315,6 +334,15 @@ public class ProductionStartupValidator implements InitializingBean {
             violations.add("switching.webhook.encryption.vault.address must use HTTPS in production.");
         }
 
+        if (!smosEnabled) {
+            violations.add("switching.smos.enabled must be true in production.");
+        }
+        if (!smosMfaRequired) {
+            violations.add("switching.smos.mfa-required must be true in production.");
+        }
+        if (smosBootstrapEnabled) {
+            violations.add("switching.smos.bootstrap.enabled must be false in production after operator provisioning.");
+        }
         if (!oauthEnabled) {
             violations.add("switching.security.oauth.enabled must be true in production.");
         }

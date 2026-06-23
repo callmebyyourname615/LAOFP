@@ -1,0 +1,90 @@
+name: Controlled application rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target GitHub Environment
+        required: true
+        type: choice
+        options: [staging, production]
+      change_reference:
+        description: Approved incident/change reference
+        required: true
+        type: string
+      rollback_mode:
+        description: Roll back to the prior ReplicaSet or set an approved digest
+        required: true
+        type: choice
+        options: [rollout-undo, approved-digest]
+      approved_image_digest:
+        description: Required for approved-digest mode (sha256:<64 hex>)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        env:
+          KUBE_CONFIG_B64: ${{ secrets.KUBE_CONFIG_B64 }}
+        run: |
+          set -euo pipefail
+          test -n "$KUBE_CONFIG_B64"
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBE_CONFIG_B64" | base64 --decode > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Capture pre-rollback state
+        run: |
+          set -euo pipefail
+          mkdir -p build/rollback
+          kubectl -n switching get deployment switching-api -o yaml > build/rollback/deployment-before.yaml
+          kubectl -n switching rollout history deployment/switching-api > build/rollback/history-before.txt
+
+      - name: Execute controlled rollback
+        env:
+          MODE: ${{ inputs.rollback_mode }}
+          DIGEST: ${{ inputs.approved_image_digest }}
+          CHANGE_REFERENCE: ${{ inputs.change_reference }}
+        run: |
+          set -euo pipefail
+          if [[ "$MODE" == "rollout-undo" ]]; then
+            kubectl -n switching rollout undo deployment/switching-api
+          else
+            [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo "approved digest is invalid" >&2; exit 64; }
+            repository="ghcr.io/${GITHUB_REPOSITORY,,}/switching-api"
+            kubectl -n switching set image deployment/switching-api switching-api="$repository@$DIGEST"
+          fi
+          kubectl -n switching annotate deployment switching-api \
+            switching.openai.com/rollback-reference="$CHANGE_REFERENCE" --overwrite
+          kubectl -n switching rollout status deployment/switching-api --timeout=600s
+
+      - name: Verify post-rollback health and image
+        run: |
+          set -euo pipefail
+          kubectl -n switching get deployment switching-api -o yaml > build/rollback/deployment-after.yaml
+          kubectl -n switching get pods -l app=switching-api -o wide | tee build/rollback/pods-after.txt
+          kubectl -n switching wait --for=condition=Ready pod -l app=switching-api --timeout=300s
+          echo "Database migrations are forward-only; execute an approved forward-fix if schema compatibility is affected." \
+            | tee build/rollback/database-forward-fix-note.txt
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rollback-evidence-${{ inputs.environment }}-${{ github.run_id }}
+          path: build/rollback/
+          if-no-files-found: error
+          retention-days: 90

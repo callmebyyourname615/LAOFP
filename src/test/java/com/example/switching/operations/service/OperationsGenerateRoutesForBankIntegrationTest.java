@@ -62,6 +62,14 @@ class OperationsGenerateRoutesForBankIntegrationTest extends AbstractIntegration
         // Purge instructions that reference connector-less participants first
         // so the subsequent participant DELETE does not violate the FK constraint.
         jdbcTemplate.update("""
+                DELETE FROM psp_suspension_log
+                WHERE psp_id IN (
+                    SELECT bank_code FROM participants
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM connector_configs cc
+                        WHERE cc.bank_code = participants.bank_code))
+                """);
+        jdbcTemplate.update("""
                 DELETE FROM settlement_instructions
                 WHERE debtor_psp_id IN (
                     SELECT bank_code FROM participants

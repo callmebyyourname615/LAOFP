@@ -1,5 +1,6 @@
 package com.example.switching.security.config;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import com.example.switching.security.oauth.service.OAuthTokenService;
 import com.example.switching.security.repository.ApiKeyRepository;
 import com.example.switching.security.signing.HmacSignatureVerifier;
 import com.example.switching.security.signing.RequestSignatureFilter;
+import com.example.switching.usermgmt.filter.SmosJwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +40,7 @@ public class SecurityConfig {
     private final boolean signingEnabled;
     private final String apiV1Prefix;
     private final BreakGlassFilter breakGlassFilter;
+    private final ObjectProvider<SmosJwtAuthenticationFilter> smosFilterProvider;
 
     public SecurityConfig(
             ApiKeyRepository apiKeyRepository,
@@ -50,7 +53,8 @@ public class SecurityConfig {
             @Value("${switching.security.mtls.cert-header:ssl-client-cert}") String mtlsCertHeader,
             @Value("${switching.security.signing.enabled:false}") boolean signingEnabled,
             @Value("${switching.api.v1-prefix}") String apiV1Prefix,
-            BreakGlassFilter breakGlassFilter) {
+            BreakGlassFilter breakGlassFilter,
+            ObjectProvider<SmosJwtAuthenticationFilter> smosFilterProvider) {
         this.apiKeyRepository = apiKeyRepository;
         this.hmacSignatureVerifier = hmacSignatureVerifier;
         this.oAuthTokenService = oAuthTokenService;
@@ -62,6 +66,7 @@ public class SecurityConfig {
         this.signingEnabled = signingEnabled;
         this.apiV1Prefix = normalizePrefix(apiV1Prefix);
         this.breakGlassFilter = breakGlassFilter;
+        this.smosFilterProvider = smosFilterProvider;
     }
 
     @Bean
@@ -73,57 +78,82 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        if (!apiKeyEnabled) {
-            // Test / dev profile — allow all requests without auth
+        SmosJwtAuthenticationFilter smosFilter = smosFilterProvider.getIfAvailable();
+        boolean pspAuthenticationEnabled = apiKeyEnabled || oauthEnabled;
+        if (!pspAuthenticationEnabled && smosFilter == null) {
+            // Legacy test/dev mode: bypass authentication only when every auth mechanism is disabled.
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
             return http.build();
         }
 
         // ── Auth filter chain ─────────────────────────────────────────────────
         //
-        // Order (when both flags are on):
-        //   OAuthTokenFilter → ApiKeyAuthFilter → RequestSignatureFilter
+        // Full order when all mechanisms are enabled:
+        //   TrustedProxyHeaderFilter → SMOS JWT → PSP OAuth → API key → mTLS → HMAC → break-glass
         //
-        // OAuthTokenFilter activates only when Authorization: Bearer is present.
-        // ApiKeyAuthFilter activates only when X-API-Key is present.
-        // Both can coexist during the grace period while PSPs migrate to OAuth.
+        // Each identity filter ignores credentials outside its own namespace, so PSP and
+        // operator authentication can safely coexist during migration and UAT.
 
-        ApiKeyAuthFilter apiKeyAuthFilter = new ApiKeyAuthFilter(apiKeyRepository);
-        http.addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+        if (apiKeyEnabled) {
+            http.addFilterBefore(new ApiKeyAuthFilter(apiKeyRepository), UsernamePasswordAuthenticationFilter.class);
+        }
         if (oauthEnabled) {
-            // Run OAuth before ApiKey so Bearer tokens are authenticated first.
-            http.addFilterBefore(new OAuthTokenFilter(oAuthTokenService), ApiKeyAuthFilter.class);
+            if (apiKeyEnabled) {
+                http.addFilterBefore(new OAuthTokenFilter(oAuthTokenService), ApiKeyAuthFilter.class);
+            } else {
+                http.addFilterBefore(new OAuthTokenFilter(oAuthTokenService), UsernamePasswordAuthenticationFilter.class);
+            }
+        }
+        if (smosFilter != null) {
+            if (oauthEnabled) {
+                http.addFilterBefore(smosFilter, OAuthTokenFilter.class);
+            } else if (apiKeyEnabled) {
+                http.addFilterBefore(smosFilter, ApiKeyAuthFilter.class);
+            } else {
+                http.addFilterBefore(smosFilter, UsernamePasswordAuthenticationFilter.class);
+            }
         }
 
-        if (mtlsEnabled) {
-            // Strip spoofed client-certificate headers before every authentication filter.
+        if (mtlsEnabled && pspAuthenticationEnabled) {
             TrustedProxyHeaderFilter trustedProxyHeaderFilter = new TrustedProxyHeaderFilter(mtlsCertHeader);
-            if (oauthEnabled) {
+            if (smosFilter != null) {
+                http.addFilterBefore(trustedProxyHeaderFilter, SmosJwtAuthenticationFilter.class);
+            } else if (oauthEnabled) {
                 http.addFilterBefore(trustedProxyHeaderFilter, OAuthTokenFilter.class);
             } else {
                 http.addFilterBefore(trustedProxyHeaderFilter, ApiKeyAuthFilter.class);
             }
-            // mTLS runs after API-key/OAuth identity is available and before request signing.
-            http.addFilterAfter(new MtlsFilter(mtlsCertificateValidator, mtlsCertHeader, apiV1Prefix), ApiKeyAuthFilter.class);
-        }
 
-        if (signingEnabled) {
-            RequestSignatureFilter signatureFilter = new RequestSignatureFilter(hmacSignatureVerifier, apiV1Prefix);
-            if (mtlsEnabled) {
-                http.addFilterAfter(signatureFilter, MtlsFilter.class);
+            MtlsFilter mtlsFilter = new MtlsFilter(mtlsCertificateValidator, mtlsCertHeader, apiV1Prefix);
+            if (apiKeyEnabled) {
+                http.addFilterAfter(mtlsFilter, ApiKeyAuthFilter.class);
             } else {
-                http.addFilterAfter(signatureFilter, ApiKeyAuthFilter.class);
+                http.addFilterAfter(mtlsFilter, OAuthTokenFilter.class);
             }
         }
 
-        // Record break-glass use only after all ordinary authentication, mTLS, and HMAC checks pass.
-        if (signingEnabled) {
-            http.addFilterAfter(breakGlassFilter, RequestSignatureFilter.class);
-        } else if (mtlsEnabled) {
-            http.addFilterAfter(breakGlassFilter, MtlsFilter.class);
-        } else {
-            http.addFilterAfter(breakGlassFilter, ApiKeyAuthFilter.class);
+        if (signingEnabled && pspAuthenticationEnabled) {
+            RequestSignatureFilter signatureFilter = new RequestSignatureFilter(hmacSignatureVerifier, apiV1Prefix);
+            if (mtlsEnabled) {
+                http.addFilterAfter(signatureFilter, MtlsFilter.class);
+            } else if (apiKeyEnabled) {
+                http.addFilterAfter(signatureFilter, ApiKeyAuthFilter.class);
+            } else {
+                http.addFilterAfter(signatureFilter, OAuthTokenFilter.class);
+            }
+        }
+
+        // Record break-glass use only after all ordinary PSP authentication and integrity checks pass.
+        if (pspAuthenticationEnabled) {
+            if (signingEnabled) {
+                http.addFilterAfter(breakGlassFilter, RequestSignatureFilter.class);
+            } else if (mtlsEnabled) {
+                http.addFilterAfter(breakGlassFilter, MtlsFilter.class);
+            } else if (apiKeyEnabled) {
+                http.addFilterAfter(breakGlassFilter, ApiKeyAuthFilter.class);
+            } else {
+                http.addFilterAfter(breakGlassFilter, OAuthTokenFilter.class);
+            }
         }
 
         http.authorizeHttpRequests(auth -> auth
@@ -135,6 +165,10 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
+                                "/api/auth/login",
+                                "/api/auth/mfa",
+                                "/api/auth/refresh",
+                                "/api/auth/logout",
                                 // OAuth token endpoint — PSPs authenticate *here* with
                                 // client_id + client_secret; Bearer token is returned
                                 v1("/oauth/token"),
@@ -237,6 +271,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,   v1("/participants/*/certificates/register")).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, v1("/participants/*/certificates/*")).hasRole("ADMIN")
 
+                        // ── SMOS operator administration and four-eyes requests ───────
+                        .requestMatchers("/api/admin/users/**").hasRole("SYSTEM_ADMIN")
+                        .requestMatchers("/api/admin/requests/**").authenticated()
+
                         // ── ADMIN only — API key management ──────────────────────
                         .requestMatchers("/api/admin/api-keys/**").hasRole("ADMIN")
 
@@ -247,7 +285,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/operations/bank-onboarding/generate-routes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/operations/connectors/*/test").hasRole("ADMIN")
 
-                        // ── Dashboard (OPS / ADMIN) ──────────────────────────────
+                        // ── SMOS critical dashboards — fine-grained method permissions ──
+                        .requestMatchers(
+                                "/api/dashboard/settlement",
+                                "/api/dashboard/risk",
+                                "/api/dashboard/crossborder"
+                        ).authenticated()
+
+                        // ── Legacy dashboard overview (OPS / ADMIN) ────────────────
                         .requestMatchers("/api/dashboard/**").hasAnyRole("OPS", "ADMIN")
 
                         // ── OPS role — operations & monitoring ────────────────────
@@ -306,7 +351,7 @@ public class SecurityConfig {
                             res.setContentType("application/json");
                             res.getWriter().write("""
                                     {"status":401,"error":"UNAUTHORIZED","errorCode":"SEC-001",\
-                                    "message":"Missing or invalid X-API-Key header",\
+                                    "message":"Missing or invalid authentication credential",\
                                     "path":"%s"}""".formatted(req.getRequestURI()));
                         })
                         .accessDeniedHandler((req, res, e) -> {

@@ -4,8 +4,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 /**
  * Minimal process entry point used exclusively by the Kubernetes Flyway Job.
@@ -32,6 +37,19 @@ import org.springframework.context.annotation.Profile;
 public class MigrationApplication {
 
     protected MigrationApplication() {
+    }
+
+    /**
+     * The migration process intentionally scans only migration and webhook crypto packages.
+     * Provide the mapper explicitly so webhook-secret backfill can decrypt/encrypt payloads
+     * without pulling the full web/runtime application graph into the migration Job.
+     */
+    @Bean
+    @ConditionalOnMissingBean(ObjectMapper.class)
+    ObjectMapper migrationObjectMapper() {
+        return JsonMapper.builder()
+                .findAndAddModules()
+                .build();
     }
 
     public static void main(String[] args) {

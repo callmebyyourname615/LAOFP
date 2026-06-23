@@ -11,9 +11,9 @@ spec:
           expr: switching_slo_burn_rate_5m > 14.4 and switching_slo_burn_rate_1h > 14.4
           for: 2m
           labels: {severity: critical, phase: 56A}
-          annotations: {summary: Fast SLO error-budget burn, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
+          annotations: {summary: Fast SLO error-budget burn, description: The short-window burn rate is consuming the service error budget fast enough to require immediate release and incident controls., runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
         - alert: SwitchingSlowErrorBudgetBurn
           expr: switching_slo_burn_rate_30m > 6 and switching_slo_burn_rate_6h > 6
           for: 15m
           labels: {severity: warning, phase: 56A}
-          annotations: {summary: Slow SLO error-budget burn, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
+          annotations: {summary: Slow SLO error-budget burn, description: The multi-window burn rate indicates sustained SLO degradation that requires corrective action., runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}

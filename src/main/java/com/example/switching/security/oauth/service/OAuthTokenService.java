@@ -59,7 +59,7 @@ public class OAuthTokenService {
     public OAuthTokenService(
             OAuthClientRepository clientRepository,
             ObjectMapper objectMapper,
-            @Value("${switching.security.oauth.jwt-secret:dev-test-oauth-secret-change-me-32-bytes}") String jwtSecret,
+            @Value("${switching.security.oauth.jwt-secret:}") String jwtSecret,
             @Value("${switching.security.oauth.token-ttl-seconds:3600}") long tokenTtlSeconds) {
         this(clientRepository, objectMapper, Clock.systemUTC(), jwtSecret, tokenTtlSeconds);
     }
@@ -78,6 +78,7 @@ public class OAuthTokenService {
     }
 
     public String createToken(String clientId, Set<String> requestedScopes) {
+        requireSigningSecret();
         OAuthClientEntity client = activeClient(clientId);
         Set<String> allowedScopes = parseScopes(client.getScopes());
         Set<String> scopes = requestedScopes == null || requestedScopes.isEmpty()
@@ -106,6 +107,7 @@ public class OAuthTokenService {
     }
 
     public OAuthTokenClaims validateToken(String bearerToken) {
+        requireSigningSecret();
         String token = normalizeBearerToken(bearerToken);
         String[] parts = token.split("\\.", -1);
         if (parts.length != 3) {
@@ -253,6 +255,13 @@ public class OAuthTokenService {
             return Long.parseLong(String.valueOf(value));
         } catch (Exception ex) {
             throw new OAuthTokenInvalidException("Invalid OAuth token claim: " + claim);
+        }
+    }
+
+    private void requireSigningSecret() {
+        if (!StringUtils.hasText(jwtSecret) || jwtSecret.length() < 32) {
+            throw new OAuthTokenInvalidException(
+                    "OAuth token signing secret is not configured securely");
         }
     }
 

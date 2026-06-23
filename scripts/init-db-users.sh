@@ -2,14 +2,22 @@
 # Creates least-privilege DB users for the switching app.
 # Runs once on first PostgreSQL container start (docker-entrypoint-initdb.d).
 # Env vars injected from docker-compose postgres service environment block.
-set -e
+set -euo pipefail
+
+: "${POSTGRES_USER:?POSTGRES_USER is required}"
+: "${POSTGRES_DB:?POSTGRES_DB is required}"
+: "${FLYWAY_PASSWORD:?FLYWAY_PASSWORD is required}"
+: "${REPLICATION_PASSWORD:?REPLICATION_PASSWORD is required}"
+: "${DB_APP_PASSWORD:?DB_APP_PASSWORD is required}"
+
+REPLICATION_USER="${REPLICATION_USER:-switching_replicator}"
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     -- Flyway user: needs DDL to run schema migrations
     DO \$\$
     BEGIN
         IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'switching_flyway') THEN
-            CREATE ROLE switching_flyway LOGIN PASSWORD '${FLYWAY_PASSWORD:-switching_flyway_password_change_me}';
+            CREATE ROLE switching_flyway LOGIN PASSWORD '${FLYWAY_PASSWORD}';
         END IF;
     END
     \$\$;
@@ -19,9 +27,9 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Streaming replication user for the hot read replica.
     DO \$\$
     BEGIN
-        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '${REPLICATION_USER:-switching_replicator}') THEN
-            CREATE ROLE ${REPLICATION_USER:-switching_replicator}
-                WITH REPLICATION LOGIN PASSWORD '${REPLICATION_PASSWORD:-switching_replicator_password_change_me}';
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '${REPLICATION_USER}') THEN
+            CREATE ROLE ${REPLICATION_USER}
+                WITH REPLICATION LOGIN PASSWORD '${REPLICATION_PASSWORD}';
         END IF;
     END
     \$\$;
@@ -30,7 +38,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     DO \$\$
     BEGIN
         IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'switching_app') THEN
-            CREATE ROLE switching_app LOGIN PASSWORD '${DB_APP_PASSWORD:-switching_app_password_change_me}';
+            CREATE ROLE switching_app LOGIN PASSWORD '${DB_APP_PASSWORD}';
         END IF;
     END
     \$\$;
@@ -44,8 +52,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
         GRANT USAGE, SELECT ON SEQUENCES TO switching_app;
 EOSQL
 
-if ! grep -q "host replication ${REPLICATION_USER:-switching_replicator}" "$PGDATA/pg_hba.conf"; then
-    echo "host replication ${REPLICATION_USER:-switching_replicator} all md5" >> "$PGDATA/pg_hba.conf"
+if ! grep -q "host replication ${REPLICATION_USER}" "$PGDATA/pg_hba.conf"; then
+    echo "host replication ${REPLICATION_USER} all md5" >> "$PGDATA/pg_hba.conf"
 fi
 
 echo "[init-db-users] Created roles: switching_app (DML only), switching_flyway (DDL), switching_replicator (replication)"

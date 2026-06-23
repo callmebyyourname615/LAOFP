@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "runId": "replace-me",
+  "noMemoryLeak": true,
+  "maximumGcPauseMs": 99,
+  "noDatabaseConnectionExhaustion": true,
+  "noSustainedKafkaLagGrowth": true,
+  "operator": "replace-me",
+  "performanceLead": "replace-me",
+  "capacityPlanReference": "replace-me",
+  "signedAt": "2026-06-22T00:00:00Z"
+}

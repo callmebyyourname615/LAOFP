@@ -1,0 +1,81 @@
+name: Immutable backup image
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Full certified commit SHA
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'backup/**'
+      - '.github/workflows/backup-image.yml'
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/switching-backup
+    steps:
+      - name: Resolve source commit
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          commit='${{ inputs.commit_sha || github.sha }}'
+          [[ "$commit" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "full commit SHA required" >&2; exit 64; }
+          echo "commit=${commit,,}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source.outputs.commit }}
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and smoke-test backup image
+        run: |
+          set -euo pipefail
+          image="$IMAGE_REPOSITORY:${{ steps.source.outputs.commit }}"
+          docker build --pull -f backup/Dockerfile \
+            --label "org.opencontainers.image.revision=${{ steps.source.outputs.commit }}" \
+            -t "$image" .
+          docker run --rm "$image" --help >/dev/null
+
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_REPOSITORY }}:${{ steps.source.outputs.commit }}
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          ignore-unfixed: true
+
+      - name: Push and capture digest
+        id: digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="$IMAGE_REPOSITORY:${{ steps.source.outputs.commit }}"
+          docker push "$image"
+          reference="$(docker inspect --format='{{index .RepoDigests 0}}' "$image")"
+          [[ "$reference" == *@sha256:* ]] || { echo "digest missing" >&2; exit 3; }
+          echo "image_reference=$reference" >> "$GITHUB_OUTPUT"
+          printf 'commit=%s\nimage=%s\ndigest: %s\n' \
+            '${{ steps.source.outputs.commit }}' "$reference" "${reference#*@}" | tee backup-image-digest.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backup-image-digest-${{ steps.source.outputs.commit }}
+          path: backup-image-digest.txt
+          if-no-files-found: error
+          retention-days: 90

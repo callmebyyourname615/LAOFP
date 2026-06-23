@@ -31,7 +31,7 @@ class MigrationApplicationIntegrationTest {
             .withPassword("switching_migration");
 
     @Test
-    void appliesAllMigrationsThroughV83WithoutLoadingKafkaOrRuntimeWorkers() {
+    void appliesAllMigrationsThroughLatestVersionWithoutLoadingKafkaOrRuntimeWorkers() {
         Map<String, Object> properties = Map.ofEntries(
                 Map.entry("spring.datasource.url", POSTGRES.getJdbcUrl()),
                 Map.entry("spring.datasource.username", POSTGRES.getUsername()),
@@ -58,7 +58,7 @@ class MigrationApplicationIntegrationTest {
                     .load();
 
             assertThat(flyway.info().current()).isNotNull();
-            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("96");
+            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("100");
             assertThat(flyway.info().pending()).isEmpty();
             flyway.validate();
 

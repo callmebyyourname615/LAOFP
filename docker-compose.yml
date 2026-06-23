@@ -18,13 +18,13 @@ services:
       - "-c"
       - "hot_standby=on"
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-switching_postgres_password_change_me}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       POSTGRES_DB: switching_db
       POSTGRES_USER: ${POSTGRES_USER:-switching}
       REPLICATION_USER: ${REPLICATION_USER:-switching_replicator}
-      REPLICATION_PASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
-      DB_APP_PASSWORD: ${DB_APP_PASSWORD:-switching_app_password_change_me}
-      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:-switching_flyway_password_change_me}
+      REPLICATION_PASSWORD: ${REPLICATION_PASSWORD:?Set REPLICATION_PASSWORD in .env; run security/scripts/generate-local-env.sh}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:?Set DB_APP_PASSWORD in .env; run security/scripts/generate-local-env.sh}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Set FLYWAY_PASSWORD in .env; run security/scripts/generate-local-env.sh}
     ports:
       - "5433:5432"
     volumes:
@@ -47,7 +47,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      PGPASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+      PGPASSWORD: ${REPLICATION_PASSWORD:?Set REPLICATION_PASSWORD in .env; run security/scripts/generate-local-env.sh}
     command: >
       bash -c "
         if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
@@ -82,7 +82,7 @@ services:
     container_name: switching-postgres-archive
     restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: ${ARCHIVE_POSTGRES_PASSWORD:-switching_archive_postgres_password_change_me}
+      POSTGRES_PASSWORD: ${ARCHIVE_POSTGRES_PASSWORD:?Set ARCHIVE_POSTGRES_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       POSTGRES_DB: switching_archive
       POSTGRES_USER: ${ARCHIVE_POSTGRES_USER:-switching_archive}
     ports:
@@ -106,7 +106,7 @@ services:
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-switching_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env; run security/scripts/generate-local-env.sh}
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -127,7 +127,7 @@ services:
         condition: service_healthy
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-switching_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env; run security/scripts/generate-local-env.sh}
     entrypoint: >
       /bin/sh -c "
         mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD;
@@ -189,14 +189,14 @@ services:
       PGPORT: "5432"
       PGDATABASE: switching_db
       PGUSER: ${REPLICATION_USER:-switching_replicator}
-      PGPASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+      PGPASSWORD: ${REPLICATION_PASSWORD:?Set REPLICATION_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       PGSSLMODE: disable
       S3_ENDPOINT: http://minio:9000
       S3_REGION: us-east-1
       S3_BUCKET: switching-backups
       S3_PREFIX: switching
       AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-switching_minio}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       S3_SERVER_SIDE_ENCRYPTION: none
       BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
       SECONDARY_S3_ENABLED: "false"
@@ -223,14 +223,14 @@ services:
       PGPORT: "5432"
       PGDATABASE: switching_db
       PGUSER: ${REPLICATION_USER:-switching_replicator}
-      PGPASSWORD: ${REPLICATION_PASSWORD:-switching_replicator_password_change_me}
+      PGPASSWORD: ${REPLICATION_PASSWORD:?Set REPLICATION_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       PGSSLMODE: disable
       S3_ENDPOINT: http://minio:9000
       S3_REGION: us-east-1
       S3_BUCKET: switching-backups
       S3_PREFIX: switching
       AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-switching_minio}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       S3_SERVER_SIDE_ENCRYPTION: none
       BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
       SECONDARY_S3_ENABLED: "false"
@@ -262,22 +262,22 @@ services:
       # HOT primary datasource: writes and strongly-consistent reads.
       DB_URL: jdbc:postgresql://postgres:5432/switching_db
       DB_USERNAME: switching_app
-      DB_PASSWORD: ${DB_APP_PASSWORD:-switching_app_password_change_me}
+      DB_PASSWORD: ${DB_APP_PASSWORD:?Set DB_APP_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       # HOT read replica datasource: read-only dashboards/search/report queries.
       READ_REPLICA_DB_URL: jdbc:postgresql://postgres-read-replica:5432/switching_db
       # HOT DB Flyway datasource uses the migration role created by scripts/init-db-users.sh.
       FLYWAY_URL: jdbc:postgresql://postgres:5432/switching_db
       FLYWAY_USERNAME: switching_flyway
-      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:-switching_flyway_password_change_me}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Set FLYWAY_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       # ARCHIVE DB datasource: archive tables in public, object metadata in object_storage.
       ARCHIVE_DB_URL: jdbc:postgresql://postgres-archive:5432/switching_archive
       ARCHIVE_DB_USERNAME: ${ARCHIVE_POSTGRES_USER:-switching_archive}
-      ARCHIVE_DB_PASSWORD: ${ARCHIVE_POSTGRES_PASSWORD:-switching_archive_postgres_password_change_me}
+      ARCHIVE_DB_PASSWORD: ${ARCHIVE_POSTGRES_PASSWORD:?Set ARCHIVE_POSTGRES_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       # Object storage endpoint: actual archived payload/file bytes.
       OBJECT_STORAGE_ENDPOINT: http://minio:9000
       OBJECT_STORAGE_BUCKET: switching-archive
       OBJECT_STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-switching_minio}
-      OBJECT_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-switching_minio_password_change_me}
+      OBJECT_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       MESSAGE_CRYPTO_KEY_BASE64: ${MESSAGE_CRYPTO_KEY_BASE64:-}
       # Webhook secret encryption (dev: local AES)
       SWITCHING_WEBHOOK_ENCRYPTION_PROVIDER: ${SWITCHING_WEBHOOK_ENCRYPTION_PROVIDER:-local}

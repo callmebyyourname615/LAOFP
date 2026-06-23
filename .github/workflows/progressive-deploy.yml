@@ -1,0 +1,28 @@
+name: Progressive production deployment
+on:
+  workflow_dispatch:
+    inputs:
+      image_digest: {description: 'sha256:<64 hex>', required: true, type: string}
+      change_reference: {required: true, type: string}
+permissions: {contents: read}
+concurrency: {group: production-progressive-deploy, cancel-in-progress: false}
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubectl
+        env: {KUBE_CONFIG_B64: '${{ secrets.KUBE_CONFIG_B64 }}'}
+        run: |
+          mkdir -p "$HOME/.kube"; printf '%s' "$KUBE_CONFIG_B64" | base64 -d > "$HOME/.kube/config"; chmod 600 "$HOME/.kube/config"
+      - name: Run 5-25-50 progressive rollout and gates
+        env:
+          IMAGE_REPOSITORY: 'ghcr.io/${{ github.repository }}/switching-api'
+          IMAGE_DIGEST: '${{ inputs.image_digest }}'
+          PROMETHEUS_URL: '${{ secrets.PROMETHEUS_URL }}'
+          CANARY_WEIGHTS: '5 25 50'
+        run: scripts/release/progressive-rollout.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: 'progressive-deploy-${{ github.run_id }}', path: 'build/canary/', if-no-files-found: warn, retention-days: 90}

@@ -1,0 +1,21 @@
+name: SLO and error-budget gate
+on:
+  workflow_dispatch:
+    inputs:
+      change_class: {required: true, type: choice, options: [standard, reliability, security, emergency]}
+      approved_exception: {required: false, type: boolean, default: false}
+permissions: {contents: read}
+jobs:
+  slo:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - name: Check error budget
+        run: >-
+          python3 scripts/slo/check_error_budget.py
+          --prometheus-url '${{ secrets.PROMETHEUS_URL }}'
+          --change-class '${{ inputs.change_class }}'
+          ${{ inputs.approved_exception && '--approved-exception' || '' }}

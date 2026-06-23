@@ -1,0 +1,85 @@
+name: Deploy backup and PITR components
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        options: [staging, production]
+      image_digest:
+        description: sha256:<64 hex> digest from backup-image workflow
+        required: true
+        type: string
+      change_reference:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup-deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate immutable digest
+        id: image
+        shell: bash
+        run: |
+          set -euo pipefail
+          digest='${{ inputs.image_digest }}'
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo "invalid digest" >&2; exit 64; }
+          echo "repository=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/switching-backup" >> "$GITHUB_OUTPUT"
+
+      - name: Configure kubectl
+        env:
+          KUBE_CONFIG_B64: ${{ secrets.KUBE_CONFIG_B64 }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBE_CONFIG_B64" | base64 --decode > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Render digest-pinned manifests
+        env:
+          REPOSITORY: ${{ steps.image.outputs.repository }}
+          DIGEST: ${{ inputs.image_digest }}
+        run: |
+          set -euo pipefail
+          mkdir -p build/backup-rendered
+          for manifest in k8s/backup/*.yaml; do
+            output="build/backup-rendered/$(basename "$manifest")"
+            if grep -q REPLACE_WITH_BACKUP_IMAGE_DIGEST "$manifest"; then
+              scripts/render_k8s_image.sh "$manifest" "$output" "$REPOSITORY" "$DIGEST"
+            else
+              cp "$manifest" "$output"
+            fi
+          done
+          ! grep -R 'REPLACE_WITH_BACKUP_IMAGE_DIGEST\|:latest' build/backup-rendered
+
+      - name: Apply backup components
+        run: |
+          set -euo pipefail
+          kubectl apply -f k8s/namespace.yaml
+          kubectl -n switching apply -f k8s/external-secrets/backup-secrets.yaml
+          kubectl -n switching apply -f build/backup-rendered/
+          kubectl -n switching rollout status daemonset/switching-wal-archiver --timeout=300s
+          kubectl -n switching get cronjobs,pods -l app.kubernetes.io/name=switching-backup -o wide \
+            | tee build/backup-deploy-status.txt
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backup-deploy-evidence-${{ inputs.environment }}-${{ github.run_id }}
+          path: |
+            build/backup-rendered/
+            build/backup-deploy-status.txt
+          if-no-files-found: warn
+          retention-days: 90

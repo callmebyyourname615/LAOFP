@@ -1,0 +1,24 @@
+name: Participant certification
+on:
+  workflow_dispatch:
+    inputs:
+      bank_code: {required: true, type: string}
+      base_url: {required: true, type: string}
+permissions: {contents: read}
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - name: Run certification pack
+        env: {PARTICIPANT_API_KEY: '${{ secrets.PARTICIPANT_API_KEY }}'}
+        run: |
+          mkdir -p build/certification
+          python3 certification/scripts/run-certification.py \
+            --base-url '${{ inputs.base_url }}' --bank-code '${{ inputs.bank_code }}' \
+            --api-key "$PARTICIPANT_API_KEY" --output build/certification/result.json
+      - uses: actions/upload-artifact@v4
+        with: {name: 'participant-certification-${{ inputs.bank_code }}-${{ github.run_id }}', path: build/certification/, if-no-files-found: error, retention-days: 365}

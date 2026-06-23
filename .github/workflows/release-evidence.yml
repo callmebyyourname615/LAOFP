@@ -1,0 +1,31 @@
+name: Release evidence bundle
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha: {description: 'Full certified commit SHA', required: true, type: string}
+      image_reference: {description: 'Digest-pinned image reference', required: true, type: string}
+      image_digest: {description: 'sha256:<64 hex>', required: true, type: string}
+permissions: {contents: read}
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ inputs.commit_sha }}', fetch-depth: 1}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - name: Build and verify release evidence
+        run: |
+          set -euo pipefail
+          mkdir -p build/release
+          python3 scripts/release/build-release-evidence.py \
+            --commit '${{ inputs.commit_sha }}' \
+            --image-reference '${{ inputs.image_reference }}' \
+            --image-digest '${{ inputs.image_digest }}' \
+            --include pom.xml --include Dockerfile --include src/main/resources/db/migration \
+            --output build/release/release-evidence.json
+          python3 scripts/release/verify-release-evidence.py build/release/release-evidence.json \
+            --expected-commit '${{ inputs.commit_sha }}' --expected-digest '${{ inputs.image_digest }}'
+          sha256sum build/release/release-evidence.json > build/release/release-evidence.sha256
+      - uses: actions/upload-artifact@v4
+        with: {name: 'release-evidence-${{ inputs.commit_sha }}', path: 'build/release/', if-no-files-found: error, retention-days: 365}

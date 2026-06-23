@@ -6,12 +6,13 @@
 
 ```
 scripts/execute-and-verify/
-├── 00-run-all.sh                 # orchestrator — รันทั้ง 5 step ตามลำดับ
+├── 00-run-all.sh                 # orchestrator — รันทั้ง 6 step ตามลำดับ
 ├── 01-verify-schema-v83.sh       # Action #1 — ddl-auto + V83 migration
 ├── 02-verify-metrics-activation.sh # Action #2 — metrics profile
 ├── 03-run-static-and-tests.sh    # Action #3 — verifiers + mvn verify
 ├── 04-credential-rotation-check.sh # Action #4 — credential audit (read-only)
 ├── 05-runtime-evidence-check.sh  # Action #5 — runtime evidence inventory
+├── 06-phase60-preflight.sh       # Action #6 — Phase 60A-60J repository preflight
 └── evidence/                     # log + artifact ของแต่ละรอบรัน
     └── YYYYMMDD_HHMMSS/
         ├── 01-verify-schema-v83.log
@@ -39,6 +40,7 @@ scripts/execute-and-verify/
 ./scripts/execute-and-verify/03-run-static-and-tests.sh
 ./scripts/execute-and-verify/04-credential-rotation-check.sh
 ./scripts/execute-and-verify/05-runtime-evidence-check.sh
+./scripts/execute-and-verify/06-phase60-preflight.sh
 ```
 
 ## สถานะแต่ละ Step
@@ -50,6 +52,7 @@ scripts/execute-and-verify/
 | **03** | static verifiers + `mvn verify` ทั้งหมด | ~10–60 นาที | Docker, JDK 17, Maven |
 | **04** | audit `.env.prod.example` ไม่มี placeholder + reminder operator | <1 นาที | – |
 | **05** | inventory ว่า B1–B8 ของ evidence ครบไหม | <1 นาที | – |
+| **06** | Phase 60 static contract + 60A–60J preflight | ~1–3 นาที | Python 3 |
 
 ## Pre-requisite ก่อนรัน
 

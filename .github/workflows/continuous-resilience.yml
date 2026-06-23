@@ -1,0 +1,14 @@
+name: Continuous resilience validation
+on:
+  schedule: [{cron: '17 2 * * 1'}]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  static-and-dr-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - run: python3 scripts/verify_phases_13_22_static.py
+      - run: bash -n dr/scripts/run-dr-suite.sh

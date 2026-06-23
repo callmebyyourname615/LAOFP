@@ -61,6 +61,11 @@ public class OAuthTokenFilter extends OncePerRequestFilter {
                                     FilterChain         chain)
             throws ServletException, IOException {
 
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader(AUTHORIZATION);
 
         // Only process Bearer tokens — other schemes (X-API-Key) are handled

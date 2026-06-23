@@ -1,0 +1,25 @@
+name: Deploy database maintenance job
+on:
+  workflow_dispatch:
+    inputs:
+      environment: {required: true, type: choice, options: [staging, production]}
+      backup_image_digest: {required: true, type: string}
+permissions: {contents: read}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: '${{ inputs.environment }}'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubectl
+        env: {KUBE_CONFIG_B64: '${{ secrets.KUBE_CONFIG_B64 }}'}
+        run: |
+          mkdir -p "$HOME/.kube"; printf '%s' "$KUBE_CONFIG_B64" | base64 -d > "$HOME/.kube/config"; chmod 600 "$HOME/.kube/config"
+      - name: Render and apply digest-pinned maintenance job
+        run: |
+          set -euo pipefail
+          scripts/render_k8s_image.sh k8s/database/maintenance-cronjob.yaml build-maintenance.yaml \
+            "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/switching-backup" '${{ inputs.backup_image_digest }}'
+          kubectl -n switching apply -f k8s/database/maintenance-external-secret.yaml
+          kubectl -n switching apply -f k8s/database/maintenance-configmap.yaml
+          kubectl -n switching apply -f build-maintenance.yaml

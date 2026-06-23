@@ -67,3 +67,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Generated Python/runtime certification artifacts ###
+__pycache__/
+*.py[cod]
+scripts/phase60/evidence/
+scripts/execute-and-verify/evidence/
+performance/results/
+backup/evidence/
+dr/evidence/
+monitoring/evidence/
+compliance/evidence/

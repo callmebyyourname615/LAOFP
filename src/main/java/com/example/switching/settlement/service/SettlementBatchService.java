@@ -42,6 +42,8 @@ public class SettlementBatchService {
             INSERT INTO settlement_items
                 (cycle_id, bank_code, transaction_ref, direction, amount, currency, settlement_date)
             VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (cycle_id, transaction_ref, bank_code, direction, settlement_date)
+            DO NOTHING
             """;
 
     /**
@@ -85,7 +87,7 @@ public class SettlementBatchService {
      * <p>The cycle must be OPEN or CLOSED; re-batching an already-SETTLED cycle is rejected.
      *
      * @param cycleRef identifies the target settlement cycle
-     * @return number of transfers processed (each produces 2 item rows)
+     * @return number of transfers newly inserted or partially repaired; a clean retry returns zero
      */
     @Transactional
     public int batchTransactions(String cycleRef) {
@@ -111,6 +113,8 @@ public class SettlementBatchService {
 
         long cycleId = cycle.getId();
 
+        int batchCount = 0;
+        int itemRowsInserted = 0;
         for (TransferEntity t : transfers) {
             String      txnRef = t.getTransferRef();
             BigDecimal  amt    = t.getAmount();
@@ -118,28 +122,37 @@ public class SettlementBatchService {
             String      src    = t.getSourceBank();
             String      dst    = t.getDestinationBank();
 
-            // ── DEBIT side (source bank pays out) ────────────────────────────
-            jdbcTemplate.update(INSERT_ITEM_SQL,
+            // Update a position only when its immutable settlement item was inserted.
+            // This makes retries/re-batching idempotent and also repairs a partial batch
+            // where only one side was committed before an earlier failure.
+            int debitInserted = jdbcTemplate.update(INSERT_ITEM_SQL,
                     cycleId, src, txnRef, "DEBIT", amt, ccy, settlementDate);
-            jdbcTemplate.update(UPSERT_POSITION_SQL,
-                    cycleId, src, ccy, amt, BigDecimal.ZERO, 1);
+            if (debitInserted == 1) {
+                jdbcTemplate.update(UPSERT_POSITION_SQL,
+                        cycleId, src, ccy, amt, BigDecimal.ZERO, 1);
+            }
 
-            // ── CREDIT side (destination bank receives) ───────────────────────
-            jdbcTemplate.update(INSERT_ITEM_SQL,
+            int creditInserted = jdbcTemplate.update(INSERT_ITEM_SQL,
                     cycleId, dst, txnRef, "CREDIT", amt, ccy, settlementDate);
-            jdbcTemplate.update(UPSERT_POSITION_SQL,
-                    cycleId, dst, ccy, BigDecimal.ZERO, amt, 1);
-        }
+            if (creditInserted == 1) {
+                jdbcTemplate.update(UPSERT_POSITION_SQL,
+                        cycleId, dst, ccy, BigDecimal.ZERO, amt, 1);
+            }
 
-        int batchCount = transfers.size();
+            itemRowsInserted += debitInserted + creditInserted;
+            if (debitInserted == 1 || creditInserted == 1) {
+                batchCount++;
+            }
+        }
         auditLogService.log("SETTLEMENT_BATCH_COMPLETED", ENTITY, cycleRef, SOURCE,
                 Map.of("cycleRef", cycleRef,
                         "settlementDate", settlementDate.toString(),
                         "businessDate", businessDate.toString(),
                         "settlementModel", "T_PLUS_1",
-                        "transferCount", batchCount));
+                        "transferCount", batchCount,
+                        "itemRowsInserted", itemRowsInserted));
         log.info("T+1 settlement batch done: cycleRef={} settlementDate={} businessDate={} transfers={} itemRows={}",
-                cycleRef, settlementDate, businessDate, batchCount, batchCount * 2);
+                cycleRef, settlementDate, businessDate, batchCount, itemRowsInserted);
         return batchCount;
     }
 

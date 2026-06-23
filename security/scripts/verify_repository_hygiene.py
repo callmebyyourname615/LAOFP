@@ -197,6 +197,10 @@ def main() -> int:
     parser.add_argument("--repo", default=".", help="Git working tree to scan")
     parser.add_argument("--policy", default=str(DEFAULT_POLICY), help="Repository hygiene policy JSON")
     parser.add_argument("--staged", action="store_true", help="Scan only staged added/modified files")
+    parser.add_argument(
+        "--allow-pending-deletions", action="store_true",
+        help="Ignore tracked paths that are already deleted from the working tree; intended for pre-commit delivery validation",
+    )
     parser.add_argument("--json-report", help="Write a redacted JSON report")
     args = parser.parse_args()
 
@@ -204,6 +208,10 @@ def main() -> int:
         repo = git_root(Path(args.repo).resolve())
         policy = json.loads(Path(args.policy).read_text(encoding="utf-8"))
         paths = tracked_paths(repo, args.staged)
+        pending_deletions: list[str] = []
+        if args.allow_pending_deletions and not args.staged:
+            pending_deletions = [path for path in paths if not (repo / path).exists()]
+            paths = [path for path in paths if path not in set(pending_deletions)]
         findings = unique_findings(path_findings(paths, policy) + content_findings(repo, paths, policy))
     except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
         print(f"repository hygiene scanner error: {exc}", file=sys.stderr)
@@ -214,6 +222,7 @@ def main() -> int:
         "repository": repo.name,
         "scope": "staged" if args.staged else "tracked",
         "files_scanned": len(paths),
+        "pending_deletions_ignored": pending_deletions,
         "finding_count": len(findings),
         "findings": [asdict(item) for item in findings],
     }

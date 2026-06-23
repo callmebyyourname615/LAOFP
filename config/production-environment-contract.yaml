@@ -44,6 +44,10 @@ variables:
   KAFKA_SSL_KEYSTORE_PASSWORD: {delivery: application-secret, type: secret, minLength: 12}
   MESSAGE_CRYPTO_KEY_BASE64: {delivery: application-secret, type: base64-bytes, decodedLength: 32}
   OAUTH_JWT_SECRET: {delivery: application-secret, type: secret, minLength: 32}
+  SMOS_ENABLED: {delivery: configmap, type: boolean, value: true}
+  SMOS_MFA_REQUIRED: {delivery: configmap, type: boolean, value: true}
+  SMOS_JWT_SECRET: {delivery: application-secret, type: secret, minLength: 32}
+  SMOS_BOOTSTRAP_ENABLED: {delivery: configmap, type: boolean, value: false}
   ACCOUNT_LOOKUP_BASE_URL: {delivery: configmap, type: https-url}
   BOL_RTGS_URL: {delivery: configmap, type: https-url}
   RTGS_CALLBACK_IP_WHITELIST: {delivery: configmap, type: nonempty}

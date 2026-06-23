@@ -11,6 +11,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.aml.exception.SanctionsBlockException;
+import com.example.switching.aml.service.SanctionsListSyncService;
 import com.example.switching.crossborder.adapter.PromptPayAdapter;
 import com.example.switching.crossborder.dto.CrossBorderInitiateRequest;
 import com.example.switching.crossborder.dto.FxQuoteRequest;
@@ -32,6 +33,7 @@ class CrossBorderAmlBlockIntegrationTest extends AbstractIntegrationTest {
     @Autowired FxQuoteService             fxQuoteService;
     @Autowired FxCorridorRepository       corridorRepo;
     @Autowired JdbcTemplate               jdbcTemplate;
+    @Autowired SanctionsListSyncService   sanctionsListSyncService;
 
     // ── TC-CB-AML-001 ────────────────────────────────────────────────────────
 
@@ -67,9 +69,6 @@ class CrossBorderAmlBlockIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void seedSanctionsEntry(String name) {
-        jdbcTemplate.update("""
-                INSERT INTO sanctions_lists (list_type, entity_name, entity_type, is_active, added_at)
-                VALUES ('OFAC', ?, 'ENTITY', true, NOW())
-                """, name);
+        sanctionsListSyncService.seedTestEntry(name, "OFAC", "ENTITY", "TC-CB-AML-001");
     }
 }

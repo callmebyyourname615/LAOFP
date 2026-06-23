@@ -1,0 +1,11 @@
+# Files intentionally deleted from the repository
+.env.bak
+new.txt
+
+# Operator-only cleanup (do not automate from this ZIP)
+# - Keep `.env` local and untracked.
+# - Rotate all exposed credentials before rewriting history.
+# - Use security/scripts/purge-sensitive-history.sh against an isolated mirror clone.
+# - Review security/policy/history-purge-paths.txt and the generated evidence.
+# - Force-push only through the approved repository coordinator process.
+# - Invalidate old clones, CI caches, images, archives, and artifacts afterward.

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.example/schemas/phase60-evidence-manifest.schema.json",
+  "title": "Phase 60 Evidence Manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion", "runId", "generatedAt", "gitCommit",
+    "applicationImageDigest", "migrationImageDigest", "targetEnvironment",
+    "phases", "artifacts", "uatEntrySignOff"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "runId": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "gitCommit": {"pattern": "^[0-9a-f]{40}$"},
+    "applicationImageDigest": {"pattern": "^sha256:[0-9a-f]{64}$"},
+    "migrationImageDigest": {"pattern": "^sha256:[0-9a-f]{64}$"},
+    "targetEnvironment": {"const": "uat"},
+    "phases": {
+      "type": "object",
+      "minProperties": 10,
+      "maxProperties": 10,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "resultPath", "resultSha256"],
+        "properties": {
+          "status": {"const": "PASS"},
+          "resultPath": {"type": "string"},
+          "resultSha256": {"pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sizeBytes", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sizeBytes": {"type": "integer", "minimum": 0},
+          "sha256": {"pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "uatEntrySignOff": {
+      "type": "object",
+      "required": [
+        "decision", "qaLead", "securityLead", "sreLead",
+        "engineeringLead", "productOwner", "signedAt", "changeReference"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

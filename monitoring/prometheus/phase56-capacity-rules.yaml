@@ -11,9 +11,9 @@ spec:
           expr: switching_db_connection_utilization_percent > 70
           for: 10m
           labels: {severity: warning, phase: 56D}
-          annotations: {summary: Database connection budget at risk, runbook_url: docs/runbooks/CAPACITY_AUTOSCALING.md}
+          annotations: {summary: Database connection budget at risk, description: Database connection utilization has remained above 70 percent and may exhaust the approved connection budget., runbook_url: docs/runbooks/CAPACITY_AUTOSCALING.md}
         - alert: SwitchingStorageForecastBelow90Days
           expr: switching_storage_forecast_days < 90
           for: 1h
           labels: {severity: warning, phase: 56I}
-          annotations: {summary: Storage forecast below 90 days, runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}
+          annotations: {summary: Storage forecast below 90 days, description: Forecasted storage headroom is below 90 days and capacity expansion planning is required., runbook_url: docs/runbooks/PHASE56_DAY2_OPERATIONS.md}

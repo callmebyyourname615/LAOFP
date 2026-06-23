@@ -40,11 +40,11 @@ for source in (ROOT / "src/main/java").rglob("*.java"):
 # 53D operational metrics
 require("src/main/java/com/example/switching/observability/OperationalMetricsConfiguration.java",
         '@Profile("!migration")', "matchIfMissing = true", "OperationalMetricsCollector")
-require("src/main/resources/application.yml", "OPERATIONAL_METRICS_ENABLED:true")
+require("src/main/resources/application-prod.yml", "OPERATIONAL_METRICS_ENABLED:true")
 
-# 53E migration integration test at version 83
+# 53E migration integration test at the repository latest version
 require("src/test/java/com/example/switching/migration/MigrationApplicationIntegrationTest.java",
-        'isEqualTo("96")', "KafkaTemplate", "outboxDispatchWorker")
+        'isEqualTo("100")', "KafkaTemplate", "outboxDispatchWorker")
 
 # 53F unified gates and restored runbooks
 for path in [

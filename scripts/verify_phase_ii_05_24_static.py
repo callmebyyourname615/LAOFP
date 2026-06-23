@@ -31,11 +31,11 @@ def require_tests(*names: str) -> None:
 
 def main() -> int:
     migrations = {
-        86: "promotion_management.sql",
-        87: "push_payment_orchestrator.sql",
-        88: "scheduled_report_delivery.sql",
-        89: "cross_border_rail_journal.sql",
-        90: "rtp_authorisation_settlement_extensions.sql",
+        92: "promotion_management.sql",
+        93: "push_payment_orchestrator.sql",
+        94: "scheduled_report_delivery.sql",
+        95: "cross_border_rail_journal.sql",
+        96: "rtp_authorisation_settlement_extensions.sql",
     }
     migration_text = {
         version: read(f"src/main/resources/db/migration/V{version}__{name}")
@@ -218,8 +218,8 @@ def main() -> int:
         if flag not in application:
             raise AssertionError(f"feature flag is not default-off: {flag}")
 
+    read("src/test/java/com/example/switching/promotion/service/PromotionEligibilityEvaluatorTest.java")
     require_tests(
-        "PromotionEligibilityEvaluatorTest.java",
         "RailSignatureVerifierTest.java",
         "ReportLinkSigningTest.java",
         "PhaseII0524MigrationIntegrationTest.java",

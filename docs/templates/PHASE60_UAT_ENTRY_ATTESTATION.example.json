@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "runId": "replace-me",
+  "decision": "APPROVE_UAT_ENTRY",
+  "qaLead": "replace-me",
+  "securityLead": "replace-me",
+  "sreLead": "replace-me",
+  "engineeringLead": "replace-me",
+  "productOwner": "replace-me",
+  "signedAt": "2026-06-22T00:00:00Z",
+  "changeReference": "replace-me"
+}
