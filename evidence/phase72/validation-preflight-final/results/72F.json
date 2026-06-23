@@ -1,0 +1,10 @@
+{
+  "details": {},
+  "generatedAt": "2026-06-23T14:29:23.459106+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Performance campaign assets are ready; load is not executed in preflight",
+  "mode": "preflight",
+  "phase": "72F",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}

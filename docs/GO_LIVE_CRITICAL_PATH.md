@@ -1,6 +1,6 @@
 # Go-Live Critical Path — Master Checklist
 
-> **Last updated:** 2026-06-23 (after Phase 68+69+70 merge — commit `e14be44`)
+> **Last updated:** 2026-06-23 (Phase 71–73 tooling merged; UAT execution still pending)
 > **Audience:** Engineering, QA, SecOps, SRE, Change Manager
 > **Purpose:** Single checklist สำหรับพา Switching ขึ้น production
 > **Convention:**
@@ -32,6 +32,9 @@
 | 🆕 Phase 68 UAT Activation | 🟢 **scripts ready** | not executed |
 | 🆕 Phase 69 Verification Closure | 🟢 **scripts ready** + test fixes | not executed |
 | 🆕 Phase 70 Traffic & Financial Safety | 🟢 **code wired** | rate-limit + read-your-writes |
+| 🆕 Phase 71 UAT Certification Closure | 🟢 **scripts ready** + temporal JDBC fix | not executed |
+| 🆕 Phase 72 Final UAT Closure | 🟢 **scripts ready** | not executed |
+| 🆕 Phase 73 Chaos Certification | 🟢 **tooling ready** | real UAT chaos drills not executed |
 | **OVERALL** | **🟡 ~63%** | **2 weeks to Go-Live** |
 
 ---
@@ -83,7 +86,7 @@
 - [x] Fix vault `ObjectMapper` missing in `WebhookEncryptionConfiguration` (Phase 69)
 - [x] Add `provider_uid` seed in `SanctionsScreeningIntegrationTest` (Phase 65A)
 - [x] Fix FK cleanup order in `OperationsGenerateRoutesForBankIntegrationTest` (Phase 69)
-- [ ] Fix `setObject(Instant)` → `setObject(idx, instant, Types.TIMESTAMP_WITH_TIMEZONE)` in cross-border
+- [x] Fix cross-border JDBC temporal binding with `JdbcTemporalBinder` (Phase 71)
 - [ ] **Run `./mvnw verify` → 0 errors, 0 failures**
 - [ ] **Run `./scripts/execute-and-verify/00-run-all.sh` → all steps green**
 
@@ -477,7 +480,54 @@ Orchestrator: `scripts/phase70/run_phase70.sh` + static `verify_phase70_static.p
 
 ---
 
-# 17. Post Go-Live BAU (Hypercare 14 days)
+# 17. 🆕 Phase 71 — UAT Certification Closure
+
+Orchestrator: `scripts/phase71/run_phase71.sh` + preflight `scripts/execute-and-verify/11-phase71-preflight.sh`
+
+- [x] 71A typed JDBC temporal binding and cross-border regression test
+- [x] 71B–71J UAT certification closure scripts, schemas, policies and attestation templates
+- [x] CI workflow `phase71-uat-certification.yml`
+- [x] Phase 71 operator runbook and exit criteria
+- [ ] **Execute** Phase 71 against UAT with the authoritative migration chain
+- [ ] Complete Maven verification and collect non-synthetic runtime evidence
+- [ ] Sign Phase 54 entry bundle
+
+**Status:** 🟢 tooling merged / execution blocked pending UAT prerequisites
+
+---
+
+# 18. 🆕 Phase 72 — Final UAT Closure
+
+Orchestrator: `scripts/phase72/run_phase72.sh` + preflight `scripts/execute-and-verify/13-phase72-final-uat-closure.sh`
+
+- [x] 72A–72J final UAT closure scripts, schemas, policies and attestation templates
+- [x] Cross-border temporal-binding static verifier and regression test
+- [x] CI workflow `phase72-final-uat-closure.yml`
+- [x] Post-restore financial-integrity SQL check
+- [ ] **Execute** Phase 72 after Phase 71 has a complete UAT handoff
+- [ ] Produce commit-matched, non-synthetic final GO attestation
+
+**Status:** 🟢 tooling merged / final decision pending runtime evidence
+
+---
+
+# 19. 🆕 Phase 73 — Chaos Certification
+
+Orchestrator: `scripts/phase73/run_phase73.sh`
+
+- [x] 73A–73J chaos certification scripts, schemas, policy and operator runbook
+- [x] Eight Chaos Mesh experiment manifests (pod, database, Kafka, object storage, API, DNS, CPU and memory)
+- [x] CI workflow `phase73-chaos-certification.yml`
+- [x] Synthetic orchestration/evidence validation fixtures
+- [ ] Install or confirm Chaos Mesh in UAT
+- [ ] Configure real UAT dependency CIDRs and read-only financial-integrity adapter
+- [ ] Execute and sign all eight real UAT experiments
+
+**Status:** 🟢 tooling merged / synthetic evidence is not UAT certification
+
+---
+
+# 20. Post Go-Live BAU (Hypercare 14 days)
 
 - [ ] Day 1: 24/7 SRE coverage
 - [ ] Day 1: Watch all 47 alerts firing as expected
@@ -511,8 +561,9 @@ Orchestrator: `scripts/phase70/run_phase70.sh` + static `verify_phase70_static.p
 - [x] **DONE** (Phase 62 — OTLP exporter + V106 trace correlation + `TraceContextSupportTest`)
 
 ## 12.6 — Chaos Engineering Suite
+- [x] Phase 73 chaos certification tooling and 8 scenario manifests merged
 - [ ] Install Chaos Mesh / LitmusChaos on UAT
-- [ ] Define 10 scenarios
+- [ ] Execute and certify the 8 UAT scenarios
 
 ## 12.7 — PSD2-style Consent (BRD future-scope)
 - [ ] Phase IV

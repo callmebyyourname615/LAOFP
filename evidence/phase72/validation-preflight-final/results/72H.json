@@ -1,0 +1,10 @@
+{
+  "details": {},
+  "generatedAt": "2026-06-23T14:29:23.457780+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Secret rotation ceremony requires signed operator evidence in full mode",
+  "mode": "preflight",
+  "phase": "72H",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}

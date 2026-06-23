@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "gitCommit": "REPLACE_WITH_FULL_COMMIT_SHA",
+  "smos": {
+    "adminsProvisioned": false,
+    "totpVerified": false,
+    "passwordPolicyVerified": false,
+    "sessionRevocationVerified": false,
+    "rbacVerified": false,
+    "makerCheckerVerified": false,
+    "auditTrailVerified": false
+  },
+  "alerts": {
+    "rulesLoaded": false,
+    "pendingObserved": false,
+    "firingObserved": false,
+    "resolvedObserved": false,
+    "routingVerified": false,
+    "runbookLinksVerified": false
+  },
+  "approvers": {
+    "security": "",
+    "sre": ""
+  },
+  "approvedAt": ""
+}

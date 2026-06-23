@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.example/schemas/phase71-attestation.schema.json",
+  "title": "Phase 71 Operator Attestation",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "status", "environment", "executedAt", "operator", "approver", "evidence"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "kind": {"enum": ["uat-infrastructure", "secret-rotation", "smos-runtime", "performance-settlement", "resilience-alerts", "phase54-entry"]},
+    "status": {"const": "PASS"},
+    "environment": {"enum": ["uat", "production"]},
+    "executedAt": {"type": "string", "format": "date-time"},
+    "operator": {"type": "string", "minLength": 1},
+    "approver": {"type": "string", "minLength": 1},
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": false
+}

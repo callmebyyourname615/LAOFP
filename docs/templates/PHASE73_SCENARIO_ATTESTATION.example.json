@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "runId": "phase73-example",
+  "scenario": "pod-kill",
+  "status": "PASS",
+  "startedAt": "2026-06-23T00:00:00Z",
+  "finishedAt": "2026-06-23T00:02:00Z",
+  "recoveryTimeSeconds": 120,
+  "cleanupStatus": "PASS",
+  "integrity": {
+    "dataLossCount": 0,
+    "duplicateReplayCount": 0,
+    "balanceMismatchCount": 0,
+    "outboxBacklogGrowth": 0
+  },
+  "artifacts": ["reconciliation.json", "replay-integrity.json", "financial-integrity.json"]
+}

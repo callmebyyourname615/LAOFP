@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.internal/schemas/phase73/resilience-bundle.schema.json",
+  "title": "Phase 73 Resilience Certification Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runId", "generatedAt", "environment", "gitCommit", "status", "scenarioSummary", "phaseResults", "artifacts", "approval"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "runId": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "environment": {"const": "uat"},
+    "gitCommit": {"type": "string", "minLength": 7},
+    "status": {"enum": ["PASS", "FAIL"]},
+    "scenarioSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "passed", "failed", "passPercent"],
+      "properties": {
+        "required": {"type": "integer", "minimum": 1},
+        "passed": {"type": "integer", "minimum": 0},
+        "failed": {"type": "integer", "minimum": 0},
+        "passPercent": {"type": "number", "minimum": 0, "maximum": 100}
+      }
+    },
+    "phaseResults": {"type": "object", "minProperties": 9, "maxProperties": 9},
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sizeBytes", "sha256"],
+        "properties": {
+          "path": {"type": "string"},
+          "sizeBytes": {"type": "integer", "minimum": 0},
+          "sha256": {"pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "approval": {"type": "object"}
+  }
+}

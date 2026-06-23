@@ -1,0 +1,10 @@
+{
+  "details": {},
+  "generatedAt": "2026-06-23T14:29:23.372568+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "SMOS and alert certification requires real runtime evidence in full mode",
+  "mode": "preflight",
+  "phase": "72I",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}

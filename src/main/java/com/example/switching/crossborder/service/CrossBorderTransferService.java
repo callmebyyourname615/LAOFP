@@ -24,6 +24,7 @@ import com.example.switching.crossborder.exception.CorridorNotAvailableException
 import com.example.switching.crossborder.exception.PurposeCodeRequiredException;
 import com.example.switching.crossborder.repository.FxCorridorRepository;
 import com.example.switching.crossborder.repository.FxQuoteRepository;
+import com.example.switching.jdbc.JdbcTemporalBinder;
 import com.example.switching.liquidity.service.PoolService;
 import com.example.switching.webhook.service.WebhookEventPublisher;
 
@@ -113,7 +114,7 @@ public class CrossBorderTransferService {
 
         // 7. Insert crossborder_transfers INITIATED
         LocalDateTime now = LocalDateTime.now();
-        Long cbId = jdbcTemplate.queryForObject(
+        Long cbId = jdbcTemplate.query(
                 """
                 INSERT INTO crossborder_transfers
                     (quote_id, initiating_psp_id, purpose_code, source_of_funds,
@@ -122,12 +123,24 @@ public class CrossBorderTransferService {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'INITIATED', ?)
                 RETURNING cb_id
                 """,
-                Long.class,
-                quote.getQuoteId(), request.initiatingPspId(),
-                request.purposeCode(), request.sourceOfFunds(),
-                request.beneficiaryName(), request.beneficiaryBank(),
-                request.beneficiaryAccount(), request.beneficiaryCountry(),
-                network, now);
+                statement -> {
+                    statement.setLong(1, quote.getQuoteId());
+                    statement.setString(2, request.initiatingPspId());
+                    statement.setString(3, request.purposeCode());
+                    statement.setString(4, request.sourceOfFunds());
+                    statement.setString(5, request.beneficiaryName());
+                    statement.setString(6, request.beneficiaryBank());
+                    statement.setString(7, request.beneficiaryAccount());
+                    statement.setString(8, request.beneficiaryCountry());
+                    statement.setString(9, network);
+                    JdbcTemporalBinder.bindTimestamp(statement, 10, now);
+                },
+                resultSet -> {
+                    if (!resultSet.next()) {
+                        throw new IllegalStateException("Cross-border transfer insert returned no cb_id");
+                    }
+                    return resultSet.getLong("cb_id");
+                });
 
         // 8. Dispatch to network adapter (throws CorridorNotAvailableException on failure → full rollback)
         String networkTxnId = adapter.send(request, quote, cbId);
@@ -149,19 +162,33 @@ public class CrossBorderTransferService {
                     'SETTLED', ?, ?,
                     'DNS', false,
                     ?, ?, ?, ?)
-                """,
-                txnRef, txnRef, "CB-" + cbId,
-                request.initiatingPspId(),
-                corridor.getDestCurrency() + "_PARTNER", request.beneficiaryName(),
-                quote.getSourceAmount(), quote.getSourceCurrency(),
-                network,
-                "CB-EXT-" + cbId, txnRef,
-                today, now, now, now);
+                """, statement -> {
+                    statement.setString(1, txnRef);
+                    statement.setString(2, txnRef);
+                    statement.setString(3, "CB-" + cbId);
+                    statement.setString(4, request.initiatingPspId());
+                    statement.setString(5, corridor.getDestCurrency() + "_PARTNER");
+                    statement.setString(6, request.beneficiaryName());
+                    statement.setBigDecimal(7, quote.getSourceAmount());
+                    statement.setString(8, quote.getSourceCurrency());
+                    statement.setString(9, network);
+                    statement.setString(10, "CB-EXT-" + cbId);
+                    statement.setString(11, txnRef);
+                    JdbcTemporalBinder.bindDate(statement, 12, today);
+                    JdbcTemporalBinder.bindTimestamp(statement, 13, now);
+                    JdbcTemporalBinder.bindTimestamp(statement, 14, now);
+                    JdbcTemporalBinder.bindTimestamp(statement, 15, now);
+                });
 
         // 10. Update crossborder_transfers COMPLETED
         jdbcTemplate.update(
                 "UPDATE crossborder_transfers SET status='COMPLETED', txn_ref=?, network_txn_id=?, completed_at=? WHERE cb_id=?",
-                txnRef, networkTxnId, now, cbId);
+                statement -> {
+                    statement.setString(1, txnRef);
+                    statement.setString(2, networkTxnId);
+                    JdbcTemporalBinder.bindTimestamp(statement, 3, now);
+                    statement.setLong(4, cbId);
+                });
 
         // 11. Mark quote used + confirm hold
         quoteRepo.markUsed(quote.getQuoteId());

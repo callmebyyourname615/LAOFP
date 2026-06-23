@@ -1,0 +1,12 @@
+{
+  "details": {
+    "violations": 0
+  },
+  "generatedAt": "2026-06-23T14:29:28.724048+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "No untyped Instant JDBC binding found in cross-border source",
+  "mode": "preflight",
+  "phase": "72B",
+  "schemaVersion": 1,
+  "status": "PASS"
+}

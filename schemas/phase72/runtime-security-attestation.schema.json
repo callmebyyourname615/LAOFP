@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alerts": {
+      "additionalProperties": false,
+      "properties": {
+        "firingObserved": {
+          "const": true
+        },
+        "pendingObserved": {
+          "const": true
+        },
+        "resolvedObserved": {
+          "const": true
+        },
+        "routingVerified": {
+          "const": true
+        },
+        "rulesLoaded": {
+          "const": true
+        },
+        "runbookLinksVerified": {
+          "const": true
+        }
+      },
+      "required": [
+        "rulesLoaded",
+        "pendingObserved",
+        "firingObserved",
+        "resolvedObserved",
+        "routingVerified",
+        "runbookLinksVerified"
+      ],
+      "type": "object"
+    },
+    "approvedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "approvers": {
+      "additionalProperties": false,
+      "properties": {
+        "security": {
+          "minLength": 2,
+          "type": "string"
+        },
+        "sre": {
+          "minLength": 2,
+          "type": "string"
+        }
+      },
+      "required": [
+        "security",
+        "sre"
+      ],
+      "type": "object"
+    },
+    "gitCommit": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "smos": {
+      "additionalProperties": false,
+      "properties": {
+        "adminsProvisioned": {
+          "const": true
+        },
+        "auditTrailVerified": {
+          "const": true
+        },
+        "makerCheckerVerified": {
+          "const": true
+        },
+        "passwordPolicyVerified": {
+          "const": true
+        },
+        "rbacVerified": {
+          "const": true
+        },
+        "sessionRevocationVerified": {
+          "const": true
+        },
+        "totpVerified": {
+          "const": true
+        }
+      },
+      "required": [
+        "adminsProvisioned",
+        "totpVerified",
+        "passwordPolicyVerified",
+        "sessionRevocationVerified",
+        "rbacVerified",
+        "makerCheckerVerified",
+        "auditTrailVerified"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "gitCommit",
+    "smos",
+    "alerts",
+    "approvers",
+    "approvedAt"
+  ],
+  "title": "Runtime security and alert attestation",
+  "type": "object"
+}

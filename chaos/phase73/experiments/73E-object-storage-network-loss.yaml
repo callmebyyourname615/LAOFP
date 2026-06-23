@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: phase73-object-loss-${PHASE73_RUN_ID_SAFE}
+  namespace: ${PHASE73_NAMESPACE}
+  labels:
+    switching.phase: "73E"
+    switching.run-id: "${PHASE73_RUN_ID_SAFE}"
+spec:
+  action: loss
+  mode: all
+  selector:
+    namespaces:
+      - ${PHASE73_NAMESPACE}
+    labelSelectors:
+      app.kubernetes.io/name: ${PHASE73_APP_LABEL}
+  direction: to
+  externalTargets: ${PHASE73_OBJECT_STORAGE_CIDRS_JSON}
+  loss:
+    loss: "100"
+    correlation: "100"
+  duration: "${PHASE73_EXPERIMENT_DURATION}s"

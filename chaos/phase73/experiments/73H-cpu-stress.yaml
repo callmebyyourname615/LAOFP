@@ -1,0 +1,20 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: phase73-cpu-stress-${PHASE73_RUN_ID_SAFE}
+  namespace: ${PHASE73_NAMESPACE}
+  labels:
+    switching.phase: "73H"
+    switching.run-id: "${PHASE73_RUN_ID_SAFE}"
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - ${PHASE73_NAMESPACE}
+    labelSelectors:
+      app.kubernetes.io/name: ${PHASE73_APP_LABEL}
+  stressors:
+    cpu:
+      workers: ${PHASE73_CPU_WORKERS}
+      load: ${PHASE73_CPU_LOAD_PERCENT}
+  duration: "${PHASE73_EXPERIMENT_DURATION}s"

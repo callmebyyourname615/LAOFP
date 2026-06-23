@@ -1,0 +1,82 @@
+schemaVersion: 1
+phase: "73"
+environment: uat
+productionExecutionAllowed: false
+approval:
+  required: true
+  tokenPattern: '^CHAOS-UAT-[A-Z0-9-]{8,64}$'
+  maximumAgeMinutes: 120
+namespace: switching
+application:
+  appLabel: switching-api
+  workloadLabelSelector:
+    app.kubernetes.io/name: switching-api
+  deploymentName: switching-api
+  baseUrl: http://switching-api.switching.svc.cluster.local:8080
+  healthUrl: http://switching-api.switching.svc.cluster.local:8080/actuator/health
+chaosMesh:
+  namespace: chaos-mesh
+  requiredCrds:
+    - podchaos.chaos-mesh.org
+    - networkchaos.chaos-mesh.org
+    - dnschaos.chaos-mesh.org
+    - stresschaos.chaos-mesh.org
+execution:
+  experimentDurationSeconds: 30
+  stabilizationSeconds: 60
+  cleanupTimeoutSeconds: 120
+  commandTimeoutSeconds: 600
+  maximumConcurrentExperiments: 1
+thresholds:
+  maximumDataLossCount: 0
+  maximumDuplicateReplayCount: 0
+  maximumBalanceMismatchCount: 0
+  maximumOutboxBacklogGrowth: 0
+  maximumRecoveryTimeSeconds: 1800
+  minimumAlertDeliveryPercent: 100
+  minimumScenarioPassPercent: 100
+externalTargets:
+  databaseCidrs: []
+  kafkaCidrs: []
+  objectStorageCidrs: []
+  externalApiCidrs: []
+dnsPatterns:
+  - '*.uat.internal'
+resourceStress:
+  cpuWorkers: 1
+  cpuLoadPercent: 70
+  memoryWorkers: 1
+  memorySize: 256MB
+scenarios:
+  - id: pod-kill
+    phase: 73B
+    manifest: chaos/phase73/experiments/73B-pod-kill.yaml
+    required: true
+  - id: database-network-loss
+    phase: 73C
+    manifest: chaos/phase73/experiments/73C-database-network-loss.yaml
+    required: true
+  - id: kafka-network-delay
+    phase: 73D
+    manifest: chaos/phase73/experiments/73D-kafka-network-delay.yaml
+    required: true
+  - id: object-storage-network-loss
+    phase: 73E
+    manifest: chaos/phase73/experiments/73E-object-storage-network-loss.yaml
+    required: true
+  - id: external-api-delay
+    phase: 73F
+    manifest: chaos/phase73/experiments/73F-external-api-delay.yaml
+    required: true
+  - id: dns-error
+    phase: 73G
+    manifest: chaos/phase73/experiments/73G-dns-error.yaml
+    required: true
+  - id: cpu-stress
+    phase: 73H
+    manifest: chaos/phase73/experiments/73H-cpu-stress.yaml
+    required: true
+  - id: memory-stress
+    phase: 73H
+    manifest: chaos/phase73/experiments/73H-memory-stress.yaml
+    required: true

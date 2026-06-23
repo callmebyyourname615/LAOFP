@@ -1,0 +1,21 @@
+schemaVersion: 1
+backup:
+  requireFullBackup: true
+  requireSha256Verification: true
+  requireIsolatedRestore: true
+  requirePitr: true
+recoveryObjectives:
+  rpoMinutesMaxExclusive: 5
+  rtoMinutesMaxExclusive: 30
+  transactionLossMaxInclusive: 0
+  financialMismatchMaxInclusive: 0
+drScenarios:
+  - application_instance_failure
+  - postgres_primary_failure
+  - kafka_broker_failure
+  - network_partition
+  - object_storage_outage
+  - external_api_timeout
+  - replica_promotion_failback
+  - outbox_replay
+  - duplicate_transaction_protection

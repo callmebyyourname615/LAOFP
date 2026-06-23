@@ -1,0 +1,47 @@
+name: Phase 73 chaos certification
+
+on:
+  pull_request:
+    paths:
+      - 'chaos/phase73/**'
+      - 'scripts/phase73/**'
+      - 'scripts/verify_phase73_static.py'
+      - 'config/phase73-chaos-policy.yaml'
+      - 'schemas/phase73/**'
+      - 'docs/phase73/**'
+      - 'docs/templates/PHASE73_*'
+      - 'AGENT/PHASE_73A_73J_IMPLEMENTATION_CHECKLIST.md'
+      - '.github/workflows/phase73-chaos-certification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase73-static-and-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install validation dependencies
+        run: python -m pip install --disable-pip-version-check --no-cache-dir PyYAML==6.0.2 jsonschema==4.23.0
+      - name: Static contract
+        run: python3 scripts/verify_phase73_static.py
+      - name: Unit tests
+        run: python3 -m unittest discover -s scripts/phase73/tests -v
+      - name: Phase 73 preflight
+        env:
+          PHASE73_RUN_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}
+          PHASE73_EVIDENCE_ROOT: build/phase73-evidence
+        run: scripts/phase73/run_phase73.sh --preflight
+      - name: Upload Phase 73 preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase73-preflight-${{ github.sha }}
+          path: build/phase73-evidence/
+          if-no-files-found: error
+          retention-days: 90

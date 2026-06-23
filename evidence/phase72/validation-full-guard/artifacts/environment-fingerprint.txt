@@ -1,0 +1,5 @@
+git_commit=baseline-pre71
+generated_at=2026-06-23T14:26:49Z
+kernel=Linux 4.4.0
+java=openjdk version "21.0.10" 2026-01-20
+docker=unavailable

@@ -1,0 +1,96 @@
+name: Phase 72 Final UAT Closure
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/phase72/**'
+      - 'scripts/verify_phase72_static.py'
+      - 'scripts/verify_cross_border_temporal_binding.py'
+      - 'scripts/execute-and-verify/13-phase72-final-uat-closure.sh'
+      - 'config/phase72/**'
+      - 'schemas/phase72/**'
+      - 'docs/phase72/**'
+      - 'src/test/java/com/example/switching/crossborder/CrossBorderTemporalBindingRegressionTest.java'
+      - '.github/workflows/phase72-final-uat-closure.yml'
+  workflow_dispatch:
+    inputs:
+      full_execution:
+        description: 'Execute real UAT closure (requires protected environment and secrets)'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  static-and-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Static contract
+        run: python3 scripts/verify_phase72_static.py --root .
+      - name: Temporal binding scan
+        run: python3 scripts/verify_cross_border_temporal_binding.py --root .
+      - name: Phase 72 preflight
+        env:
+          PHASE72_RUN_ID: github-${{ github.run_id }}-preflight
+        run: ./scripts/phase72/run_phase72.sh --preflight
+      - name: Upload preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase72-preflight-${{ github.run_id }}
+          path: evidence/phase72/github-${{ github.run_id }}-preflight
+
+  full-uat-closure:
+    if: github.event_name == 'workflow_dispatch' && inputs.full_execution
+    runs-on: [self-hosted, uat]
+    environment: uat-certification
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute Phase 72 against UAT
+        env:
+          PHASE72_CONFIRM_FULL: 'YES'
+          PHASE72_CONFIRM_UAT: 'YES'
+          PHASE72_CONFIRM_LOAD: 'YES'
+          PHASE72_CONFIRM_BACKUP_RESTORE: 'YES'
+          PHASE72_CONFIRM_DR: 'YES'
+          PHASE72_CONFIRM_SECRET_ROTATION: 'YES'
+          PHASE72_CONFIRM_RUNTIME_SECURITY: 'YES'
+          PHASE72_BASE_URL: ${{ secrets.PHASE72_BASE_URL }}
+          PHASE72_PRIMARY_DB_URL: ${{ secrets.PHASE72_PRIMARY_DB_URL }}
+          PHASE72_REPLICA_DB_URL: ${{ secrets.PHASE72_REPLICA_DB_URL }}
+          PHASE72_PROMETHEUS_URL: ${{ secrets.PHASE72_PROMETHEUS_URL }}
+          PHASE72_GRAFANA_URL: ${{ secrets.PHASE72_GRAFANA_URL }}
+          PHASE72_KAFKA_CHECK_CMD: ${{ vars.PHASE72_KAFKA_CHECK_CMD }}
+          PHASE72_MINIO_CHECK_CMD: ${{ vars.PHASE72_MINIO_CHECK_CMD }}
+          PHASE72_VAULT_CHECK_CMD: ${{ vars.PHASE72_VAULT_CHECK_CMD }}
+          PHASE72_TIME_SYNC_CHECK_CMD: ${{ vars.PHASE72_TIME_SYNC_CHECK_CMD }}
+          PHASE72_FULL_BACKUP_CMD: ${{ vars.PHASE72_FULL_BACKUP_CMD }}
+          PHASE72_VERIFY_BACKUP_CMD: ${{ vars.PHASE72_VERIFY_BACKUP_CMD }}
+          PHASE72_ISOLATED_RESTORE_CMD: ${{ vars.PHASE72_ISOLATED_RESTORE_CMD }}
+          PHASE72_PITR_CMD: ${{ vars.PHASE72_PITR_CMD }}
+          PHASE72_DR_SUITE_CMD: ${{ vars.PHASE72_DR_SUITE_CMD }}
+          PHASE72_RESILIENCE_SUMMARY: ${{ vars.PHASE72_RESILIENCE_SUMMARY }}
+          PHASE72_SECRET_ROTATION_COMMAND: ${{ vars.PHASE72_SECRET_ROTATION_COMMAND }}
+          PHASE72_SMOS_CHECK_CMD: ${{ vars.PHASE72_SMOS_CHECK_CMD }}
+          PHASE72_ALERT_CHECK_CMD: ${{ vars.PHASE72_ALERT_CHECK_CMD }}
+          BASE_URL: ${{ secrets.PHASE72_BASE_URL }}
+          API_KEY: ${{ secrets.PHASE72_API_KEY }}
+          DB_URL: ${{ secrets.PHASE72_PRIMARY_DB_URL }}
+          DB_USERNAME: ${{ secrets.PHASE72_DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.PHASE72_DB_PASSWORD }}
+          PHASE72_FINAL_ATTESTATION: ${{ secrets.PHASE72_FINAL_ATTESTATION_PATH }}
+          PHASE72_SECRET_ROTATION_ATTESTATION: ${{ secrets.PHASE72_SECRET_ATTESTATION_PATH }}
+          PHASE72_RUNTIME_SECURITY_ATTESTATION: ${{ secrets.PHASE72_RUNTIME_ATTESTATION_PATH }}
+        run: ./scripts/phase72/run_phase72.sh --full
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase72-runtime-${{ github.run_id }}
+          path: evidence/phase72/

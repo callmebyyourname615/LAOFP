@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "details": {
+      "type": "object"
+    },
+    "generatedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "gitCommit": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "message": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "preflight",
+        "full"
+      ]
+    },
+    "phase": {
+      "pattern": "^72[A-J]$"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "PREPARED"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "phase",
+    "status",
+    "mode",
+    "message",
+    "generatedAt",
+    "gitCommit"
+  ],
+  "title": "Phase 72 step result",
+  "type": "object"
+}

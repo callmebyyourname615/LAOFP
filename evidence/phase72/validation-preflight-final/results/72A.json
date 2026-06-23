@@ -1,0 +1,12 @@
+{
+  "details": {
+    "phase71Present": false
+  },
+  "generatedAt": "2026-06-23T14:29:24.057264+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Collision guard ready; supplied baseline does not contain Phase 71",
+  "mode": "preflight",
+  "phase": "72A",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}

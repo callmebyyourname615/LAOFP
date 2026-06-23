@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "72J",
+  "gitCommit": "REPLACE_WITH_FULL_COMMIT_SHA",
+  "approved": false,
+  "syntheticEvidence": false,
+  "approvers": {
+    "engineering": "",
+    "qa": "",
+    "sre": "",
+    "security": ""
+  },
+  "approvedAt": "",
+  "notes": ""
+}

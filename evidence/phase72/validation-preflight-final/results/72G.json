@@ -1,0 +1,10 @@
+{
+  "details": {},
+  "generatedAt": "2026-06-23T14:29:23.368363+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Backup/PITR/DR framework is ready; destructive operations are disabled in preflight",
+  "mode": "preflight",
+  "phase": "72G",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}

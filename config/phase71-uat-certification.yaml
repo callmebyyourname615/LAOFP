@@ -1,0 +1,29 @@
+schemaVersion: 1
+phase: 71
+purpose: unified UAT certification and Phase 54 entry
+releaseIdentity:
+  requireKnownGitCommit: true
+  requireApplicationImageDigest: true
+  requireMigrationImageDigest: true
+  requireSingleDigestAcrossAllSteps: true
+migrations:
+  expectedCount: 99
+  latestVersion: 106
+  reservedGaps: [88, 89, 90, 98, 99, 102, 103]
+  upgradeBaselines: [87, 96, 101, 105]
+uat:
+  minimumApplicationReplicas: 4
+  minimumKafkaBrokers: 3
+  requiredStabilityHours: 24
+  requireTls: true
+  requireVaultSecrets: true
+  requirePrimaryAndReplica: true
+security:
+  mfaMethod: TOTP
+  requireMakerChecker: true
+  requireParticipantIsolation: true
+  requireSecretRotation: true
+phase54Entry:
+  requireAllPhase71ResultsPass: true
+  requireSignedAttestation: true
+  requireP0BlockersZero: true

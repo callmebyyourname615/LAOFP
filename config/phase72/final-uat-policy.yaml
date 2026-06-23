@@ -1,0 +1,23 @@
+schemaVersion: 1
+phase: 72
+phase71:
+  requiredForFullExecution: true
+  acceptedMarkers:
+    - scripts/phase71
+    - docs/phase71
+runtime:
+  requireRealUat: true
+  rejectSyntheticEvidence: true
+  requireCommitMatchedAttestations: true
+  requiredPhases: [72A, 72B, 72C, 72D, 72E, 72F, 72G, 72H, 72I]
+decisions: [PREPARED, BLOCKED, NO_GO, GO]
+strictNoGoConditions:
+  - maven_tests_not_executed
+  - repository_gate_not_executed
+  - performance_scenario_skipped
+  - restore_not_executed
+  - dr_scenario_skipped
+  - secret_rotation_unsigned
+  - runtime_security_unsigned
+  - synthetic_evidence
+  - git_commit_mismatch

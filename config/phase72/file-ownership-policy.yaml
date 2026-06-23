@@ -1,0 +1,26 @@
+schemaVersion: 1
+phase: 72
+allowedPaths:
+  - AGENT/PHASE72
+  - scripts/phase72/
+  - scripts/verify_phase72_static.py
+  - scripts/verify_cross_border_temporal_binding.py
+  - scripts/execute-and-verify/13-phase72-final-uat-closure.sh
+  - docs/phase72/
+  - docs/templates/PHASE72_
+  - config/phase72/
+  - schemas/phase72/
+  - evidence/phase72/
+  - sql/phase72/
+  - .github/workflows/phase72-final-uat-closure.yml
+  - src/test/java/com/example/switching/crossborder/CrossBorderTemporalBindingRegressionTest.java
+protectedPhase71Prefixes:
+  - scripts/phase71/
+  - docs/phase71/
+  - config/phase71/
+  - schemas/phase71/
+  - evidence/phase71/
+  - AGENT/PHASE71
+forbiddenPaths:
+  - src/main/resources/db/migration/
+  - pom.xml

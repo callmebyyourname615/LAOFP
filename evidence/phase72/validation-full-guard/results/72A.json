@@ -1,0 +1,12 @@
+{
+  "details": {
+    "phase71Present": false
+  },
+  "generatedAt": "2026-06-23T14:26:51.407164+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Phase 71 is not present in this baseline",
+  "mode": "full",
+  "phase": "72A",
+  "schemaVersion": 1,
+  "status": "BLOCKED"
+}

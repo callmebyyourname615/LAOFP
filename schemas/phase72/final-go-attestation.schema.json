@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approved": {
+      "type": "boolean"
+    },
+    "approvedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "approvers": {
+      "additionalProperties": false,
+      "properties": {
+        "engineering": {
+          "minLength": 2,
+          "type": "string"
+        },
+        "qa": {
+          "minLength": 2,
+          "type": "string"
+        },
+        "security": {
+          "minLength": 2,
+          "type": "string"
+        },
+        "sre": {
+          "minLength": 2,
+          "type": "string"
+        }
+      },
+      "required": [
+        "engineering",
+        "qa",
+        "sre",
+        "security"
+      ],
+      "type": "object"
+    },
+    "gitCommit": {
+      "minLength": 7,
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "phase": {
+      "const": "72J"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "syntheticEvidence": {
+      "const": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "phase",
+    "gitCommit",
+    "approved",
+    "syntheticEvidence",
+    "approvers",
+    "approvedAt"
+  ],
+  "title": "Phase 72 final GO attestation",
+  "type": "object"
+}

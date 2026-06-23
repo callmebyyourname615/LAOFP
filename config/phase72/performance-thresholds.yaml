@@ -1,0 +1,24 @@
+schemaVersion: 1
+scenarios:
+  smoke:
+    p95MsMaxExclusive: 200
+    errorRateMaxInclusive: 0.0
+  sustained-2k-tps:
+    p95MsMaxExclusive: 300
+    errorRateMaxExclusive: 0.001
+  sustained-10k-tps:
+    p95MsMaxExclusive: 500
+    errorRateMaxExclusive: 0.001
+  burst-20k-tps:
+    p95MsMaxExclusive: 500
+    errorRateMaxExclusive: 0.005
+  soak-8h:
+    p95MsMaxExclusive: 500
+    errorRateMaxExclusive: 0.001
+    gcPauseMsMaxExclusive: 100
+    kafkaLagGrowthMaxInclusive: 0
+settlement500k:
+  transactionCount: 500000
+  durationSecondsMaxInclusive: 1800
+  transactionLossMaxInclusive: 0
+  financialMismatchMaxInclusive: 0

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.internal/schemas/phase73/chaos-approval.schema.json",
+  "title": "Phase 73 Chaos Approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "approved", "tokenId", "environment", "approvedBy", "approvedAt", "expiresAt", "changeReference", "scenarios"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "approved": {"const": true},
+    "tokenId": {"pattern": "^CHAOS-UAT-[A-Z0-9-]{8,64}$"},
+    "environment": {"const": "uat"},
+    "approvedBy": {"type": "string", "minLength": 3},
+    "approvedAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"},
+    "changeReference": {"type": "string", "minLength": 3},
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["pod-kill", "database-network-loss", "kafka-network-delay", "object-storage-network-loss", "external-api-delay", "dns-error", "cpu-stress", "memory-stress"]}
+    }
+  }
+}

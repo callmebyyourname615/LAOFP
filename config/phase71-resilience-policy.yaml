@@ -1,0 +1,35 @@
+schemaVersion: 1
+recovery:
+  maximumRpoMinutes: 5
+  maximumRestoreRtoMinutes: 30
+  requireNoFinancialTransactionLoss: true
+  requireOutboxReplayIdempotent: true
+scenarios:
+  - application-pod-kill
+  - postgres-primary-failure
+  - postgres-failback
+  - kafka-broker-failure
+  - network-partition
+  - object-storage-unavailable
+  - vault-leader-failure
+  - external-api-timeout
+  - deployment-rollback
+alerts:
+  requirePending: true
+  requireFiring: true
+  requireRouted: true
+  requireAcknowledged: true
+  requireResolved: true
+  critical:
+    - database-unavailable
+    - replica-lag
+    - kafka-lag
+    - payment-error-rate
+    - outbox-backlog
+    - settlement-sla-breach
+    - reconciliation-mismatch
+    - hikari-saturation
+    - backup-stale
+    - certificate-expiry
+    - vault-unavailable
+    - sanctions-feed-stale

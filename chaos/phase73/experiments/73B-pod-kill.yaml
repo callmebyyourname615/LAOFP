@@ -1,0 +1,17 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: phase73-pod-kill-${PHASE73_RUN_ID_SAFE}
+  namespace: ${PHASE73_NAMESPACE}
+  labels:
+    switching.phase: "73B"
+    switching.run-id: "${PHASE73_RUN_ID_SAFE}"
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - ${PHASE73_NAMESPACE}
+    labelSelectors:
+      app.kubernetes.io/name: ${PHASE73_APP_LABEL}
+  duration: "${PHASE73_EXPERIMENT_DURATION}s"

@@ -1,0 +1,23 @@
+schemaVersion: 1
+required:
+  - application_health
+  - application_readiness
+  - postgres_primary
+  - postgres_replica
+  - postgres_replica_recovery
+  - kafka
+  - object_storage
+  - vault
+  - prometheus
+  - grafana
+  - tls_expiry
+  - time_synchronization
+fullModeEnvironment:
+  - PHASE72_BASE_URL
+  - PHASE72_PRIMARY_DB_URL
+  - PHASE72_REPLICA_DB_URL
+  - PHASE72_PROMETHEUS_URL
+  - PHASE72_GRAFANA_URL
+  - PHASE72_KAFKA_CHECK_CMD
+  - PHASE72_MINIO_CHECK_CMD
+  - PHASE72_VAULT_CHECK_CMD

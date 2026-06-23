@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://switching.internal/schemas/phase73/chaos-attestation.schema.json",
+  "title": "Phase 73 Chaos Scenario Attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runId", "scenario", "status", "startedAt", "finishedAt", "recoveryTimeSeconds", "cleanupStatus", "integrity", "artifacts"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "runId": {"type": "string", "minLength": 1},
+    "scenario": {"type": "string", "minLength": 2},
+    "status": {"enum": ["PASS", "FAIL"]},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "finishedAt": {"type": "string", "format": "date-time"},
+    "recoveryTimeSeconds": {"type": "integer", "minimum": 0},
+    "cleanupStatus": {"enum": ["PASS", "FAIL"]},
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataLossCount", "duplicateReplayCount", "balanceMismatchCount", "outboxBacklogGrowth"],
+      "properties": {
+        "dataLossCount": {"type": "integer", "minimum": 0},
+        "duplicateReplayCount": {"type": "integer", "minimum": 0},
+        "balanceMismatchCount": {"type": "integer", "minimum": 0},
+        "outboxBacklogGrowth": {"type": "integer", "minimum": 0}
+      }
+    },
+    "artifacts": {"type": "array", "items": {"type": "string"}}
+  }
+}

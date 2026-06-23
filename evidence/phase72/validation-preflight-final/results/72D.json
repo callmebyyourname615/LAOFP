@@ -1,0 +1,10 @@
+{
+  "details": {},
+  "generatedAt": "2026-06-23T14:29:28.784474+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Static contract passed; repository runtime gate is deferred to full mode",
+  "mode": "preflight",
+  "phase": "72D",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}

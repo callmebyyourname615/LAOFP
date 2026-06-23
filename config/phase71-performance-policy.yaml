@@ -1,0 +1,21 @@
+schemaVersion: 1
+scenarios:
+  smoke: {targetTps: 100, durationMinutes: 5, p95Ms: 200, maxErrorRate: 0.0}
+  sustained2k: {targetTps: 2000, durationMinutes: 30, p95Ms: 300, maxErrorRate: 0.001}
+  sustained10k: {targetTps: 10000, durationMinutes: 60, p95Ms: 500, maxErrorRate: 0.001}
+  burst20k: {targetTps: 20000, durationMinutes: 15, p95Ms: 750, maxErrorRate: 0.005}
+  soak8h: {targetTps: 5000, durationMinutes: 480, maxErrorRate: 0.001, maxGcPauseMs: 100}
+settlement:
+  transactions: 500000
+  requireDebitCreditBalance: true
+  requireZeroDuplicateLegs: true
+  requireZeroDuplicatePostings: true
+  requireZeroMissingTransactions: true
+  requireZeroNegativeCounters: true
+  requireOutboxDrained: true
+  requireZeroReconciliationDifference: true
+rateLimit:
+  requirePerParticipantIsolation: true
+  requireRetryAfter: true
+  requireInternalTrafficBypass: true
+  requireMakerCheckerOverride: true

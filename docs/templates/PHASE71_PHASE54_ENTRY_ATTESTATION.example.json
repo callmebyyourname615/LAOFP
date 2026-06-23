@@ -1,0 +1,16 @@
+{
+  "approver": "REPLACE_WITH_APPROVER",
+  "environment": "uat",
+  "evidence": [
+    {
+      "path": "REPLACE_WITH_EVIDENCE_PATH",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "executedAt": "2026-06-23T00:00:00Z",
+  "kind": "phase54-entry",
+  "notes": "Replace all placeholders and attach immutable evidence before use.",
+  "operator": "REPLACE_WITH_OPERATOR",
+  "schemaVersion": 1,
+  "status": "PASS"
+}

@@ -1,0 +1,12 @@
+{
+  "details": {
+    "java": "openjdk version \"21.0.10\" 2026-01-20"
+  },
+  "generatedAt": "2026-06-23T14:29:23.869330+00:00",
+  "gitCommit": "baseline-pre71",
+  "message": "Maven verification commands are ready; tests are not executed in preflight",
+  "mode": "preflight",
+  "phase": "72C",
+  "schemaVersion": 1,
+  "status": "PREPARED"
+}
