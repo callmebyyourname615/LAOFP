@@ -1,6 +1,6 @@
 # Go-Live Critical Path — Master Checklist
 
-> **Last updated:** 2026-06-23 (after Phase 65+66+67 merge — commit `5075fe4`)
+> **Last updated:** 2026-06-23 (after Phase 68+69+70 merge — commit `e14be44`)
 > **Audience:** Engineering, QA, SecOps, SRE, Change Manager
 > **Purpose:** Single checklist สำหรับพา Switching ขึ้น production
 > **Convention:**
@@ -16,7 +16,7 @@
 | Section | Progress | Note |
 |---|---|---|
 | 1. Code Foundation | 🟢 **100%** | 99 migrations (V1–V106) |
-| 2. P0 Critical Fixes | 🟡 **85%** | code done + Phase 65A sanctions fix |
+| 2. P0 Critical Fixes | 🟡 **95%** | 4/5 test bugs fixed (Phase 65/69) |
 | 3. P1 Operational | 🟢 **90%** | 3 dashboards + DSL + promotion budget |
 | 4. P2 Nice-to-have | 🔴 **0%** | deferred |
 | 5. Runtime Evidence | 🔴 **0%** | UAT drills not executed |
@@ -29,7 +29,10 @@
 | 12. 🆕 Phase 67 Production Cutover | 🟢 **scripts ready** | not executed |
 | 13. Phase 55 Production Go-Live | 🔴 **0%** | depends on Phase 67 |
 | 14. Post Go-Live BAU | 🔴 **0%** | hypercare not started |
-| **OVERALL** | **🟡 ~60%** | **2–3 weeks to Go-Live** |
+| 🆕 Phase 68 UAT Activation | 🟢 **scripts ready** | not executed |
+| 🆕 Phase 69 Verification Closure | 🟢 **scripts ready** + test fixes | not executed |
+| 🆕 Phase 70 Traffic & Financial Safety | 🟢 **code wired** | rate-limit + read-your-writes |
+| **OVERALL** | **🟡 ~63%** | **2 weeks to Go-Live** |
 
 ---
 
@@ -77,9 +80,9 @@
 - [x] Update Flyway version assertions to V106 (3 ไฟล์)
 - [x] Update static verifiers to expect V106 (verify_phase53b, 53c-j, 43-52, 54a-j, 60, 61)
 - [x] Phase 62 added static regression guards for 4 historical blockers
-- [ ] Fix vault `ObjectMapper` missing in `WebhookEncryptionConfiguration`
+- [x] Fix vault `ObjectMapper` missing in `WebhookEncryptionConfiguration` (Phase 69)
 - [x] Add `provider_uid` seed in `SanctionsScreeningIntegrationTest` (Phase 65A)
-- [ ] Fix FK cleanup order in `OperationsGenerateRoutesForBankIntegrationTest`
+- [x] Fix FK cleanup order in `OperationsGenerateRoutesForBankIntegrationTest` (Phase 69)
 - [ ] Fix `setObject(Instant)` → `setObject(idx, instant, Types.TIMESTAMP_WITH_TIMEZONE)` in cross-border
 - [ ] **Run `./mvnw verify` → 0 errors, 0 failures**
 - [ ] **Run `./scripts/execute-and-verify/00-run-all.sh` → all steps green**
@@ -415,7 +418,66 @@ Orchestrator: `scripts/phase67/`
 
 ---
 
-# 14. Post Go-Live BAU (Hypercare 14 days)
+# 14. 🆕 Phase 68 — UAT Activation + Phase 54 Kickoff
+
+Orchestrator: `scripts/phase68/` + preflight `scripts/execute-and-verify/10-phase68-preflight.sh`
+
+- [x] Performance policy config (`config/phase68-performance-policy.yaml`)
+- [x] Resilience policy config (`config/phase68-resilience-policy.yaml`)
+- [x] UAT activation config (`config/phase68-uat-activation.yaml`)
+- [x] 6 attestation templates (Performance, Phase54 Kickoff, Resilience, Secret Rotation, SMOS Runtime, UAT)
+- [x] Phase 68 result schema
+- [x] CI workflow `phase68-certification.yml`
+- [x] Implementation report + delivery notes
+- [ ] **Execute** Phase 68 against UAT
+- [ ] Phase 54 kickoff sign-off
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 15. 🆕 Phase 69 — Verification Closure
+
+Orchestrator: `scripts/phase69/` (validation evidence bundled)
+
+- [x] Fix vault ObjectMapper bug in `WebhookEncryptionConfiguration` (P0.1 bug #2)
+- [x] Fix FK cleanup in `OperationsGenerateRoutesForBankIntegrationTest` (P0.1 bug #4)
+- [x] `WebhookEncryptionConfigurationContextTest` + `WebhookEncryptionConfigurationTest`
+- [x] Phase 69 verification policy config
+- [x] Release verification attestation template
+- [x] Validation evidence bundle (preflight/local/full-guard logs + SHA256SUMS)
+- [x] Phase 69 exit criteria + operator runbook
+- [x] CI workflow `phase69-verification-closure.yml`
+- [ ] **Execute** Phase 69 verification gate
+- [ ] Sign release verification attestation
+
+**Status:** 🟢 code fixes done / verification gate pending
+
+---
+
+# 16. 🆕 Phase 70 — Traffic & Financial Safety
+
+Orchestrator: `scripts/phase70/run_phase70.sh` + static `verify_phase70_static.py`
+
+- [x] Participant rate limit policy (`config/phase70-participant-traffic-policy.yaml`)
+- [x] `RateLimitFilter` token-bucket enhancements
+- [x] `ParticipantTokenBucketServiceTest`
+- [x] Read-your-writes consistency policy doc
+- [x] `ConsistencyAwareReportingJdbcOperations` (replica routing wired)
+- [x] `application.yml` + `-prod.yml` + `-staging.yml` rate-limit config
+- [x] `RailMessageJournalService` + `OperationsGenerateRoutesForBankService` enhancements
+- [x] `PromotionBudgetConcurrencyIntegrationTest` (concurrent budget cap test)
+- [x] Phase 70 result schema
+- [x] CI workflow `phase70-traffic-financial-safety.yml`
+- [x] Operator runbook + overview + validation report
+- [ ] **Execute** Phase 70 verification
+- [ ] Tune rate-limit thresholds per participant
+
+**Status:** 🟢 code wired / verification pending
+
+---
+
+# 17. Post Go-Live BAU (Hypercare 14 days)
 
 - [ ] Day 1: 24/7 SRE coverage
 - [ ] Day 1: Watch all 47 alerts firing as expected
@@ -433,7 +495,7 @@ Orchestrator: `scripts/phase67/`
 ## 12.1 — Read Replica Routing
 - [x] **DONE** (Phase 62) — `RoutingDataSource` + `LazyConnectionDataSourceProxy`
 - [x] Dashboards mark `@Transactional(readOnly = true)`
-- [ ] Document read-your-writes policy
+- [x] Document read-your-writes policy (Phase 70 — `docs/phase70/READ_YOUR_WRITES_CONSISTENCY_POLICY.md`)
 
 ## 12.2 — Standardize NUMERIC precision
 - [x] **DONE** (V104 Phase 62)
@@ -456,8 +518,9 @@ Orchestrator: `scripts/phase67/`
 - [ ] Phase IV
 
 ## 12.8 — Rate Limiting per participant
-- [ ] Token-bucket rate limit
-- [ ] Per-participant quotas
+- [x] Token-bucket rate limit (Phase 70 — `RateLimitFilter` + `ParticipantTokenBucketService`)
+- [x] Per-participant quotas (`config/phase70-participant-traffic-policy.yaml`)
+- [ ] Tune thresholds per real-world participant traffic
 
 ## 12.9 — HikariCP Pool Monitoring
 - [x] **DONE** (Phase 62)
@@ -530,10 +593,14 @@ phase_61_executed: false
 phase_64_executed: false
 mvn_compile: passing
 mvn_verify: pending
-last_merge_commit: 5075fe4 (Phase 65 + 66 + 67)
+last_merge_commit: e14be44 (Phase 68 + 69 + 70)
 phase_65_scripts_ready: true
 phase_66_scripts_ready: true
 phase_67_scripts_ready: true
+phase_68_scripts_ready: true
+phase_69_test_fixes_done: true
+phase_70_code_wired: true
+p0_1_test_bugs_closed: 4_of_5
 ```
 
 ---
@@ -541,7 +608,7 @@ phase_67_scripts_ready: true
 # 📈 Overall Progress
 
 ```
-█████████████████████████████████████░░░░░░░░░░░░░░░░░░░  60%
+██████████████████████████████████████░░░░░░░░░░░░░░░░░░  63%
 ```
 
 | Tier | Progress |
