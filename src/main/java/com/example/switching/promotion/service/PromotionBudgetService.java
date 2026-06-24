@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.financial.MoneyPrecisionPolicy;
@@ -20,6 +21,7 @@ import com.example.switching.promotion.dto.PromotionBudgetReservation;
 
 /** Concurrency-safe budget reservation and funder-ledger service. */
 @Service
+@Profile("!migration")
 @ConditionalOnProperty(name = "switching.phase-ii.promotion.enabled", havingValue = "true")
 public class PromotionBudgetService {
     private final JdbcTemplate jdbc;

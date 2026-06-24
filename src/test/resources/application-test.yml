@@ -85,3 +85,4 @@ switching:
     rotation:
       default-grace-minutes: 60
       max-grace-minutes: 10080
+
