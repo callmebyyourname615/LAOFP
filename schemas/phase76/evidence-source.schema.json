@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "control_id",
+    "type",
+    "owner",
+    "required"
+  ],
+  "properties": {
+    "control_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "required": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

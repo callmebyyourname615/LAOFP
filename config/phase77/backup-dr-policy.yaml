@@ -1,0 +1,12 @@
+schedules:
+- id: backup_verify
+  frequency: DAILY
+- id: isolated_restore
+  frequency: WEEKLY
+- id: pitr
+  frequency: MONTHLY
+- id: dr_drill
+  frequency: QUARTERLY
+rpo_minutes_max: 5
+rto_minutes_max: 30
+financial_reconciliation_required: true

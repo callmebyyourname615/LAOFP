@@ -1,0 +1,27 @@
+{
+  "alertsRouted": false,
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvals": [
+    {
+      "approved": false,
+      "name": "REPLACE_WITH_NAME",
+      "role": "REPLACE_WITH_ROLE"
+    }
+  ],
+  "approvedAt": "REPLACE_WITH_RFC3339",
+  "chaosScenariosPassed": 0,
+  "commit": "REPLACE_WITH_40_CHAR_COMMIT",
+  "environment": "uat",
+  "evidenceFiles": [
+    "REPLACE_WITH_EVIDENCE_PATH"
+  ],
+  "failbackPassed": false,
+  "kind": "resilience-chaos",
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "operator": "REPLACE_WITH_OPERATOR",
+  "rpoMinutes": 999,
+  "rtoMinutes": 999,
+  "schemaVersion": 1,
+  "status": "PREPARED",
+  "zeroTransactionLoss": false
+}

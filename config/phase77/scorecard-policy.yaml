@@ -1,0 +1,26 @@
+dimensions:
+- id: build_health
+  weight: 10
+- id: test_health
+  weight: 10
+- id: security_posture
+  weight: 10
+- id: performance_headroom
+  weight: 10
+- id: financial_integrity
+  weight: 20
+- id: backup_health
+  weight: 10
+- id: dr_readiness
+  weight: 10
+- id: alert_health
+  weight: 10
+- id: secret_freshness
+  weight: 5
+- id: documentation_freshness
+  weight: 5
+thresholds:
+  green: 90
+  amber: 75
+  red: 0
+financial_integrity_override: RED

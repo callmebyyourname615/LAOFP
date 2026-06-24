@@ -1,0 +1,14 @@
+assets:
+- tls_certificates
+- jwt_signing_keys
+- database_credentials
+- kafka_credentials
+- minio_keys
+- service_account_tokens
+alert_days:
+- 30
+- 14
+- 7
+- 1
+secret_values_in_evidence: false
+overlap_window_hours: 24

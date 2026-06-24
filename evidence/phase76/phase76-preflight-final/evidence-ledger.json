@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-23T16:21:16.055974+00:00",
+  "entry_count": 10,
+  "tail_hash": "20323501dafe1ba1dc535c808afdefc5fd6cac8eb898465728b95718d448a49f",
+  "entries": [
+    {
+      "sequence": 1,
+      "path": "76A.json",
+      "sha256": "a213a97aca25fd4951fb49266f6a632bf4bf11598956ce0cfe57772cd27008c7",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "record_hash": "4c62856fd6dc065c3118e02e266a8b4a16478614f921b613b5ea526d4a93c92d"
+    },
+    {
+      "sequence": 2,
+      "path": "76B.json",
+      "sha256": "eb0f44a970ea848268fecb5ac9a4585bdf6d666981a74dc294e30be5675054ae",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "4c62856fd6dc065c3118e02e266a8b4a16478614f921b613b5ea526d4a93c92d",
+      "record_hash": "234fa3bd3e624bef71c58c68dd65e5d48d512d7c07196f63fc2865258c6b984e"
+    },
+    {
+      "sequence": 3,
+      "path": "76C.json",
+      "sha256": "67934e4cb6d245feb726c2752cde030a9eb9776c83dedd69f1a5eb28508e310a",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "234fa3bd3e624bef71c58c68dd65e5d48d512d7c07196f63fc2865258c6b984e",
+      "record_hash": "7bfd267a3cd7bcc5b02df35d7a07e2e93b6bfe6dc2a46104d1b747f411447d62"
+    },
+    {
+      "sequence": 4,
+      "path": "76D.json",
+      "sha256": "e1cd7f3e51054c81ca4a5fb7b41a0b4dd9d72da9c5c998e1399c0bd0821a57cb",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "7bfd267a3cd7bcc5b02df35d7a07e2e93b6bfe6dc2a46104d1b747f411447d62",
+      "record_hash": "449490b383f4c1c4d27a12fe5e37efe6168f9d08571ad064371afd6ad4f80e68"
+    },
+    {
+      "sequence": 5,
+      "path": "76E.json",
+      "sha256": "667429ff73966238754c3719cc227be471814642dfa983219de3709ae9d87b9b",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "449490b383f4c1c4d27a12fe5e37efe6168f9d08571ad064371afd6ad4f80e68",
+      "record_hash": "2f1d16bc148803ecd77982d993f29bb39dfe551d94bc45b6f0de6686dd738899"
+    },
+    {
+      "sequence": 6,
+      "path": "76F.json",
+      "sha256": "9a9121695f60272d98384d9bc9493af928ab448e559be7919020f239c7057c23",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "2f1d16bc148803ecd77982d993f29bb39dfe551d94bc45b6f0de6686dd738899",
+      "record_hash": "1bb95682749177409d63ed72c815a817f82760a677d66bd5bb8992372ea23afc"
+    },
+    {
+      "sequence": 7,
+      "path": "76G.json",
+      "sha256": "9624df7d36dc5dd62d873644ddf1333c1866a6c1f36b9b91a720f6733bf07d54",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "1bb95682749177409d63ed72c815a817f82760a677d66bd5bb8992372ea23afc",
+      "record_hash": "d5a9d20a871b0f71f4b74f9407eac98291ba94952a82888a795d8a222d2d3cce"
+    },
+    {
+      "sequence": 8,
+      "path": "76H.json",
+      "sha256": "1069ad3506c9294f3de2440cc137e3d14fd85f33eb7d63d93a3c9d87b796b251",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "d5a9d20a871b0f71f4b74f9407eac98291ba94952a82888a795d8a222d2d3cce",
+      "record_hash": "1da838e506d01ac0f2613333db678a214e5cd101fc2b8ffbbfe5e158a034f24a"
+    },
+    {
+      "sequence": 9,
+      "path": "76I.json",
+      "sha256": "e308d5e385d8debea0729d9a08e00ef8e43b829a584edb541877a906900854a6",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "1da838e506d01ac0f2613333db678a214e5cd101fc2b8ffbbfe5e158a034f24a",
+      "record_hash": "dacc4b6b62e4d4519645ddac4e7d450ed26d14d7147c9fcb5c749ed6fd073639"
+    },
+    {
+      "sequence": 10,
+      "path": "76J.json",
+      "sha256": "34e0946de112ec2b2cedbae30f3cea9fc5a58f9d6db43a4b59e11dc4d04923ce",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "dacc4b6b62e4d4519645ddac4e7d450ed26d14d7147c9fcb5c749ed6fd073639",
+      "record_hash": "20323501dafe1ba1dc535c808afdefc5fd6cac8eb898465728b95718d448a49f"
+    }
+  ]
+}

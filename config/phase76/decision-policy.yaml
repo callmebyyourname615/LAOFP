@@ -1,0 +1,30 @@
+required_controls:
+- BUILD-MAVEN-VERIFY
+- REPOSITORY-VERIFY
+- PERF-10K
+- PERF-BURST-20K
+- SETTLEMENT-500K
+- BACKUP-RESTORE
+- PITR
+- DR
+- FINANCIAL-INTEGRITY
+- SECRET-ROTATION
+- SMOS-SECURITY
+- ALERT-LIFECYCLE
+required_approval_roles:
+- ENGINEERING_LEAD
+- QA_LEAD
+- SRE_LEAD
+- SECOPS
+- CHANGE_MANAGER
+- BUSINESS_OWNER
+allowed_decisions:
+- PREPARED
+- BLOCKED
+- NO_GO
+- GO
+- CANARY_GO
+- HOLD
+- ROLLBACK
+evidence_max_age_hours: 24
+minimum_unique_approvers: 4

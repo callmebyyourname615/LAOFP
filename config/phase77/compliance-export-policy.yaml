@@ -1,0 +1,12 @@
+sections:
+- release_identity
+- approvals
+- control_results
+- evidence_hashes
+- access_logs
+- financial_reconciliation
+- backup_dr
+- security
+- exceptions
+retention_years: 7
+contains_secret_values: false

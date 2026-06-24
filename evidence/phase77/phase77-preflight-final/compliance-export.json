@@ -1,0 +1,49 @@
+{
+  "release": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "generated_at": "2026-06-23T16:19:23.461852+00:00",
+  "artifacts": [
+    {
+      "path": "77A.json",
+      "sha256": "448b7fa37d4e542aa3dbe6146cb10f04607ed8bdbdf4ca59c478293edd10450e"
+    },
+    {
+      "path": "77B.json",
+      "sha256": "6cb14e6c46406cf97e2b261dac2dcb9309e36295d231d3b1d3f2ee2fb8d3c1c0"
+    },
+    {
+      "path": "77C.json",
+      "sha256": "3a3326102d2568b94d876916e0e0069c2affce255e2f914fbbfdca5df731b7c0"
+    },
+    {
+      "path": "77D.json",
+      "sha256": "4accc22faca47f62447489b664cfc856e035953028b6de3a5d3c056057f91275"
+    },
+    {
+      "path": "77E.json",
+      "sha256": "7f91807efac24f21d41d37f407c28911246f045273af605d760bde1583b90c0b"
+    },
+    {
+      "path": "77F.json",
+      "sha256": "5d970eb247c3b215fa8e723c34706fd0d1a4cfa3da17c872495957a154be81ca"
+    },
+    {
+      "path": "77G.json",
+      "sha256": "6500b5cb5e926b5bd35a9a169597bbb08b872cae62cadda76dfa9f86ca44c0fc"
+    },
+    {
+      "path": "77H.json",
+      "sha256": "2a7b9cd9bb6bc667db832606701dd958556b32da5a0f51436971cd354bc96aba"
+    },
+    {
+      "path": "77I.json",
+      "sha256": "c0f9dbf49105fa13550f60293fe36ff34a158312215eb2ce33095f765198a097"
+    },
+    {
+      "path": "77J.json",
+      "sha256": "5b0992c8d5b91f20c030b5f38223411b1526e7de3e310775600c104a592bbc14"
+    }
+  ],
+  "contains_secret_values": false,
+  "signed": false,
+  "runtime_certified": false
+}

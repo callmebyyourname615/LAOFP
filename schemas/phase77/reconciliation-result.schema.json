@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "unmatched_transactions",
+    "ledger_imbalances",
+    "duplicate_postings"
+  ],
+  "properties": {
+    "unmatched_transactions": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": true
+}

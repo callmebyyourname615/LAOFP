@@ -1,0 +1,8 @@
+{
+  "valid": false,
+  "errors": [
+    "sha256:a"
+  ],
+  "entry_count": 2,
+  "tail_hash": "91da41426813a4d29f4306863f19fc8eb4597e3429328c50c5b8444e8ab00033"
+}

@@ -1,0 +1,17 @@
+components:
+- id: application
+  primary: ENGINEERING
+  secondary: SRE
+- id: database
+  primary: DBA
+  secondary: SRE
+- id: messaging
+  primary: SRE
+  secondary: ENGINEERING
+- id: security
+  primary: SECOPS
+  secondary: ENGINEERING
+- id: financial_reconciliation
+  primary: OPERATIONS
+  secondary: FINANCE
+postmortem_sla_hours: 72

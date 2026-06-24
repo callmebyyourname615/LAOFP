@@ -1,0 +1,13 @@
+guardrails:
+- id: hikari_utilization
+  max_percent: 80
+- id: db_connection_budget
+  max_percent: 85
+- id: replica_lag_seconds
+  max: 5
+- id: kafka_lag_growth
+  max_percent: 10
+- id: storage_free
+  min_percent: 20
+scale_down_cooldown_minutes: 30
+minimum_replicas: 2

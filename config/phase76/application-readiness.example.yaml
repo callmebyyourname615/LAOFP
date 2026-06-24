@@ -1,0 +1,4 @@
+switching:
+  readiness:
+    enabled: false
+    evidence-max-age: 24h

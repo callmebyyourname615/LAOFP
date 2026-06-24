@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "git_commit", "decision", "human_signatures_complete", "runtime_certified", "artifacts", "results"],
+  "properties": {
+    "decision": {"enum": ["PREPARED", "BLOCKED", "NO_GO", "GO", "CANARY_GO", "HOLD", "ROLLBACK"]},
+    "human_signatures_complete": {"type": "boolean"},
+    "runtime_certified": {"type": "boolean"},
+    "artifacts": {"type": "array"},
+    "results": {"type": "array", "minItems": 10}
+  },
+  "additionalProperties": true
+}

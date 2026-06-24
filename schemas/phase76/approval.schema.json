@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "role",
+    "approver",
+    "status",
+    "git_commit",
+    "expires_at",
+    "evidence_tail_hash"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "APPROVED",
+        "REJECTED",
+        "EXPIRED",
+        "REVOKED"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

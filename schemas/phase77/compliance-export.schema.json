@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "release",
+    "artifacts",
+    "contains_secret_values",
+    "signed"
+  ],
+  "additionalProperties": true
+}

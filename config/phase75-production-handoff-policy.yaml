@@ -1,0 +1,27 @@
+policyId: phase75-production-handoff-v1
+phase54Required: [54A, 54B, 54C, 54D, 54E, 54F, 54G, 54H, 54I, 54J]
+requiredApprovers:
+  - Engineering Lead
+  - QA Lead
+  - Security Lead
+  - SRE Lead
+  - Product Business Owner
+  - Change Manager
+canaryWeights: [5, 25, 50, 100]
+abortConditions:
+  - reconciliation-mismatch
+  - duplicate-posting
+  - latency-threshold-breach
+  - error-rate-threshold-breach
+  - database-saturation
+  - kafka-saturation
+  - outbox-backlog
+  - security-alert
+conditionalGoForbiddenFor:
+  - test-failure
+  - migration-failure
+  - financial-mismatch
+  - missing-secret-rotation
+  - failed-rpo-rto
+  - unsigned-image
+  - missing-rollback-path

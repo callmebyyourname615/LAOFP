@@ -1,0 +1,9 @@
+controls:
+- traffic_baseline
+- tier_quota
+- temporary_burst
+- maker_checker_change
+- retry_after_validation
+- abuse_detection
+audit_required: true
+minimum_observation_days: 7

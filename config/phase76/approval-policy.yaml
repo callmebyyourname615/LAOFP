@@ -1,0 +1,13 @@
+required_roles:
+- ENGINEERING_LEAD
+- QA_LEAD
+- SRE_LEAD
+- SECOPS
+- CHANGE_MANAGER
+- BUSINESS_OWNER
+expiry_hours: 24
+commit_bound: true
+evidence_tail_hash_bound: true
+separation_of_duties:
+  single_person_all_roles: false
+  minimum_unique_approvers: 4

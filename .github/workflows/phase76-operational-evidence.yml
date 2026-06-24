@@ -1,0 +1,22 @@
+name: Phase 76 Operational Evidence
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/phase76/**'
+      - 'config/phase76/**'
+      - 'schemas/phase76/**'
+      - 'src/main/java/com/example/switching/readiness/**'
+      - 'src/test/java/com/example/switching/readiness/**'
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install pyyaml jsonschema
+      - run: scripts/execute-and-verify/15-phase76-operational-evidence.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: phase76-preflight, path: evidence/phase76/ }

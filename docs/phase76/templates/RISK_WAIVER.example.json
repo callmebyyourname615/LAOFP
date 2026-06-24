@@ -1,0 +1,8 @@
+{
+  "risk_id": "RISK-001",
+  "category": "PERFORMANCE",
+  "owner": "replace",
+  "waiver_approved": false,
+  "expires_at": "2026-07-01T00:00:00Z",
+  "compensating_control": "replace"
+}

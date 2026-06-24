@@ -1,0 +1,15 @@
+slos:
+- id: availability
+  target: 99.95
+- id: payment_success
+  target: 99.99
+- id: p95_latency_ms
+  max: 500
+- id: reconciliation_delay_minutes
+  max: 5
+burn_rate_windows:
+- 5m/1h
+- 30m/6h
+- 2h/1d
+- 6h/3d
+release_freeze_error_budget_percent: 0

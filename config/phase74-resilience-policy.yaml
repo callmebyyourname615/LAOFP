@@ -1,0 +1,16 @@
+policyId: phase74-resilience-v1
+rpoMinutesMaximum: 5
+rtoMinutesMaximum: 30
+requireFailback: true
+requireOutboxReplay: true
+requireZeroTransactionLoss: true
+chaosScenarios:
+  - application-pod
+  - database
+  - kafka
+  - object-storage
+  - external-api
+  - dns
+  - cpu-stress
+  - memory-stress
+alertLifecycle: [Pending, Firing, Alertmanager, Destination, Acknowledged, Resolved]

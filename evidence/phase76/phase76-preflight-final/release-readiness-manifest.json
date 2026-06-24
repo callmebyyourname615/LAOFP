@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "decision": "PREPARED",
+  "human_signatures_complete": false,
+  "runtime_certified": false,
+  "generated_at": "2026-06-23T16:21:22.859744+00:00",
+  "artifacts": [
+    {
+      "path": "evidence-ledger.json",
+      "sha256": "a46111bf65f7095a4eed551fb1e76f20f3d41545ae314ec1af6893616dab362e"
+    },
+    {
+      "path": "ledger-selftest/input/a",
+      "sha256": "7692c3ad3540bb803c020b3aee66cd8887123234ea0c6e7143c0add73ff431ed"
+    },
+    {
+      "path": "ledger-selftest/input/b",
+      "sha256": "3fc4ccfe745870e2c0d99f71f30ff0656c8dedd41cc1d7d3d376b0dbe685e2f3"
+    },
+    {
+      "path": "ledger-selftest/ledger.json",
+      "sha256": "27dbf140ff27f899b30d9f266ac561259aae4122fd7f2c7e33966b557b3695a1"
+    },
+    {
+      "path": "ledger-selftest/verify.json",
+      "sha256": "32ec29815b4117c195a80f3b0c85045e37dc3a4569ecbab899dfecec238fbf8b"
+    },
+    {
+      "path": "ledger-validation.json",
+      "sha256": "bda407f88f57aafef4cbe6b888d5cd7160024e658910fac970da6b7120d68940"
+    },
+    {
+      "path": "logs/76I-policy-selftest.log",
+      "sha256": "4e3f35b35b1cb02769b391794d67f8ace59e562f2904f4793674fdab11888840"
+    },
+    {
+      "path": "normalizer-selftest/junit.xml",
+      "sha256": "13b360fe784c445f702899057dd5f59356157eb2899858243382c36eedf5863e"
+    },
+    {
+      "path": "normalizer-selftest/result.json",
+      "sha256": "9d9203714d1a03d439773d752a04ec84a36e3b4f01db9a60b6d67274a80f60c3"
+    },
+    {
+      "path": "results/76A.json",
+      "sha256": "a213a97aca25fd4951fb49266f6a632bf4bf11598956ce0cfe57772cd27008c7"
+    },
+    {
+      "path": "results/76B.json",
+      "sha256": "eb0f44a970ea848268fecb5ac9a4585bdf6d666981a74dc294e30be5675054ae"
+    },
+    {
+      "path": "results/76C.json",
+      "sha256": "67934e4cb6d245feb726c2752cde030a9eb9776c83dedd69f1a5eb28508e310a"
+    },
+    {
+      "path": "results/76D.json",
+      "sha256": "e1cd7f3e51054c81ca4a5fb7b41a0b4dd9d72da9c5c998e1399c0bd0821a57cb"
+    },
+    {
+      "path": "results/76E.json",
+      "sha256": "667429ff73966238754c3719cc227be471814642dfa983219de3709ae9d87b9b"
+    },
+    {
+      "path": "results/76F.json",
+      "sha256": "9a9121695f60272d98384d9bc9493af928ab448e559be7919020f239c7057c23"
+    },
+    {
+      "path": "results/76G.json",
+      "sha256": "9624df7d36dc5dd62d873644ddf1333c1866a6c1f36b9b91a720f6733bf07d54"
+    },
+    {
+      "path": "results/76H.json",
+      "sha256": "1069ad3506c9294f3de2440cc137e3d14fd85f33eb7d63d93a3c9d87b796b251"
+    },
+    {
+      "path": "results/76I.json",
+      "sha256": "e308d5e385d8debea0729d9a08e00ef8e43b829a584edb541877a906900854a6"
+    },
+    {
+      "path": "results/76J.json",
+      "sha256": "34e0946de112ec2b2cedbae30f3cea9fc5a58f9d6db43a4b59e11dc4d04923ce"
+    }
+  ],
+  "results": [
+    {
+      "phase": "76A",
+      "status": "PREPARED",
+      "message": "Forward-compatible baseline; Phase 74/75 not present in supplied ZIP",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:16:26.510705+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76B",
+      "status": "PASS",
+      "message": "Evidence source registry validated",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:16:33.372244+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76C",
+      "status": "PASS",
+      "message": "Coordinator dependency graph validated",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:16:40.143067+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76D",
+      "status": "PASS",
+      "message": "Normalizer self-test passed",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:16:49.970148+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76E",
+      "status": "PASS",
+      "message": "Evidence ledger hash-chain self-test passed",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:17:09.426768+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76F",
+      "status": "PASS",
+      "message": "Approval policy and separation-of-duties validated",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:17:16.121684+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76G",
+      "status": "PASS",
+      "message": "Non-waivable risk controls validated",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:17:22.961128+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76H",
+      "status": "PASS",
+      "message": "Feature-gated RBAC command-center API present",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:17:33.247654+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76I",
+      "status": "PASS",
+      "message": "Decision engine policy self-test passed",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:17:39.728161+00:00",
+      "details": {}
+    },
+    {
+      "phase": "76J",
+      "status": "PASS",
+      "message": "Release-readiness bundle prepared; human signatures not asserted",
+      "synthetic": true,
+      "run_id": "phase76-preflight-final",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "generated_at": "2026-06-23T16:21:12.693696+00:00",
+      "details": {}
+    }
+  ]
+}

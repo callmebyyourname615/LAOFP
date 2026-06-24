@@ -1,0 +1,13 @@
+checks:
+- transactions_vs_ledger
+- debit_vs_credit
+- settlement_totals
+- outbox_vs_published
+- rail_journal
+- promotion_funder_ledger
+- duplicates
+- cross_border_journal
+critical_zero_tolerance:
+- ledger_imbalance
+- transaction_loss
+- duplicate_posting

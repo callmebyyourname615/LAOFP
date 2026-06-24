@@ -1,0 +1,12 @@
+duration_days: 14
+milestones:
+- day: 0
+  id: CUTOVER
+- day: 1
+  id: DAY1_RECON
+- day: 3
+  id: DAY3_SETTLEMENT
+- day: 7
+  id: DAY7_WEEKLY_RECON
+- day: 14
+  id: DAY14_EXIT_REVIEW

@@ -1,0 +1,9 @@
+switching:
+  continuous-assurance:
+    enabled: false
+    availability-slo: 99.95
+    payment-success-slo: 99.99
+    p95-latency-max-ms: 500
+    reconciliation-delay-max-minutes: 5
+    green-score: 90
+    amber-score: 75

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "control_id",
+    "status",
+    "environment",
+    "git_commit",
+    "synthetic",
+    "observed"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "NOT_RUN"
+      ]
+    },
+    "synthetic": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

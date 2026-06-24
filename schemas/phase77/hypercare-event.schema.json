@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "event_id",
+    "day",
+    "type",
+    "owner",
+    "occurred_at"
+  ],
+  "properties": {
+    "day": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 14
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-23T16:17:03.001977+00:00",
+  "entry_count": 2,
+  "tail_hash": "c211d5657a5a2b4eadb2310c978ee22c78a98236fc2229662b75928504606017",
+  "entries": [
+    {
+      "sequence": 1,
+      "path": "a",
+      "sha256": "7692c3ad3540bb803c020b3aee66cd8887123234ea0c6e7143c0add73ff431ed",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "record_hash": "5098fc5866d6896f40368e1cee3b771f17fd966b62c97113fd636cdef852715d"
+    },
+    {
+      "sequence": 2,
+      "path": "b",
+      "sha256": "3fc4ccfe745870e2c0d99f71f30ff0656c8dedd41cc1d7d3d376b0dbe685e2f3",
+      "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "previous_hash": "5098fc5866d6896f40368e1cee3b771f17fd966b62c97113fd636cdef852715d",
+      "record_hash": "c211d5657a5a2b4eadb2310c978ee22c78a98236fc2229662b75928504606017"
+    }
+  ]
+}

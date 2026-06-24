@@ -1,0 +1,15 @@
+{
+  "control_id": "NORMALIZER-SELFTEST",
+  "status": "PASS",
+  "environment": "uat",
+  "git_commit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "synthetic": true,
+  "observed": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "threshold": {},
+  "source": "/mnt/data/work_phase7677/Switching/evidence/phase76/phase76-preflight-final/normalizer-selftest/junit.xml"
+}

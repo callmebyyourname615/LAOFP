@@ -1,0 +1,13 @@
+non_waivable:
+- TRANSACTION_LOSS
+- LEDGER_IMBALANCE
+- SECRET_LEAK
+- UNSIGNED_RELEASE
+- BACKUP_RESTORE_FAILURE
+max_expiry_days: 14
+required_fields:
+- owner
+- business_impact
+- compensating_control
+- expires_at
+- approvals

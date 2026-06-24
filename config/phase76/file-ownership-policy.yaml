@@ -1,0 +1,25 @@
+allowed:
+- AGENT/PHASE76*
+- AGENT/PHASE77*
+- scripts/phase76/**
+- scripts/phase77/**
+- docs/phase76/**
+- docs/phase77/**
+- config/phase76/**
+- config/phase77/**
+- schemas/phase76/**
+- schemas/phase77/**
+- evidence/phase76/**
+- evidence/phase77/**
+- .github/workflows/phase76-*.yml
+- .github/workflows/phase77-*.yml
+- src/main/java/com/example/switching/readiness/**
+- src/main/java/com/example/switching/continuousassurance/**
+- src/test/java/com/example/switching/readiness/**
+- src/test/java/com/example/switching/continuousassurance/**
+forbidden:
+- scripts/phase74/**
+- scripts/phase75/**
+- docs/phase74/**
+- docs/phase75/**
+- src/main/resources/db/migration/**

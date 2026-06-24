@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-06-23T16:13:54.696367Z",
+  "mavenCompileAttempt": "BLOCKED_DEPENDENCY_DOWNLOAD",
+  "phase74": [
+    {
+      "message": "Maven clean verify, fresh reports and flaky-test repetition are ready; execution pending",
+      "phase": "74A",
+      "status": "PREPARED"
+    },
+    {
+      "message": "authoritative 99-file migration chain is incomplete",
+      "phase": "74B",
+      "status": "BLOCKED"
+    },
+    {
+      "message": "UAT probes and 24-hour stability attestation ready",
+      "phase": "74C",
+      "status": "PREPARED"
+    },
+    {
+      "message": "guarded SecOps ceremony and negative credential evidence ready",
+      "phase": "74D",
+      "status": "PREPARED"
+    },
+    {
+      "message": "SMOS provisioning, MFA/RBAC and maker-checker evidence gate ready",
+      "phase": "74E",
+      "status": "PREPARED"
+    },
+    {
+      "message": "smoke and sustained-2K execution policy ready",
+      "phase": "74F",
+      "status": "PREPARED"
+    },
+    {
+      "message": "10K/20K/soak policy and evidence verification ready",
+      "phase": "74G",
+      "status": "PREPARED"
+    },
+    {
+      "message": "settlement 500K and accounting invariant verifier ready",
+      "phase": "74H",
+      "status": "PREPARED"
+    },
+    {
+      "message": "authoritative Phase 73 chaos source is missing",
+      "phase": "74I",
+      "status": "BLOCKED"
+    },
+    {
+      "message": "authoritative prerequisite source missing: scripts/phase64/run_phase64.sh scripts/phase66/run_phase66.sh scripts/phase69/run_phase69.sh scripts/phase70/run_phase70.sh scripts/phase72/run_phase72.sh scripts/phase73/run_phase73.sh",
+      "phase": "74J",
+      "status": "BLOCKED"
+    }
+  ],
+  "phase75": [
+    {
+      "message": "Phase 54A/54B acceptance wrapper ready",
+      "phase": "75A",
+      "status": "PREPARED"
+    },
+    {
+      "message": "deployment, rollback and forward-fix acceptance gate ready",
+      "phase": "75B",
+      "status": "PREPARED"
+    },
+    {
+      "message": "capacity and settlement acceptance gate ready",
+      "phase": "75C",
+      "status": "PREPARED"
+    },
+    {
+      "message": "backup, PITR and DR acceptance gate ready",
+      "phase": "75D",
+      "status": "PREPARED"
+    },
+    {
+      "message": "security, SBOM, signatures and provenance acceptance gate ready",
+      "phase": "75E",
+      "status": "PREPARED"
+    },
+    {
+      "message": "metrics, logs, traces and alert acceptance gate ready",
+      "phase": "75F",
+      "status": "PREPARED"
+    },
+    {
+      "message": "54J rehearsal and immutable release-candidate freeze gate ready",
+      "phase": "75G",
+      "status": "PREPARED"
+    },
+    {
+      "message": "production contract, external connectivity and migration dry-run gate ready",
+      "phase": "75H",
+      "status": "PREPARED"
+    },
+    {
+      "message": "named command-center roles, canary gates and abort criteria ready",
+      "phase": "75I",
+      "status": "PREPARED"
+    },
+    {
+      "message": "authoritative Phase 67 production cutover source is missing",
+      "phase": "75J",
+      "status": "BLOCKED"
+    }
+  ],
+  "runtimeCertificationPerformed": false,
+  "schemaVersion": 1,
+  "staticContract": "PASS",
+  "syntheticBundleTests": "PASS"
+}

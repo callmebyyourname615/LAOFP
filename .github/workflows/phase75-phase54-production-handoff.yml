@@ -1,0 +1,20 @@
+name: Phase 75 Phase54 Acceptance and Production Handoff
+on: {workflow_dispatch: {}}
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check pyyaml
+      - run: python3 scripts/verify_phase74_75_static.py
+      - run: scripts/phase75/run_phase75.sh --preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase75-preflight-${{ github.sha }}
+          path: scripts/phase75/evidence/
+          if-no-files-found: error

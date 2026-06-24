@@ -1,0 +1,8 @@
+{
+  "event_id": "replace",
+  "day": 1,
+  "type": "DAY1_RECON",
+  "summary": "clean",
+  "owner": "OPS",
+  "occurred_at": "2026-06-24T00:00:00Z"
+}

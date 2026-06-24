@@ -1,0 +1,14 @@
+policyId: phase74-performance-v1
+scenarios:
+  smoke: {targetTps: 100, durationMinutes: 5, p95MillisecondsMaximum: 200, errorRateMaximum: 0.0}
+  sustained2k: {targetTps: 2000, durationMinutes: 30, p95MillisecondsMaximum: 300, errorRateMaximum: 0.001}
+  sustained10k: {targetTps: 10000, durationMinutes: 60, p95MillisecondsMaximum: 500, errorRateMaximum: 0.001}
+  burst20k: {targetTps: 20000, durationMinutes: 15, errorRateMaximum: 0.005}
+  soak: {targetTps: 5000, durationHours: 8, memoryLeakAllowed: false, unboundedKafkaLagAllowed: false}
+settlement:
+  inputTransactions: 500000
+  requireDebitCreditBalance: true
+  duplicateLegsMaximum: 0
+  duplicatePostingsMaximum: 0
+  missingTransactionsMaximum: 0
+  reconciliationDifferenceMaximum: 0

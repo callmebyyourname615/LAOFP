@@ -1,0 +1,30 @@
+steps:
+- id: build
+  depends_on: []
+  destructive: false
+- id: uat_activation
+  depends_on:
+  - build
+  destructive: false
+- id: performance
+  depends_on:
+  - uat_activation
+  destructive: false
+- id: backup_restore
+  depends_on:
+  - uat_activation
+  destructive: true
+- id: dr_chaos
+  depends_on:
+  - backup_restore
+  destructive: true
+- id: security
+  depends_on:
+  - uat_activation
+  destructive: true
+- id: final_decision
+  depends_on:
+  - performance
+  - dr_chaos
+  - security
+  destructive: false

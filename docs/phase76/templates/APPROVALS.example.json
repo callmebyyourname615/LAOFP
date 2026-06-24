@@ -1,0 +1,12 @@
+{
+  "approvals": [
+    {
+      "role": "QA_LEAD",
+      "approver": "replace@example",
+      "status": "APPROVED",
+      "git_commit": "REPLACE",
+      "expires_at": "2026-06-24T00:00:00Z",
+      "evidence_tail_hash": "REPLACE"
+    }
+  ]
+}

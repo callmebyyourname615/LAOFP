@@ -1,0 +1,22 @@
+policyId: phase74-uat-runtime-certification-v1
+environment: uat
+releaseIdentity:
+  requireFullGitCommit: true
+  requireApplicationImageDigest: true
+  requireMigrationImageDigest: true
+  forbidRebuildBetweenPhases: true
+infrastructure:
+  applicationReplicasMinimum: 4
+  kafkaBrokersMinimum: 3
+  stabilityHoursMinimum: 24
+  requireTls: true
+  requireVaultManagedSecrets: true
+  requirePrimaryReplicaProof: true
+build:
+  requireCleanVerify: true
+  rejectStaleReportsMinutes: 30
+  criticalTestRepetitions: 3
+migration:
+  expectedFiles: 99
+  expectedLatest: 106
+  reservedVersions: [88, 89, 90, 98, 99, 102, 103]
