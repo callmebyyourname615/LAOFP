@@ -1,6 +1,6 @@
 # Go-Live Critical Path — Master Checklist
 
-> **Last updated:** 2026-06-23 (Phase 71–73 tooling merged; UAT execution still pending)
+> **Last updated:** 2026-06-23 (Phase 74-77 merged — commit `ba1f5a0`)
 > **Audience:** Engineering, QA, SecOps, SRE, Change Manager
 > **Purpose:** Single checklist สำหรับพา Switching ขึ้น production
 > **Convention:**
@@ -35,6 +35,10 @@
 | 🆕 Phase 71 UAT Certification Closure | 🟢 **scripts ready** + temporal JDBC fix | not executed |
 | 🆕 Phase 72 Final UAT Closure | 🟢 **scripts ready** | not executed |
 | 🆕 Phase 73 Chaos Certification | 🟢 **tooling ready** | real UAT chaos drills not executed |
+| 🆕 Phase 74 UAT Runtime Certification | 🟢 **scripts + 7 attestations** | not executed |
+| 🆕 Phase 75 Phase 54 Production Handoff | 🟢 **policy ready** | not executed |
+| 🆕 Phase 76 Operational Evidence Aggregation | 🟢 **7 policies** | not executed |
+| 🆕 Phase 77 Continuous Assurance (BAU) | 🟢 **11 policies** | not executed |
 | **OVERALL** | **🟡 ~63%** | **2 weeks to Go-Live** |
 
 ---
@@ -527,7 +531,81 @@ Orchestrator: `scripts/phase73/run_phase73.sh`
 
 ---
 
-# 20. Post Go-Live BAU (Hypercare 14 days)
+# 20. 🆕 Phase 74 — UAT Runtime Certification
+
+Orchestrator: `scripts/phase74/`
+
+- [x] Performance policy config (`config/phase74-performance-policy.yaml`)
+- [x] Resilience policy config (`config/phase74-resilience-policy.yaml`)
+- [x] UAT runtime certification config (`config/phase74-uat-runtime-certification.yaml`)
+- [x] 7 attestation templates: Capacity, Performance Baseline, Phase 54 Entry, Resilience Chaos, Secret Rotation, Settlement, SMOS Runtime
+- [x] Phase 74 result schema
+- [x] CI workflow `phase74-uat-runtime-certification.yml`
+- [x] Operator runbook + exit criteria + overview docs
+- [ ] Execute Phase 74 against UAT
+- [ ] Phase 54 entry attestation sign-off
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 21. 🆕 Phase 75 — Phase 54 Production Handoff
+
+Orchestrator: `scripts/phase75/`
+
+- [x] Production handoff policy (`config/phase75-production-handoff-policy.yaml`)
+- [x] Phase 75 exit criteria + operator runbook + overview
+- [x] CI workflow `phase75-phase54-production-handoff.yml`
+- [x] Phase 75 result schema + manifest schema
+- [ ] Execute Phase 75
+- [ ] Sign production handoff
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 22. 🆕 Phase 76 — Operational Evidence Aggregation
+
+Orchestrator: `scripts/phase76/`
+
+- [x] 7 governance policies:
+  - approval-policy / decision-policy / coordinator-plan
+  - evidence-source-registry / file-ownership-policy
+  - waiver-policy / application-readiness.example
+- [x] Approval & waiver policy doc
+- [x] Evidence integrity policy doc
+- [x] Phase 74/75 handoff baseline doc
+- [x] CI workflow `phase76-operational-evidence.yml`
+- [x] Phase 76 schemas (decision, manifest, ledger entry)
+- [ ] Execute Phase 76 evidence aggregation
+- [ ] Sign evidence ledger
+
+**Status:** 🟢 policies ready / execution pending
+
+---
+
+# 23. 🆕 Phase 77 — Continuous Assurance Framework (BAU)
+
+Orchestrator: `scripts/phase77/`
+
+- [x] 11 BAU policies:
+  - application-continuous-assurance.example
+  - backup-dr-policy / bau-ownership
+  - capacity-policy / compliance-export-policy
+  - hypercare-policy / key-lifecycle-policy
+  - participant-operations-policy / reconciliation-policy
+  - scorecard-policy / slo-policy
+- [x] CI workflow `phase77-continuous-assurance.yml`
+- [x] Phase 77 schemas + scorecard contract
+- [x] BAU ownership RACI matrix
+- [ ] Activate continuous assurance jobs post Go-Live
+- [ ] Quarterly recertification
+
+**Status:** 🟢 policies ready / activated post Go-Live
+
+---
+
+# 24. Post Go-Live BAU (Hypercare 14 days)
 
 - [ ] Day 1: 24/7 SRE coverage
 - [ ] Day 1: Watch all 47 alerts firing as expected
