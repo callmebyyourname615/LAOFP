@@ -1,0 +1,20 @@
+name: Phase 81 Operational Scope and BAU
+on:
+  workflow_dispatch:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/verify_phase81_static.py
+      - run: scripts/phase81/run_phase81.sh preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase81-preflight
+          path: evidence/phase81

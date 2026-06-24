@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "observedPeakTps",
+    "synthetic",
+    "triggered",
+    "decision",
+    "migrationGenerated"
+  ],
+  "properties": {
+    "observedPeakTps": {
+      "type": "number"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "triggered": {
+      "type": "boolean"
+    },
+    "decision": {
+      "enum": [
+        "IMPLEMENT_HOURLY_PARTITIONS",
+        "KEEP_DAILY_PARTITIONS"
+      ]
+    },
+    "migrationGenerated": {
+      "const": false
+    }
+  }
+}

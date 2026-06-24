@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "kind": "phase54-go",
+  "status": "REPLACE_ME",
+  "environment": "uat",
+  "executedAt": "REPLACE_ME",
+  "operator": "REPLACE_ME",
+  "commit": "REPLACE_ME",
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvals": [
+    {
+      "role": "REPLACE_ME",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    },
+    {
+      "role": "REPLACE_ME",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "REPLACE_ME",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ]
+}

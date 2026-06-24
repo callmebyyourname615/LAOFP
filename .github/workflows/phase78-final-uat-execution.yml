@@ -1,0 +1,14 @@
+name: Phase 78 Final UAT Execution
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ["scripts/phase78/**", "config/phase78-*.yaml", "schemas/phase78-*.json"]
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python3 scripts/verify_phase78_79_static.py
+      - run: scripts/phase78/run_phase78.sh --preflight

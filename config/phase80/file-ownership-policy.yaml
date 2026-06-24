@@ -1,0 +1,25 @@
+phase: 80
+allowed_roots:
+  - AGENT
+  - scripts/phase80
+  - docs/phase80
+  - config/phase80
+  - schemas/phase80
+  - evidence/phase80
+  - sql/phase80
+  - src/main/java/com/example/switching/dashboard
+  - src/main/java/com/example/switching/bauactivation
+  - src/test/java/com/example/switching/bauactivation
+  - .github/workflows
+forbidden_roots:
+  - scripts/phase78
+  - scripts/phase79
+  - docs/phase78
+  - docs/phase79
+  - config/phase78
+  - config/phase79
+  - schemas/phase78
+  - schemas/phase79
+  - evidence/phase78
+  - evidence/phase79
+  - src/main/resources/db/migration

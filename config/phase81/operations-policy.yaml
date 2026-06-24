@@ -1,0 +1,18 @@
+version: 1
+dashboards:
+  required: [transaction, participant, infrastructure, dr]
+  cache_control: no-store
+  bounded_results: true
+promotion:
+  uat_seed_count: 3
+  activation_requires_maker_checker: true
+quota:
+  sustained_headroom_percent: 25
+  burst_headroom_percent: 20
+  temporary_override_requires_expiry: true
+partition:
+  hourly_trigger_peak_tps_exclusive: 5000
+  automatic_migration_generation: false
+bau:
+  required_jobs: [reconciliation, slo, backupFreshness, secretExpiry, capacity, quotaMonitoring, readinessScorecard]
+  hypercare_days: 14

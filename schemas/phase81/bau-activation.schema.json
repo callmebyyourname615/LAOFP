@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "decision",
+    "controls",
+    "dashboardsOperational",
+    "continuousAssuranceRequested"
+  ],
+  "properties": {
+    "decision": {
+      "enum": [
+        "PREPARED",
+        "BLOCKED",
+        "BLOCKED_PHASE80",
+        "BAU_ACTIVE"
+      ]
+    },
+    "controls": {
+      "type": "array"
+    },
+    "dashboardsOperational": {
+      "type": "boolean"
+    },
+    "continuousAssuranceRequested": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,728 @@
+{
+  "certified": false,
+  "commit": "95ea6eea3f1b28748c45ca6a1316cf8ea7d1b4c6",
+  "deliveryMode": true,
+  "errors": [
+    "missing authoritative phase source: scripts/phase64/run_phase64.sh, scripts/phase66/run_phase66.sh, scripts/phase67/run_phase67.sh, scripts/phase69/run_phase69.sh, scripts/phase70/run_phase70.sh, scripts/phase72/run_phase72.sh, scripts/phase73/run_phase73.sh, scripts/phase76/run_phase76.sh, scripts/phase77/run_phase77.sh",
+    "migration contract mismatch: count=99 expected=101 missing=[102, 103]",
+    "tracked working tree is not clean: 298 path(s)"
+  ],
+  "expectedCommit": null,
+  "latestMigration": 106,
+  "migrationCount": 99,
+  "migrations": [
+    {
+      "file": "V100__repair_current_status_reporting.sql",
+      "sha256": "608758dbc2b04a4d1d6daa0f5f0fce8e75d8a05041f0368807411b730a84f4fb",
+      "version": 100
+    },
+    {
+      "file": "V101__smos_security_hardening.sql",
+      "sha256": "ab208d0f4e04ce4a79ee523d6d7c1a12be2a97fe72233bcb52fca633878a256d",
+      "version": 101
+    },
+    {
+      "file": "V104__standardize_financial_numeric_precision.sql",
+      "sha256": "6c27b3ea31cf1a44cd672d65baf73921a74d1c9fb3ff2cd0243f3b0c800e726b",
+      "version": 104
+    },
+    {
+      "file": "V105__promotion_budget_and_funder_ledger_controls.sql",
+      "sha256": "d761c9a0c4bad336ad38a306f5adfdbeca4e17745626996227a80dcc82483cb7",
+      "version": 105
+    },
+    {
+      "file": "V106__distributed_trace_correlation.sql",
+      "sha256": "75f2978081f23213853c43e2a5caf8c6971f3096eab1c7e0cadfb91adedac485",
+      "version": 106
+    },
+    {
+      "file": "V10__maintenance_tables.sql",
+      "sha256": "e138b17bd51526e467ec892ac5f7745147330e01c125052be6754de523e71386",
+      "version": 10
+    },
+    {
+      "file": "V11__audit_log.sql",
+      "sha256": "ae022fe44b614c536caec419095ba121cc1b2a675e22c66979abb2f87ae60794",
+      "version": 11
+    },
+    {
+      "file": "V12__warm_archive_tables.sql",
+      "sha256": "09ee0b347f02dd02fdc5f3e1602022d8be33f95125563a03c2c267b3a82d5664",
+      "version": 12
+    },
+    {
+      "file": "V13__seed_data.sql",
+      "sha256": "e2c3ca548dbbdcaea68613798ddc94241ad89fa868facb0d10ee398ae471e9c8",
+      "version": 13
+    },
+    {
+      "file": "V14__precreate_future_partitions.sql",
+      "sha256": "09e7c4060c6316a2bbe8ec2a87dad1d46c240235563fb20be71a11c879bed809",
+      "version": 14
+    },
+    {
+      "file": "V15__drop_legacy_guard.sql",
+      "sha256": "1f860ee08f59cd09dc9c0377aa4275cf4f596498078dbbc7490803c22a5be142",
+      "version": 15
+    },
+    {
+      "file": "V16__connector_call_logs_archive.sql",
+      "sha256": "1d0c80bc5839cd581128ed547a3ab251eeff5297e354e9b866d2787adf7e3636",
+      "version": 16
+    },
+    {
+      "file": "V17__object_storage_schema.sql",
+      "sha256": "4512156d6fd4c1c564b99a09d2cfddc919bf6f25da3a40cc2fda61c4338c368e",
+      "version": 17
+    },
+    {
+      "file": "V18__object_storage_grants.sql",
+      "sha256": "b449794ee858af214fff4b96ea69d23f06f3dbeada30e99dc26a9a8a5f2f33d4",
+      "version": 18
+    },
+    {
+      "file": "V19__iso_validation_errors_archive.sql",
+      "sha256": "bfa1a437e324b2b65d777150997df40ddb43978f6d2fa34f75e0135dff885d2f",
+      "version": 19
+    },
+    {
+      "file": "V1__foundation.sql",
+      "sha256": "42a06863c17eb7d8f459fdbe2d1699f630b509994e2e69cceadf282fa5bb4b0a",
+      "version": 1
+    },
+    {
+      "file": "V20__webhook_tables.sql",
+      "sha256": "5f60728f922899b0479d8ac3cb1cb8b530d497ea3c78dc8903bde3fe2e01f5f0",
+      "version": 20
+    },
+    {
+      "file": "V21__sanctions_lists.sql",
+      "sha256": "259cf5bc883226595a3b9b5d7b6dd6239477ce61a51f09183bbff62bed2f1c84",
+      "version": 21
+    },
+    {
+      "file": "V22__sanctions_screening_results.sql",
+      "sha256": "10d8e6dcb5555794c59723478f1e457ef97a038d735b52976ec93f1ed1245d4d",
+      "version": 22
+    },
+    {
+      "file": "V23__str_reports.sql",
+      "sha256": "21bde7e4449889d773c8cdb7ecbc43ac10f59aa062975fe1f603ab44e656ab5f",
+      "version": 23
+    },
+    {
+      "file": "V24__fraud_scores.sql",
+      "sha256": "5332a1d4b0875ee7d75957644b6858015dc98adf894b9133848159d18a9ac492",
+      "version": 24
+    },
+    {
+      "file": "V25__velocity_checks.sql",
+      "sha256": "3302071e0e61f3394dbf85d5a4505894b518d9a3d20baba7d4fff9a4e668d019",
+      "version": 25
+    },
+    {
+      "file": "V26__psp_pools.sql",
+      "sha256": "ba808e0b4aa8edaa5a8e02f1ee3d762ac0ce667463eea7377f3a18943bdd9ab3",
+      "version": 26
+    },
+    {
+      "file": "V27__pool_transactions.sql",
+      "sha256": "dfc7001c69f3cd447be294b85ac6648c79f3454013c4217ac04712ceacddc476",
+      "version": 27
+    },
+    {
+      "file": "V28__settlement_positions_cascade.sql",
+      "sha256": "fd13e7063b39b9b8636b9d027d3b7df42290ba700357c9c4de84842d426f42a1",
+      "version": 28
+    },
+    {
+      "file": "V29__vpa_registrations.sql",
+      "sha256": "b765b1303e157c207e49030bf673f3fef3fd37d93b4569ca2f2562116ce733e5",
+      "version": 29
+    },
+    {
+      "file": "V2__config_tables.sql",
+      "sha256": "f9b7b88b46f2881eb38f7b61ef28767258e67e6577519bdb14413da5ac4c1d91",
+      "version": 2
+    },
+    {
+      "file": "V30__beneficiary_tokens.sql",
+      "sha256": "b66dd5083f4c2dc9ce6036dcd7dde5fb4f78b8c2455b48597ef16e26608102be",
+      "version": 30
+    },
+    {
+      "file": "V31__settlement_instructions.sql",
+      "sha256": "5926b5af3d749ec330593534d5409648fb60b26a2d68eeb26137f98de578c8d3",
+      "version": 31
+    },
+    {
+      "file": "V32__settlement_instruction_rtgs_payloads.sql",
+      "sha256": "e54d56c3e6420dc928b5f4b71f60ed4ffc0c215472fe944888c7c7b2415724b3",
+      "version": 32
+    },
+    {
+      "file": "V33__transfer_settlement_routing.sql",
+      "sha256": "a9eddcf9a7b9469ee6c0d1a4235b180f6c972b0f46a974537e5bd4c4c0f8e662",
+      "version": 33
+    },
+    {
+      "file": "V34__high_value_rtgs_instruction_source.sql",
+      "sha256": "2860a0aab4d18f3490a1f8440a3b2612938432d2345feeac89c8873bff675283",
+      "version": 34
+    },
+    {
+      "file": "V35__settlement_reports.sql",
+      "sha256": "f57c33d5452639aa9c02b904072abe53a96a42e848d51b649513f23292f56a7f",
+      "version": 35
+    },
+    {
+      "file": "V36__qr_codes.sql",
+      "sha256": "777e11e4a95ec3e80e185ac854c256a74c9efd6b03f188e4e0d93b48bc4caab7",
+      "version": 36
+    },
+    {
+      "file": "V37__bill_payment.sql",
+      "sha256": "8c05881108cd0e4923ffd4e0a6ae143c29a629ba17e59f0c2ef5eb1adb5467b5",
+      "version": 37
+    },
+    {
+      "file": "V38__disputes.sql",
+      "sha256": "54da39ad40d2b6c622c2c4e027bae5e18c3701d5105966d7544dee65c6f400e3",
+      "version": 38
+    },
+    {
+      "file": "V39__fx_corridors.sql",
+      "sha256": "0be34dd3a6ec7ae158f0df3da7f744726dd0387a2c939f344779f3364835c45b",
+      "version": 39
+    },
+    {
+      "file": "V3__security_tables.sql",
+      "sha256": "90c3a8c9f24436e468c186bcf54aa1fed305d5acfe463e99867300c6dc537f6b",
+      "version": 3
+    },
+    {
+      "file": "V40__fx_quotes.sql",
+      "sha256": "3d9af9c3066e1146aa6bbfc007eca22528ae818f711a4a39b7f05b22120652a0",
+      "version": 40
+    },
+    {
+      "file": "V41__crossborder_transfers.sql",
+      "sha256": "4ba27c92639dc26c82623628f8918ef75a109f80cc23ae6f725b305dcfb55f48",
+      "version": 41
+    },
+    {
+      "file": "V42__performance_indexes.sql",
+      "sha256": "f07f3358c9aa3cfd7904daac77a1220a05036d861b320b707b4428dada2eff0a",
+      "version": 42
+    },
+    {
+      "file": "V43__webhook_secret_encryption.sql",
+      "sha256": "9141b0ac7ac7318677b5f50699d635c7300821b51db5248b74eba47769035282",
+      "version": 43
+    },
+    {
+      "file": "V44__drop_webhook_secret_plain.sql",
+      "sha256": "4c66b45dbc7d374f56de461ab136d90f449c85c7101c2d013db27ceda19d94b2",
+      "version": 44
+    },
+    {
+      "file": "V45__sanctions_provider_import.sql",
+      "sha256": "f74e471c212976172287ed5a13a511b88ad68bcac60d4c7a1ead43b0cdd45798",
+      "version": 45
+    },
+    {
+      "file": "V46__audit_chain_and_immutability.sql",
+      "sha256": "8f4a46d0be63f1fcf95a83ca240e3c0a61c25cffd46686ad02d16b3fb96883d0",
+      "version": 46
+    },
+    {
+      "file": "V47__outbox_dead_letter_quarantine.sql",
+      "sha256": "1452291ac5a547d264c51a46fa488de66beb943047ef669e38a4443bef55e049",
+      "version": 47
+    },
+    {
+      "file": "V48__database_maintenance_runs.sql",
+      "sha256": "e38e9f1e075b61c342980fbb29d4914ccdb2d05ea9ab55c2213e7417dc6c17fe",
+      "version": 48
+    },
+    {
+      "file": "V49__legal_holds_and_retention.sql",
+      "sha256": "ee2f4eb7ce508f3653a9cf4cd5555b1f32452c81fb236d3d3a95fc45992b03da",
+      "version": 49
+    },
+    {
+      "file": "V4__core_flow_tables.sql",
+      "sha256": "8ae13aed45efc9cfb73d5fd89dcc8002b059fbb86233994dd53a74dbf439ffc2",
+      "version": 4
+    },
+    {
+      "file": "V50__privileged_access_sessions.sql",
+      "sha256": "bad2255a810f0bf3e63b7146a5c3abbc1801617d45c9d1a15f16b5311f118219",
+      "version": 50
+    },
+    {
+      "file": "V51__configuration_change_approval.sql",
+      "sha256": "29859b6e8fd947a38cc58e3558c0057da9f3cc99396c55928dff9f3a4ded1579",
+      "version": 51
+    },
+    {
+      "file": "V52__participant_certifications.sql",
+      "sha256": "21f58625540e9ba7e02c734a776180f8cbb565230337fe8e8f61c90652add244",
+      "version": 52
+    },
+    {
+      "file": "V53__reconciliation_automation.sql",
+      "sha256": "a68df2d49355125ab1d7a7932db4abebf8730c4f61c11cdca008f1809dccfea2",
+      "version": 53
+    },
+    {
+      "file": "V54__fraud_velocity_controls.sql",
+      "sha256": "bc27bfaafed8d80ce0ea1a6d20bb000862876f79e01066ade91642dcd562ce4d",
+      "version": 54
+    },
+    {
+      "file": "V55__participant_lifecycle_sla.sql",
+      "sha256": "c80cb4141e7a6bf1283a0895403d954c29ecc4feb3eeda8f85e78fa7d4b93e95",
+      "version": 55
+    },
+    {
+      "file": "V56__iso_message_validation_packs.sql",
+      "sha256": "55682ce93ee716a628ac01486e7a9558c13af82ba37122a89c57e90c35588b6a",
+      "version": 56
+    },
+    {
+      "file": "V57__settlement_evidence_ledger.sql",
+      "sha256": "af4cfebc69d61bdfbd13fc04ba4899603ce6dd8698c0474bfbe37665359af1be",
+      "version": 57
+    },
+    {
+      "file": "V58__operations_command_center.sql",
+      "sha256": "9291311f6142870162b038d1b7fe92d54da96367ef991e9e8ca7f85348dde028",
+      "version": 58
+    },
+    {
+      "file": "V59__data_quality_controls.sql",
+      "sha256": "505c517723445028d9f2ab3e5a61367d62c9c349ffe7a010b9f152893fed74d6",
+      "version": 59
+    },
+    {
+      "file": "V5__iso_tables.sql",
+      "sha256": "be47a3bd054846fb773402ba9239804f6e6a8264c64bde739c318e49747b4bc1",
+      "version": 5
+    },
+    {
+      "file": "V60__multi_region_readiness.sql",
+      "sha256": "32423ce8754278b8c0cc5e45c368737d192dd75983a2c3ed922855fed3b99098",
+      "version": 60
+    },
+    {
+      "file": "V61__privacy_case_management.sql",
+      "sha256": "ddc91332e9825fdfe6a18aca717977d81f45a22e0a39b49eb6fe48cbfee0de4f",
+      "version": 61
+    },
+    {
+      "file": "V62__continuous_compliance_controls.sql",
+      "sha256": "4c3bc61bf36f4cde833fba1d7c145a1e05128f1d325fb45fcd6a0cdc1ecb1e58",
+      "version": 62
+    },
+    {
+      "file": "V63__double_entry_control_ledger.sql",
+      "sha256": "183145f3e194791347fe19dc7e9e2855449bf3d540dc0224721f6f7e244e838e",
+      "version": 63
+    },
+    {
+      "file": "V64__intraday_liquidity_prefunding_controls.sql",
+      "sha256": "64b7957e216e8a28451679460ce2e6bbae7a2d2c5138b4602102b8346049b07f",
+      "version": 64
+    },
+    {
+      "file": "V65__tariff_fee_governance.sql",
+      "sha256": "5fcfaf2070d165d8bb431962879b0923248400c87e21bf571ec321dd694f45b9",
+      "version": 65
+    },
+    {
+      "file": "V66__fx_rate_governance.sql",
+      "sha256": "258a92cbf8b862152fdc0d5323cce9fbad9c7d4e161ae96900f380b00e055871",
+      "version": 66
+    },
+    {
+      "file": "V67__participant_certificate_lifecycle.sql",
+      "sha256": "61a4774cc79d9ba851bcd13c2d2cc33242aba9a15b370ffa6bd994a8940bc861",
+      "version": 67
+    },
+    {
+      "file": "V68__regulatory_reporting_submission.sql",
+      "sha256": "3b6ec09d1eec0f2cb96f28015882f9779f426ac6cb5628a07a7aee7d409439b6",
+      "version": 68
+    },
+    {
+      "file": "V69__notification_delivery_governance.sql",
+      "sha256": "2808f8f24929146139c63e93e4303bc65ca3625092dd74b9a741bcd67a3db860",
+      "version": 69
+    },
+    {
+      "file": "V6__reliability_tables.sql",
+      "sha256": "468be55451a86f9548140f1eea9b9ff247ebf0d3db393418dba5f4f473605cf6",
+      "version": 6
+    },
+    {
+      "file": "V70__change_freeze_release_calendar.sql",
+      "sha256": "a06daeb7c1b836a780a4e6fec155da418acc20925b9f19337ea585aeee7a2032",
+      "version": 70
+    },
+    {
+      "file": "V71__synthetic_transaction_monitoring.sql",
+      "sha256": "7b4504fe16fbe8041b2354bb9b702cfcbf4685a4ecc81d3fd09d8984ac2e2ae5",
+      "version": 71
+    },
+    {
+      "file": "V72__incident_corrective_action_management.sql",
+      "sha256": "f51408690fb656013d45e465187287f459770dee629dcb51e541d414029dc1dd",
+      "version": 72
+    },
+    {
+      "file": "V73__transaction_limit_entitlement_governance.sql",
+      "sha256": "df97d725b8fb77f31e9562523831c1562e42f479938baa94226984a105d7bb82",
+      "version": 73
+    },
+    {
+      "file": "V74__manual_financial_adjustment_governance.sql",
+      "sha256": "1dd59d1bee2596d5b3a32fc8462b1ba55ce2a467faed10b084f601d5f56ca8ef",
+      "version": 74
+    },
+    {
+      "file": "V75__settlement_calendar_cutoff_governance.sql",
+      "sha256": "aa8c1e0ddd13f9c227189acf7674ba5288e362feb90788418de6278d6da21658",
+      "version": 75
+    },
+    {
+      "file": "V76__payment_finality_duplicate_protection.sql",
+      "sha256": "95103f611b130c8fc327e2f24e96fc1d0788b78fb7f0cb064939a7151bb11474",
+      "version": 76
+    },
+    {
+      "file": "V77__cryptographic_asset_inventory_rotation.sql",
+      "sha256": "eba366374326f298adfe6147c6ffb69ea737fc0124e54afefb18e2c7c82e8cab",
+      "version": 77
+    },
+    {
+      "file": "V78__third_party_dependency_sla_governance.sql",
+      "sha256": "38687f812055ba05f49301b565d54da443428ade19ca9c1086f7f59d89272397",
+      "version": 78
+    },
+    {
+      "file": "V79__capacity_forecast_autoscaling_governance.sql",
+      "sha256": "edca3810e35a32104dd8cde31536c9cb9767d3f2cdea3261f1caec1ca0a73057",
+      "version": 79
+    },
+    {
+      "file": "V7__fpre_tables.sql",
+      "sha256": "d88e8be76b8a56abffc10ddf3b8c5ba19610f52d2dcfc25f0895919cc2a43948",
+      "version": 7
+    },
+    {
+      "file": "V80__data_lineage_evidence_catalog.sql",
+      "sha256": "c126d802f8c843e6e3cb46c004c3a64a9ae292a4dd863662a9ce9dd742dbb2a8",
+      "version": 80
+    },
+    {
+      "file": "V81__decision_rule_model_governance.sql",
+      "sha256": "cef0f97f43b4e0b782456eff530123a4a2687534a83800678a4ee0c20dec679f",
+      "version": 81
+    },
+    {
+      "file": "V82__controlled_decommissioning_data_exit.sql",
+      "sha256": "776d477ee55c65b94c9aeac5a5f4c2052a29cf28d1a87013c0d5bed7c362ab65",
+      "version": 82
+    },
+    {
+      "file": "V83__align_payload_sha256_to_varchar.sql",
+      "sha256": "f01d8639b1859b7c2759536f7cfc2cd8f89b73edceb790c2d5b7e001c439a1ea",
+      "version": 83
+    },
+    {
+      "file": "V84__align_all_sha256_columns_to_varchar.sql",
+      "sha256": "d6e5d3d3e16896f029955384666ff1d8b026047da92ba2cdee72bae5b7664406",
+      "version": 84
+    },
+    {
+      "file": "V85__lookup_directories_and_reporting_aggregates.sql",
+      "sha256": "3e4d1751153d40229e9c14b995613247bdb231ee246eb545cd75464c876d22e6",
+      "version": 85
+    },
+    {
+      "file": "V86__current_status_reporting.sql",
+      "sha256": "9af84b6320376f2f0f59065392b7a0fe0b25230871b5b8cf3c13d415695d8ff7",
+      "version": 86
+    },
+    {
+      "file": "V87__payment_reference_and_settlement_integrity.sql",
+      "sha256": "c0eecf43f9065207ec6dc93f3bd0b8ae404a192022affa0e8cc082dc00048398",
+      "version": 87
+    },
+    {
+      "file": "V8__settlement_tables.sql",
+      "sha256": "57661d9205ad3f6e9253f1efa4204773b2b1cb7c411d0942f15f499bbc75e3b9",
+      "version": 8
+    },
+    {
+      "file": "V91__request_to_pay_foundation.sql",
+      "sha256": "378d2b3dafaf88233c7cd63e8b3deedd5796d3933703f0abdf9bce7abe16de4c",
+      "version": 91
+    },
+    {
+      "file": "V92__promotion_management.sql",
+      "sha256": "c6d189ed3559f1b90be8cf99a78144fcd4e4984215c4fb433295deef32f1fb39",
+      "version": 92
+    },
+    {
+      "file": "V93__push_payment_orchestrator.sql",
+      "sha256": "dd5975c8be23529dda35a1a858ffcbe89f6ca7681aed94fd73fd3a71b508814b",
+      "version": 93
+    },
+    {
+      "file": "V94__scheduled_report_delivery.sql",
+      "sha256": "67c212b2b61de79a2ee30299111b0a799fdea67d045253a134d24a2fbfc7e532",
+      "version": 94
+    },
+    {
+      "file": "V95__cross_border_rail_journal.sql",
+      "sha256": "400444762495a51a2da8ad4b4652ce2768e8ca60b734aa40d3b32694fcea05d9",
+      "version": 95
+    },
+    {
+      "file": "V96__rtp_authorisation_settlement_extensions.sql",
+      "sha256": "8b2765641d47c9ce742503a9d3742e66425853e87063e6449670922997d6b661",
+      "version": 96
+    },
+    {
+      "file": "V97__smos_user_access_management.sql",
+      "sha256": "1a0f1d1555de423dc4c519b9a08f8138110b663962b08d70b5514ed5cb9cc5c0",
+      "version": 97
+    },
+    {
+      "file": "V9__lookup_summary_tables.sql",
+      "sha256": "e609731d1a4bfc07908425454bd04c2a4ef8c1ae657234e47e6fc6abbc3e342e",
+      "version": 9
+    }
+  ],
+  "missingMigrationVersions": [
+    102,
+    103
+  ],
+  "missingPhaseSources": [
+    "scripts/phase64/run_phase64.sh",
+    "scripts/phase66/run_phase66.sh",
+    "scripts/phase67/run_phase67.sh",
+    "scripts/phase69/run_phase69.sh",
+    "scripts/phase70/run_phase70.sh",
+    "scripts/phase72/run_phase72.sh",
+    "scripts/phase73/run_phase73.sh",
+    "scripts/phase76/run_phase76.sh",
+    "scripts/phase77/run_phase77.sh"
+  ],
+  "schemaVersion": 1,
+  "trackedChanges": [
+    " D .env.bak",
+    " M .env.example",
+    " M .env.prod.example",
+    " M .gitignore",
+    " D DELIVERY_NOTES.md",
+    " D IMPLEMENTATION_GUIDE.md",
+    " D IMPLEMENTATION_PROGRESS.md",
+    " D PHASES_09_12_DELIVERY_NOTES.md",
+    " D PHASES_13_22_DELIVERY_NOTES.md",
+    " D PHASES_23_32_DELIVERY_NOTES.md",
+    " D PHASES_33_42_DELIVERY_NOTES.md",
+    " D PHASES_43_52_DELIVERY_NOTES.md",
+    " D PHASES_53C_53J_DELIVERY_NOTES.md",
+    " D PHASES_53C_53J_FILE_MANIFEST.txt",
+    " D PHASES_53C_53J_VALIDATION_REPORT.md",
+    " D PHASES_54A_54J_DELIVERY_NOTES.md",
+    " D PHASES_54A_54J_FILE_MANIFEST.txt",
+    " D PHASES_54A_54J_VALIDATION_REPORT.md",
+    " D PHASES_55A_55J_DELIVERY_NOTES.md",
+    " D PHASES_55A_55J_FILE_MANIFEST.txt",
+    " D PHASES_55A_55J_VALIDATION_REPORT.md",
+    " D PHASES_56A_56J_DELIVERY_NOTES.md",
+    " D PHASES_56A_56J_FILE_MANIFEST.txt",
+    " D PHASES_56A_56J_VALIDATION_REPORT.md",
+    " D PHASES_57A_57J_DELIVERY_NOTES.md",
+    " D PHASES_57A_57J_FILE_MANIFEST.txt",
+    " D PHASES_57A_57J_VALIDATION_REPORT.md",
+    " D PHASES_58A_58J_DELIVERY_NOTES.md",
+    " D PHASES_58A_58J_FILE_MANIFEST.txt",
+    " D PHASES_58A_58J_VALIDATION_REPORT.md",
+    " D PHASE_53A_DELETE_MANIFEST.txt",
+    " D PHASE_53A_DELIVERY_NOTES.md",
+    " D PHASE_53A_VALIDATION_REPORT.md",
+    " D PHASE_53B_DELIVERY_NOTES.md",
+    " D PHASE_53B_FILE_MANIFEST.txt",
+    " D PHASE_53B_VALIDATION_REPORT.md",
+    " D PHASE_54_DELETE_MANIFEST.txt",
+    " D PHASE_54_UNTRACK_MANIFEST.txt",
+    " D PHASE_II_01_04_DELIVERY_NOTES.md",
+    " D PHASE_II_01_04_FILE_MANIFEST.txt",
+    " D PHASE_II_01_04_VALIDATION_REPORT.md",
+    " D PHASE_II_05_24_DELIVERY_NOTES.md",
+    " D PHASE_II_05_24_FILE_MANIFEST.txt",
+    " D PHASE_II_05_24_PLAN.md",
+    " D PHASE_II_05_24_VALIDATION_REPORT.md",
+    " D PRODUCTION_GO_LIVE_IMPLEMENTATION_ROADMAP.md",
+    " D PRODUCTION_READINESS_GAPS.md",
+    " D PROJECT_DEV_STATUS_SUMMARY.md",
+    " D SECURITY.md",
+    " D WEBPORTAL_SIMULATOR_SPEC.md",
+    " D apply-phase-ii-01-04.sh",
+    " D apply-phase-ii-05-24.sh",
+    " D apply-phase53a.sh",
+    " D apply-phase53b.sh",
+    " D apply-phases53c-53j.sh",
+    " D apply-phases54a-54j.sh",
+    " D apply-phases55a-55j.sh",
+    " D apply-phases56a-56j.sh",
+    " D apply-phases57a-57j.sh",
+    " D apply-phases58a-58j.sh",
+    " M config/production-environment-contract.yaml",
+    " M docker-compose.yml",
+    " D docs/PHASE_DB_READ_SCALING.md",
+    " D docs/PHASE_II_PLANNING.md",
+    " D docs/aml/SANCTIONS_PROVIDER_ONBOARDING.md",
+    " D docs/api/phase-ii-services.md",
+    " D docs/api/rtp.md",
+    " D docs/architecture/phase-ii-foundation.md",
+    " D docs/assurance/PHASE58_CONTROL_MAP.md",
+    " D docs/certification/PHASE54_CERTIFICATION_ARCHITECTURE.md",
+    " D docs/certification/PHASE54_EVIDENCE_LAYOUT.md",
+    " D docs/checklist-viewer.html",
+    " D docs/control-evidence/phase23-32-control-map.md",
+    " D docs/control-evidence/phase33-42-control-map.md",
+    " D docs/control-evidence/phase43-52-control-map.md",
+    " D docs/database-and-architecture-design.md",
+    " D docs/diagrams/switching-kafka-iso20022-flow-english.png",
+    " D docs/golive/COMMAND_CENTER_AND_ESCALATION.md",
+    " D docs/golive/CUTOVER_CHECKLIST.md",
+    " D docs/golive/HYPERCARE_AND_BAU_HANDOVER.md",
+    " D docs/golive/MASTER_GO_LIVE_RUNBOOK.md",
+    " D docs/golive/ROLLBACK_CHECKLIST.md",
+    " D docs/http-status-guide.md",
+    " D docs/implementation/PHASES_02_TO_04_IMPLEMENTATION.md",
+    " D docs/implementation/PHASES_05_TO_07_IMPLEMENTATION.md",
+    " D docs/implementation/PHASES_09_TO_12_IMPLEMENTATION.md",
+    " D docs/implementation/PHASES_23_32.md",
+    " D docs/implementation/PHASES_33_42.md",
+    " D docs/implementation/PHASES_43_52.md",
+    " D docs/implementation/PHASE_08_BACKUP_PITR_IMPLEMENTATION.md",
+    " D docs/implementation/PHASE_13_RELEASE_INTEGRITY.md",
+    " D docs/implementation/PHASE_16_EVENT_SCHEMA_GOVERNANCE.md",
+    " D docs/manual-curl-testcases.md",
+    " D docs/overall.md",
+    " D docs/p9-api-key-grace-period.md",
+    " D docs/postgres-switching-database-concept.md",
+    " D docs/production-checklist.md",
+    " D docs/risk-register.md",
+    " D docs/runbooks/ALERT_DELIVERY_DRILL.md",
+    " D docs/runbooks/CAPACITY_AUTOSCALING.md",
+    " D docs/runbooks/CERTIFICATE_LIFECYCLE.md",
+    " D docs/runbooks/CONTINUOUS_COMPLIANCE_CONTROLS.md",
+    " D docs/runbooks/CONTROLLED_DECOMMISSIONING.md",
+    " D docs/runbooks/CROSS_SYSTEM_RECONCILIATION.md",
+    " D docs/runbooks/CRYPTOGRAPHIC_ASSET_ROTATION.md",
+    " D docs/runbooks/DATA_LINEAGE_EVIDENCE_CATALOG.md",
+    " D docs/runbooks/DATA_QUALITY_CONTROLS.md",
+    " D docs/runbooks/DECISION_RULE_GOVERNANCE.md",
+    " D docs/runbooks/DOUBLE_ENTRY_LEDGER.md",
+    " D docs/runbooks/FRAUD_VELOCITY_CONTROLS.md",
+    " D docs/runbooks/FX_RATE_GOVERNANCE.md",
+    " D docs/runbooks/INCIDENT_CAPA.md",
+    " D docs/runbooks/INTRADAY_LIQUIDITY.md",
+    " D docs/runbooks/ISO_VALIDATION_PACKS.md",
+    " D docs/runbooks/MANUAL_FINANCIAL_ADJUSTMENTS.md",
+    " D docs/runbooks/MULTI_REGION_READINESS.md",
+    " D docs/runbooks/NOTIFICATION_DELIVERY.md",
+    " D docs/runbooks/OPERATIONS_COMMAND_CENTER.md",
+    " D docs/runbooks/PARTICIPANT_LIFECYCLE_SLA.md",
+    " D docs/runbooks/PAYMENT_FINALITY_DUPLICATE.md",
+    " D docs/runbooks/PHASE54_CERTIFICATION_EXECUTION.md",
+    " D docs/runbooks/PHASE55_PRODUCTION_GOLIVE.md",
+    " D docs/runbooks/PHASE56_DAY2_OPERATIONS.md",
+    " D docs/runbooks/PHASE58_REGULATORY_ECOSYSTEM_ASSURANCE.md",
+    " D docs/runbooks/PHASE_II_CROSS_BORDER_ADAPTERS.md",
+    " D docs/runbooks/PHASE_II_PROMOTION_OPERATIONS.md",
+    " D docs/runbooks/PHASE_II_REPORT_DELIVERY.md",
+    " D docs/runbooks/PHASE_II_RTP_OPERATIONS.md",
+    " D docs/runbooks/PRIVACY_CASE_MANAGEMENT.md",
+    " D docs/runbooks/PRODUCTION_ENVIRONMENT_CONTRACT.md",
+    " D docs/runbooks/RB-01-outbox-backlog-growing.md",
+    " D docs/runbooks/RB-02-transfer-failure-spike.md",
+    " D docs/runbooks/RB-03-connector-timeout-down.md",
+    " D docs/runbooks/RB-04-db-connection-exhausted.md",
+    " D docs/runbooks/RB-05-manual-outbox-retry.md",
+    " D docs/runbooks/RB-06-emergency-rollback.md",
+    " D docs/runbooks/RB-07-production-config-and-kafka.md",
+    " D docs/runbooks/RB-08_MONITORING_AND_API_SLO.md",
+    " D docs/runbooks/RB-09_DATABASE_AND_QUEUE_PRESSURE.md",
+    " D docs/runbooks/RB-10_TRANSACTION_SETTLEMENT_AND_WEBHOOK.md",
+    " D docs/runbooks/RB-11_AML_SANCTIONS_AND_STR.md",
+    " D docs/runbooks/RB-12_BACKUP_PITR_AND_RESTORE.md",
+    " D docs/runbooks/RB-13_PROGRESSIVE_DELIVERY.md",
+    " D docs/runbooks/RB-14_SLO_ERROR_BUDGET.md",
+    " D docs/runbooks/RB-15_DEAD_LETTER_REPLAY.md",
+    " D docs/runbooks/RB-16_DATABASE_LIFECYCLE.md",
+    " D docs/runbooks/RB-17_RETENTION_AND_LEGAL_HOLD.md",
+    " D docs/runbooks/RB-18_BREAK_GLASS_ACCESS.md",
+    " D docs/runbooks/RB-19_FOUR_EYES_CONFIGURATION.md",
+    " D docs/runbooks/RB-20_PARTICIPANT_CERTIFICATION.md",
+    " D docs/runbooks/REGULATORY_REPORTING.md",
+    " D docs/runbooks/RELEASE_FREEZE_CALENDAR.md",
+    " D docs/runbooks/RTP_REQUEST_SERVICE.md",
+    " D docs/runbooks/RUNTIME_EVIDENCE_AND_GOLIVE.md",
+    " D docs/runbooks/SETTLEMENT_CALENDAR_CUTOFF.md",
+    " D docs/runbooks/SETTLEMENT_EVIDENCE_LEDGER.md",
+    " D docs/runbooks/SYNTHETIC_MONITORING.md",
+    " D docs/runbooks/TARIFF_FEE_GOVERNANCE.md",
+    " D docs/runbooks/THIRD_PARTY_DEPENDENCY_SLA.md",
+    " D docs/runbooks/TRANSACTION_LIMIT_ENTITLEMENT.md",
+    " D docs/runbooks/V83_SCHEMA_ALIGNMENT.md",
+    " D docs/runbooks/WEBHOOK_SECRET_ENCRYPTION_AND_ROTATION.md",
+    " D docs/runbooks/enterprise/ANOMALY_RESPONSE.md",
+    " D docs/runbooks/enterprise/CONTINUOUS_RECERTIFICATION.md",
+    " D docs/runbooks/enterprise/DATA_LIFECYCLE_AND_LEGAL_HOLD.md",
+    " D docs/runbooks/enterprise/DEPENDENCY_DEGRADED_MODE.md",
+    " D docs/runbooks/enterprise/ENTERPRISE_CERTIFICATION.md",
+    " D docs/runbooks/enterprise/FINANCIAL_INTEGRITY_INCIDENT.md",
+    " D docs/runbooks/enterprise/FRAUD_AML_CASE_ROUTING.md",
+    " D docs/runbooks/enterprise/MULTI_REGION_DR.md",
+    " D docs/runbooks/enterprise/PHASE57_MASTER_RUNBOOK.md",
+    " D docs/runbooks/enterprise/SELF_SERVICE_OPERATION.md",
+    " D docs/runbooks/enterprise/VULNERABILITY_LIFECYCLE.md",
+    " D docs/runbooks/security/credential-compromise.md",
+    " D docs/runbooks/security/data-exfiltration.md",
+    " D docs/runbooks/security/production-pod-compromise.md",
+    " D docs/runbooks/security/suspicious-admin-access.md",
+    " D docs/runbooks/security/transaction-fraud-spike.md",
+    " D docs/runbooks/templates/BACKUP_RESTORE_DRILL_SIGNOFF.md",
+    " D docs/security/CI_SECURITY_GATES.md",
+    " D docs/security/GIT_HISTORY_PURGE_RUNBOOK.md",
+    " D docs/security/KEY_ROTATION_AND_AUDIT_INTEGRITY.md",
+    " D docs/security/REPOSITORY_SECURITY_CLEANUP.md",
+    " M docs/security/SECRET_ROTATION_CHECKLIST.md",
+    " D docs/security/VAULT_EXTERNAL_SECRETS_RUNBOOK.md",
+    " D docs/security/WEBHOOK_SSRF_AND_EGRESS.md",
+    " D docs/templates/PHASE54_GO_LIVE_SIGNOFF.md",
+    " D docs/templates/PHASE55_POST_IMPLEMENTATION_REVIEW.md",
+    " D docs/templates/PRODUCTION_GO_LIVE_SIGNOFF.md",
+    " D docs/templates/V83_SCHEMA_ALIGNMENT_EVIDENCE.md",
+    " D docs/templates/autoscaling_policy.example.yaml",
+    " D docs/templates/capacity_observations.example.json",
+    " D docs/templates/data_lineage.example.json",
+    " D docs/templates/decision_rule_golden_cases.example.json",
+    " D docs/templates/decision_rule_golden_results.example.json",
+    " D docs/templates/decision_rule_manifest.example.json",
+    " D docs/templates/decommission_plan.example.yaml",
+    " D docs/templates/hpa.phase43-52.example.yaml",
+    " D docs/templates/incident_postmortem.md",
+    " D docs/templates/iso_validation_pack_manifest.json"
+  ]
+}

@@ -41,6 +41,8 @@ run 10-phase68-preflight          "Action #10 — Phase 68A-68J UAT activation a
 run 11-phase71-preflight          "Action #11 — Phase 71A-71J UAT certification closure preflight"
 run 14-phase74-uat-runtime-closure "Action #14 — Phase 74 UAT runtime certification closure preflight"
 run 15-phase75-production-handoff "Action #15 — Phase 75 Phase 54 acceptance and production handoff preflight"
+run 16-phase78-final-uat-execution "Action #16 — Phase 78 final UAT execution closure preflight"
+run 17-phase79-production-golive "Action #17 — Phase 79 production Go-Live preflight"
 
 echo
 echo "=========================================="

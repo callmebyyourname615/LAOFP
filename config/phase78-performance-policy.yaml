@@ -1,0 +1,8 @@
+version: 1
+scenarios:
+  smoke: {tps: 100, durationMinutes: 5, p95Ms: 200, maxErrorRate: 0.0}
+  sustained2k: {tps: 2000, durationMinutes: 30, p95Ms: 300, maxErrorRate: 0.001}
+  sustained10k: {tps: 10000, durationMinutes: 60, p95Ms: 500, maxErrorRate: 0.001}
+  burst20k: {tps: 20000, durationMinutes: 15, maxErrorRate: 0.005}
+  soak: {tps: 5000, durationHours: 8, requireNoLeak: true}
+settlementTransactions: 500000

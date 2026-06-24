@@ -1,0 +1,205 @@
+{
+  "artifacts": [
+    {
+      "bytes": 131,
+      "path": "artifacts/release-baseline.json",
+      "sha256": "2bb19f1794fe02a55cc37dad49c9088775c6d9737221f46282841eaf274d9bda"
+    },
+    {
+      "bytes": 133,
+      "path": "logs/80A.log",
+      "sha256": "fb916d4edf58c075008b5ead8c38fb8cfebd2fe550024a92d6d5d022b2a4da9d"
+    },
+    {
+      "bytes": 104,
+      "path": "logs/80B.log",
+      "sha256": "b8b4b8828316759263e1c93c232f459eb8c67e81222caf8bad5a5d58e7875cdd"
+    },
+    {
+      "bytes": 94,
+      "path": "logs/80C.log",
+      "sha256": "f2a4b1ea7faa5b29993776c40a1e41d4b1953bfbcdd3073025633536a9a929bb"
+    },
+    {
+      "bytes": 86,
+      "path": "logs/80D.log",
+      "sha256": "b10bc5dd43950180bb86f06baf010112c991490e774f2560d18ca1648d4b0d08"
+    },
+    {
+      "bytes": 100,
+      "path": "logs/80E.log",
+      "sha256": "ad1c687f25bd21449be8c4bf4947d16d7049e73c5ba6111174b350113342a319"
+    },
+    {
+      "bytes": 85,
+      "path": "logs/80F.log",
+      "sha256": "d539523c6b826b404271c2bdf49ff4cc3888c2c36e384c8aa85e66f572466e6d"
+    },
+    {
+      "bytes": 97,
+      "path": "logs/80G.log",
+      "sha256": "1bbebc9575da2fc27ff706e0cea384f94f7de2a0a0345a6ddacd98f020a120c5"
+    },
+    {
+      "bytes": 104,
+      "path": "logs/80H.log",
+      "sha256": "4e6baa155729ebcc3d7f11bf82dc00bde922db8734f559331cc2bb3eee379f72"
+    },
+    {
+      "bytes": 98,
+      "path": "logs/80I.log",
+      "sha256": "2491bc061aee519623613cfaf793de016ae855d7e01eba4303b9620f29c7ccad"
+    },
+    {
+      "bytes": 369,
+      "path": "results/80A.json",
+      "sha256": "e87630fb517391ae2bd5ac19c34fd5570d9b05ef2fad9c6ae0c475dd8b63cc66"
+    },
+    {
+      "bytes": 340,
+      "path": "results/80B.json",
+      "sha256": "30ec1783bf806ffbefa2d6b7299e8f0a3f46164d7487914b85ca52e41ba3c5a8"
+    },
+    {
+      "bytes": 330,
+      "path": "results/80C.json",
+      "sha256": "a00976afdb50f5c7e60d19d8f41629f00f4a4270e048a141dc01a5d04cf88e7d"
+    },
+    {
+      "bytes": 322,
+      "path": "results/80D.json",
+      "sha256": "63ea9f587f39986b5af1604fe9d49661e4c0a8b4cb686ea581c02801571b5b75"
+    },
+    {
+      "bytes": 336,
+      "path": "results/80E.json",
+      "sha256": "11b215ba24326dccb532666c652ecc70a15e65357959709d1bad333b582256ad"
+    },
+    {
+      "bytes": 321,
+      "path": "results/80F.json",
+      "sha256": "1738652e8fcdf4f351da4614a12bd7ef6de305c7f0f114a4c52a653ed62cfe7a"
+    },
+    {
+      "bytes": 333,
+      "path": "results/80G.json",
+      "sha256": "8c46e7d6b9ab1d19cadcfb210565fe7afa2c1ec66f1e7db456c5a3f2333cf8ee"
+    },
+    {
+      "bytes": 340,
+      "path": "results/80H.json",
+      "sha256": "093b4eede4a86547891cd51c8590e0175b2b90979bf890b39198921f9a5ca44f"
+    },
+    {
+      "bytes": 334,
+      "path": "results/80I.json",
+      "sha256": "fb378fbb4405b5f620169d79f34dc88925ab1679212192ccffd73f234b662a12"
+    }
+  ],
+  "controls": [
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:28.995791Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "baseline scanner ready; current archive has V101__smos_security_hardening.sql / 96 migrations",
+      "mode": "preflight",
+      "phase": "80A",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:30.318171Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "build verification commands validated; not executed in preflight",
+      "mode": "preflight",
+      "phase": "80B",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:31.562765Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "UAT probes configured; runtime endpoints not contacted",
+      "mode": "preflight",
+      "phase": "80C",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:32.873998Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "performance campaign defined; load not started",
+      "mode": "preflight",
+      "phase": "80D",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:34.149511Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "settlement and reconciliation proof ready; no data generated",
+      "mode": "preflight",
+      "phase": "80E",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:35.363299Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "backup/PITR hooks ready; no restore performed",
+      "mode": "preflight",
+      "phase": "80F",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:36.578390Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "DR/chaos campaign ready; blast-radius actions not started",
+      "mode": "preflight",
+      "phase": "80G",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:37.838178Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "secret ceremony guardrails ready; no credentials/history changed",
+      "mode": "preflight",
+      "phase": "80H",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    },
+    {
+      "environment": "uat",
+      "generatedAt": "2026-06-24T02:11:39.047727Z",
+      "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+      "message": "security and alert hooks ready; no live identities changed",
+      "mode": "preflight",
+      "phase": "80I",
+      "runId": "implementation-preflight",
+      "status": "PREPARED",
+      "synthetic": false
+    }
+  ],
+  "decision": "PREPARED",
+  "generatedAt": "2026-06-24T02:11:40.421057Z",
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "mode": "preflight",
+  "syntheticEvidenceCount": 0
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "phase",
+    "status",
+    "exitCode",
+    "message",
+    "startedAt",
+    "finishedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "phase": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "PREPARED",
+        "BLOCKED",
+        "FAIL"
+      ]
+    },
+    "exitCode": {
+      "type": "integer"
+    },
+    "message": {
+      "type": "string"
+    },
+    "startedAt": {
+      "type": "string"
+    },
+    "finishedAt": {
+      "type": "string"
+    }
+  }
+}

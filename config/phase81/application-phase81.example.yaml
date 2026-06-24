@@ -1,0 +1,23 @@
+switching:
+  phase81:
+    dashboards:
+      enabled: false
+    dr:
+      last-backup-at: ''
+      last-restore-at: ''
+      last-drill-at: ''
+      observed-rpo-minutes: 999999
+      observed-rto-minutes: 999999
+      offsite-copy-verified: false
+    bau:
+      enabled: false
+      release-id: unassigned
+      hypercare-started-at: null
+      jobs:
+        reconciliation: false
+        slo: false
+        backupFreshness: false
+        secretExpiry: false
+        capacity: false
+        quotaMonitoring: false
+        readinessScorecard: false

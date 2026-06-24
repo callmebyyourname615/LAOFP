@@ -1,0 +1,10 @@
+{
+  "endpoints": [
+    "/api/dashboard/dr",
+    "/api/dashboard/infrastructure",
+    "/api/dashboard/participants",
+    "/api/dashboard/transactions"
+  ],
+  "errors": [],
+  "passed": true
+}

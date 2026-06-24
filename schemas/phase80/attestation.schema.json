@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "type",
+    "approved",
+    "synthetic",
+    "gitCommit",
+    "signers"
+  ],
+  "properties": {
+    "type": {
+      "enum": [
+        "backup",
+        "dr",
+        "secret",
+        "security"
+      ]
+    },
+    "approved": {
+      "type": "boolean"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "gitCommit": {
+      "type": "string"
+    },
+    "signers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "financialMismatch": {
+      "type": "number"
+    },
+    "transactionLoss": {
+      "type": "number"
+    }
+  }
+}

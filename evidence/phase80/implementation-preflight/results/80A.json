@@ -1,0 +1,11 @@
+{
+  "environment": "uat",
+  "generatedAt": "2026-06-24T02:11:28.995791Z",
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "baseline scanner ready; current archive has V101__smos_security_hardening.sql / 96 migrations",
+  "mode": "preflight",
+  "phase": "80A",
+  "runId": "implementation-preflight",
+  "status": "PREPARED",
+  "synthetic": false
+}

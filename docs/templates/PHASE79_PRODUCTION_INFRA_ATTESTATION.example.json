@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "kind": "production-infrastructure",
+  "status": "REPLACE_ME",
+  "environment": "production",
+  "executedAt": "REPLACE_ME",
+  "operator": "REPLACE_ME",
+  "commit": "REPLACE_ME",
+  "applicationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "migrationImageDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "approvals": [
+    {
+      "role": "engineering",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    },
+    {
+      "role": "qa",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    },
+    {
+      "role": "security",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    },
+    {
+      "role": "sre",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    },
+    {
+      "role": "product",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    },
+    {
+      "role": "change-manager",
+      "name": "REPLACE_ME",
+      "approvedAt": "REPLACE_ME"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "REPLACE_ME",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+version: 1
+modes: [preflight, full]
+full_mode_confirmations:
+  load_tests: PHASE80_ALLOW_LOAD_TESTS
+  settlement_benchmark: PHASE80_ALLOW_SETTLEMENT_BENCHMARK
+  restore_drill: PHASE80_ALLOW_RESTORE_DRILL
+  chaos: PHASE80_ALLOW_CHAOS
+  history_rewrite: PHASE80_ALLOW_HISTORY_REWRITE
+thresholds:
+  smoke_p95_ms_exclusive: 200
+  sustained_2k_p95_ms_exclusive: 300
+  sustained_10k_p95_ms_exclusive: 500
+  burst_20k_error_rate_exclusive: 0.005
+  rpo_minutes_exclusive: 5
+  rto_minutes_exclusive: 30
+non_waivable:
+  - transaction_loss
+  - financial_mismatch
+  - duplicate_posting
+  - unsigned_release
+  - secret_leak
+  - restore_failure

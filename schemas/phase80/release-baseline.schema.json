@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "migrationCount",
+    "latestMigration",
+    "gitCommit"
+  ],
+  "properties": {
+    "migrationCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "latestMigration": {
+      "type": "string"
+    },
+    "gitCommit": {
+      "type": "string"
+    }
+  }
+}

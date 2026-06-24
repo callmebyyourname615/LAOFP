@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "decision",
+    "gitCommit",
+    "mode",
+    "syntheticEvidenceCount",
+    "controls",
+    "artifacts"
+  ],
+  "properties": {
+    "decision": {
+      "enum": [
+        "PREPARED",
+        "BLOCKED",
+        "NO_GO",
+        "GO_PHASE54",
+        "GO_PRODUCTION_CANARY"
+      ]
+    },
+    "gitCommit": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "preflight",
+        "full"
+      ]
+    },
+    "syntheticEvidenceCount": {
+      "type": "integer"
+    },
+    "controls": {
+      "type": "array"
+    },
+    "artifacts": {
+      "type": "array"
+    }
+  }
+}

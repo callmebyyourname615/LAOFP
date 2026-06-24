@@ -1,0 +1,7 @@
+version: 1
+environment: production
+canaryStages: [5, 25, 50, 100]
+requiredApprovals: [engineering, qa, security, sre, product, change-manager]
+abortOn: [financial-mismatch, duplicate-posting, security-breach, migration-inconsistency, unbounded-backlog]
+hypercareDays: 14
+requireImmutableReleaseCandidate: true

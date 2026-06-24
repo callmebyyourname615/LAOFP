@@ -1,0 +1,44 @@
+name: Phase 80 Authoritative UAT
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [preflight, full]
+        default: preflight
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/verify_phase80_static.py
+      - run: scripts/phase80/run_phase80.sh preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase80-preflight
+          path: evidence/phase80
+  full:
+    if: inputs.mode == 'full'
+    environment: uat-authoritative
+    runs-on: [self-hosted, uat]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute protected full campaign
+        env:
+          PHASE80_MODE: full
+          PHASE80_RELEASE_IMAGE_DIGEST: ${{ vars.RELEASE_IMAGE_DIGEST }}
+          PHASE80_APP_BASE_URL: ${{ vars.APP_BASE_URL }}
+          PHASE80_PRIMARY_DB_URL: ${{ secrets.PRIMARY_DB_URL }}
+          PHASE80_REPLICA_DB_URL: ${{ secrets.REPLICA_DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: scripts/phase80/run_phase80.sh full
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase80-runtime-evidence
+          path: evidence/phase80

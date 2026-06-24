@@ -1,0 +1,6 @@
+switching:
+  phase80:
+    environment: uat
+    execution-enabled: false
+    require-non-synthetic-evidence: true
+    require-commit-match: true

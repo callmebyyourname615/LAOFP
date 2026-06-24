@@ -1,0 +1,7 @@
+version: 1
+maximumRpoMinutes: 5
+maximumRtoMinutes: 30
+requireFailback: true
+requireNoTransactionLoss: true
+requireOutboxReplay: true
+requiredChaosScenarios: [pod, database, kafka, object-storage, external-api, dns, cpu, memory]

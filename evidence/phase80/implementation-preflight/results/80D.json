@@ -1,0 +1,11 @@
+{
+  "environment": "uat",
+  "generatedAt": "2026-06-24T02:11:32.873998Z",
+  "gitCommit": "f5a2453e92eaed0e53801c23514c79c1bb8492e4",
+  "message": "performance campaign defined; load not started",
+  "mode": "preflight",
+  "phase": "80D",
+  "runId": "implementation-preflight",
+  "status": "PREPARED",
+  "synthetic": false
+}

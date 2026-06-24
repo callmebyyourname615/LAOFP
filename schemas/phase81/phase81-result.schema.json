@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "phase",
+    "status",
+    "mode",
+    "runId",
+    "gitCommit",
+    "synthetic"
+  ],
+  "properties": {
+    "phase": {
+      "pattern": "^81[A-J]$"
+    },
+    "status": {
+      "enum": [
+        "PREPARED",
+        "PASS",
+        "BLOCKED",
+        "FAIL"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "preflight",
+        "full"
+      ]
+    },
+    "runId": {
+      "type": "string"
+    },
+    "gitCommit": {
+      "type": "string"
+    },
+    "synthetic": {
+      "type": "boolean"
+    }
+  }
+}

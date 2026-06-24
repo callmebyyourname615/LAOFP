@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "kind",
+    "status",
+    "environment",
+    "executedAt",
+    "operator",
+    "approvals",
+    "evidence"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "type": "string"
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "environment": {
+      "type": "string"
+    },
+    "commit": {
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "applicationImageDigest": {
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "migrationImageDigest": {
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "approvals": {
+      "type": "array",
+      "minItems": 2
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1
+    }
+  }
+}

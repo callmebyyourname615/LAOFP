@@ -1,0 +1,9 @@
+version: 1
+environment: uat
+minimumApplicationReplicas: 4
+minimumKafkaBrokers: 3
+stabilityHours: 24
+requireImageDigests: true
+requireTls: true
+requireVaultSecrets: true
+requirePrimaryReplicaProof: true
