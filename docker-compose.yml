@@ -259,6 +259,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      # Rate limit override — default 100/min is too low for E2E test runs that
+      # share BANK_A_KEY across 100+ sequential POSTs. Override via .env.
+      RATE_LIMIT_RPM: ${RATE_LIMIT_RPM:-100}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
       # HOT primary datasource: writes and strongly-consistent reads.
       DB_URL: jdbc:postgresql://postgres:5432/switching_db
       DB_USERNAME: switching_app

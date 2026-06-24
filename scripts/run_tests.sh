@@ -9,8 +9,16 @@
 #    ./scripts/run_tests.sh --wait --timeout 120     # custom wait timeout (seconds)
 #    ./scripts/run_tests.sh --with-junit             # run Maven full suite, then HTTP smoke
 #    ./scripts/run_tests.sh --junit-only             # run Maven full suite only
+#    ./scripts/run_tests.sh --skip-rate-limit        # skip section 18 (rate-limit test)
 #
 #  Requires: curl, jq
+#
+#  IMPORTANT: With the default RATE_LIMIT_RPM=100, this script will trigger
+#  ~25 false-positive HTTP 429 failures because sections 4-17 emit more than
+#  100 POST/min with BANK_A_KEY. To run cleanly:
+#    RATE_LIMIT_RPM=10000 docker compose up -d --force-recreate app
+#    ./scripts/run_tests.sh
+#  Or pass --skip-rate-limit and run section 18 separately with default limits.
 # =============================================================================
 
 # ── Argument parsing ──────────────────────────────────────────────────────────
@@ -18,16 +26,31 @@ WAIT_FOR_APP=false
 WAIT_TIMEOUT=60
 WITH_JUNIT=false
 JUNIT_ONLY=false
+SKIP_RATE_LIMIT=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --wait|-w)       WAIT_FOR_APP=true; shift ;;
-    --timeout|-t)    WAIT_TIMEOUT="$2"; shift 2 ;;
-    --with-junit)    WITH_JUNIT=true; shift ;;
-    --junit-only)    WITH_JUNIT=true; JUNIT_ONLY=true; shift ;;
-    *)               shift ;;   # ignore unknown flags (e.g. -d passed by mistake)
+    --wait|-w)              WAIT_FOR_APP=true; shift ;;
+    --timeout|-t)           WAIT_TIMEOUT="$2"; shift 2 ;;
+    --with-junit)           WITH_JUNIT=true; shift ;;
+    --junit-only)           WITH_JUNIT=true; JUNIT_ONLY=true; shift ;;
+    --skip-rate-limit|-srl) SKIP_RATE_LIMIT=true; shift ;;
+    *)                      shift ;;   # ignore unknown flags
   esac
 done
+
+# ── Warn if rate limit is at the default 100/min (will fail ~25 tests) ───────
+RATE_LIMIT_RPM_DEFAULT=100
+if [ -z "${RATE_LIMIT_NOTICE_SUPPRESS:-}" ]; then
+  echo ""
+  echo "⚠  Rate-limit notice: this script makes >100 POST/min with BANK_A_KEY."
+  echo "   Default app limit (RATE_LIMIT_RPM=${RATE_LIMIT_RPM_DEFAULT}) will reject ~25 tests with HTTP 429."
+  echo "   To run cleanly, restart the app with a higher limit:"
+  echo "     RATE_LIMIT_RPM=10000 docker compose up -d --force-recreate app"
+  echo "   Then re-run this script. Or pass --skip-rate-limit to skip section 18."
+  echo "   (set RATE_LIMIT_NOTICE_SUPPRESS=1 to hide this notice next time)"
+  echo ""
+fi
 
 # ── Dependencies check ───────────────────────────────────────────────────────
 for cmd in curl jq; do
@@ -1481,6 +1504,12 @@ fi
 section "18. Rate Limiting (runs last — exhausts BANK_A_KEY for this minute)"
 # =============================================================================
 
+if [ "$SKIP_RATE_LIMIT" = "true" ]; then
+  skip "TC-070" "Rate limit section skipped (--skip-rate-limit)"
+  skip "TC-071" "Rate limit section skipped (--skip-rate-limit)"
+  skip "TC-072" "Rate limit section skipped (--skip-rate-limit)"
+else
+
 warn "Sending up to 120 POST requests to trigger rate limit (100 req/min)..."
 info "This may take 10-15 seconds..."
 
@@ -1541,6 +1570,8 @@ if [ "$GET_429_HIT" = "0" ]; then
 else
   fail "TC-072" "GET request returned 429 — unexpected behavior"
 fi
+
+fi  # end of: if [ "$SKIP_RATE_LIMIT" = "true" ]
 
 # =============================================================================
 # FINAL SUMMARY
