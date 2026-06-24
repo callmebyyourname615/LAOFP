@@ -1,3 +1,0 @@
-# Files to remove from the target repository if still tracked
-.env.bak
-new.txt

@@ -1,5 +1,0 @@
-# Phase 60A–60J deletion manifest
-# Baseline: 95ea6eea3f1b28748c45ca6a1316cf8ea7d1b4c6
-# Generated: 2026-06-22T09:09:28Z
-.env.bak
-new.txt

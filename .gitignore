@@ -78,3 +78,15 @@ backup/evidence/
 dr/evidence/
 monitoring/evidence/
 compliance/evidence/
+
+# Phase merge artifacts at repo root (build byproducts, not source)
+/PHASE*_CHANGED_FILES_MANIFEST.txt
+/PHASE*_DELETE_MANIFEST.txt
+/PHASE*_PACKAGE_MANIFEST.txt
+/PHASE*_VALIDATION.log
+/PHASE*_PREFLIGHT.log
+/MAVEN_*.log
+/MAVEN_*.txt
+/CHANGED_FILES_MANIFEST.txt
+/GO_LIVE_DELETE_MANIFEST.txt
+/.env.bak

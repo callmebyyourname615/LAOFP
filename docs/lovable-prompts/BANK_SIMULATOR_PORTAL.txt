@@ -1,0 +1,196 @@
+BUILD: Bank Simulator Portal for LaoFPS Switching UAT
+GOAL: Visual-complete frontend (all pages, all states). No real backend — mock everything with local state + setTimeout. I'll wire APIs later.
+
+ROLE
+A bank operator pretends their browser tab IS a member bank (BANK_A or BANK_B) connected to the Switching national payment switch. They can flip the tab to act as Source (originating payments) OR Destination (receiving inquiries + credits + webhooks), fire N transactions at the switch with a chosen rate, and watch results stream in.
+
+THEME
+Modern dark, minimal, clean. No gradients, no emojis in UI. Inter for body, JetBrains Mono for IDs/amounts/payloads.
+
+DESIGN TOKENS (use these exact CSS vars)
+  --bg-canvas: #0A0B0F
+  --bg-surface: #12141A
+  --bg-elevated: #1A1D26
+  --border-subtle: #232733
+  --border-strong: #2E3340
+  --text-primary: #E8EAED
+  --text-secondary: #9AA0A6
+  --text-tertiary: #5F6368
+  --accent: #4F8CFF        (Bank Simulator brand)
+  --success: #22C55E
+  --warn:    #F59E0B
+  --error:   #EF4444
+  --mono: 'JetBrains Mono', monospace
+  --sans: 'Inter', system-ui, sans-serif
+  Radius: 8px cards, 6px buttons, 4px chips
+  Shadow: none on dark; use border-strong for separation
+
+LAYOUT
+- Left sidebar 240px: brand "BankSim" + nav. Collapsible to 64px icons.
+- Top bar 56px: env switcher (UAT-200 / Localhost), current role chip
+  (Source: BANK_A / Destination: BANK_B), connection dot (green/red).
+- Main: 24px padding, max-width 1440 centered.
+
+NAV (sidebar)
+  1. Dashboard
+  2. Profile (this bank's identity)
+  3. Send  (Source mode)
+  4. Receive (Destination mode)
+  5. Transactions
+  6. Webhooks
+  7. Load Generator
+  8. Settings
+
+PAGE 1 — DASHBOARD
+- 4 stat cards: Total Sent (24h), Success Rate %, Avg Latency ms,
+  Webhooks Received. Sparkline on each.
+- Two side-by-side panels:
+    LEFT  "Live Activity" — auto-scrolling table of last 20 events
+          (timestamp · type · counterparty · amount · status chip)
+    RIGHT "Connection Health" — pings to switch every 5s, shows
+          last 10 in a tiny dot timeline.
+- Bottom: "Current Role" big card with two big toggles
+  [ I am SOURCE BANK ]  [ I am DESTINATION BANK ]  (only one active).
+
+PAGE 2 — PROFILE (Bank Identity)
+Form with these fields, all editable:
+  Bank code        BANK_A   (chip-style picker: BANK_A / BANK_B / custom)
+  Bank name        Bank of Alpha
+  BIC              ALPHALAXXX
+  Country          LA (read-only)
+  Default currency LAK
+  Default debtor account     010100000001
+  Default creditor account   020200000001
+  API key                    sk-bank-a-switching-2026  (masked, click to reveal)
+  Webhook receive URL        https://this-bank.local/webhooks  (editable)
+Save button → toast "Profile saved (local only)".
+
+PAGE 3 — SEND (Source mode)
+Three tabs at top: [ Inquiry ] [ Transfer ] [ ISO 20022 XML ]
+Each tab is a single form + a "Send" button. After send, show response
+card on the right (status code, latency, full JSON/XML body, copy btn).
+Inquiry form:
+  Counterparty bank   [BANK_B ▾]
+  Creditor account    020200000001
+  Amount              150,000.00 LAK
+  Idempotency key     auto (regenerate btn)
+Transfer form:
+  Inquiry ref         (auto-fill from last inquiry, or paste)
+  Debtor account      010100000001
+  Creditor account    020200000001
+  Amount              150,000.00 LAK
+  Remittance info     "Test from BankSim"
+ISO 20022 tab:
+  Big monospace textarea pre-filled with sample ACMT.023 XML.
+  "Validate" + "Send" buttons.
+All three forms keep a 10-item history dropdown below the Send button
+for quick replay.
+
+PAGE 4 — RECEIVE (Destination mode)
+- Big status banner: "Listening as BANK_B — waiting for inquiries".
+- Three columns:
+    Pending Inquiries   (cards, Approve / Reject buttons per card)
+    Approved Credits    (read-only, scrolling)
+    Rejected            (with reason chip)
+- Bottom: "Auto-respond" toggle. When on, dropdown of preset
+  responses: [Always MTCH] [Always NMTC] [Random 80/20] [Manual].
+- Each inquiry card shows: time, source bank, amount, creditor acct,
+  buttons. Clicking opens drawer with full JSON.
+
+PAGE 5 — TRANSACTIONS
+Filterable table:
+  Filters across top: role (sent/received), type (inquiry/transfer/iso),
+  status (success/fail/pending), date range, counterparty, free-text ref.
+Columns: timestamp · direction (up/down arrow) · type · ref · counterparty · amount · status · latency · actions (view / replay).
+Row click → side drawer with request + response in two tabs.
+Bulk select → "Replay selected" button.
+
+PAGE 6 — WEBHOOKS
+- Top: registered webhook URL + "Rotate secret" button.
+- Live console (terminal-style, monospace, dark): incoming POSTs from
+  the switch, newest at top, signature verification status chip.
+- Filter chips: payment.completed | payment.failed | inquiry.resolved.
+- Each row expands to show: headers, body (JSON syntax-highlighted),
+  signature header, our computed signature for compare.
+
+PAGE 7 — LOAD GENERATOR  (the highlight)
+Single card, three sliders + run button:
+  Burst size       [—•—————] 100 transactions   (range 1 – 5,000)
+  Rate             [—•—————] 10 TPS              (range 1 – 1,000)
+  Mode             ( ) Inquiry only
+                   (•) Inquiry + Transfer (paired)
+                   ( ) ISO 20022 mix
+  Target direction (•) As Source → switch
+                   ( ) As Destination ← switch (replays prior)
+Below sliders, two summary chips: "Estimated duration: 10 s",
+"Estimated payload size: 4 MB".
+[ START RUN ] big button.
+While running:
+  - Top bar shows progress bar + cancel button.
+  - Live stats: sent · success · failed · 429 · avg latency · p95.
+  - Live histogram of latencies (200ms buckets).
+  - Auto-stop on N failures (configurable).
+Past runs list at bottom of page (collapsible), click → drill into a run.
+
+PAGE 8 — SETTINGS
+Sections:
+  Connection
+    Base URL          http://175.11.0.200:8080    (editable)
+    Connect timeout   3000 ms
+    Read timeout      10000 ms
+    Verify SSL        toggle
+  Behavior
+    Default rate-limit awareness toggle (slow down on 429)
+    Auto-retry failed (count, backoff)
+  Data
+    Export all local history (JSON download)
+    Clear local history (destructive, confirm modal)
+  About
+    Build info, theme version, link to repo.
+
+GLOBAL COMPONENTS
+- Status chip: success/warn/error/pending — pill, 12px text, mono ref.
+- Code block: monospace, line numbers, copy-to-clipboard on hover.
+- Toast: top-right, auto-dismiss 4s, dark with accent left border.
+- Drawer: right-side 480px, click outside to close.
+- Empty states: small monochrome icon + one sentence + suggested action.
+
+STATE / DATA (this iteration is pure frontend)
+- Persist Profile + Settings + last 200 transactions in localStorage.
+- All "API calls" go through a single fetch wrapper that, when
+  Settings.useMock=true (default), returns a mock response after a
+  realistic delay (50–250ms randomized).
+- Provide a tiny mockAdapter.ts with these mocks:
+    POST /api/inquiries     -> 200 {inquiryRef, status:"MTCH"}
+    POST /api/transfers     -> 200 {transferRef, status:"ACCEPTED"}
+    POST /api/iso20022/...  -> 200 (returns XML string)
+    GET  /actuator/health   -> 200 {status:"UP"}
+- Hook this so flipping Settings.useMock=false will hit the real URL
+  later without any UI changes.
+
+STRETCH (only if time allows AFTER all pages are visually complete)
+- Dark/light theme toggle (default dark).
+- Keyboard shortcut palette (Cmd+K).
+- Real WebSocket subscription on Receive page.
+
+DO
+- Build all 8 pages with realistic placeholder data so the app feels
+  alive on first load.
+- Use react-router for nav, zustand or context for state.
+- Use shadcn/ui primitives + Tailwind. No heavy chart libs — recharts
+  is fine for sparkline and histogram.
+
+DO NOT
+- Do not add a login screen.
+- Do not add multi-tenant or org switcher.
+- Do not add internationalization yet.
+- Do not include emojis in the UI.
+- Do not write a backend — everything mocked client-side.
+
+ACCEPTANCE
+- All 8 nav items render their page without console errors.
+- Toggling SOURCE/DESTINATION changes the chip in the top bar
+  immediately and persists across reloads.
+- Load Generator runs visibly to completion against the mock adapter
+  and shows a completed run in "Past runs".
+- Settings.useMock toggle is wired (even though we keep it true).
