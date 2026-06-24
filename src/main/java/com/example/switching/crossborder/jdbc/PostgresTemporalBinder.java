@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 /** PostgreSQL JDBC helpers for unambiguous timestamptz parameters. */
 public final class PostgresTemporalBinder {
@@ -17,6 +19,11 @@ public final class PostgresTemporalBinder {
             statement.setNull(index, Types.TIMESTAMP_WITH_TIMEZONE);
             return;
         }
-        statement.setObject(index, instant, Types.TIMESTAMP_WITH_TIMEZONE);
+        // PostgreSQL JDBC driver cannot bind java.time.Instant directly to TIMESTAMPTZ;
+        // convert to OffsetDateTime in UTC first (proven pattern in JdbcTemporalBinder).
+        statement.setObject(
+                index,
+                OffsetDateTime.ofInstant(instant, ZoneOffset.UTC),
+                Types.TIMESTAMP_WITH_TIMEZONE);
     }
 }

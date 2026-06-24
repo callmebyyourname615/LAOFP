@@ -91,6 +91,7 @@
 - [x] Add `provider_uid` seed in `SanctionsScreeningIntegrationTest` (Phase 65A)
 - [x] Fix FK cleanup order in `OperationsGenerateRoutesForBankIntegrationTest` (Phase 69)
 - [x] Fix cross-border JDBC temporal binding with `JdbcTemporalBinder` (Phase 71)
+- [x] Fix Instant → TIMESTAMPTZ binding in `PostgresTemporalBinder` (P0.1 bug e — closes the final mvn-verify root cause). See [docs/BUG_E_INSTANT_SQL_TYPE_CHECKLIST.md](BUG_E_INSTANT_SQL_TYPE_CHECKLIST.md).
 - [ ] **Run `./mvnw verify` → 0 errors, 0 failures**
 - [ ] **Run `./scripts/execute-and-verify/00-run-all.sh` → all steps green**
 
