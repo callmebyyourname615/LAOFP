@@ -1,6 +1,6 @@
 # Go-Live Critical Path — Master Checklist
 
-> **Last updated:** 2026-06-23 (Phase 74-77 merged — commit `ba1f5a0`)
+> **Last updated:** 2026-06-24 (Phase 78-81 merged + P0.1 bug (e) closed — commits `1762c76`, `6b0b50a`)
 > **Audience:** Engineering, QA, SecOps, SRE, Change Manager
 > **Purpose:** Single checklist สำหรับพา Switching ขึ้น production
 > **Convention:**
@@ -16,7 +16,7 @@
 | Section | Progress | Note |
 |---|---|---|
 | 1. Code Foundation | 🟢 **100%** | 99 migrations (V1–V106) |
-| 2. P0 Critical Fixes | 🟡 **95%** | 4/5 test bugs fixed (Phase 65/69) |
+| 2. P0 Critical Fixes | 🟢 **100%** | All 5 test bug root causes fixed (Phase 65 / 69 / bug-e commit `1762c76`) |
 | 3. P1 Operational | 🟢 **90%** | 3 dashboards + DSL + promotion budget |
 | 4. P2 Nice-to-have | 🔴 **0%** | deferred |
 | 5. Runtime Evidence | 🔴 **0%** | UAT drills not executed |
@@ -39,6 +39,10 @@
 | 🆕 Phase 75 Phase 54 Production Handoff | 🟢 **policy ready** | not executed |
 | 🆕 Phase 76 Operational Evidence Aggregation | 🟢 **7 policies** | not executed |
 | 🆕 Phase 77 Continuous Assurance (BAU) | 🟢 **11 policies** | not executed |
+| 🆕 Phase 78 Final UAT Execution | 🟢 **policies + 6 attestations** | not executed |
+| 🆕 Phase 79 Production Go-Live | 🟢 **cutover policy + runbook** | not executed |
+| 🆕 Phase 80 Authoritative UAT | 🟢 **config + evidence bundle** | not executed |
+| 🆕 Phase 81 Operational BAU | 🟢 **operations policy + SMOS dashboard contract** | not executed |
 | **OVERALL** | **🟡 ~63%** | **2 weeks to Go-Live** |
 
 ---
@@ -606,7 +610,75 @@ Orchestrator: `scripts/phase77/`
 
 ---
 
-# 24. Post Go-Live BAU (Hypercare 14 days)
+# 24. 🆕 Phase 78 — Final UAT Execution
+
+Orchestrator: `scripts/phase78/`
+
+- [x] Performance policy (`config/phase78-performance-policy.yaml`)
+- [x] Resilience policy (`config/phase78-resilience-policy.yaml`)
+- [x] Source-convergence policy (`config/phase78-source-convergence.yaml`)
+- [x] UAT-execution policy (`config/phase78-uat-execution-policy.yaml`)
+- [x] 6 attestation templates (Performance, Resilience, Source Convergence, UAT, Capacity, Settlement)
+- [x] CI workflow `phase78-final-uat-execution.yml`
+- [x] Phase 78 exit criteria + operator runbook + overview
+- [x] Source-convergence delivery JSON
+- [ ] Execute Phase 78 against UAT
+- [ ] Sign UAT execution attestation
+
+**Status:** 🟢 scripts + policies ready / execution pending
+
+---
+
+# 25. 🆕 Phase 79 — Production Go-Live
+
+Orchestrator: `scripts/phase79/`
+
+- [x] Production cutover policy (`config/phase79-production-cutover-policy.yaml`)
+- [x] Phase 79 exit criteria + operator runbook + overview
+- [x] CI workflow `phase79-production-golive.yml`
+- [ ] Execute Phase 79 production cutover
+- [ ] Sign Go-Live decision
+
+**Status:** 🟢 scripts ready / execution pending
+
+---
+
+# 26. 🆕 Phase 80 — Authoritative UAT
+
+Orchestrator: `scripts/phase80/`
+
+- [x] Application config (`config/phase80/application-phase80.example.yaml`)
+- [x] File ownership policy (`config/phase80/file-ownership-policy.yaml`)
+- [x] UAT execution policy (`config/phase80/uat-execution-policy.yaml`)
+- [x] Evidence bundle: `evidence/phase80/implementation-full-guard/` (release-baseline.json + 80A.log)
+- [x] Phase 80 exit criteria + implementation report + operator runbook + overview + validation report
+- [x] CI workflow `phase80-authoritative-uat.yml`
+- [ ] Execute Phase 80 authoritative UAT
+- [ ] Sign authoritative UAT manifest
+
+**Status:** 🟢 evidence baseline ready / execution pending
+
+---
+
+# 27. 🆕 Phase 81 — Operational BAU + SMOS Dashboard Contract
+
+Orchestrator: `scripts/phase81/`
+
+- [x] Application config (`config/phase81/application-phase81.example.yaml`)
+- [x] Operations policy (`config/phase81/operations-policy.yaml`)
+- [x] Phase 81 exit criteria + implementation report + operator runbook + overview + validation report
+- [x] **SMOS Dashboard Integration Contract** (`docs/phase81/SMOS_DASHBOARD_INTEGRATION_CONTRACT.md`) — REST contract for SMOS Lovable frontend
+- [x] `TransactionDashboardResponse` DTO + `TransactionDashboardService` Java code
+- [x] `BauActivationServiceTest` integration test
+- [x] CI workflow `phase81-operational-bau.yml`
+- [ ] Activate operational BAU jobs post Go-Live
+- [ ] Wire SMOS frontend to dashboard contract
+
+**Status:** 🟢 code + contract ready / activation post Go-Live
+
+---
+
+# 28. Post Go-Live BAU (Hypercare 14 days)
 
 - [ ] Day 1: 24/7 SRE coverage
 - [ ] Day 1: Watch all 47 alerts firing as expected
