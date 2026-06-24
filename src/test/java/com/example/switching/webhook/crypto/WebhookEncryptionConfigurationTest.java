@@ -20,9 +20,14 @@ class WebhookEncryptionConfigurationTest {
                     "switching.webhook.encryption.local.master-key-base64=" + LOCAL_MASTER_KEY);
 
     @Test
-    void providesObjectMapperWhenFocusedContextHasNoJacksonAutoConfiguration() {
+    void instantiatesEncryptionServicesWithoutGlobalObjectMapperBean() {
+        // Phase 69 redesigned WebhookEncryptionConfiguration to use an internal
+        // fallback ObjectMapper (via ObjectProvider) when no Jackson autoconfig bean
+        // is available. The configuration therefore does NOT register ObjectMapper
+        // as a context bean — it only consumes one if present and otherwise uses
+        // a private fallback. This test pins the intended behaviour.
         contextRunner.run(context -> {
-            assertThat(context).hasSingleBean(ObjectMapper.class);
+            assertThat(context).doesNotHaveBean(ObjectMapper.class);
             assertThat(context).hasSingleBean(SecretEncryptionService.class);
             assertThat(context).hasSingleBean(KeyEncryptionService.class);
         });

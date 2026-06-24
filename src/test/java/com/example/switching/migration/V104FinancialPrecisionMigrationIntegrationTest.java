@@ -16,8 +16,11 @@ class V104FinancialPrecisionMigrationIntegrationTest extends AbstractIntegration
 
     @Test
     void cleanInstallContainsPhase62FinancialPromotionAndTraceControls() {
+        // version is VARCHAR so MAX does lexicographic compare ("97" > "106");
+        // pick the highest installed_rank instead to get the actual latest applied migration.
         assertThat(jdbc.queryForObject(
-                "SELECT max(version) FROM flyway_schema_history WHERE success", String.class))
+                "SELECT version FROM flyway_schema_history WHERE success "
+                        + "ORDER BY installed_rank DESC LIMIT 1", String.class))
                 .isEqualTo("106");
         assertThat(jdbc.queryForObject(
                 "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class))
