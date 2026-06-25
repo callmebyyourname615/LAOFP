@@ -31,6 +31,15 @@ public enum ErrorCatalog {
                         ErrorPhase.RECEIVE_REQUEST,
                         false,
                         "HTTP method not allowed"),
+        REQ_004(
+                        HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                        "UNSUPPORTED_MEDIA_TYPE",
+                        "REQ-004",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.API,
+                        ErrorPhase.RECEIVE_REQUEST,
+                        false,
+                        "Unsupported media type"),
 
         INQ_001(
                         HttpStatus.NOT_FOUND,

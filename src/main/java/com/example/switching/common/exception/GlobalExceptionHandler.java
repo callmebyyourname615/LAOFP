@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -207,6 +208,18 @@ public class GlobalExceptionHandler {
 
                 return buildResponse(
                                 ErrorCatalog.REQ_003,
+                                ex.getMessage(),
+                                request,
+                                null);
+        }
+
+        @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+        public ResponseEntity<ApiErrorResponse> handleUnsupportedMediaType(
+                        HttpMediaTypeNotSupportedException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.REQ_004,
                                 ex.getMessage(),
                                 request,
                                 null);

@@ -1,0 +1,11 @@
+{
+  "clientInquiryId": "TEST-INQ-001",
+  "idempotencyKey": "IDEM-INQ-001",
+  "sourceBank": "BANK_A",
+  "destinationBank": "BANK_B",
+  "debtorAccount": "010100000001",
+  "creditorAccount": "020200000001",
+  "amount": 150000.00,
+  "currency": "LAK",
+  "reference": "UAT inquiry test"
+}
