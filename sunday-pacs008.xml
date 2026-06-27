@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.12">
+  <FIToFICstmrCdtTrf>
+    <GrpHdr>
+      <MsgId>MSG-SUNDAY-PETER-ISO-001</MsgId>
+      <CreDtTm>2026-06-26T07:40:00Z</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+    </GrpHdr>
+    <CdtTrfTxInf>
+      <PmtId>
+        <InstrId>INSTR-SUNDAY-PETER-ISO-001</InstrId>
+        <EndToEndId>E2E-SUNDAY-PETER-ISO-001</EndToEndId>
+      </PmtId>
+      <IntrBkSttlmAmt Ccy="LAK">150000.00</IntrBkSttlmAmt>
+      <DbtrAgt>
+        <FinInstnId>
+          <BICFI>SUNDAYBANK</BICFI>
+        </FinInstnId>
+      </DbtrAgt>
+      <CdtrAgt>
+        <FinInstnId>
+          <BICFI>PETERBANK</BICFI>
+        </FinInstnId>
+      </CdtrAgt>
+      <DbtrAcct>
+        <Id>
+          <Othr>
+            <Id>090100000001</Id>
+          </Othr>
+        </Id>
+      </DbtrAcct>
+      <CdtrAcct>
+        <Id>
+          <Othr>
+            <Id>090200000001</Id>
+          </Othr>
+        </Id>
+      </CdtrAcct>
+      <RmtInf>
+        <Ustrd>SUNDAYBANK to PETERBANK PACS008 XML UAT</Ustrd>
+      </RmtInf>
+      <SplmtryData>
+        <PlcAndNm>LAO_SWITCHING_INQUIRY_REF</PlcAndNm>
+        <Envlp>
+          <InquiryRef>INQ-20260626074231-66AC2B26</InquiryRef>
+        </Envlp>
+      </SplmtryData>
+    </CdtTrfTxInf>
+  </FIToFICstmrCdtTrf>
+</Document>
