@@ -129,6 +129,7 @@ PATCH    /api/participants/{bankCode}                                           
 GET      /api/routing-rules                                                       RoutingRuleController.list  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 POST     /api/routing-rules                                                       RoutingRuleController.create  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 POST     /api/routing-rules/cache/clear                                           RoutingRuleController.clearCache  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
+PATCH    /api/routing-rules/corridors                                             RoutingRuleController.updateCorridor  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 GET      /api/routing-rules/resolve                                               RoutingRuleController.resolve  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 PATCH    /api/routing-rules/{routeCode}                                           RoutingRuleController.update  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 GET      /api/transfers                                                           TransferListController.searchTransfers  (src/main/java/com/example/switching/transfer/controller/TransferListController.java)

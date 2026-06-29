@@ -26,6 +26,7 @@ public record OperationsTransferItemResponse(
         String errorMessage,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
+        LocalDateTime settledAt,
         String transferApiPath,
         String traceApiPath,
         String inquiryApiPath

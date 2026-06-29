@@ -78,6 +78,9 @@ public class RtgsGatewayService {
     @Transactional
     public SettlementInstructionEntity recordManualRtgsUpload(String instructionRef, String actor, String note) {
         SettlementInstructionEntity instruction = instructionService.requireInstruction(instructionRef);
+        if ("SENT_RTGS".equals(instruction.getStatus()) || "CONFIRMED".equals(instruction.getStatus())) {
+            return instruction;
+        }
         requireStatus(instruction, "APPROVED");
         ensureRtgsPayload(instruction);
         instruction.setStatus("SENT_RTGS");

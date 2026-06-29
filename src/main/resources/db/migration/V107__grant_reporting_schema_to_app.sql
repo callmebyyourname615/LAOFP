@@ -7,20 +7,14 @@
 -- 500 with "permission denied for schema reporting" the first time they
 -- touched reporting.current_inquiry_status or reporting.sync_*_status().
 
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'switching_app') THEN
-        GRANT USAGE ON SCHEMA reporting TO switching_app;
-        GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA reporting TO switching_app;
-        GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA reporting TO switching_app;
-        GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA reporting TO switching_app;
+GRANT USAGE ON SCHEMA reporting TO switching_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA reporting TO switching_app;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA reporting TO switching_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA reporting TO switching_app;
 
-        ALTER DEFAULT PRIVILEGES IN SCHEMA reporting
-            GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO switching_app;
-        ALTER DEFAULT PRIVILEGES IN SCHEMA reporting
-            GRANT EXECUTE ON FUNCTIONS TO switching_app;
-        ALTER DEFAULT PRIVILEGES IN SCHEMA reporting
-            GRANT USAGE, SELECT ON SEQUENCES TO switching_app;
-    END IF;
-END;
-$$;
+ALTER DEFAULT PRIVILEGES IN SCHEMA reporting
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO switching_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA reporting
+    GRANT EXECUTE ON FUNCTIONS TO switching_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA reporting
+    GRANT USAGE, SELECT ON SEQUENCES TO switching_app;

@@ -1,5 +1,6 @@
 package com.example.switching.routing.service;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import com.example.switching.iso.enums.IsoMessageType;
 import com.example.switching.participant.service.ParticipantService;
 import com.example.switching.routing.dto.CreateRoutingRuleRequest;
 import com.example.switching.routing.dto.RoutingRuleResponse;
+import com.example.switching.routing.dto.UpdateRoutingCorridorRequest;
 import com.example.switching.routing.dto.UpdateRoutingRuleRequest;
 import com.example.switching.routing.entity.RoutingRuleEntity;
 import com.example.switching.routing.exception.RoutingRuleAlreadyExistsException;
@@ -106,6 +108,41 @@ public class RoutingRuleManagementService {
         routingService.clearCache();
 
         return RoutingRuleResponse.from(saved);
+    }
+
+    @Transactional
+    public List<RoutingRuleResponse> updateCorridor(UpdateRoutingCorridorRequest request) {
+        requireField(request.getSourceBank(), "sourceBank");
+        requireField(request.getDestinationBank(), "destinationBank");
+        requireField(request.getMessageType(), "messageType");
+        if (request.getEnabled() == null) {
+            throw new IllegalArgumentException("enabled is required");
+        }
+
+        String sourceBank = normalizeCode(request.getSourceBank());
+        String destinationBank = normalizeCode(request.getDestinationBank());
+        IsoMessageType messageType = parseMessageType(request.getMessageType());
+
+        participantService.findByBankCode(sourceBank);
+        participantService.findByBankCode(destinationBank);
+
+        List<RoutingRuleEntity> rules = routingRuleRepository
+                .findBySourceBankAndDestinationBankAndMessageTypeOrderByPriorityAscRouteCodeAsc(
+                        sourceBank,
+                        destinationBank,
+                        messageType);
+        if (rules.isEmpty()) {
+            throw new RoutingRuleNotFoundException(sourceBank, destinationBank, messageType.name());
+        }
+
+        for (RoutingRuleEntity rule : rules) {
+            rule.setEnabled(request.getEnabled());
+        }
+
+        List<RoutingRuleEntity> saved = routingRuleRepository.saveAll(rules);
+        routingService.clearCache();
+
+        return saved.stream().map(RoutingRuleResponse::from).toList();
     }
 
     private IsoMessageType parseMessageType(String raw) {

@@ -139,6 +139,11 @@ public class SettlementController {
     @PostMapping("/cycles/{cycleRef}/settle")
     public ResponseEntity<SettleResult> settleCycle(@PathVariable String cycleRef) {
         SettlementCycleEntity cycle = cycleService.requireCycle(cycleRef);
+        if ("SETTLED".equals(cycle.getStatus())) {
+            List<SettlementPositionEntity> positions = netPositionService.getPositions(cycleRef);
+            List<SettlementPositionResponse> posResponses = positions.stream().map(this::toPositionResponse).toList();
+            return ResponseEntity.ok(new SettleResult(cycleRef, "SETTLED", posResponses));
+        }
         if (!instructionService.allInstructionsConfirmed(cycle.getId())) {
             throw new IllegalStateException(
                     "Cannot settle cycle " + cycleRef

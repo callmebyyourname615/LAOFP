@@ -102,7 +102,8 @@ public class OperationsTransferQueryService {
                     t.error_code,
                     t.error_message,
                     t.created_at,
-                    t.updated_at
+                    t.updated_at,
+                    t.settled_at
                 FROM transactions t
                 """
                         + whereClause
@@ -154,7 +155,8 @@ public class OperationsTransferQueryService {
                     t.error_code,
                     t.error_message,
                     t.created_at,
-                    t.updated_at
+                    t.updated_at,
+                    t.settled_at
                 FROM transactions t
                 WHERE t.transaction_ref = ?
                 LIMIT 1
@@ -300,6 +302,7 @@ public class OperationsTransferQueryService {
                 clean(rs.getString("error_message")),
                 toLocalDateTime(rs.getTimestamp("created_at")),
                 toLocalDateTime(rs.getTimestamp("updated_at")),
+                toLocalDateTime(rs.getTimestamp("settled_at")),
                 "/api/transfers/" + transactionRef,
                 "/api/transfers/" + transactionRef + "/trace",
                 StringUtils.hasText(inquiryRef) ? "/api/iso-inquiries/" + inquiryRef : null

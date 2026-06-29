@@ -305,7 +305,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,   "/api/participants/**").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/participants").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,  "/api/routing-rules/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/routing-rules/**").denyAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/routing-rules/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/routing-rules/**").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,  "/api/connector-configs").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/connector-configs/**").denyAll()

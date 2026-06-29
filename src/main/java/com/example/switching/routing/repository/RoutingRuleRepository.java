@@ -24,6 +24,11 @@ public interface RoutingRuleRepository extends JpaRepository<RoutingRuleEntity, 
 
     Optional<RoutingRuleEntity> findByRouteCode(String routeCode);
 
+    List<RoutingRuleEntity> findBySourceBankAndDestinationBankAndMessageTypeOrderByPriorityAscRouteCodeAsc(
+            String sourceBank,
+            String destinationBank,
+            IsoMessageType messageType);
+
     Optional<RoutingRuleEntity> findFirstBySourceBankAndDestinationBankAndMessageTypeAndEnabledTrueOrderByPriorityAsc(
             String sourceBank,
             String destinationBank,

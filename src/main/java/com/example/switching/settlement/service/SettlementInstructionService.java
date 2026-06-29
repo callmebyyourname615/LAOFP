@@ -126,6 +126,11 @@ public class SettlementInstructionService {
     @Transactional
     public SettlementInstructionEntity approve(String instructionRef, String actor, String note) {
         SettlementInstructionEntity instruction = requireInstruction(instructionRef);
+        if ("APPROVED".equals(instruction.getStatus())
+                || "SENT_RTGS".equals(instruction.getStatus())
+                || "CONFIRMED".equals(instruction.getStatus())) {
+            return instruction;
+        }
         requireStatus(instruction, "PENDING_APPROVAL");
         instruction.setStatus("APPROVED");
         instruction.setApprovedBy(actor);

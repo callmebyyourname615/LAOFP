@@ -17,6 +17,7 @@ import com.example.switching.routing.dto.CreateRoutingRuleRequest;
 import com.example.switching.routing.dto.RoutingResolveResponse;
 import com.example.switching.routing.dto.RoutingRuleListResponse;
 import com.example.switching.routing.dto.RoutingRuleResponse;
+import com.example.switching.routing.dto.UpdateRoutingCorridorRequest;
 import com.example.switching.routing.dto.UpdateRoutingRuleRequest;
 import com.example.switching.routing.service.RoutingRuleManagementService;
 import com.example.switching.routing.service.RoutingService;
@@ -73,5 +74,11 @@ public class RoutingRuleController {
             @PathVariable String routeCode,
             @RequestBody UpdateRoutingRuleRequest request) {
         return routingRuleManagementService.update(routeCode, request);
+    }
+
+    @PatchMapping("/corridors")
+    public java.util.List<RoutingRuleResponse> updateCorridor(
+            @RequestBody UpdateRoutingCorridorRequest request) {
+        return routingRuleManagementService.updateCorridor(request);
     }
 }
