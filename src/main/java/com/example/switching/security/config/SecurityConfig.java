@@ -308,7 +308,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/routing-rules/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/routing-rules/**").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,  "/api/connector-configs").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/connector-configs/**").denyAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/connector-configs/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/connector-configs/**").hasAnyRole("OPS", "ADMIN")
 
                         // ── Participant certification evidence ────────────────────

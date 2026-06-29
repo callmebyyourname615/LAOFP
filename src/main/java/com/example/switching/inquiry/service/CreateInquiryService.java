@@ -128,15 +128,11 @@ public class CreateInquiryService {
             String resolvedRouteCode = null;
             String resolvedConnectorName = null;
             if (eligibleForTransfer) {
-                try {
-                    RoutingResolveResponse routing = routingService.resolve(
-                            normalizedSourceBank, normalizedDestinationBank,
-                            IsoMessageType.PACS_008.name());
-                    resolvedRouteCode = routing.getRouteCode();
-                    resolvedConnectorName = routing.getConnectorName();
-                } catch (Exception ignored) {
-                    // routing resolved at transfer time if not available at inquiry time
-                }
+                RoutingResolveResponse routing = routingService.resolve(
+                        normalizedSourceBank, normalizedDestinationBank,
+                        IsoMessageType.PACS_008.name());
+                resolvedRouteCode = routing.getRouteCode();
+                resolvedConnectorName = routing.getConnectorName();
             }
 
             String inquiryRef = generateInquiryRef();
