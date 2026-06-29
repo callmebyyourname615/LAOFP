@@ -275,13 +275,13 @@ class Camt054ReportIntegrationTest extends AbstractIntegrationTest {
                     business_date, accepted_at, settled_at, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, '010100000001', ?, '020200000001',
                     'Receiver', ?, 'LAK', 'API', 'ROUTE_RPT_TEST', 'MOCK_CONNECTOR',
-                    'SETTLED', ?, ?, 'DNS', false, ?, ?, ?, ?)
+                    'READY_FOR_SETTLEMENT', ?, ?, 'DNS', false, ?, ?, NULL, ?)
                 """,
                 ref, ref, ref, ref, "INQ-" + ref,
                 srcBank, dstBank,
                 amount,
                 "EXT-" + ref, "REF-" + ref,
-                businessDate, now, now, now);
+                businessDate, now, now);
     }
 
     private String seedWebhookRegistration(String pspId, String eventType) {

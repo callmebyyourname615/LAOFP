@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.switching.crossborder.service.CrossBorderReconciliationService;
 
 @RestController
-@RequestMapping("/v1/operator/crossborder/reconciliation")
+@RequestMapping("${switching.api.v1-prefix:/v1}/operator/crossborder/reconciliation")
 @ConditionalOnProperty(
         prefix = "switching.phase-ii.cross-border-adapters",
         name = "enabled",

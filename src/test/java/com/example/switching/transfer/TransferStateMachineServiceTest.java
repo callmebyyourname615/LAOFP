@@ -25,9 +25,16 @@ class TransferStateMachineServiceTest {
             new TransferStateMachineService(historyRepository);
 
     @Test
-    void acceptedCanSettleOrReject() {
-        assertTrue(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.SETTLED));
+    void acceptedCanMoveToReadyForSettlementOrReject() {
+        assertTrue(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.READY_FOR_SETTLEMENT));
         assertTrue(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.REJECTED));
+        assertFalse(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.SETTLED));
+    }
+
+    @Test
+    void readyForSettlementCanSettleOrReject() {
+        assertTrue(stateMachine.canTransition(TransferStatus.READY_FOR_SETTLEMENT, TransferStatus.SETTLED));
+        assertTrue(stateMachine.canTransition(TransferStatus.READY_FOR_SETTLEMENT, TransferStatus.REJECTED));
     }
 
     @Test
@@ -50,7 +57,7 @@ class TransferStateMachineServiceTest {
     void validTransitionUpdatesStatusAndWritesHistory() {
         TransferEntity transfer = new TransferEntity();
         transfer.setTransferRef("TRX-SM-002");
-        transfer.setStatus(TransferStatus.ACCEPTED);
+        transfer.setStatus(TransferStatus.READY_FOR_SETTLEMENT);
 
         stateMachine.transition(transfer, TransferStatus.SETTLED, null);
 

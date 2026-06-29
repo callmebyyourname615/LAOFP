@@ -325,11 +325,11 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
                     status, external_reference, reference, business_date, accepted_at, settled_at, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, '010100000001', ?, '020200000001',
                     'Receiver', ?, 'LAK', 'API', 'ROUTE_SL_TEST', 'MOCK_CONNECTOR',
-                    'SETTLED', ?, ?, ?, ?, ?, ?)
+                    'READY_FOR_SETTLEMENT', ?, ?, ?, ?, NULL, ?)
                 """,
                 ref, ref, ref, ref, "INQ-" + ref,
                 srcBank, dstBank, amount,
                 "EXT-" + ref, "REF-" + ref,
-                businessDate, now, now, now);
+                businessDate, now, now);
     }
 }

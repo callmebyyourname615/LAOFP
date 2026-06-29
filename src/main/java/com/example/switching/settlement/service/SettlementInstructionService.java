@@ -115,6 +115,14 @@ public class SettlementInstructionService {
         return instructionRepository.findByCycleIdOrderByInstructionRefAsc(cycle.getId());
     }
 
+    @Transactional(readOnly = true)
+    public boolean allInstructionsConfirmed(Long cycleId) {
+        List<SettlementInstructionEntity> instructions =
+                instructionRepository.findByCycleIdOrderByInstructionRefAsc(cycleId);
+        return !instructions.isEmpty()
+                && instructions.stream().allMatch(i -> "CONFIRMED".equals(i.getStatus()));
+    }
+
     @Transactional
     public SettlementInstructionEntity approve(String instructionRef, String actor, String note) {
         SettlementInstructionEntity instruction = requireInstruction(instructionRef);

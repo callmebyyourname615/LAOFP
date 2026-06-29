@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +35,19 @@ public class SettlementNetPositionService {
     private final SettlementCycleService settlementCycleService;
     private final SettlementPositionRepository positionRepository;
     private final AuditLogService auditLogService;
+    private final JdbcTemplate jdbcTemplate;
+    private final SettlementDateService settlementDateService;
 
     public SettlementNetPositionService(SettlementCycleService settlementCycleService,
                                          SettlementPositionRepository positionRepository,
-                                         AuditLogService auditLogService) {
+                                         AuditLogService auditLogService,
+                                         JdbcTemplate jdbcTemplate,
+                                         SettlementDateService settlementDateService) {
         this.settlementCycleService = settlementCycleService;
         this.positionRepository = positionRepository;
         this.auditLogService = auditLogService;
+        this.jdbcTemplate = jdbcTemplate;
+        this.settlementDateService = settlementDateService;
     }
 
     /**
@@ -74,6 +81,8 @@ public class SettlementNetPositionService {
 
         // Bulk mark all position rows as SETTLED
         int updated = positionRepository.markAllSettledByCycleId(cycleId);
+        int transfersMarkedSettled = markCycleTransfersSettled(cycle);
+        int flowsMarkedSettled = markCycleFlowsSettled(cycle);
 
         // Advance the cycle entity
         settlementCycleService.markSettled(cycleRef);
@@ -81,10 +90,12 @@ public class SettlementNetPositionService {
         auditLogService.log("SETTLEMENT_NET_POSITIONS_APPLIED", ENTITY, cycleRef, SOURCE,
                 Map.of("cycleRef", cycleRef,
                         "positionCount", positions.size(),
-                        "rowsMarkedSettled", updated));
+                        "rowsMarkedSettled", updated,
+                        "transfersMarkedSettled", transfersMarkedSettled,
+                        "flowsMarkedSettled", flowsMarkedSettled));
 
-        log.info("Multilateral netting applied: cycleRef={} participants={} positionRowsUpdated={}",
-                cycleRef, positions.size(), updated);
+        log.info("Multilateral netting applied: cycleRef={} participants={} positionRowsUpdated={} transfersMarkedSettled={}",
+                cycleRef, positions.size(), updated, transfersMarkedSettled);
 
         // Return fresh view (settledAt timestamps now populated by DB trigger / bulk update)
         return positionRepository.findByCycleIdOrderByBankCodeAsc(cycleId);
@@ -100,5 +111,48 @@ public class SettlementNetPositionService {
     public List<SettlementPositionEntity> getPositions(String cycleRef) {
         SettlementCycleEntity cycle = settlementCycleService.requireCycle(cycleRef);
         return positionRepository.findByCycleIdOrderByBankCodeAsc(cycle.getId());
+    }
+
+    private int markCycleTransfersSettled(SettlementCycleEntity cycle) {
+        return jdbcTemplate.update("""
+                UPDATE transactions t
+                   SET status = 'SETTLED',
+                       settled_at = COALESCE(t.settled_at, NOW()),
+                       updated_at = NOW()
+                  FROM (
+                        SELECT DISTINCT transaction_ref
+                          FROM settlement_items
+                         WHERE cycle_id = ?
+                           AND settlement_date = ?
+                       ) si
+                 WHERE t.transaction_ref = si.transaction_ref
+                   AND t.business_date = ?
+                   AND t.status = 'READY_FOR_SETTLEMENT'
+                   AND t.settlement_method = 'DNS'
+                """,
+                cycle.getId(),
+                cycle.getSettlementDate(),
+                settlementDateService.previousBusinessDay(cycle.getSettlementDate()));
+    }
+
+    private int markCycleFlowsSettled(SettlementCycleEntity cycle) {
+        return jdbcTemplate.update("""
+                UPDATE payment_flows pf
+                   SET status = 'SETTLED',
+                       settled_at = COALESCE(pf.settled_at, NOW()),
+                       updated_at = NOW()
+                  FROM (
+                        SELECT DISTINCT transaction_ref
+                          FROM settlement_items
+                         WHERE cycle_id = ?
+                           AND settlement_date = ?
+                       ) si
+                 WHERE pf.transaction_ref = si.transaction_ref
+                   AND pf.business_date = ?
+                   AND pf.status = 'READY_FOR_SETTLEMENT'
+                """,
+                cycle.getId(),
+                cycle.getSettlementDate(),
+                settlementDateService.previousBusinessDay(cycle.getSettlementDate()));
     }
 }

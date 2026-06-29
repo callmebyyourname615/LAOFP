@@ -2,6 +2,7 @@ package com.example.switching.transfer.enums;
 
 public enum TransferStatus {
     ACCEPTED,
+    READY_FOR_SETTLEMENT,
     SETTLED,
     REJECTED,
     REFUND_REQUESTED,

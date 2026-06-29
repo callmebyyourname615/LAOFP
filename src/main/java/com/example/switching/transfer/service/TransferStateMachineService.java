@@ -21,7 +21,8 @@ public class TransferStateMachineService {
             new EnumMap<>(TransferStatus.class);
 
     static {
-        allow(TransferStatus.ACCEPTED, TransferStatus.SETTLED, TransferStatus.REJECTED);
+        allow(TransferStatus.ACCEPTED, TransferStatus.READY_FOR_SETTLEMENT, TransferStatus.REJECTED);
+        allow(TransferStatus.READY_FOR_SETTLEMENT, TransferStatus.SETTLED, TransferStatus.REJECTED);
         allow(TransferStatus.RECEIVED, TransferStatus.SETTLED, TransferStatus.REJECTED,
                 TransferStatus.SUCCESS, TransferStatus.FAILED);
         allow(TransferStatus.SETTLED, TransferStatus.REFUND_REQUESTED);

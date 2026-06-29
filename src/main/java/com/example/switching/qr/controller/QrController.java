@@ -35,7 +35,7 @@ import com.example.switching.qr.service.QrRefundService;
  * </pre>
  */
 @RestController
-@RequestMapping("/v1/qr")
+@RequestMapping("${switching.api.v1-prefix:/v1}/qr")
 public class QrController {
 
     private final QrGeneratorService generatorService;

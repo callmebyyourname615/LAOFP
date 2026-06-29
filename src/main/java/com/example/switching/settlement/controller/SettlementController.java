@@ -45,7 +45,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
  *  GET    /api/operations/settlement/cycles/{cycleRef}   — cycle detail + positions
  *  POST   /api/operations/settlement/cycles/{cycleRef}/batch   — batch SETTLED transfers
  *  POST   /api/operations/settlement/cycles/{cycleRef}/close   — close cycle
- *  POST   /api/operations/settlement/cycles/{cycleRef}/settle  — netting + mark SETTLED
+ *  POST   /api/operations/settlement/cycles/{cycleRef}/settle  — mark SETTLED after BOL RTGS confirmation
  * </pre>
  */
 @RestController
@@ -138,12 +138,13 @@ public class SettlementController {
     @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
     @PostMapping("/cycles/{cycleRef}/settle")
     public ResponseEntity<SettleResult> settleCycle(@PathVariable String cycleRef) {
-        // Step 1: apply multilateral netting (own transaction — commits here)
+        SettlementCycleEntity cycle = cycleService.requireCycle(cycleRef);
+        if (!instructionService.allInstructionsConfirmed(cycle.getId())) {
+            throw new IllegalStateException(
+                    "Cannot settle cycle " + cycleRef
+                    + " before all RTGS portal instructions are CONFIRMED");
+        }
         List<SettlementPositionEntity> positions = netPositionService.settle(cycleRef);
-
-        // Step 2: generate camt.054 reports + fire SETTLEMENT.CYCLE.COMPLETED webhooks.
-        // Runs in a separate transaction (settle has already committed above) so the
-        // cycle's SETTLED status is visible and report failure cannot roll back settlement.
         try {
             reportService.generateReportsForCycle(cycleRef);
         } catch (Exception ex) {
@@ -152,6 +153,32 @@ public class SettlementController {
 
         List<SettlementPositionResponse> posResponses = positions.stream().map(this::toPositionResponse).toList();
         return ResponseEntity.ok(new SettleResult(cycleRef, "SETTLED", posResponses));
+    }
+
+    @GetMapping("/instructions/{instructionRef}/rtgs-file")
+    public ResponseEntity<String> downloadRtgsFile(
+            @PathVariable String instructionRef,
+            Authentication authentication) {
+        SettlementInstructionEntity instruction = rtgsGatewayService.prepareManualRtgsFile(
+                instructionRef, actor(authentication));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + instruction.getInstructionRef() + "-pacs009.xml\"")
+                .body(instruction.getRtgsRequestPayload());
+    }
+
+    @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
+    @PostMapping("/instructions/{instructionRef}/record-rtgs-upload")
+    public ResponseEntity<SettlementInstructionResponse> recordRtgsPortalUpload(
+            @PathVariable String instructionRef,
+            @RequestBody(required = false) SettlementInstructionDecisionRequest request,
+            Authentication authentication) {
+        SettlementInstructionEntity instruction = rtgsGatewayService.recordManualRtgsUpload(
+                instructionRef,
+                actor(authentication),
+                request != null ? request.note() : null);
+        return ResponseEntity.ok(toInstructionResponse(cycleRefFor(instruction), instruction));
     }
 
     @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
@@ -201,9 +228,12 @@ public class SettlementController {
     @PostMapping("/instructions/{instructionRef}/send-rtgs")
     public ResponseEntity<SettlementInstructionResponse> sendInstructionToRtgs(
             @PathVariable String instructionRef,
+            @RequestBody(required = false) SettlementInstructionDecisionRequest request,
             Authentication authentication) {
-        SettlementInstructionEntity instruction = rtgsGatewayService.sendApprovedInstruction(
-                instructionRef, actor(authentication));
+        SettlementInstructionEntity instruction = rtgsGatewayService.recordManualRtgsUpload(
+                instructionRef,
+                actor(authentication),
+                request != null ? request.note() : "Uploaded manually through BOL RTGS portal");
         return ResponseEntity.ok(toInstructionResponse(cycleRefFor(instruction), instruction));
     }
 

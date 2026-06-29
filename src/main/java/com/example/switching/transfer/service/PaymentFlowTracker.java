@@ -19,7 +19,7 @@ import com.example.switching.transfer.entity.TransferEntity;
  * <p>All methods are "fire-and-quiet" — exceptions are swallowed so that
  * flow tracking never breaks the calling transaction.
  *
- * <p>Lifecycle: {@code INITIATED → DISPATCHED → SETTLED | FAILED}
+ * <p>Lifecycle: {@code INITIATED → DISPATCHED → READY_FOR_SETTLEMENT → SETTLED | FAILED}
  */
 @Component
 public class PaymentFlowTracker {
@@ -43,6 +43,12 @@ public class PaymentFlowTracker {
     private static final String UPDATE_SETTLED_SQL = """
             UPDATE payment_flows
             SET status = 'SETTLED', settled_at = NOW(), updated_at = NOW()
+            WHERE transaction_ref = ? AND business_date = ?
+            """;
+
+    private static final String UPDATE_READY_FOR_SETTLEMENT_SQL = """
+            UPDATE payment_flows
+            SET status = 'READY_FOR_SETTLEMENT', updated_at = NOW()
             WHERE transaction_ref = ? AND business_date = ?
             """;
 
@@ -86,7 +92,13 @@ public class PaymentFlowTracker {
                 "DISPATCHED", transactionRef);
     }
 
-    /** Mark the flow as SETTLED (bank confirmed). */
+    /** Mark the flow as ready for T+1 settlement after connector confirmation. */
+    public void markReadyForSettlement(String transactionRef, LocalDate businessDate) {
+        quietly(() -> jdbcTemplate.update(UPDATE_READY_FOR_SETTLEMENT_SQL, transactionRef, businessDate),
+                "READY_FOR_SETTLEMENT", transactionRef);
+    }
+
+    /** Mark the flow as SETTLED after the T+1 settlement cycle completes. */
     public void markSettled(String transactionRef, LocalDate businessDate) {
         quietly(() -> jdbcTemplate.update(UPDATE_SETTLED_SQL, transactionRef, businessDate),
                 "SETTLED", transactionRef);

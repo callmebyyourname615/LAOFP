@@ -13,7 +13,7 @@ import com.example.switching.rtp.service.RtpRequestService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/rtp/requests")
+@RequestMapping("${switching.api.v1-prefix:/v1}/rtp/requests")
 @ConditionalOnProperty(prefix = "switching.phase-ii.rtp", name = "enabled", havingValue = "true")
 public class RequestToPayController {
     private final RtpRequestService requestService;

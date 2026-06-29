@@ -22,7 +22,7 @@ import com.example.switching.promotion.service.PromotionManagementService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/promotions")
+@RequestMapping("${switching.api.v1-prefix:/v1}/promotions")
 @ConditionalOnProperty(
         prefix = "switching.phase-ii.promotion",
         name = "enabled",

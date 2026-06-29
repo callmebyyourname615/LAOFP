@@ -267,7 +267,7 @@ public class OutboxProcessorService {
 
         PoolBalance confirmedPoolBalance = poolService.confirmHold(transferRef);
 
-        transferStateMachineService.transition(transfer, TransferStatus.SETTLED, null);
+        transferStateMachineService.transition(transfer, TransferStatus.READY_FOR_SETTLEMENT, null);
         transfer.setExternalReference(result.getExternalReference());
         transfer.setReference(result.getReference());
         transfer.setErrorCode(null);
@@ -288,13 +288,13 @@ public class OutboxProcessorService {
             idempotencyService.updateStatus(
                     IDEMPOTENCY_CHANNEL,
                     transfer.getIdempotencyKey(),
-                    TransferStatus.SETTLED.name());
+                    TransferStatus.READY_FOR_SETTLEMENT.name());
         }
 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("outboxEventId", event.getId());
         payload.put("transferRef", transfer.getTransferRef());
-        payload.put("status", TransferStatus.SETTLED.name());
+        payload.put("status", TransferStatus.READY_FOR_SETTLEMENT.name());
         payload.put("externalReference", result.getExternalReference());
         payload.put("reference", result.getReference());
         payload.put("poolAvailableBalance", confirmedPoolBalance.availableBalance());
@@ -307,18 +307,13 @@ public class OutboxProcessorService {
                 SOURCE_SYSTEM,
                 payload);
 
-        // ── Lifecycle: SETTLED ────────────────────────────────────────────────
-        flowTracker.markSettled(transfer.getTransferRef(), transfer.getBusinessDate());
-        eventPublisher.publishQuietly(transfer.getTransferRef(), "TRANSFER_SETTLED",
+        // ── Lifecycle: ready for T+1 settlement ──────────────────────────────
+        flowTracker.markReadyForSettlement(transfer.getTransferRef(), transfer.getBusinessDate());
+        eventPublisher.publishQuietly(transfer.getTransferRef(), "TRANSFER_READY_FOR_SETTLEMENT",
                 transfer.getBusinessDate(),
                 java.util.Map.of("outboxEventId", event.getId(),
                         "externalReference", String.valueOf(result.getExternalReference())),
                 SOURCE_SYSTEM);
-        webhookPublisher.transferSettled(transfer.getTransferRef(), transfer.getSourceBank(),
-                java.util.Map.of("transferRef",       transfer.getTransferRef(),
-                                 "sourceBank",         transfer.getSourceBank(),
-                                 "destinationBank",    transfer.getDestinationBank(),
-                                 "externalReference",  String.valueOf(result.getExternalReference())));
         recordAttempt(event.getId(), safeRetryCount(event.getRetryCount()),
                 "SUCCESS", null, null, null, connectorName);
 

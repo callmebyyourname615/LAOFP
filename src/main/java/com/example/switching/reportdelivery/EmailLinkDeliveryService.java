@@ -11,6 +11,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.example.switching.notifications.NotificationDeliveryControlService;
@@ -22,12 +23,15 @@ public class EmailLinkDeliveryService implements ReportDeliveryChannel {
 
     private final NotificationDeliveryControlService notifications;
     private final Environment environment;
+    private final String apiV1Prefix;
 
     public EmailLinkDeliveryService(
             NotificationDeliveryControlService notifications,
-            Environment environment) {
+            Environment environment,
+            @Value("${switching.api.v1-prefix:/v1}") String apiV1Prefix) {
         this.notifications = notifications;
         this.environment = environment;
+        this.apiV1Prefix = normalizePrefix(apiV1Prefix);
     }
 
     @Override
@@ -52,7 +56,7 @@ public class EmailLinkDeliveryService implements ReportDeliveryChannel {
         String data = artifact.id() + "|" + expires;
         String token = hmac(data, secret);
         String url = baseUrl
-                + "/v1/reports/download/" + artifact.id()
+                + apiV1Prefix + "/reports/download/" + artifact.id()
                 + "?expires=" + expires
                 + "&token=" + token;
         notifications.queue(
@@ -66,6 +70,16 @@ public class EmailLinkDeliveryService implements ReportDeliveryChannel {
                         "fileName", artifact.fileName(),
                         "expiresAt", Instant.ofEpochSecond(expires).toString()));
         return new DeliveryResult("email-link:" + artifact.id());
+    }
+
+    private static String normalizePrefix(String prefix) {
+        if (prefix == null || prefix.isBlank()) {
+            return "/v1";
+        }
+        String normalized = prefix.startsWith("/") ? prefix : "/" + prefix;
+        return normalized.length() > 1 && normalized.endsWith("/")
+                ? normalized.substring(0, normalized.length() - 1)
+                : normalized;
     }
 
     private static String validateBaseUrl(String raw) {

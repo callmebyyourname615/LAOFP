@@ -122,7 +122,7 @@ class SettlementCutoffSchedulerIntegrationTest extends AbstractIntegrationTest {
                     business_date, accepted_at, settled_at, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, '010100000001', ?, '020200000001',
                     'Receiver', ?, 'LAK', 'API', 'ROUTE_CUTOFF', 'MOCK_BANK_CONNECTOR',
-                    'SETTLED', ?, ?, 'DNS', false, ?, ?, ?, ?)
+                    'READY_FOR_SETTLEMENT', ?, ?, 'DNS', false, ?, ?, NULL, ?)
                 """,
                 transferRef,
                 transferRef,
@@ -135,7 +135,6 @@ class SettlementCutoffSchedulerIntegrationTest extends AbstractIntegrationTest {
                 "EXT-" + transferRef,
                 "REF-" + transferRef,
                 businessDate,
-                now,
                 now,
                 now);
     }

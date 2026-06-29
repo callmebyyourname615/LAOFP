@@ -25,7 +25,7 @@ import com.example.switching.common.PhaseIIAuditPublisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping("/v1/operator/report-delivery-schedules")
+@RequestMapping("${switching.api.v1-prefix:/v1}/operator/report-delivery-schedules")
 @ConditionalOnProperty(
         prefix = "switching.phase-ii.report-delivery",
         name = "enabled",

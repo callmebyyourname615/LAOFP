@@ -29,6 +29,9 @@ public class RtgsGatewayService {
     private final SettlementInstructionRepository instructionRepository;
     private final Pacs009XmlBuilder pacs009XmlBuilder;
     private final AuditLogService auditLogService;
+    private final SettlementCycleService cycleService;
+    private final SettlementNetPositionService netPositionService;
+    private final Camt054ReportService reportService;
     private final HttpClient httpClient;
     private final String bolRtgsUrl;
     private final Duration requestTimeout;
@@ -37,17 +40,56 @@ public class RtgsGatewayService {
                               SettlementInstructionRepository instructionRepository,
                               Pacs009XmlBuilder pacs009XmlBuilder,
                               AuditLogService auditLogService,
+                              SettlementCycleService cycleService,
+                              SettlementNetPositionService netPositionService,
+                              Camt054ReportService reportService,
                               @Value("${switching.settlement.bol-rtgs-url}") String bolRtgsUrl,
                               @Value("${switching.settlement.rtgs-timeout-ms}") long timeoutMs) {
         this.instructionService = instructionService;
         this.instructionRepository = instructionRepository;
         this.pacs009XmlBuilder = pacs009XmlBuilder;
         this.auditLogService = auditLogService;
+        this.cycleService = cycleService;
+        this.netPositionService = netPositionService;
+        this.reportService = reportService;
         this.bolRtgsUrl = bolRtgsUrl;
         this.requestTimeout = Duration.ofMillis(timeoutMs);
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(this.requestTimeout)
                 .build();
+    }
+
+    @Transactional
+    public SettlementInstructionEntity prepareManualRtgsFile(String instructionRef, String actor) {
+        SettlementInstructionEntity instruction = instructionService.requireInstruction(instructionRef);
+        if (!"APPROVED".equals(instruction.getStatus()) && !"SENT_RTGS".equals(instruction.getStatus())) {
+            throw new IllegalStateException(
+                    "Cannot prepare RTGS file for instruction " + instructionRef
+                    + " from " + instruction.getStatus() + " — expected APPROVED or SENT_RTGS");
+        }
+        ensureRtgsPayload(instruction);
+        SettlementInstructionEntity saved = instructionRepository.save(instruction);
+        auditLogService.log("SETTLEMENT_INSTRUCTION_RTGS_FILE_PREPARED", ENTITY, instructionRef, actorOrSource(actor),
+                Map.of("instructionRef", instructionRef,
+                        "rtgsMsgId", saved.getRtgsMsgId()));
+        return saved;
+    }
+
+    @Transactional
+    public SettlementInstructionEntity recordManualRtgsUpload(String instructionRef, String actor, String note) {
+        SettlementInstructionEntity instruction = instructionService.requireInstruction(instructionRef);
+        requireStatus(instruction, "APPROVED");
+        ensureRtgsPayload(instruction);
+        instruction.setStatus("SENT_RTGS");
+        instruction.setSentAt(LocalDateTime.now());
+        instruction.setRtgsResponsePayload(note);
+        instruction.setLastError(null);
+        SettlementInstructionEntity saved = instructionRepository.save(instruction);
+        auditLogService.log("SETTLEMENT_INSTRUCTION_RTGS_PORTAL_UPLOADED", ENTITY, instructionRef, actorOrSource(actor),
+                Map.of("instructionRef", instructionRef,
+                        "rtgsMsgId", saved.getRtgsMsgId(),
+                        "note", note != null ? note : ""));
+        return saved;
     }
 
     @Transactional(noRollbackFor = IllegalStateException.class)
@@ -138,7 +180,32 @@ public class RtgsGatewayService {
                         "rtgsMsgId", saved.getRtgsMsgId() != null ? saved.getRtgsMsgId() : "",
                         "callbackStatus", callbackStatus,
                         "sourceIp", sourceIp != null ? sourceIp : ""));
+        settleCycleWhenAllInstructionsConfirmed(saved);
         return saved;
+    }
+
+    private void settleCycleWhenAllInstructionsConfirmed(SettlementInstructionEntity instruction) {
+        Long cycleId = instruction.getCycleId();
+        if (cycleId == null || !instructionService.allInstructionsConfirmed(cycleId)) {
+            return;
+        }
+        var cycle = cycleService.requireCycleById(cycleId);
+        if ("SETTLED".equals(cycle.getStatus())) {
+            return;
+        }
+        netPositionService.settle(cycle.getCycleRef());
+        reportService.generateReportsForCycle(cycle.getCycleRef());
+    }
+
+    private void ensureRtgsPayload(SettlementInstructionEntity instruction) {
+        String rtgsMsgId = instruction.getRtgsMsgId();
+        if (rtgsMsgId == null || rtgsMsgId.isBlank()) {
+            rtgsMsgId = "RTGS-" + instruction.getInstructionRef() + "-" + System.currentTimeMillis();
+        }
+        instruction.setRtgsMsgId(rtgsMsgId);
+        if (instruction.getRtgsRequestPayload() == null || instruction.getRtgsRequestPayload().isBlank()) {
+            instruction.setRtgsRequestPayload(pacs009XmlBuilder.build(instruction, rtgsMsgId));
+        }
     }
 
     private HttpRequest request(String requestPayload, String instructionRef, String rtgsMsgId) {

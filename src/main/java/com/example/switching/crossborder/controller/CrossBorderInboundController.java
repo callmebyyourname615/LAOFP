@@ -20,7 +20,7 @@ import com.example.switching.crossborder.adapter.CrossBorderRailAdapter;
 import com.example.switching.crossborder.dto.RailInstructionEvent;
 
 @RestController
-@RequestMapping("/v1/crossborder/inbound")
+@RequestMapping("${switching.api.v1-prefix:/v1}/crossborder/inbound")
 @ConditionalOnProperty(
         prefix = "switching.phase-ii.cross-border-adapters",
         name = "enabled",

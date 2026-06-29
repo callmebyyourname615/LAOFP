@@ -31,7 +31,7 @@ import com.example.switching.billpayment.service.BillerService;
  * </pre>
  */
 @RestController
-@RequestMapping
+@RequestMapping("${switching.api.v1-prefix:/v1}")
 public class BillPaymentController {
 
     private final BillerService       billerService;
@@ -45,21 +45,21 @@ public class BillPaymentController {
 
     // ── GET /v1/billers ───────────────────────────────────────────────────────
 
-    @GetMapping("/v1/billers")
+    @GetMapping("/billers")
     public ResponseEntity<List<BillerResponse>> listBillers() {
         return ResponseEntity.ok(billerService.findActiveBillers());
     }
 
     // ── GET /v1/billers/{billerId} ────────────────────────────────────────────
 
-    @GetMapping("/v1/billers/{billerId}")
+    @GetMapping("/billers/{billerId}")
     public ResponseEntity<BillerResponse> getBiller(@PathVariable Long billerId) {
         return ResponseEntity.ok(billerService.getBiller(billerId));
     }
 
     // ── GET /v1/bills/fetch ───────────────────────────────────────────────────
 
-    @GetMapping("/v1/bills/fetch")
+    @GetMapping("/bills/fetch")
     public ResponseEntity<BillFetchResponse> fetchBill(
             @RequestParam Long   billerId,
             @RequestParam String ref) {
@@ -68,7 +68,7 @@ public class BillPaymentController {
 
     // ── POST /v1/bills/pay ────────────────────────────────────────────────────
 
-    @PostMapping("/v1/bills/pay")
+    @PostMapping("/bills/pay")
     public ResponseEntity<BillPayResponse> pay(@Valid @RequestBody BillPayRequest request) {
         return ResponseEntity.ok(paymentService.pay(request.tokenId(), request.payingPspId()));
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/operator/push-payment-policies")
+@RequestMapping("${switching.api.v1-prefix:/v1}/operator/push-payment-policies")
 @ConditionalOnProperty(
         prefix = "switching.phase-ii.push-payment-orchestrator",
         name = "enabled",

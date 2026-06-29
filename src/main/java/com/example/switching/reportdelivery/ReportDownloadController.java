@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/reports/download")
+@RequestMapping("${switching.api.v1-prefix:/v1}/reports/download")
 @ConditionalOnProperty(
         prefix = "switching.phase-ii.report-delivery",
         name = "enabled",

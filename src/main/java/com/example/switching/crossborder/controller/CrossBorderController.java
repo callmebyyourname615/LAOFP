@@ -31,7 +31,7 @@ import com.example.switching.crossborder.service.FxQuoteService;
  * </pre>
  */
 @RestController
-@RequestMapping("/v1/crossborder")
+@RequestMapping("${switching.api.v1-prefix:/v1}/crossborder")
 public class CrossBorderController {
 
     private final FxQuoteService            fxQuoteService;

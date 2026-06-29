@@ -240,10 +240,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/authorise")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/decline")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/settlements")).hasAnyRole("OPS", "ADMIN")
-                        .requestMatchers("/v1/promotions/**").hasAnyRole("OPS", "ADMIN")
-                        .requestMatchers("/v1/operator/push-payment-policies/**").hasAnyRole("OPS", "ADMIN")
-                        .requestMatchers("/v1/operator/report-delivery-schedules/**").hasAnyRole("OPS", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/v1/reports/download/**").permitAll()
+                        .requestMatchers(v1("/promotions/**")).hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(v1("/operator/push-payment-policies/**")).hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(v1("/operator/report-delivery-schedules/**")).hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, v1("/reports/download/**")).permitAll()
 
                         // ── Bill Payment Service (P16) ────────────────────────────
                         .requestMatchers(HttpMethod.GET,  v1("/billers")).hasAnyRole("BANK", "OPS", "ADMIN")

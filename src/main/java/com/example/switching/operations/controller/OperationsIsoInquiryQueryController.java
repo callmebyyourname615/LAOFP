@@ -68,4 +68,6 @@ public class OperationsIsoInquiryQueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    
 }

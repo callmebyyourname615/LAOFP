@@ -34,7 +34,7 @@ import com.example.switching.dispute.service.DisputeResolutionService;
  * </pre>
  */
 @RestController
-@RequestMapping("/v1/disputes")
+@RequestMapping("${switching.api.v1-prefix:/v1}/disputes")
 public class DisputeController {
 
     private final DisputeRaiseService      raiseService;

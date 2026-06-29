@@ -100,7 +100,7 @@ class SettlementTPlusOneIntegrationTest extends AbstractIntegrationTest {
                     business_date, accepted_at, settled_at, created_at
                 ) VALUES (?, ?, ?, ?, ?, 'BANK_A', '010100000001', 'BANK_B', '020200000001',
                     'Receiver', ?, 'LAK', 'API', 'ROUTE_TPLUS1', 'MOCK_BANK_B_CONNECTOR',
-                    'SETTLED', ?, ?, ?, ?, ?, ?, ?, ?)
+                    'READY_FOR_SETTLEMENT', ?, ?, ?, ?, ?, ?, NULL, ?)
                 """,
                 transferRef,
                 transferRef,
@@ -113,7 +113,6 @@ class SettlementTPlusOneIntegrationTest extends AbstractIntegrationTest {
                 settlementMethod,
                 highValue,
                 businessDate,
-                now,
                 now,
                 now);
     }

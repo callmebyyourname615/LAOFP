@@ -80,7 +80,7 @@ public class SettlementBatchService {
     }
 
     /**
-     * Collect all SETTLED transfers from the previous business day (T) for the
+     * Collect all connector-confirmed transfers from the previous business day (T) for the
      * cycle's settlement date (T+1), then write
      * settlement_items + upsert settlement_positions.
      *
@@ -103,10 +103,10 @@ public class SettlementBatchService {
         LocalDate businessDate = settlementDateService.previousBusinessDay(settlementDate);
         List<TransferEntity> transfers =
                 transferRepository.findByStatusAndBusinessDateAndSettlementMethod(
-                        TransferStatus.SETTLED, businessDate, "DNS");
+                        TransferStatus.READY_FOR_SETTLEMENT, businessDate, "DNS");
 
         if (transfers.isEmpty()) {
-            log.info("No SETTLED transfers for businessDate={} settlementDate={} cycleRef={}",
+            log.info("No READY_FOR_SETTLEMENT transfers for businessDate={} settlementDate={} cycleRef={}",
                     businessDate, settlementDate, cycleRef);
             return 0;
         }
