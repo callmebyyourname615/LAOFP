@@ -12,6 +12,8 @@ import com.example.switching.outbox.dto.BankDispatchResult;
 import com.example.switching.outbox.dto.BankIsoDispatchResponse;
 import com.example.switching.outbox.dto.DispatchIsoMessageCommand;
 import com.example.switching.outbox.dto.DispatchTransferCommand;
+import com.example.switching.outbox.dto.StatusEnquiryCommand;
+import com.example.switching.outbox.dto.StatusEnquiryResult;
 
 /**
  * Generic MOCK connector.
@@ -140,6 +142,37 @@ public class GenericMockConnector implements BankConnector {
                 externalReference(),
                 pacs002Xml,
                 "ACSC");
+    }
+
+    @Override
+    public StatusEnquiryResult enquireStatus(StatusEnquiryCommand command) {
+        if (command == null) {
+            return StatusEnquiryResult.unknown("BANK-400", "StatusEnquiryCommand is null");
+        }
+
+        ConnectorConfigEntity connectorConfig = connectorConfigService.resolveForDispatch(
+                command.connectorName(),
+                command.destinationBank());
+
+        if (!connectorConfig.enabled()) {
+            return StatusEnquiryResult.unknown(
+                    "BANK-503",
+                    "Connector is disabled: " + connectorConfig.getConnectorName());
+        }
+
+        if (connectorConfig.forceReject()) {
+            String reasonCode = StringUtils.hasText(connectorConfig.getRejectReasonCode())
+                    ? connectorConfig.getRejectReasonCode()
+                    : "AC01";
+            String reasonMessage = StringUtils.hasText(connectorConfig.getRejectReasonMessage())
+                    ? connectorConfig.getRejectReasonMessage()
+                    : "Mock connector rejected transfer";
+            return StatusEnquiryResult.rejected(externalReference(), reasonCode, reasonMessage);
+        }
+
+        return StatusEnquiryResult.accepted(
+                externalReference(),
+                "Mock status enquiry confirmed destination credited");
     }
 
     private BankIsoDispatchResponse rejectedWithoutPacs002(

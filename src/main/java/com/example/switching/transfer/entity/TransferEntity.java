@@ -78,6 +78,12 @@ public class TransferEntity {
     @Column(name = "reference")
     private String reference;
 
+    @Column(name = "confirmation_status")
+    private String confirmationStatus = "PENDING";
+
+    @Column(name = "settlement_confidence")
+    private String settlementConfidence = "PENDING";
+
     @Column(name = "settlement_method")
     private String settlementMethod = "DNS";
 
@@ -254,6 +260,22 @@ public class TransferEntity {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public String getConfirmationStatus() {
+        return confirmationStatus;
+    }
+
+    public void setConfirmationStatus(String confirmationStatus) {
+        this.confirmationStatus = confirmationStatus;
+    }
+
+    public String getSettlementConfidence() {
+        return settlementConfidence;
+    }
+
+    public void setSettlementConfidence(String settlementConfidence) {
+        this.settlementConfidence = settlementConfidence;
     }
 
     public String getSettlementMethod() {

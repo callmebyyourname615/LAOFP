@@ -292,6 +292,10 @@ services:
       OUTBOX_QUEUE_ENABLED: "true"
       OUTBOX_QUEUE_TOPIC: switching.outbox.dispatch
       OUTBOX_QUEUE_GROUP_ID: switching-outbox-dispatcher
+      SECURITY_MTLS_ENABLED: ${SECURITY_MTLS_ENABLED:-true}
+      SWITCHING_SMOS_ENABLED: ${SWITCHING_SMOS_ENABLED:-true}
+      SWITCHING_SMOS_MFA_REQUIRED: ${SWITCHING_SMOS_MFA_REQUIRED:-false}
+      SMOS_JWT_SECRET: ${SMOS_JWT_SECRET:-SundayBankSmosJwtSecretForUatOnly2026}
       SERVER_PORT: 8080
     ports:
       - "8080:8080"

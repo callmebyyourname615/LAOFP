@@ -19,6 +19,8 @@ import com.example.switching.outbox.dto.BankDispatchResult;
 import com.example.switching.outbox.dto.BankIsoDispatchResponse;
 import com.example.switching.outbox.dto.DispatchIsoMessageCommand;
 import com.example.switching.outbox.dto.DispatchTransferCommand;
+import com.example.switching.outbox.dto.StatusEnquiryCommand;
+import com.example.switching.outbox.dto.StatusEnquiryResult;
 
 /**
  * Generic HTTP connector.
@@ -134,6 +136,67 @@ public class GenericHttpConnector implements BankConnector {
 
         } catch (Exception ex) {
             return failure("HTTP-UNKNOWN", "AMBIGUOUS: " + ex.getMessage(), command.transferRef());
+        }
+    }
+
+    @Override
+    public StatusEnquiryResult enquireStatus(StatusEnquiryCommand command) {
+        if (command == null) {
+            return StatusEnquiryResult.unknown("HTTP-400", "StatusEnquiryCommand is null");
+        }
+
+        ConnectorConfigEntity config = connectorConfigService.resolveForDispatch(
+                command.connectorName(), command.destinationBank());
+
+        if (!config.enabled()) {
+            return StatusEnquiryResult.unknown(
+                    "HTTP-503",
+                    "Connector disabled: " + config.getConnectorName());
+        }
+        if (!StringUtils.hasText(config.getEndpointUrl())) {
+            return StatusEnquiryResult.unknown(
+                    "HTTP-MISCONFIGURED",
+                    "endpoint_url not configured for connector: " + config.getConnectorName());
+        }
+
+        String enquiryUrl = config.getEndpointUrl().replaceAll("/+$", "")
+                + "/status/" + command.transferRef();
+
+        RestClient client = RestClient.builder()
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader("X-Transfer-Ref", command.transferRef())
+                .defaultHeader("X-Message-Id", orEmpty(command.messageId()))
+                .defaultHeader("X-End-To-End-Id", orEmpty(command.endToEndId()))
+                .build();
+
+        try {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> body = client.get()
+                    .uri(URI.create(enquiryUrl))
+                    .retrieve()
+                    .body(java.util.Map.class);
+
+            String status = body == null ? null : String.valueOf(body.getOrDefault("status", "UNKNOWN"));
+            String externalReference = body == null ? null : String.valueOf(body.getOrDefault("externalReference", ""));
+            String message = body == null ? null : String.valueOf(body.getOrDefault("message", status));
+
+            return switch (status == null ? "UNKNOWN" : status.toUpperCase()) {
+                case "ACCEPTED", "CREDITED", "READY_FOR_SETTLEMENT", "SETTLED", "ACSC", "ACCP" ->
+                        StatusEnquiryResult.accepted(externalReference, message);
+                case "REJECTED", "RJCT" ->
+                        StatusEnquiryResult.rejected(externalReference, "RJCT", message);
+                case "NOT_FOUND" ->
+                        new StatusEnquiryResult(StatusEnquiryResult.Status.NOT_FOUND,
+                                externalReference, "NOT_FOUND", message);
+                case "PROCESSING", "PENDING" ->
+                        new StatusEnquiryResult(StatusEnquiryResult.Status.PROCESSING,
+                                externalReference, "PROCESSING", message);
+                default -> StatusEnquiryResult.unknown("HTTP-STATUS-UNKNOWN", message);
+            };
+        } catch (Exception ex) {
+            return StatusEnquiryResult.unknown(
+                    "HTTP-STATUS-ENQUIRY-FAILED",
+                    ex.getMessage());
         }
     }
 

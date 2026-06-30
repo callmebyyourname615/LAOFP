@@ -41,4 +41,15 @@ class TransferResponseContractTest {
         assertEquals("FAILED", response.getResult());
         assertEquals("REJECTED", response.getResultDetail());
     }
+
+    @Test
+    void createTransferDrsRequired_returnsOkDrsRequiredForSourceBank() {
+        CreateTransferResponse response = new CreateTransferResponse(
+                "TRX-TEST",
+                "DRS_REQUIRED",
+                "Retry exhausted without destination final response");
+
+        assertEquals("OK", response.getResult());
+        assertEquals("DRS_REQUIRED", response.getResultDetail());
+    }
 }

@@ -28,7 +28,16 @@ class TransferStateMachineServiceTest {
     void acceptedCanMoveToReadyForSettlementOrReject() {
         assertTrue(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.READY_FOR_SETTLEMENT));
         assertTrue(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.REJECTED));
+        assertTrue(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.DRS_REQUIRED));
         assertFalse(stateMachine.canTransition(TransferStatus.ACCEPTED, TransferStatus.SETTLED));
+    }
+
+    @Test
+    void drsRequiredCanResolveToSettlementOrReject() {
+        assertTrue(stateMachine.canTransition(TransferStatus.DRS_REQUIRED, TransferStatus.READY_FOR_SETTLEMENT));
+        assertTrue(stateMachine.canTransition(TransferStatus.DRS_REQUIRED, TransferStatus.REJECTED));
+        assertTrue(stateMachine.canTransition(TransferStatus.DRS_REQUIRED, TransferStatus.REFUND_REQUESTED));
+        assertFalse(stateMachine.canTransition(TransferStatus.DRS_REQUIRED, TransferStatus.SETTLED));
     }
 
     @Test

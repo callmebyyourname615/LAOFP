@@ -117,6 +117,12 @@ public class SettlementBatchService {
         int itemRowsInserted = 0;
         for (TransferEntity t : transfers) {
             String      txnRef = t.getTransferRef();
+            if (isAlreadyBatchedForSettlementDate(txnRef, settlementDate)) {
+                log.info("Skip already batched transferRef={} settlementDate={} targetCycleRef={}",
+                        txnRef, settlementDate, cycleRef);
+                continue;
+            }
+
             BigDecimal  amt    = t.getAmount();
             String      ccy    = t.getCurrency() != null ? t.getCurrency() : "LAK";
             String      src    = t.getSourceBank();
@@ -154,6 +160,20 @@ public class SettlementBatchService {
         log.info("T+1 settlement batch done: cycleRef={} settlementDate={} businessDate={} transfers={} itemRows={}",
                 cycleRef, settlementDate, businessDate, batchCount, itemRowsInserted);
         return batchCount;
+    }
+
+    private boolean isAlreadyBatchedForSettlementDate(String transactionRef, LocalDate settlementDate) {
+        Integer count = jdbcTemplate.queryForObject(
+                """
+                SELECT COUNT(*)
+                FROM settlement_items
+                WHERE transaction_ref = ?
+                  AND settlement_date = ?
+                """,
+                Integer.class,
+                transactionRef,
+                settlementDate);
+        return count != null && count > 0;
     }
 
     /** Count settlement_items rows already written for a cycle (cross-partition aggregate). */

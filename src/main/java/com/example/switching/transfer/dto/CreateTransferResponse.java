@@ -76,6 +76,9 @@ public class CreateTransferResponse {
         if ("REJECTED".equals(status)) {
             return "REJECTED";
         }
+        if ("DRS_REQUIRED".equals(status)) {
+            return "DRS_REQUIRED";
+        }
         if ("FAILED".equals(status)) {
             return "FAILED";
         }

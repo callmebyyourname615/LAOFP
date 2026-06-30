@@ -41,6 +41,8 @@ public class TransferInquiryResponse {
     private String connectorName;
     private String externalReference;
     private String reference;
+    private String confirmationStatus;
+    private String settlementConfidence;
 
     private String errorCode;
     private String errorMessage;
@@ -179,6 +181,22 @@ public class TransferInquiryResponse {
 
     public void setExternalReference(String externalReference) {
         this.externalReference = externalReference;
+    }
+
+    public String getConfirmationStatus() {
+        return confirmationStatus;
+    }
+
+    public void setConfirmationStatus(String confirmationStatus) {
+        this.confirmationStatus = confirmationStatus;
+    }
+
+    public String getSettlementConfidence() {
+        return settlementConfidence;
+    }
+
+    public void setSettlementConfidence(String settlementConfidence) {
+        this.settlementConfidence = settlementConfidence;
     }
 
     public String getReference() {

@@ -13,6 +13,8 @@ import com.example.switching.outbox.dto.BankDispatchResult;
 import com.example.switching.outbox.dto.BankIsoDispatchResponse;
 import com.example.switching.outbox.dto.DispatchIsoMessageCommand;
 import com.example.switching.outbox.dto.DispatchTransferCommand;
+import com.example.switching.outbox.dto.StatusEnquiryCommand;
+import com.example.switching.outbox.dto.StatusEnquiryResult;
 
 /**
  * Generic MQ connector.
@@ -116,6 +118,23 @@ public class GenericMqConnector implements BankConnector {
         return transient_("MQ-CONNECTION-NOT-IMPLEMENTED",
                 "CONNECTION: MQ broker client not wired — add broker dependency and implement publishAndAwaitReply",
                 command.transferRef());
+    }
+
+    @Override
+    public StatusEnquiryResult enquireStatus(StatusEnquiryCommand command) {
+        if (command == null) {
+            return StatusEnquiryResult.unknown("MQ-STATUS-NULL-COMMAND", "command is null");
+        }
+        ConnectorConfigEntity config = connectorConfigService.resolveForDispatch(
+                command.connectorName(), command.destinationBank());
+        if (!config.enabled()) {
+            return StatusEnquiryResult.unknown(
+                    "MQ-STATUS-DISABLED",
+                    "Connector disabled: " + config.getConnectorName());
+        }
+        return StatusEnquiryResult.unknown(
+                "MQ-STATUS-NOT-IMPLEMENTED",
+                "MQ status enquiry client not wired");
     }
 
     private BankIsoDispatchResponse transient_(String code, String message, String transferRef) {

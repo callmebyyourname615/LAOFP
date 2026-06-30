@@ -8,6 +8,10 @@ public record OperationsTransferTraceSummaryResponse(
         Boolean hasInquiry,
         Boolean hasOutboxFailure,
         Boolean hasIsoFailure,
-        Boolean transferSuccessful
+        Boolean transferSuccessful,
+        String settlementDecision,
+        String statusEnquiryResult,
+        String confirmationStatus,
+        String settlementConfidence
 ) {
 }

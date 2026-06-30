@@ -22,6 +22,8 @@ import com.example.switching.iso.service.InboundPacs002MessageService;
 import com.example.switching.outbox.dto.BankDispatchResult;
 import com.example.switching.outbox.dto.BankIsoDispatchResponse;
 import com.example.switching.outbox.dto.DispatchIsoMessageCommand;
+import com.example.switching.outbox.dto.StatusEnquiryCommand;
+import com.example.switching.outbox.dto.StatusEnquiryResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -210,6 +212,75 @@ public class OutboxIsoMessageDispatchService {
             throw new IllegalStateException(
                     "Failed to dispatch encrypted ISO message from outbox payload",
                     ex);
+        }
+    }
+
+    public StatusEnquiryResult enquireDestinationStatus(String outboxPayload) {
+        try {
+            JsonNode payload = objectMapper.readTree(outboxPayload);
+
+            String transferRef = requiredText(payload, "transferRef");
+            Long isoMessageId = requiredLong(payload, "isoMessageId");
+            String sourceBank = requiredText(payload, "sourceBank");
+            String destinationBank = requiredText(payload, "destinationBank");
+            String routeCode = requiredText(payload, "routeCode");
+            String connectorName = requiredText(payload, "connectorName");
+
+            IsoMessageEntity outboundPacs008 = isoMessageRepository.findById(isoMessageId)
+                    .orElseThrow(() -> new IsoMessageNotFoundException(String.valueOf(isoMessageId)));
+            hydratePayloads(outboundPacs008);
+
+            String messageType = optionalText(payload, "messageType");
+            if (!StringUtils.hasText(messageType) && outboundPacs008.getMessageType() != null) {
+                messageType = String.valueOf(outboundPacs008.getMessageType());
+            }
+
+            validateOutboundPacs008(outboundPacs008, transferRef);
+
+            Map<String, Object> auditPayload = new LinkedHashMap<>();
+            auditPayload.put("transferRef", transferRef);
+            auditPayload.put("isoMessageId", isoMessageId);
+            auditPayload.put("messageId", outboundPacs008.getMessageId());
+            auditPayload.put("endToEndId", outboundPacs008.getEndToEndId());
+            auditPayload.put("sourceBank", sourceBank);
+            auditPayload.put("destinationBank", destinationBank);
+            auditPayload.put("routeCode", routeCode);
+            auditPayload.put("connectorName", connectorName);
+            auditLogService.log(
+                    "STATUS_ENQUIRY_STARTED",
+                    ENTITY_TYPE,
+                    transferRef,
+                    SOURCE_SYSTEM,
+                    auditPayload);
+
+            BankConnector connector = connectorRegistry.resolve(connectorName);
+            StatusEnquiryResult result = connector.enquireStatus(new StatusEnquiryCommand(
+                    transferRef,
+                    outboundPacs008.getId(),
+                    outboundPacs008.getMessageId(),
+                    outboundPacs008.getEndToEndId(),
+                    messageType,
+                    sourceBank,
+                    destinationBank,
+                    connectorName));
+
+            Map<String, Object> resultPayload = new LinkedHashMap<>(auditPayload);
+            resultPayload.put("status", result.status().name());
+            resultPayload.put("responseCode", result.responseCode());
+            resultPayload.put("responseMessage", result.responseMessage());
+            resultPayload.put("externalReference", result.externalReference());
+            auditLogService.log(
+                    "STATUS_ENQUIRY_COMPLETED",
+                    ENTITY_TYPE,
+                    transferRef,
+                    SOURCE_SYSTEM,
+                    resultPayload);
+
+            return result;
+        } catch (Exception ex) {
+            return StatusEnquiryResult.unknown(
+                    "STATUS-ENQUIRY-FAILED",
+                    ex.getMessage());
         }
     }
 

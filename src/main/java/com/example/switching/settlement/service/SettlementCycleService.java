@@ -83,6 +83,11 @@ public class SettlementCycleService {
     @Transactional
     public SettlementCycleEntity closeCycle(String cycleRef) {
         SettlementCycleEntity cycle = requireCycle(cycleRef);
+        if ("CLOSED".equals(cycle.getStatus()) || "SETTLED".equals(cycle.getStatus())) {
+            log.info("Settlement cycle close skipped: cycleRef={} status={}",
+                    cycleRef, cycle.getStatus());
+            return cycle;
+        }
         requireStatus(cycle, "OPEN");
 
         cycle.setStatus("CLOSED");

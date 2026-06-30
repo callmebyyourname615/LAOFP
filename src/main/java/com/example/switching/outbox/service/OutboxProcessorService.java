@@ -27,6 +27,7 @@ import com.example.switching.outbox.entity.OutboxEventEntity;
 import com.example.switching.outbox.enums.FailureClass;
 import com.example.switching.outbox.enums.OutboxStatus;
 import com.example.switching.outbox.repository.OutboxEventRepository;
+import com.example.switching.outbox.dto.StatusEnquiryResult;
 import com.example.switching.settlement.service.HighValueRtgsInstructionService;
 import com.example.switching.transfer.entity.TransferEntity;
 import com.example.switching.transfer.enums.TransferStatus;
@@ -82,6 +83,7 @@ public class OutboxProcessorService {
     private final ErrorClassifier errorClassifier;
     private final WebhookEventPublisher webhookPublisher;
     private final TransactionTemplate transactionTemplate;
+    private final TransactionTemplate nonTransactionalTemplate;
     private final Counter dispatchSuccessCounter;
     private final Counter dispatchBusinessFailureCounter;
     private final Counter dispatchTechnicalFailureCounter;
@@ -132,6 +134,8 @@ public class OutboxProcessorService {
         this.maxRetry = fpre.getRetryAttempts();
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        this.nonTransactionalTemplate = new TransactionTemplate(transactionManager);
+        this.nonTransactionalTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED);
         this.dispatchSuccessCounter = Counter.builder("payment.outbox.dispatch.success")
                 .description("Outbox events dispatched successfully")
                 .register(meterRegistry);
@@ -270,6 +274,8 @@ public class OutboxProcessorService {
         transferStateMachineService.transition(transfer, TransferStatus.READY_FOR_SETTLEMENT, null);
         transfer.setExternalReference(result.getExternalReference());
         transfer.setReference(result.getReference());
+        transfer.setConfirmationStatus("CONFIRMED");
+        transfer.setSettlementConfidence("CONFIRMED");
         transfer.setErrorCode(null);
         transfer.setErrorMessage(null);
         transferRepository.save(transfer);
@@ -295,6 +301,8 @@ public class OutboxProcessorService {
         payload.put("outboxEventId", event.getId());
         payload.put("transferRef", transfer.getTransferRef());
         payload.put("status", TransferStatus.READY_FOR_SETTLEMENT.name());
+        payload.put("confirmationStatus", transfer.getConfirmationStatus());
+        payload.put("settlementConfidence", transfer.getSettlementConfidence());
         payload.put("externalReference", result.getExternalReference());
         payload.put("reference", result.getReference());
         payload.put("poolAvailableBalance", confirmedPoolBalance.availableBalance());
@@ -331,40 +339,46 @@ public class OutboxProcessorService {
 
         ErrorCatalog catalog = ErrorCatalog.EXT_001;
         FailureClass failureClass = failureClassificationService.classifyBankFailure(result);
+        int nextRetryCount = nextAttemptCount(event.getRetryCount());
         boolean shouldRetry = failureClassificationService.shouldRetry(
                 failureClass,
-                safeRetryCount(event.getRetryCount()) + 1,
+                nextRetryCount,
                 maxRetry);
 
         transfer.setErrorCode(catalog.getErrorCode());
         transfer.setErrorMessage(trimMessage(result.getErrorMessage()));
         if (!shouldRetry) {
-            boolean rejectedNow = rejectTransferIfOpen(transfer, catalog.getErrorCode());
-            PoolBalance releasedPoolBalance = poolService.releaseHold(transfer.getTransferRef());
+            boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
+            transfer.setConfirmationStatus("DISPUTED");
+            transfer.setSettlementConfidence("DISPUTED");
+            transfer.setReference("Destination rejected transfer: " + trimMessage(result.getErrorMessage()));
             transferRepository.save(transfer);
 
             auditLogService.log(
-                    "POOL_HOLD_RELEASED",
+                    "TRANSFER_DRS_REQUIRED",
                     ENTITY_TYPE,
                     transfer.getTransferRef(),
                     SOURCE_SYSTEM,
                     java.util.Map.of(
                             "transferRef", transfer.getTransferRef(),
-                            "reason", "BUSINESS_FAILURE",
-                            "availableBalance", releasedPoolBalance.availableBalance(),
-                            "heldAmount", releasedPoolBalance.heldAmount()));
+                            "reason", "DESTINATION_REJECTED",
+                            "downstreamErrorCode", nullToEmpty(result.getErrorCode()),
+                            "downstreamErrorMessage", nullToEmpty(trimMessage(result.getErrorMessage())),
+                            "confirmationStatus", transfer.getConfirmationStatus(),
+                            "settlementConfidence", transfer.getSettlementConfidence()));
 
-            if (rejectedNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
+            if (drsNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
                 idempotencyService.updateStatus(
                         IDEMPOTENCY_CHANNEL,
                         transfer.getIdempotencyKey(),
-                        TransferStatus.REJECTED.name());
+                        TransferStatus.DRS_REQUIRED.name());
             }
+            openDrsDisputeIfAbsent(transfer, event, catalog, failureClass,
+                    new IllegalStateException(result.getErrorMessage()), nextRetryCount);
         } else {
             transferRepository.save(transfer);
         }
 
-        int nextRetryCount = safeRetryCount(event.getRetryCount()) + 1;
         boolean isFinal = retryScheduleService.isFinalAttempt(nextRetryCount);
 
         // AMBIGUOUS: check if PSP already applied credit before scheduling another retry
@@ -387,8 +401,10 @@ public class OutboxProcessorService {
         event.setWillRetry(shouldRetry);
         outboxEventRepository.save(event);
 
-        // Auto-reversal on final attempt
-        if (!shouldRetry && isFinal && fpre.isAutoReversalEnabled()) {
+        // Auto-reversal is skipped for final business rejects because this flow
+        // escalates to DRS after source-side acceptance.
+        if (!shouldRetry && isFinal && fpre.isAutoReversalEnabled()
+                && transfer.getStatus() != TransferStatus.DRS_REQUIRED) {
             autoReversalService.triggerReversal(event, transfer,
                     OutboxAutoReversalService.reasonFor(failureClass));
             pspSuspensionService.checkAndSuspend(transfer.getDestinationBank());
@@ -412,8 +428,8 @@ public class OutboxProcessorService {
                 SOURCE_SYSTEM,
                 payload);
 
-        // ── Lifecycle: REJECTED or RETRY_SCHEDULED ────────────────────────────
-        String eventType = shouldRetry ? "TRANSFER_RETRY_SCHEDULED" : "TRANSFER_REJECTED";
+        // ── Lifecycle: DRS_REQUIRED or RETRY_SCHEDULED ────────────────────────
+        String eventType = shouldRetry ? "TRANSFER_RETRY_SCHEDULED" : "TRANSFER_DRS_REQUIRED";
         eventPublisher.publishQuietly(transfer.getTransferRef(), eventType,
                 transfer.getBusinessDate(),
                 java.util.Map.of("outboxEventId", event.getId(),
@@ -427,11 +443,13 @@ public class OutboxProcessorService {
                                      "attemptNo",    nextRetryCount,
                                      "failureClass", failureClass.name()));
         } else {
-            webhookPublisher.transferRejected(transfer.getTransferRef(), transfer.getSourceBank(),
+            webhookPublisher.publishQuietly("TRANSFER.DRS_REQUIRED", transfer.getSourceBank(),
+                    transfer.getTransferRef(),
                     java.util.Map.of("transferRef",  transfer.getTransferRef(),
                                      "errorCode",    catalog.getErrorCode(),
-                                     "failureClass", failureClass.name()));
-            flowTracker.markFailed(transfer.getTransferRef(), transfer.getBusinessDate());
+                                     "failureClass", failureClass.name(),
+                                     "result",       "OK",
+                                     "resultDetail", TransferStatus.DRS_REQUIRED.name()));
         }
         recordAttempt(event.getId(), nextRetryCount,
                 shouldRetry ? "RETRY_SCHEDULED" : "FAILED",
@@ -452,7 +470,7 @@ public class OutboxProcessorService {
         OutboxEventEntity event = getOutboxEventOrThrow(outboxEventId);
         FailureClass failureClass = failureClassificationService.classifyTechnicalFailure(catalog);
 
-        int nextRetryCount = safeRetryCount(event.getRetryCount()) + 1;
+        int nextRetryCount = nextAttemptCount(event.getRetryCount());
         boolean shouldRetry = failureClassificationService.shouldRetry(failureClass, nextRetryCount, maxRetry);
 
         TransferEntity transfer = null;
@@ -465,33 +483,89 @@ public class OutboxProcessorService {
             transfer.setErrorMessage(trimMessage(ex.getMessage()));
 
             if (failureClassificationService.shouldRejectTransfer(failureClass, shouldRetry)) {
-                boolean rejectedNow = rejectTransferIfOpen(transfer, catalog.getErrorCode());
-                PoolBalance releasedPoolBalance = poolService.releaseHold(transfer.getTransferRef());
-                transferRepository.save(transfer);
+                StatusEnquiryResult enquiryResult = nonTransactionalTemplate.execute(status ->
+                        outboxIsoMessageDispatchService.enquireDestinationStatus(event.getPayload()));
+                if (enquiryResult == null) {
+                    enquiryResult = StatusEnquiryResult.unknown(
+                            "STATUS-ENQUIRY-NULL",
+                            "Status enquiry returned no result");
+                }
 
-                auditLogService.log(
-                        "POOL_HOLD_RELEASED",
-                        ENTITY_TYPE,
-                        transfer.getTransferRef(),
-                        SOURCE_SYSTEM,
-                        java.util.Map.of(
-                                "transferRef", transfer.getTransferRef(),
-                                "reason", "TECHNICAL_FAILURE",
-                                "availableBalance", releasedPoolBalance.availableBalance(),
-                                "heldAmount", releasedPoolBalance.heldAmount()));
+                if (enquiryResult.accepted()) {
+                    finalizeSuccess(event.getId(), transfer.getTransferRef(),
+                            BankDispatchResult.success(
+                                    enquiryResult.externalReference(),
+                                    "Status enquiry confirmed destination credited"),
+                            resolveConnectorName(event));
+                    return;
+                }
 
-                if (rejectedNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
-                    idempotencyService.updateStatus(
-                            IDEMPOTENCY_CHANNEL,
-                            transfer.getIdempotencyKey(),
-                            TransferStatus.REJECTED.name());
+                if (enquiryResult.rejectedOrNotFound()) {
+                    boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
+                    transfer.setConfirmationStatus("DISPUTED");
+                    transfer.setSettlementConfidence("DISPUTED");
+                    transfer.setReference("Status enquiry confirmed destination did not credit: "
+                            + enquiryResult.status().name());
+                    transferRepository.save(transfer);
+
+                    auditLogService.log(
+                            "STATUS_ENQUIRY_CONFIRMED_REJECTED",
+                            ENTITY_TYPE,
+                            transfer.getTransferRef(),
+                            SOURCE_SYSTEM,
+                            java.util.Map.of(
+                                    "transferRef", transfer.getTransferRef(),
+                                    "statusEnquiryResult", enquiryResult.status().name(),
+                                    "responseCode", nullToEmpty(enquiryResult.responseCode()),
+                                    "responseMessage", nullToEmpty(enquiryResult.responseMessage()),
+                                    "confirmationStatus", transfer.getConfirmationStatus(),
+                                    "settlementConfidence", transfer.getSettlementConfidence()));
+
+                    if (drsNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
+                        idempotencyService.updateStatus(
+                                IDEMPOTENCY_CHANNEL,
+                                transfer.getIdempotencyKey(),
+                                TransferStatus.DRS_REQUIRED.name());
+                    }
+                    openDrsDisputeIfAbsent(transfer, event, catalog, failureClass, ex, nextRetryCount);
+                } else {
+                    markTransferProvisionalReadyForSettlement(transfer,
+                            "Provisional settlement: destination status unknown after retry/status enquiry");
+                    PoolBalance confirmedPoolBalance = poolService.confirmHold(transfer.getTransferRef());
+                    transferRepository.save(transfer);
+
+                    Map<String, Object> provisionalPayload = new LinkedHashMap<>();
+                    provisionalPayload.put("transferRef", transfer.getTransferRef());
+                    provisionalPayload.put("reason", "STATUS_ENQUIRY_UNKNOWN_AFTER_RETRY_EXHAUSTED");
+                    provisionalPayload.put("statusEnquiryResult", enquiryResult.status().name());
+                    provisionalPayload.put("statusEnquiryCode", nullToEmpty(enquiryResult.responseCode()));
+                    provisionalPayload.put("confirmationStatus", transfer.getConfirmationStatus());
+                    provisionalPayload.put("settlementConfidence", transfer.getSettlementConfidence());
+                    provisionalPayload.put("poolAvailableBalance", confirmedPoolBalance.availableBalance());
+                    provisionalPayload.put("poolHeldAmount", confirmedPoolBalance.heldAmount());
+                    provisionalPayload.put("failureClass", failureClass.name());
+                    provisionalPayload.put("attemptNo", nextRetryCount);
+                    provisionalPayload.put("maxRetry", maxRetry);
+
+                    auditLogService.log(
+                            "TRANSFER_PROVISIONAL_READY_FOR_SETTLEMENT",
+                            ENTITY_TYPE,
+                            transfer.getTransferRef(),
+                            SOURCE_SYSTEM,
+                            provisionalPayload);
+
+                    if (StringUtils.hasText(transfer.getIdempotencyKey())) {
+                        idempotencyService.updateStatus(
+                                IDEMPOTENCY_CHANNEL,
+                                transfer.getIdempotencyKey(),
+                                TransferStatus.READY_FOR_SETTLEMENT.name());
+                    }
+                    flowTracker.markReadyForSettlement(transfer.getTransferRef(), transfer.getBusinessDate());
                 }
             } else {
                 transferRepository.save(transfer);
             }
         }
-
-        boolean isFinal = retryScheduleService.isFinalAttempt(nextRetryCount);
 
         event.setRetryCount(nextRetryCount);
         event.setStatus(shouldRetry ? OutboxStatus.PENDING : OutboxStatus.FAILED);
@@ -501,12 +575,9 @@ public class OutboxProcessorService {
         event.setWillRetry(shouldRetry);
         outboxEventRepository.save(event);
 
-        // Auto-reversal on final attempt for retryable failure classes
-        if (!shouldRetry && isFinal && fpre.isAutoReversalEnabled() && transfer != null) {
-            autoReversalService.triggerReversal(event, transfer,
-                    OutboxAutoReversalService.reasonFor(failureClass));
-            pspSuspensionService.checkAndSuspend(transfer.getDestinationBank());
-        }
+        // Technical/no-response exhaustion is ambiguous. When status enquiry is
+        // still unknown, continue to provisional settlement instead of creating
+        // DRS noise. Clear reject/not-found answers still open DRS.
 
         Map<String, Object> payload = buildErrorPayload(
                 catalog,
@@ -525,9 +596,13 @@ public class OutboxProcessorService {
                 SOURCE_SYSTEM,
                 payload);
 
-        // ── Lifecycle: REJECTED or RETRY_SCHEDULED (technical) ────────────────
+        // ── Lifecycle: PROVISIONAL/DRS_REQUIRED or RETRY_SCHEDULED ────────────
         String effectiveRef = StringUtils.hasText(transferRef) ? transferRef : event.getTransferRef();
-        String techEventType = shouldRetry ? "TRANSFER_RETRY_SCHEDULED" : "TRANSFER_REJECTED";
+        String techEventType = shouldRetry
+                ? "TRANSFER_RETRY_SCHEDULED"
+                : transfer != null && transfer.getStatus() == TransferStatus.READY_FOR_SETTLEMENT
+                        ? "TRANSFER_PROVISIONAL_READY_FOR_SETTLEMENT"
+                        : "TRANSFER_DRS_REQUIRED";
         eventPublisher.publishQuietly(effectiveRef, techEventType,
                 java.time.LocalDate.now(),
                 java.util.Map.of("outboxEventId", event.getId(),
@@ -536,12 +611,35 @@ public class OutboxProcessorService {
                         "technical",    true),
                 SOURCE_SYSTEM);
         if (!shouldRetry && transfer != null) {
-            flowTracker.markFailed(transfer.getTransferRef(), transfer.getBusinessDate());
-            webhookPublisher.transferRejected(transfer.getTransferRef(), transfer.getSourceBank(),
-                    java.util.Map.of("transferRef",  transfer.getTransferRef(),
-                                     "errorCode",    catalog.getErrorCode(),
-                                     "failureClass", failureClass.name(),
-                                     "technical",    true));
+            if (transfer.getStatus() == TransferStatus.REJECTED) {
+                flowTracker.markFailed(transfer.getTransferRef(), transfer.getBusinessDate());
+                webhookPublisher.transferRejected(transfer.getTransferRef(), transfer.getSourceBank(),
+                        java.util.Map.of("transferRef", transfer.getTransferRef(),
+                                "errorCode", catalog.getErrorCode(),
+                                "failureClass", failureClass.name(),
+                                "technical", true,
+                                "statusEnquiry", true));
+            } else if (transfer.getStatus() == TransferStatus.DRS_REQUIRED) {
+                webhookPublisher.publishQuietly("TRANSFER.DRS_REQUIRED", transfer.getSourceBank(),
+                        transfer.getTransferRef(),
+                        java.util.Map.of("transferRef",  transfer.getTransferRef(),
+                                         "errorCode",    catalog.getErrorCode(),
+                                         "failureClass", failureClass.name(),
+                                         "technical",    true,
+                                         "result",       "OK",
+                                         "resultDetail", TransferStatus.DRS_REQUIRED.name()));
+            } else {
+                webhookPublisher.publishQuietly("TRANSFER.PROVISIONAL_READY_FOR_SETTLEMENT", transfer.getSourceBank(),
+                        transfer.getTransferRef(),
+                        java.util.Map.of("transferRef",  transfer.getTransferRef(),
+                                         "errorCode",    catalog.getErrorCode(),
+                                         "failureClass", failureClass.name(),
+                                         "technical",    true,
+                                         "result",       "OK",
+                                         "resultDetail", "PENDING_SETTLEMENT_CONFIRMATION",
+                                         "confirmationStatus", nullToEmpty(transfer.getConfirmationStatus()),
+                                         "settlementConfidence", nullToEmpty(transfer.getSettlementConfidence())));
+            }
         } else if (shouldRetry && transfer != null) {
             webhookPublisher.transferRetryScheduled(transfer.getTransferRef(), transfer.getSourceBank(),
                     java.util.Map.of("transferRef",  transfer.getTransferRef(),
@@ -602,12 +700,107 @@ public class OutboxProcessorService {
         return true;
     }
 
+    private boolean markTransferDrsRequiredIfOpen(TransferEntity transfer, String reasonCode) {
+        if (transfer.getStatus() == TransferStatus.DRS_REQUIRED) {
+            log.info("Skip DRS transition for transferRef={} because status is already DRS_REQUIRED",
+                    transfer.getTransferRef());
+            return false;
+        }
+        if (isTerminalStatus(transfer.getStatus())) {
+            log.info("Skip DRS transition for transferRef={} because status is already terminal: {}",
+                    transfer.getTransferRef(), transfer.getStatus());
+            return false;
+        }
+        transferStateMachineService.transition(transfer, TransferStatus.DRS_REQUIRED, reasonCode);
+        return true;
+    }
+
+    private void markTransferProvisionalReadyForSettlement(TransferEntity transfer, String reference) {
+        if (transfer.getStatus() != TransferStatus.READY_FOR_SETTLEMENT) {
+            transferStateMachineService.transition(transfer, TransferStatus.READY_FOR_SETTLEMENT, null);
+        }
+        transfer.setConfirmationStatus("PROVISIONAL");
+        transfer.setSettlementConfidence("PROVISIONAL");
+        transfer.setReference(reference);
+        transfer.setErrorCode(null);
+        transfer.setErrorMessage(null);
+    }
+
     private boolean isTerminalStatus(TransferStatus status) {
         return status == TransferStatus.REJECTED
                 || status == TransferStatus.FAILED
                 || status == TransferStatus.SETTLED
                 || status == TransferStatus.SUCCESS
                 || status == TransferStatus.REFUNDED;
+    }
+
+    private void openDrsDisputeIfAbsent(TransferEntity transfer,
+            OutboxEventEntity event,
+            ErrorCatalog catalog,
+            FailureClass failureClass,
+            Exception ex,
+            int attemptNo) {
+        try {
+            Integer existing = jdbcTemplate.queryForObject(
+                    """
+                    SELECT COUNT(*)
+                    FROM disputes
+                    WHERE txn_ref = ?
+                      AND status IN ('OPEN', 'UNDER_REVIEW', 'ESCALATED')
+                    """,
+                    Integer.class,
+                    transfer.getTransferRef());
+
+            if (existing != null && existing > 0) {
+                return;
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            String lastError = trimMessage(ex.getMessage());
+            String evidence = objectMapper.writeValueAsString(java.util.List.of(
+                    java.util.Map.of(
+                            "reason", "DESTINATION_NO_RESPONSE_RETRY_EXHAUSTED",
+                            "outboxEventId", event.getId(),
+                            "errorCode", catalog.getErrorCode(),
+                            "failureClass", failureClass.name(),
+                            "attemptNo", attemptNo,
+                            "maxRetry", maxRetry,
+                            "lastError", lastError == null ? "" : lastError)));
+
+            Long disputeId = jdbcTemplate.queryForObject(
+                    """
+                    INSERT INTO disputes
+                        (txn_ref, raising_psp_id, responding_psp_id, dispute_type, status,
+                         raised_at, sla_deadline, evidence, resolution_note, created_at, updated_at)
+                    VALUES (?, ?, ?, 'TECHNICAL_ERROR', 'OPEN', ?, ?, ?, ?, ?, ?)
+                    RETURNING dispute_id
+                    """,
+                    Long.class,
+                    transfer.getTransferRef(),
+                    transfer.getSourceBank(),
+                    transfer.getDestinationBank(),
+                    now,
+                    now.plusDays(1),
+                    evidence,
+                    "Auto-opened by switching after push-forward retry exhaustion",
+                    now,
+                    now);
+
+            auditLogService.log(
+                    "DRS_DISPUTE_AUTO_OPENED",
+                    ENTITY_TYPE,
+                    transfer.getTransferRef(),
+                    SOURCE_SYSTEM,
+                    java.util.Map.of(
+                            "disputeId", disputeId,
+                            "transferRef", transfer.getTransferRef(),
+                            "sourceBank", transfer.getSourceBank(),
+                            "destinationBank", transfer.getDestinationBank(),
+                            "failureClass", failureClass.name()));
+        } catch (Exception disputeEx) {
+            log.warn("Failed to auto-open DRS dispute for transferRef={} outboxEventId={}: {}",
+                    transfer.getTransferRef(), event.getId(), disputeEx.getMessage());
+        }
     }
 
     private String resolveTransferRef(OutboxEventEntity event, DispatchTransferCommand command) {
@@ -635,8 +828,25 @@ public class OutboxProcessorService {
         }
     }
 
+    private String resolveConnectorName(OutboxEventEntity event) {
+        try {
+            DispatchTransferCommand command = objectMapper.readValue(event.getPayload(), DispatchTransferCommand.class);
+            return command.getConnectorName();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     private int safeRetryCount(Integer retryCount) {
         return retryCount == null ? 0 : retryCount;
+    }
+
+    private int nextAttemptCount(Integer retryCount) {
+        return Math.min(safeRetryCount(retryCount) + 1, maxRetry);
+    }
+
+    private String nullToEmpty(String value) {
+        return value == null ? "" : value;
     }
 
     private String trimMessage(String message) {

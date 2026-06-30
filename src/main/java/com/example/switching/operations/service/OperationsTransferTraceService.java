@@ -91,6 +91,9 @@ public class OperationsTransferTraceService {
                 auditEvents
         );
 
+        String settlementDecision = deriveSettlementDecision(transfer, auditEvents);
+        String statusEnquiryResult = deriveStatusEnquiryResult(auditEvents);
+
         OperationsTransferTraceSummaryResponse summary = new OperationsTransferTraceSummaryResponse(
                 outboxEvents.size(),
                 isoMessages.size(),
@@ -105,6 +108,11 @@ public class OperationsTransferTraceService {
                 ),
                 "SETTLED".equalsIgnoreCase(transfer.status())
                         || "SUCCESS".equalsIgnoreCase(transfer.status())
+                        || "READY_FOR_SETTLEMENT".equalsIgnoreCase(transfer.status()),
+                settlementDecision,
+                statusEnquiryResult,
+                transfer.confirmationStatus(),
+                transfer.settlementConfidence()
         );
 
         return Optional.of(new OperationsTransferTraceResponse(
@@ -122,6 +130,59 @@ public class OperationsTransferTraceService {
                 auditEvents,
                 timeline
         ));
+    }
+
+    private String deriveSettlementDecision(
+            OperationsTransferTraceTransferResponse transfer,
+            List<OperationsTransferTraceAuditItemResponse> auditEvents
+    ) {
+        if (hasAuditEvent(auditEvents, "TRANSFER_PROVISIONAL_READY_FOR_SETTLEMENT")) {
+            return "PROVISIONAL_READY_FOR_SETTLEMENT";
+        }
+        if (hasAuditEvent(auditEvents, "STATUS_ENQUIRY_CONFIRMED_REJECTED")) {
+            return "DRS_REQUIRED_AFTER_STATUS_ENQUIRY";
+        }
+        if ("READY_FOR_SETTLEMENT".equalsIgnoreCase(transfer.status())
+                && "PROVISIONAL".equalsIgnoreCase(transfer.settlementConfidence())) {
+            return "PROVISIONAL_READY_FOR_SETTLEMENT";
+        }
+        if ("READY_FOR_SETTLEMENT".equalsIgnoreCase(transfer.status())) {
+            return "CONFIRMED_READY_FOR_SETTLEMENT";
+        }
+        if ("DRS_REQUIRED".equalsIgnoreCase(transfer.status())) {
+            return "DRS_REQUIRED";
+        }
+        return transfer.status();
+    }
+
+    private String deriveStatusEnquiryResult(List<OperationsTransferTraceAuditItemResponse> auditEvents) {
+        for (OperationsTransferTraceAuditItemResponse audit : auditEvents) {
+            String payload = audit.payload();
+            if (!StringUtils.hasText(payload)) {
+                continue;
+            }
+            if (payload.contains("\"statusEnquiryResult\":\"UNKNOWN\"")
+                    || payload.contains("statusEnquiryResult=UNKNOWN")) {
+                return "UNKNOWN";
+            }
+            if (payload.contains("\"statusEnquiryResult\":\"ACCEPTED\"")
+                    || payload.contains("statusEnquiryResult=ACCEPTED")) {
+                return "ACCEPTED";
+            }
+            if (payload.contains("\"statusEnquiryResult\":\"REJECTED\"")
+                    || payload.contains("statusEnquiryResult=REJECTED")) {
+                return "REJECTED";
+            }
+            if (payload.contains("\"statusEnquiryResult\":\"NOT_FOUND\"")
+                    || payload.contains("statusEnquiryResult=NOT_FOUND")) {
+                return "NOT_FOUND";
+            }
+        }
+        return null;
+    }
+
+    private boolean hasAuditEvent(List<OperationsTransferTraceAuditItemResponse> auditEvents, String eventType) {
+        return auditEvents.stream().anyMatch(audit -> eventType.equalsIgnoreCase(audit.eventType()));
     }
 
     private OperationsTransferTraceTransferResponse findTransfer(String transferRef) {
@@ -145,6 +206,8 @@ public class OperationsTransferTraceService {
                     t.connector_name,
                     t.external_reference,
                     t.reference,
+                    t.confirmation_status,
+                    t.settlement_confidence,
                     t.error_code,
                     t.error_message,
                     t.created_at,
@@ -189,6 +252,8 @@ public class OperationsTransferTraceService {
                 clean(rs.getString("connector_name")),
                 clean(rs.getString("external_reference")),
                 clean(rs.getString("reference")),
+                clean(rs.getString("confirmation_status")),
+                clean(rs.getString("settlement_confidence")),
                 clean(rs.getString("error_code")),
                 clean(rs.getString("error_message")),
                 toLocalDateTime(rs.getTimestamp("created_at")),

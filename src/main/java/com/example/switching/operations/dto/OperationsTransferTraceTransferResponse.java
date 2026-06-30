@@ -22,6 +22,8 @@ public record OperationsTransferTraceTransferResponse(
         String connectorName,
         String externalReference,
         String reference,
+        String confirmationStatus,
+        String settlementConfidence,
         String errorCode,
         String errorMessage,
         LocalDateTime createdAt,

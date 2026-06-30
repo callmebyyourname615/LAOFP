@@ -1,0 +1,5 @@
+ dispute_id |           txn_ref           | raising_psp_id | responding_psp_id |  dispute_type   | status |        raised_at        |      sla_deadline       |                       resolution_note                        
+------------+-----------------------------+----------------+-------------------+-----------------+--------+-------------------------+-------------------------+--------------------------------------------------------------
+         15 | TRX-20260630070035-A29CB10D | SUNDAYBANK     | PETERBANK         | TECHNICAL_ERROR | OPEN   | 2026-06-30 07:04:49.797 | 2026-07-01 07:04:49.797 | Auto-opened by switching after push-forward retry exhaustion
+(1 row)
+

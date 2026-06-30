@@ -1,0 +1,1 @@
+{"category":"BUSINESS","details":null,"error":"BAD_REQUEST","errorCode":"INQ-002","layer":"TRANSFER","message":"Amount does not match inquiry","path":"/api/transfers","phase":"VALIDATE_REQUEST","requestId":"3d718118-7bbb-4e00-953a-b3869983885c","retryable":false,"status":400,"timestamp":"2026-06-30T09:02:37.899583693","traceId":null}

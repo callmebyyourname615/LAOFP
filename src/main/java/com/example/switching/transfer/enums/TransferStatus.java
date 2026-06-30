@@ -5,6 +5,7 @@ public enum TransferStatus {
     READY_FOR_SETTLEMENT,
     SETTLED,
     REJECTED,
+    DRS_REQUIRED,
     REFUND_REQUESTED,
     REFUNDED,
 

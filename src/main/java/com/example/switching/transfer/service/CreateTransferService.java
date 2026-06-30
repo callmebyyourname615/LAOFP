@@ -308,6 +308,8 @@ public class CreateTransferService {
             transfer.setExternalReference(null);
             transfer.setFlowRef(inquiryRef);
             transfer.setStatus(TransferStatus.ACCEPTED);
+            transfer.setConfirmationStatus("PENDING");
+            transfer.setSettlementConfidence("PENDING");
             transfer.setErrorCode(null);
             transfer.setErrorMessage(null);
             transfer.setReference(request.getReference());

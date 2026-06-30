@@ -105,7 +105,7 @@ public class TransferInquiryService {
         response.setStatus(status);
         response.setCurrentStatus(status);
         response.setResult(mapResult(status));
-        response.setResultDetail(mapResultDetail(status));
+        response.setResultDetail(mapResultDetail(transfer, status));
 
         response.setSourceBank(transfer.getSourceBank());
         response.setDebtorAccount(transfer.getDebtorAccount());
@@ -121,6 +121,8 @@ public class TransferInquiryService {
         response.setConnectorName(transfer.getConnectorName());
         response.setExternalReference(transfer.getExternalReference());
         response.setReference(transfer.getReference());
+        response.setConfirmationStatus(transfer.getConfirmationStatus());
+        response.setSettlementConfidence(transfer.getSettlementConfidence());
 
         response.setErrorCode(transfer.getErrorCode());
         response.setErrorMessage(transfer.getErrorMessage());
@@ -139,15 +141,21 @@ public class TransferInquiryService {
         return "OK";
     }
 
-    private String mapResultDetail(String status) {
+    private String mapResultDetail(TransferEntity transfer, String status) {
         if ("ACCEPTED".equals(status)) {
             return "PENDING";
         }
         if ("READY_FOR_SETTLEMENT".equals(status) || "SETTLED".equals(status)) {
+            if ("PROVISIONAL".equals(transfer.getSettlementConfidence())) {
+                return "PENDING_SETTLEMENT_CONFIRMATION";
+            }
             return "OK";
         }
         if ("REJECTED".equals(status)) {
             return "REJECTED";
+        }
+        if ("DRS_REQUIRED".equals(status)) {
+            return "DRS_REQUIRED";
         }
         if ("FAILED".equals(status)) {
             return "FAILED";

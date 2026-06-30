@@ -72,7 +72,7 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEventEntity, 
         @Query(value = """
                         update outbox_messages
                            set status = :pendingStatus,
-                               retry_count = coalesce(retry_count, 0) + 1,
+                               retry_count = :retryCount,
                                failure_class = 'TRANSIENT',
                                will_retry = true,
                                updated_at = now()
@@ -82,15 +82,17 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEventEntity, 
         int recoverProcessingEvent(
                         @Param("id") Long id,
                         @Param("processingStatus") String processingStatus,
-                        @Param("pendingStatus") String pendingStatus);
+                        @Param("pendingStatus") String pendingStatus,
+                        @Param("retryCount") int retryCount);
 
         @Modifying(clearAutomatically = true, flushAutomatically = true)
         @Query(value = """
                         update outbox_messages
                            set status = :failedStatus,
-                               retry_count = coalesce(retry_count, 0) + 1,
+                               retry_count = :retryCount,
                                failure_class = 'TRANSIENT',
                                will_retry = false,
+                               next_retry_at = null,
                                updated_at = now()
                          where id = :id
                            and status = :processingStatus
@@ -98,7 +100,8 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEventEntity, 
         int markProcessingEventAsFailed(
                         @Param("id") Long id,
                         @Param("processingStatus") String processingStatus,
-                        @Param("failedStatus") String failedStatus);
+                        @Param("failedStatus") String failedStatus,
+                        @Param("retryCount") int retryCount);
 
         @Modifying(clearAutomatically = true, flushAutomatically = true)
         @Query(value = """

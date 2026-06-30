@@ -1,0 +1,1 @@
+{"status":401,"error":"UNAUTHORIZED","errorCode":"SEC-001","message":"Missing or invalid authentication credential","path":"/error"}

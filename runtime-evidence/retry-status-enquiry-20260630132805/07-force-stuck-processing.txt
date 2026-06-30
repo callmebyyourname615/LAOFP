@@ -1,0 +1,6 @@
+UPDATE 1
+ id |       transaction_ref       |   status   | retry_count |      next_retry_at      | will_retry |                          last_error                          |      updated_at       
+----+-----------------------------+------------+-------------+-------------------------+------------+--------------------------------------------------------------+-----------------------
+ 20 | TRX-20260630062835-C7FB8BB5 | PROCESSING |           3 | 2026-06-30 07:29:35.817 | t          | Failed to dispatch encrypted ISO message from outbox payload | 2026-06-30 06:30:27.6
+(1 row)
+
