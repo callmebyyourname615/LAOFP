@@ -19,6 +19,14 @@ public class TransferInquiryResponse {
      */
     private String currentStatus;
 
+    /**
+     * Bank-facing outcome fields. While the transfer is accepted and the
+     * destination response is still pending, status remains ACCEPTED but
+     * result/resultDetail expose the LAPNET/LMPS contract: OK/PENDING.
+     */
+    private String result;
+    private String resultDetail;
+
     private String sourceBank;
     private String debtorAccount;
     private String destinationBank;
@@ -67,6 +75,22 @@ public class TransferInquiryResponse {
 
     public void setCurrentStatus(String currentStatus) {
         this.currentStatus = currentStatus;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getResultDetail() {
+        return resultDetail;
+    }
+
+    public void setResultDetail(String resultDetail) {
+        this.resultDetail = resultDetail;
     }
 
     public String getSourceBank() {

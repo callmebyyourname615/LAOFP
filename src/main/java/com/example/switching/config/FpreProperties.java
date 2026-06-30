@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
  *
  * <pre>
  * switching.fpre:
- *   retry-attempts: 5
- *   retry-delays-seconds: 30,60,120,300,600
- *   jitter-percent: 10
+ *   retry-attempts: 4
+ *   retry-delays-seconds: 1,1800,3600
+ *   jitter-percent: 0
  *   auto-reversal-enabled: true
  *   suspension-window-minutes: 30
  *   suspension-reversal-threshold: 3
@@ -20,17 +20,24 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "switching.fpre")
 public class FpreProperties {
 
-    /** Total FPRE retry attempts (1–5). Default: 5. */
-    private int retryAttempts = 5;
+    /**
+     * Total dispatch failure budget, including the initial forward failure.
+     *
+     * <p>Default 4 means: initial forward fails, then LAPNET/LMPS performs
+     * exactly 3 push-forward retries before terminal failure.
+     */
+    private int retryAttempts = 4;
 
     /**
-     * Base delay in seconds for each attempt (comma-separated, length must equal retryAttempts).
-     * Default: 30,60,120,300,600.
+     * Base delay in seconds for retryable failures.
+     *
+     * <p>Default: first retry immediately after timeout, second retry 30 minutes later,
+     * final retry 60 minutes after the previous retry.
      */
-    private String retryDelaysSeconds = "30,60,120,300,600";
+    private String retryDelaysSeconds = "1,1800,3600";
 
-    /** Jitter percentage applied to each delay (±N%). Default: 10. */
-    private int jitterPercent = 10;
+    /** Jitter percentage applied to each delay (±N%). Default: 0 for scheme fidelity. */
+    private int jitterPercent = 0;
 
     /** Whether auto-reversal fires when all retries are exhausted. Default: true. */
     private boolean autoReversalEnabled = true;

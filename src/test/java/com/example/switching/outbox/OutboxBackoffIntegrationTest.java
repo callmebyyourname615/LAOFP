@@ -14,14 +14,14 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * P5 — Exponential backoff verification.
+ * P5 — Push-forward retry schedule verification.
  *
  * Verifies that after each retryable technical failure the outbox event's
  * {@code next_retry_at} timestamp advances by the expected FPRE backoff delay:
  *
- *   attempt 1 → +30 s   (±5 s tolerance)
- *   attempt 2 → +60 s   (±10 s tolerance)   [was 120 s before FPRE; now uses delays[1]]
- *   attempt 5 → FAILED  (maxRetry = 5)      [was attempt 3 with maxRetry = 3]
+ *   attempt 1 → +1 s
+ *   attempt 2 → +1800 s
+ *   attempt 4 → FAILED  (initial failure + 3 retry pushes)
  *
  * A null {@code isoMessageId} in the payload reliably produces an
  * {@code IllegalStateException} → OUT-002 (retryable=true), which is the
@@ -42,10 +42,10 @@ class OutboxBackoffIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-BO-001  Attempt 1 → next_retry_at ≈ now + 30 s
+    // TC-BO-001  Attempt 1 → next_retry_at ≈ now + 1 s
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt1_setsNextRetryAt_30seconds() {
+    void attempt1_setsNextRetryAt_1second() {
         String transferRef  = "BO-TXN-1-" + System.nanoTime();
         long outboxEventId  = insertPendingOutboxEvent(transferRef, 0);
 
@@ -65,18 +65,17 @@ class OutboxBackoffIntegrationTest extends AbstractIntegrationTest {
         LocalDateTime nextRetry = toLocalDateTime(row.get("next_retry_at"));
         assertNotNull(nextRetry, "next_retry_at must not be null for a retryable failure");
 
-        // next_retry_at should be in [before+25s, after+35s]
-        assertTrue(nextRetry.isAfter(before.plusSeconds(25)),
-                "next_retry_at should be at least 25 s in the future");
-        assertTrue(nextRetry.isBefore(after.plusSeconds(35)),
-                "next_retry_at should be at most 35 s in the future");
+        assertTrue(nextRetry.isAfter(before.minusSeconds(1)),
+                "next_retry_at should be roughly immediate");
+        assertTrue(nextRetry.isBefore(after.plusSeconds(3)),
+                "next_retry_at should be at most 3 s in the future");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-BO-002  Attempt 2 → next_retry_at ≈ now + 60 s (FPRE delay[1])
+    // TC-BO-002  Attempt 2 → next_retry_at ≈ now + 1800 s (FPRE delay[1])
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt2_setsNextRetryAt_60seconds() {
+    void attempt2_setsNextRetryAt_1800seconds() {
         String transferRef  = "BO-TXN-2-" + System.nanoTime();
         // Pre-seed with retry_count=1 so the service thinks this is attempt #2
         long outboxEventId  = insertPendingOutboxEvent(transferRef, 1);
@@ -95,22 +94,21 @@ class OutboxBackoffIntegrationTest extends AbstractIntegrationTest {
         LocalDateTime nextRetry = toLocalDateTime(row.get("next_retry_at"));
         assertNotNull(nextRetry, "next_retry_at must not be null for attempt 2");
 
-        // FPRE delay[1] = 60 s ±10% jitter → window [54, 66]; add ±4 s safety buffer → [50, 70]
-        assertTrue(nextRetry.isAfter(before.plusSeconds(50)),
-                "next_retry_at should be at least 50 s in the future (60 s - 10 s safety)");
-        assertTrue(nextRetry.isBefore(after.plusSeconds(70)),
-                "next_retry_at should be at most 70 s in the future (60 s + 10 s safety)");
+        assertTrue(nextRetry.isAfter(before.plusSeconds(1797)),
+                "next_retry_at should be at least ~1800 s in the future");
+        assertTrue(nextRetry.isBefore(after.plusSeconds(1803)),
+                "next_retry_at should be at most ~1800 s in the future");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-BO-003  Attempt 5 (default max-retry=5) → event goes FAILED,
+    // TC-BO-003  Attempt 4 (default max-retry=4) → event goes FAILED,
     //            next_retry_at is null (no more retries)
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt5_atMaxRetry_setsStatusFailed_noNextRetry() {
+    void attempt4_atMaxRetry_setsStatusFailed_noNextRetry() {
         String transferRef  = "BO-TXN-3-" + System.nanoTime();
-        // retry_count=4 means this is the 5th attempt, which hits maxRetry=5
-        long outboxEventId  = insertPendingOutboxEvent(transferRef, 4);
+        // retry_count=3 means this is the 4th failed attempt, which hits maxRetry=4
+        long outboxEventId  = insertPendingOutboxEvent(transferRef, 3);
 
         outboxProcessorService.processSingleEvent(outboxEventId);
 

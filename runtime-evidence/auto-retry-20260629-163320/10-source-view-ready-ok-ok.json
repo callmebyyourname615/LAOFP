@@ -1,0 +1,10 @@
+{
+  "transferRef": "TRX-20260629093344-1D1E7E1B",
+  "status": "ACCEPTED",
+  "currentStatus": "ACCEPTED",
+  "result": null,
+  "resultDetail": null,
+  "reference": "Auto retry transfer evidence test",
+  "errorCode": "OUT-002",
+  "errorMessage": "Failed to dispatch encrypted ISO message from outbox payload"
+}

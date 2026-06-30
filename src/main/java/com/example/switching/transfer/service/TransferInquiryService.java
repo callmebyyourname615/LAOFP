@@ -104,6 +104,8 @@ public class TransferInquiryService {
         // Keep original field and add currentStatus for trace/operations-style clients.
         response.setStatus(status);
         response.setCurrentStatus(status);
+        response.setResult(mapResult(status));
+        response.setResultDetail(mapResultDetail(status));
 
         response.setSourceBank(transfer.getSourceBank());
         response.setDebtorAccount(transfer.getDebtorAccount());
@@ -128,5 +130,28 @@ public class TransferInquiryService {
 
         response.setHistory(history);
         return response;
+    }
+
+    private String mapResult(String status) {
+        if ("REJECTED".equals(status) || "FAILED".equals(status)) {
+            return "FAILED";
+        }
+        return "OK";
+    }
+
+    private String mapResultDetail(String status) {
+        if ("ACCEPTED".equals(status)) {
+            return "PENDING";
+        }
+        if ("READY_FOR_SETTLEMENT".equals(status) || "SETTLED".equals(status)) {
+            return "OK";
+        }
+        if ("REJECTED".equals(status)) {
+            return "REJECTED";
+        }
+        if ("FAILED".equals(status)) {
+            return "FAILED";
+        }
+        return status;
     }
 }

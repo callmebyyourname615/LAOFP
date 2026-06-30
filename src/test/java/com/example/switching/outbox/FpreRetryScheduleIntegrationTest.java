@@ -16,13 +16,13 @@ import com.example.switching.outbox.service.OutboxProcessorService;
 import com.example.switching.outbox.service.OutboxRetryScheduleService;
 
 /**
- * P10 Step 3 — FPRE 5-attempt retry schedule verification.
+ * P10 Step 3 — FPRE push-forward retry schedule verification.
  *
  * <p>Verifies that:
  * <ul>
- *   <li>Each attempt schedules next_retry_at using the FPRE delay table [30,60,120,300,600] ±10%.</li>
- *   <li>Attempts 1–4 keep the event in PENDING with will_retry=true.</li>
- *   <li>Attempt 5 (max) transitions the event to FAILED and triggers auto-reversal.</li>
+ *   <li>Each retryable attempt schedules next_retry_at using the FPRE delay table [1,1800,3600].</li>
+ *   <li>Attempts 1–3 keep the event in PENDING with will_retry=true.</li>
+ *   <li>Attempt 4 (initial failure + 3 retry pushes) transitions the event to FAILED and triggers auto-reversal.</li>
  *   <li>next_retry_at is null after the final attempt.</li>
  * </ul>
  *
@@ -36,9 +36,9 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     private static final String CONNECTOR_NAME = "MOCK_FR_CONNECTOR";
 
     // FPRE base delays in seconds (must match application.yml / FpreProperties defaults)
-    private static final int[] BASE_DELAYS = { 30, 60, 120, 300, 600 };
-    // Allowed ±% tolerance around the jittered value during assertions
-    private static final int TOLERANCE_PCT = 15;
+    private static final int[] BASE_DELAYS = { 1, 1800, 3600 };
+    // Allowed clock tolerance during assertions. Default FPRE jitter is disabled.
+    private static final int TOLERANCE_SECONDS = 2;
 
     @Autowired private OutboxProcessorService outboxProcessorService;
     @Autowired private OutboxRetryScheduleService retryScheduleService;
@@ -50,10 +50,10 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-001  Attempt 1 → PENDING, next_retry_at ≈ +30 s (±10%)
+    // TC-FR-001  Attempt 1 → PENDING, next_retry_at ≈ +1 s
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt1_schedules_30s_delay() {
+    void attempt1_schedules_1s_delay() {
         long id = insertEvent("FR-TXN-1-" + System.nanoTime(), 0);
         LocalDateTime before = LocalDateTime.now();
         outboxProcessorService.processSingleEvent(id);
@@ -68,10 +68,10 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-002  Attempt 2 → PENDING, next_retry_at ≈ +60 s (±10%)
+    // TC-FR-002  Attempt 2 → PENDING, next_retry_at ≈ +1800 s
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt2_schedules_60s_delay() {
+    void attempt2_schedules_1800s_delay() {
         long id = insertEvent("FR-TXN-2-" + System.nanoTime(), 1);
         LocalDateTime before = LocalDateTime.now();
         outboxProcessorService.processSingleEvent(id);
@@ -84,10 +84,10 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-003  Attempt 3 → PENDING, next_retry_at ≈ +120 s (±10%)
+    // TC-FR-003  Attempt 3 → PENDING, next_retry_at ≈ +3600 s
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt3_schedules_120s_delay() {
+    void attempt3_schedules_3600s_delay() {
         long id = insertEvent("FR-TXN-3-" + System.nanoTime(), 2);
         LocalDateTime before = LocalDateTime.now();
         outboxProcessorService.processSingleEvent(id);
@@ -100,35 +100,19 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-004  Attempt 4 → PENDING, next_retry_at ≈ +300 s (±10%)
+    // TC-FR-004  Attempt 4 (final) → FAILED, next_retry_at=null, reversal_log created
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt4_schedules_300s_delay() {
-        long id = insertEvent("FR-TXN-4-" + System.nanoTime(), 3);
-        LocalDateTime before = LocalDateTime.now();
-        outboxProcessorService.processSingleEvent(id);
-        LocalDateTime after = LocalDateTime.now();
-
-        Map<String, Object> row = fetchRow(id);
-        assertEquals("PENDING", row.get("status"));
-        assertEquals(4, num(row.get("retry_count")));
-        assertRetryDelay(before, after, toLdt(row.get("next_retry_at")), BASE_DELAYS[3]);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-005  Attempt 5 (final) → FAILED, next_retry_at=null, reversal_log created
-    // ─────────────────────────────────────────────────────────────────────────
-    @Test
-    void attempt5_final_setsFailedAndCreatesReversal() {
-        String transferRef = "FR-TXN-5-" + System.nanoTime();
-        long id = insertEvent(transferRef, 4);
+    void attempt4_final_setsFailedAndCreatesReversal() {
+        String transferRef = "FR-TXN-4-" + System.nanoTime();
+        long id = insertEvent(transferRef, 3);
 
         outboxProcessorService.processSingleEvent(id);
 
         Map<String, Object> row = fetchRow(id);
         assertEquals("FAILED", row.get("status"), "Final attempt must set FAILED");
-        assertEquals(5, num(row.get("retry_count")));
-        assertFalse(bool(row.get("will_retry")), "No more retries after attempt 5");
+        assertEquals(4, num(row.get("retry_count")));
+        assertFalse(bool(row.get("will_retry")), "No more retries after attempt 4");
         assertNull(row.get("next_retry_at"), "next_retry_at must be null after final attempt");
 
         // Verify reversal_log was created
@@ -146,34 +130,31 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     @Test
     void retryScheduleService_canRetry_and_isFinalAttempt() {
         assertTrue(retryScheduleService.canRetry(1));
-        assertTrue(retryScheduleService.canRetry(4));
+        assertTrue(retryScheduleService.canRetry(3));
+        assertFalse(retryScheduleService.canRetry(4));
         assertFalse(retryScheduleService.canRetry(5));
-        assertFalse(retryScheduleService.canRetry(6));
 
         assertFalse(retryScheduleService.isFinalAttempt(1));
-        assertFalse(retryScheduleService.isFinalAttempt(4));
+        assertFalse(retryScheduleService.isFinalAttempt(3));
+        assertTrue(retryScheduleService.isFinalAttempt(4));
         assertTrue(retryScheduleService.isFinalAttempt(5));
-        assertTrue(retryScheduleService.isFinalAttempt(6));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-007  computeNextRetry returns timestamp within expected jitter range
+    // TC-FR-007  computeNextRetry returns timestamp within expected range
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void computeNextRetry_allAttempts_withinJitterRange() {
-        for (int attempt = 1; attempt <= 5; attempt++) {
+    void computeNextRetry_allRetryableAttempts_withinExpectedRange() {
+        for (int attempt = 1; attempt <= 3; attempt++) {
             LocalDateTime before = LocalDateTime.now();
             LocalDateTime nextRetry = retryScheduleService.computeNextRetry(attempt);
             LocalDateTime after = LocalDateTime.now();
 
             int base = BASE_DELAYS[attempt - 1];
-            int jitter = (int) Math.ceil(base * 0.10);
-            long minSec = base - jitter;
-            long maxSec = base + jitter;
 
-            assertTrue(nextRetry.isAfter(before.plusSeconds(minSec - 1)),
+            assertTrue(nextRetry.isAfter(before.plusSeconds(base - TOLERANCE_SECONDS - 1)),
                     "attempt " + attempt + ": nextRetry too early (base=" + base + "s)");
-            assertTrue(nextRetry.isBefore(after.plusSeconds(maxSec + 2)),
+            assertTrue(nextRetry.isBefore(after.plusSeconds(base + TOLERANCE_SECONDS + 1)),
                     "attempt " + attempt + ": nextRetry too late (base=" + base + "s)");
         }
     }
@@ -185,11 +166,10 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     private void assertRetryDelay(LocalDateTime before, LocalDateTime after,
                                    LocalDateTime nextRetry, int baseSeconds) {
         assertNotNull(nextRetry, "next_retry_at must not be null for a retryable failure");
-        int jitter = (int) Math.ceil(baseSeconds * (TOLERANCE_PCT / 100.0));
-        assertTrue(nextRetry.isAfter(before.plusSeconds(baseSeconds - jitter - 1)),
-                "next_retry_at is earlier than expected (base=" + baseSeconds + "s, tol=" + TOLERANCE_PCT + "%)");
-        assertTrue(nextRetry.isBefore(after.plusSeconds(baseSeconds + jitter + 1)),
-                "next_retry_at is later than expected (base=" + baseSeconds + "s, tol=" + TOLERANCE_PCT + "%)");
+        assertTrue(nextRetry.isAfter(before.plusSeconds(baseSeconds - TOLERANCE_SECONDS - 1)),
+                "next_retry_at is earlier than expected (base=" + baseSeconds + "s)");
+        assertTrue(nextRetry.isBefore(after.plusSeconds(baseSeconds + TOLERANCE_SECONDS + 1)),
+                "next_retry_at is later than expected (base=" + baseSeconds + "s)");
     }
 
     private long insertEvent(String transferRef, int initialRetryCount) {

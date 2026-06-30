@@ -8,19 +8,23 @@ import org.springframework.stereotype.Service;
 import com.example.switching.config.FpreProperties;
 
 /**
- * FPRE 5-attempt retry schedule with ±N% jitter.
+ * FPRE push-forward retry schedule with optional ±N% jitter.
  *
- * <p>Base delays (attempt 1–5): 30 s, 60 s, 120 s, 300 s, 600 s.
- * Jitter is applied as ±{jitterPercent}% of the base delay so that a cluster
- * of workers does not retry simultaneously.
+ * <p>The default policy follows the LAPNET/LMPS push-forward flow:
+ * initial forward failure, then only 3 retry pushes:
+ * <ol>
+ *   <li>first retry immediately after timeout/non-definitive result,</li>
+ *   <li>second retry 30 minutes after the first retry,</li>
+ *   <li>last retry 60 minutes after the second retry.</li>
+ * </ol>
+ * Jitter can still be enabled by configuration when a deployment needs worker
+ * de-synchronisation.
  *
- * <p>Example with 10 % jitter:
+ * <p>Default delays:
  * <pre>
- *   attempt 1 → 27–33 s
- *   attempt 2 → 54–66 s
- *   attempt 3 → 108–132 s
- *   attempt 4 → 270–330 s
- *   attempt 5 → 540–660 s
+ *   attempt 1 → 1 s
+ *   attempt 2 → 1800 s
+ *   attempt 3 → 3600 s
  * </pre>
  */
 @Service

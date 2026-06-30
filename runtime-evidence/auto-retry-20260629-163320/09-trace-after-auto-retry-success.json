@@ -1,0 +1,29 @@
+{
+  "currentStatus": "ACCEPTED",
+  "summary": {
+    "outboxEventCount": 1,
+    "isoMessageCount": 1,
+    "auditEventCount": 14,
+    "timelineEventCount": 19,
+    "hasInquiry": true,
+    "hasOutboxFailure": false,
+    "hasIsoFailure": false,
+    "transferSuccessful": false
+  },
+  "isoMessages": [
+    {
+      "messageType": "PACS_008",
+      "direction": "OUTBOUND",
+      "securityStatus": "ENCRYPTED",
+      "validationStatus": "NOT_VALIDATED"
+    }
+  ],
+  "outboxEvents": [
+    {
+      "status": "PENDING",
+      "retryCount": 1,
+      "lastError": "Failed to dispatch encrypted ISO message from outbox payload",
+      "nextRetryAt": "2026-06-29T09:34:14.727"
+    }
+  ]
+}

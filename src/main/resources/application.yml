@@ -247,9 +247,11 @@ switching:
       secret-key: ${OBJECT_STORAGE_SECRET_KEY:}
       retention-years: ${OBJECT_STORAGE_RETENTION_YEARS:10}
   fpre:
-    retry-attempts: ${FPRE_RETRY_ATTEMPTS:5}
-    retry-delays-seconds: ${FPRE_RETRY_DELAYS_SECONDS:30,60,120,300,600}
-    jitter-percent: ${FPRE_JITTER_PERCENT:10}
+    # Initial forward failure + 3 push-forward retries:
+    # 1st retry after timeout, 2nd after 30m, last after 60m.
+    retry-attempts: ${FPRE_RETRY_ATTEMPTS:4}
+    retry-delays-seconds: ${FPRE_RETRY_DELAYS_SECONDS:1,1800,3600}
+    jitter-percent: ${FPRE_JITTER_PERCENT:0}
     auto-reversal-enabled: ${FPRE_AUTO_REVERSAL_ENABLED:true}
     suspension-window-minutes: ${FPRE_SUSPENSION_WINDOW_MINUTES:30}
     suspension-reversal-threshold: ${FPRE_SUSPENSION_REVERSAL_THRESHOLD:3}

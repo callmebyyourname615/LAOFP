@@ -1,0 +1,29 @@
+{
+  "mfaRequired": false,
+  "expiresIn": 3600,
+  "roles": [
+    "SYSTEM_ADMIN"
+  ],
+  "permissions": [
+    "participant.view",
+    "audit.read",
+    "dashboard.risk",
+    "settlement.view",
+    "participant.manage",
+    "security.reset_mfa",
+    "dashboard.crossborder",
+    "risk.view",
+    "maker_checker.submit",
+    "user.view",
+    "security.reset_password",
+    "dispute.resolve",
+    "dashboard.settlement",
+    "session.revoke",
+    "dispute.view",
+    "user.manage",
+    "maker_checker.approve",
+    "settlement.approve",
+    "session.view",
+    "risk.investigate"
+  ]
+}
