@@ -1,0 +1,1 @@
+{"bankCode":"PETERBANK","connectorName":"MOCK_PETERBANK_CONNECTOR","connectorType":"MOCK","createdAt":"2026-06-25T08:11:18.296","enabled":true,"endpointUrl":null,"forceReject":false,"id":5,"rejectReasonCode":"AC01","rejectReasonMessage":"Mock destination account rejected by PETERBANK","timeoutMs":5000,"updatedAt":"2026-07-01T04:20:03.351"}

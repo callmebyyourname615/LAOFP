@@ -12,7 +12,8 @@ public record Pacs002ParseResult(
     public boolean accepted() {
         return "ACSC".equalsIgnoreCase(transactionStatus)
                 || "ACCP".equalsIgnoreCase(transactionStatus)
-                || "ACTC".equalsIgnoreCase(transactionStatus);
+                || "ACTC".equalsIgnoreCase(transactionStatus)
+                || "ACSP".equalsIgnoreCase(transactionStatus);
     }
 
     public boolean rejected() {

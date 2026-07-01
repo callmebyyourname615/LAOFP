@@ -1,21 +1,33 @@
 package com.example.switching.outbox.service;
 
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.connector.BankConnector;
 import com.example.switching.connector.registry.ConnectorRegistry;
+import com.example.switching.iso.dto.Camt006ParseResult;
 import com.example.switching.iso.dto.Pacs002ParseResult;
 import com.example.switching.iso.entity.IsoMessageEntity;
+import com.example.switching.iso.enums.IsoMessageDirection;
+import com.example.switching.iso.enums.IsoMessageType;
 import com.example.switching.iso.enums.IsoSecurityStatus;
+import com.example.switching.iso.enums.IsoValidationStatus;
 import com.example.switching.iso.exception.IsoMessageInvalidStateException;
 import com.example.switching.iso.exception.IsoMessageNotFoundException;
+import com.example.switching.iso.mapper.Camt005XmlBuilder;
+import com.example.switching.iso.mapper.Camt006XmlBuilder;
+import com.example.switching.iso.parser.Camt006Parser;
 import com.example.switching.iso.parser.Pacs002Parser;
 import com.example.switching.iso.repository.IsoMessageRepository;
 import com.example.switching.iso.service.InboundPacs002MessageService;
@@ -30,6 +42,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class OutboxIsoMessageDispatchService {
 
+    private static final Logger log = LoggerFactory.getLogger(OutboxIsoMessageDispatchService.class);
+
     private static final String ENTITY_TYPE = "TRANSFER";
     private static final String SOURCE_SYSTEM = "WORKER";
 
@@ -38,6 +52,9 @@ public class OutboxIsoMessageDispatchService {
     private final JdbcTemplate jdbcTemplate;
     private final ConnectorRegistry connectorRegistry;
     private final Pacs002Parser pacs002Parser;
+    private final Camt005XmlBuilder camt005XmlBuilder;
+    private final Camt006XmlBuilder camt006XmlBuilder;
+    private final Camt006Parser camt006Parser;
     private final InboundPacs002MessageService inboundPacs002MessageService;
     private final AuditLogService auditLogService;
 
@@ -47,6 +64,9 @@ public class OutboxIsoMessageDispatchService {
             JdbcTemplate jdbcTemplate,
             ConnectorRegistry connectorRegistry,
             Pacs002Parser pacs002Parser,
+            Camt005XmlBuilder camt005XmlBuilder,
+            Camt006XmlBuilder camt006XmlBuilder,
+            Camt006Parser camt006Parser,
             InboundPacs002MessageService inboundPacs002MessageService,
             AuditLogService auditLogService) {
         this.objectMapper = objectMapper;
@@ -54,6 +74,9 @@ public class OutboxIsoMessageDispatchService {
         this.jdbcTemplate = jdbcTemplate;
         this.connectorRegistry = connectorRegistry;
         this.pacs002Parser = pacs002Parser;
+        this.camt005XmlBuilder = camt005XmlBuilder;
+        this.camt006XmlBuilder = camt006XmlBuilder;
+        this.camt006Parser = camt006Parser;
         this.inboundPacs002MessageService = inboundPacs002MessageService;
         this.auditLogService = auditLogService;
     }
@@ -235,11 +258,33 @@ public class OutboxIsoMessageDispatchService {
                 messageType = String.valueOf(outboundPacs008.getMessageType());
             }
 
-            validateOutboundPacs008(outboundPacs008, transferRef);
+            validateOutboundPacs008Correlation(outboundPacs008, transferRef);
+            TransferSnapshot transfer = loadTransferSnapshot(
+                    transferRef,
+                    sourceBank,
+                    destinationBank);
+            IsoMessageEntity outboundCamt005 = savePlainIsoMessage(
+                    outboundPacs008,
+                    IsoMessageType.CAMT_005,
+                    IsoMessageDirection.OUTBOUND,
+                    "CAMT005-" + transferRef + "-" + System.currentTimeMillis(),
+                    outboundPacs008.getEndToEndId(),
+                    camt005XmlBuilder.build(
+                            transferRef,
+                            outboundPacs008.getMessageId(),
+                            outboundPacs008.getEndToEndId(),
+                            sourceBank,
+                            destinationBank,
+                            transfer.amount(),
+                            transfer.currency(),
+                            transfer.debtorAccount(),
+                            transfer.creditorAccount()));
 
             Map<String, Object> auditPayload = new LinkedHashMap<>();
             auditPayload.put("transferRef", transferRef);
             auditPayload.put("isoMessageId", isoMessageId);
+            auditPayload.put("statusEnquiryIsoMessageId", outboundCamt005.getId());
+            auditPayload.put("statusEnquiryMessageType", outboundCamt005.getMessageType().name());
             auditPayload.put("messageId", outboundPacs008.getMessageId());
             auditPayload.put("endToEndId", outboundPacs008.getEndToEndId());
             auditPayload.put("sourceBank", sourceBank);
@@ -264,6 +309,13 @@ public class OutboxIsoMessageDispatchService {
                     destinationBank,
                     connectorName));
 
+            saveInboundCamt006IfApplicable(
+                    outboundPacs008,
+                    result,
+                    transfer,
+                    routeCode,
+                    connectorName);
+
             Map<String, Object> resultPayload = new LinkedHashMap<>(auditPayload);
             resultPayload.put("status", result.status().name());
             resultPayload.put("responseCode", result.responseCode());
@@ -278,13 +330,202 @@ public class OutboxIsoMessageDispatchService {
 
             return result;
         } catch (Exception ex) {
+            log.warn("Status enquiry failed while preparing/sending CAMT.005", ex);
+            logStatusEnquiryFailure(outboxPayload, ex);
             return StatusEnquiryResult.unknown(
                     "STATUS-ENQUIRY-FAILED",
                     ex.getMessage());
         }
     }
 
+    private void saveInboundCamt006IfApplicable(
+            IsoMessageEntity outboundPacs008,
+            StatusEnquiryResult result,
+            TransferSnapshot transfer,
+            String routeCode,
+            String connectorName
+    ) {
+        if (result == null || result.status() == StatusEnquiryResult.Status.UNKNOWN) {
+            return;
+        }
+
+        String xml = camt006XmlBuilder.build(
+                transfer.transferRef(),
+                outboundPacs008.getEndToEndId(),
+                transfer.sourceBank(),
+                transfer.destinationBank(),
+                transfer.amount(),
+                transfer.currency(),
+                result);
+
+        Camt006ParseResult parsed = camt006Parser.parse(xml);
+        IsoMessageEntity inboundCamt006 = savePlainIsoMessage(
+                outboundPacs008,
+                IsoMessageType.CAMT_006,
+                IsoMessageDirection.INBOUND,
+                parsed.messageId(),
+                parsed.endToEndId(),
+                xml);
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("transferRef", transfer.transferRef());
+        payload.put("inboundIsoMessageId", inboundCamt006.getId());
+        payload.put("messageType", inboundCamt006.getMessageType().name());
+        payload.put("direction", inboundCamt006.getDirection().name());
+        payload.put("messageId", inboundCamt006.getMessageId());
+        payload.put("endToEndId", inboundCamt006.getEndToEndId());
+        payload.put("statusCode", parsed.statusCode());
+        payload.put("reasonCode", parsed.reasonCode());
+        payload.put("errorCode", parsed.errorCode());
+        payload.put("errorDescription", parsed.errorDescription());
+        payload.put("routeCode", routeCode);
+        payload.put("connectorName", connectorName);
+        auditLogService.log(
+                "ISO_CAMT006_INBOUND_SAVED",
+                ENTITY_TYPE,
+                transfer.transferRef(),
+                SOURCE_SYSTEM,
+                payload);
+    }
+
+    private IsoMessageEntity savePlainIsoMessage(
+            IsoMessageEntity correlationSource,
+            IsoMessageType messageType,
+            IsoMessageDirection direction,
+            String messageId,
+            String endToEndId,
+            String plainPayload
+    ) {
+        IsoMessageEntity entity = new IsoMessageEntity();
+        entity.setCorrelationRef(correlationSource.getCorrelationRef());
+        entity.setInquiryRef(correlationSource.getInquiryRef());
+        entity.setTransferRef(correlationSource.getTransferRef());
+        entity.setEndToEndId(endToEndId);
+        entity.setMessageId(messageId);
+        entity.setMessageType(messageType);
+        entity.setDirection(direction);
+        entity.setPlainPayload(plainPayload);
+        entity.setEncryptedPayload(null);
+        entity.setSecurityStatus(IsoSecurityStatus.PLAIN);
+        entity.setValidationStatus(IsoValidationStatus.NOT_VALIDATED);
+        entity.setErrorCode(null);
+        entity.setErrorMessage(null);
+
+        IsoMessageEntity saved = isoMessageRepository.save(entity);
+        persistPlainPayload(saved.getId(), plainPayload);
+        return saved;
+    }
+
+    private void persistPlainPayload(Long isoMessageId, String plainPayload) {
+        if (!hasTable("iso_message_payloads")) {
+            return;
+        }
+
+        int sizeBytes = plainPayload == null
+                ? 0
+                : plainPayload.getBytes(StandardCharsets.UTF_8).length;
+
+        jdbcTemplate.update(
+                """
+                INSERT INTO iso_message_payloads
+                  (iso_message_id, payload_type, plain_payload, encrypted_payload,
+                   payload_size_bytes, business_date)
+                VALUES (?, 'REQUEST', ?, NULL, ?, ?)
+                """,
+                isoMessageId,
+                plainPayload,
+                sizeBytes,
+                LocalDate.now());
+    }
+
+    private TransferSnapshot loadTransferSnapshot(
+            String transferRef,
+            String sourceBank,
+            String destinationBank
+    ) {
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(
+                """
+                SELECT transaction_ref, source_bank, destination_bank, amount, currency,
+                       debtor_account, creditor_account
+                FROM transactions
+                WHERE transaction_ref = ?
+                LIMIT 1
+                """,
+                transferRef);
+
+        if (rows.isEmpty()) {
+            return new TransferSnapshot(
+                    transferRef,
+                    sourceBank,
+                    destinationBank,
+                    null,
+                    "LAK",
+                    null,
+                    null);
+        }
+
+        Map<String, Object> row = rows.get(0);
+        return new TransferSnapshot(
+                textValue(row.get("transaction_ref"), transferRef),
+                textValue(row.get("source_bank"), sourceBank),
+                textValue(row.get("destination_bank"), destinationBank),
+                decimalValue(row.get("amount")),
+                textValue(row.get("currency"), "LAK"),
+                textValue(row.get("debtor_account"), null),
+                textValue(row.get("creditor_account"), null));
+    }
+
+    private BigDecimal decimalValue(Object value) {
+        if (value instanceof BigDecimal bd) {
+            return bd;
+        }
+        if (value == null) {
+            return null;
+        }
+        try {
+            return new BigDecimal(String.valueOf(value));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private String textValue(Object value, String fallback) {
+        if (value == null) {
+            return fallback;
+        }
+        String text = String.valueOf(value);
+        return StringUtils.hasText(text) ? text : fallback;
+    }
+
+    private record TransferSnapshot(
+            String transferRef,
+            String sourceBank,
+            String destinationBank,
+            BigDecimal amount,
+            String currency,
+            String debtorAccount,
+            String creditorAccount
+    ) {
+    }
+
     private void validateOutboundPacs008(IsoMessageEntity isoMessage, String transferRef) {
+        validateOutboundPacs008Correlation(isoMessage, transferRef);
+
+        if (isoMessage.getSecurityStatus() != IsoSecurityStatus.ENCRYPTED) {
+            throw new IsoMessageInvalidStateException(
+                    "ISO message must be ENCRYPTED before dispatch. isoMessageId="
+                            + isoMessage.getId()
+                            + ", securityStatus="
+                            + isoMessage.getSecurityStatus());
+        }
+
+        if (!StringUtils.hasText(isoMessage.getEncryptedPayload())) {
+            throw new IsoMessageInvalidStateException(
+                    "ISO encryptedPayload is empty. isoMessageId=" + isoMessage.getId());
+        }
+    }
+
+    private void validateOutboundPacs008Correlation(IsoMessageEntity isoMessage, String transferRef) {
         if (!StringUtils.hasText(isoMessage.getTransferRef())) {
             throw new IsoMessageInvalidStateException(
                     "ISO message transferRef is empty. isoMessageId=" + isoMessage.getId());
@@ -298,19 +539,6 @@ public class OutboxIsoMessageDispatchService {
                             + isoMessage.getTransferRef()
                             + ", outboxTransferRef="
                             + transferRef);
-        }
-
-        if (isoMessage.getSecurityStatus() != IsoSecurityStatus.ENCRYPTED) {
-            throw new IsoMessageInvalidStateException(
-                    "ISO message must be ENCRYPTED before dispatch. isoMessageId="
-                            + isoMessage.getId()
-                            + ", securityStatus="
-                            + isoMessage.getSecurityStatus());
-        }
-
-        if (!StringUtils.hasText(isoMessage.getEncryptedPayload())) {
-            throw new IsoMessageInvalidStateException(
-                    "ISO encryptedPayload is empty. isoMessageId=" + isoMessage.getId());
         }
     }
 

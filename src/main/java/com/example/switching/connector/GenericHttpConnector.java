@@ -206,11 +206,7 @@ public class GenericHttpConnector implements BankConnector {
         }
         try {
             Pacs002ParseResult parsed = pacs002Parser.parse(body);
-            boolean accepted = "ACSC".equals(parsed.transactionStatus())
-                    || "ACCP".equals(parsed.transactionStatus())
-                    || "ACSP".equals(parsed.transactionStatus());
-
-            if (accepted) {
+            if (parsed.accepted()) {
                 return new BankIsoDispatchResponse(true, "00", "HTTP_CONNECTOR_ACCEPTED",
                         externalRef(), body, parsed.transactionStatus());
             }

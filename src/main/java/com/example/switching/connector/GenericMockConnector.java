@@ -119,7 +119,9 @@ public class GenericMockConnector implements BankConnector {
                     command.endToEndId(),
                     command.transferRef(),
                     reasonCode,
-                    reasonMessage);
+                    reasonMessage,
+                    command.sourceBank(),
+                    command.destinationBank());
 
             return new BankIsoDispatchResponse(
                     false,
@@ -133,7 +135,9 @@ public class GenericMockConnector implements BankConnector {
         String pacs002Xml = pacs002XmlBuilder.buildAcceptedResponse(
                 command.messageId(),
                 command.endToEndId(),
-                command.transferRef());
+                command.transferRef(),
+                command.sourceBank(),
+                command.destinationBank());
 
         return new BankIsoDispatchResponse(
                 true,

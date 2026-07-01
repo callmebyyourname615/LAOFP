@@ -1,0 +1,1 @@
+{"category":"UNKNOWN","details":null,"error":"INTERNAL_SERVER_ERROR","errorCode":"SYS-001","layer":"SYSTEM","message":"Internal server error","path":"/api/operations/settlement/cycles","phase":"UNKNOWN","requestId":"3b13b901-6a20-4248-855e-52da868ec292","retryable":false,"status":500,"timestamp":"2026-07-01T02:46:22.827868893","traceId":null}
