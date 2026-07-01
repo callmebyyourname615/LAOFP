@@ -154,6 +154,8 @@ public class OperationsTransferQueryService {
                     t.connector_name,
                     t.external_reference,
                     t.reference,
+                    t.confirmation_status,
+                    t.settlement_confidence,
                     t.error_code,
                     t.error_message,
                     t.created_at,
