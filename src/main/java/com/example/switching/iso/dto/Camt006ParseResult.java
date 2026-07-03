@@ -7,7 +7,8 @@ public record Camt006ParseResult(
         String statusCode,
         String reasonCode,
         String errorCode,
-        String errorDescription
+        String errorDescription,
+        String resultDetail
 ) {
     public boolean accepted() {
         return "ACSC".equalsIgnoreCase(reasonCode)

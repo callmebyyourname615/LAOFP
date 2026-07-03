@@ -388,6 +388,36 @@ public class OutboxIsoMessageDispatchService {
                 payload);
     }
 
+    private void logStatusEnquiryFailure(String outboxPayload, Exception ex) {
+        try {
+            JsonNode payload = objectMapper.readTree(outboxPayload);
+            String transferRef = optionalText(payload, "transferRef");
+            if (!StringUtils.hasText(transferRef)) {
+                return;
+            }
+
+            Map<String, Object> auditPayload = new LinkedHashMap<>();
+            auditPayload.put("transferRef", transferRef);
+            auditPayload.put("isoMessageId", optionalText(payload, "isoMessageId"));
+            auditPayload.put("sourceBank", optionalText(payload, "sourceBank"));
+            auditPayload.put("destinationBank", optionalText(payload, "destinationBank"));
+            auditPayload.put("routeCode", optionalText(payload, "routeCode"));
+            auditPayload.put("connectorName", optionalText(payload, "connectorName"));
+            auditPayload.put("responseCode", "STATUS-ENQUIRY-FAILED");
+            auditPayload.put("responseMessage", ex.getMessage());
+            auditPayload.put("exceptionClass", ex.getClass().getSimpleName());
+
+            auditLogService.log(
+                    "STATUS_ENQUIRY_FAILED",
+                    ENTITY_TYPE,
+                    transferRef,
+                    SOURCE_SYSTEM,
+                    auditPayload);
+        } catch (Exception auditEx) {
+            log.warn("Unable to write STATUS_ENQUIRY_FAILED audit event", auditEx);
+        }
+    }
+
     private IsoMessageEntity savePlainIsoMessage(
             IsoMessageEntity correlationSource,
             IsoMessageType messageType,
@@ -446,7 +476,7 @@ public class OutboxIsoMessageDispatchService {
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(
                 """
                 SELECT transaction_ref, source_bank, destination_bank, amount, currency,
-                       debtor_account, creditor_account
+                       source_account_no, destination_account_no
                 FROM transactions
                 WHERE transaction_ref = ?
                 LIMIT 1
@@ -471,8 +501,8 @@ public class OutboxIsoMessageDispatchService {
                 textValue(row.get("destination_bank"), destinationBank),
                 decimalValue(row.get("amount")),
                 textValue(row.get("currency"), "LAK"),
-                textValue(row.get("debtor_account"), null),
-                textValue(row.get("creditor_account"), null));
+                textValue(row.get("source_account_no"), null),
+                textValue(row.get("destination_account_no"), null));
     }
 
     private BigDecimal decimalValue(Object value) {

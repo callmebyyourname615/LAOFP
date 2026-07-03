@@ -25,7 +25,8 @@ public class Camt006Parser {
                     firstPrtryAfter(document, "Cd"),
                     firstPrtryAfter(document, "Rsn"),
                     firstPrtryAfter(document, "Err"),
-                    text(document, "Desc"));
+                    text(document, "Desc"),
+                    text(document, "ResDt"));
         } catch (Exception ex) {
             throw new IllegalArgumentException("Failed to parse CAMT.006 XML", ex);
         }

@@ -1,0 +1,5 @@
+ id |       transaction_ref       | message_type | direction | security_status | validation_status |           message_id            |          end_to_end_id          |       created_at        
+----+-----------------------------+--------------+-----------+-----------------+-------------------+---------------------------------+---------------------------------+-------------------------
+ 71 | TRX-20260701075311-B0350C7E | PACS_008     | OUTBOUND  | ENCRYPTED       | NOT_VALIDATED     | MSG-TRX-20260701075311-B0350C7E | E2E-TRX-20260701075311-B0350C7E | 2026-07-01 07:53:11.664
+(1 row)
+

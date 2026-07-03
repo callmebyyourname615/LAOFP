@@ -32,6 +32,7 @@ import com.example.switching.settlement.service.SettlementCycleService;
 import com.example.switching.settlement.service.RtgsGatewayService;
 import com.example.switching.settlement.service.SettlementInstructionService;
 import com.example.switching.settlement.service.SettlementNetPositionService;
+import com.example.switching.settlement.service.SettlementOpsReportService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -61,19 +62,22 @@ public class SettlementController {
     private final SettlementInstructionService instructionService;
     private final RtgsGatewayService           rtgsGatewayService;
     private final Camt054ReportService         reportService;
+    private final SettlementOpsReportService   opsReportService;
 
     public SettlementController(SettlementCycleService cycleService,
                                  SettlementBatchService batchService,
                                  SettlementNetPositionService netPositionService,
                                  SettlementInstructionService instructionService,
                                  RtgsGatewayService rtgsGatewayService,
-                                 Camt054ReportService reportService) {
+                                 Camt054ReportService reportService,
+                                 SettlementOpsReportService opsReportService) {
         this.cycleService       = cycleService;
         this.batchService       = batchService;
         this.netPositionService = netPositionService;
         this.instructionService = instructionService;
         this.rtgsGatewayService = rtgsGatewayService;
         this.reportService      = reportService;
+        this.opsReportService   = opsReportService;
     }
 
     // ── Open a new cycle ─────────────────────────────────────────────────────
@@ -297,6 +301,24 @@ public class SettlementController {
                         r.getGeneratedAt()))
                 .toList();
         return ResponseEntity.ok(summaries);
+    }
+
+    // ── Operations evidence report after STGS/RTGS confirmation ──────────────
+
+    @GetMapping("/cycles/{cycleRef}/ops-report")
+    public ResponseEntity<SettlementOpsReportService.OpsSettlementReport> getOpsSettlementReport(
+            @PathVariable String cycleRef) {
+        return ResponseEntity.ok(opsReportService.load(cycleRef));
+    }
+
+    @GetMapping(value = "/cycles/{cycleRef}/ops-report.csv", produces = "text/csv")
+    public ResponseEntity<String> downloadOpsSettlementReportCsv(@PathVariable String cycleRef) {
+        String csv = opsReportService.loadCsv(cycleRef);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + cycleRef + "-ops-settlement-report.csv\"")
+                .body(csv);
     }
 
     // ── Mapping helpers ──────────────────────────────────────────────────────

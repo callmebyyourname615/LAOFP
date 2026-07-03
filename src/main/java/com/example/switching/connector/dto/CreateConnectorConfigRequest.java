@@ -11,6 +11,8 @@ public class CreateConnectorConfigRequest {
     private Boolean forceReject;    // default false
     private String rejectReasonCode;
     private String rejectReasonMessage;
+    private String mockDispatchMode; // SUCCESS | TIMEOUT | REJECT
+    private String mockStatusEnquiryResult; // ACCEPTED | REJECTED | NOT_FOUND | PROCESSING | UNKNOWN
 
     public String getConnectorName() { return connectorName; }
     public void setConnectorName(String connectorName) { this.connectorName = connectorName; }
@@ -38,4 +40,10 @@ public class CreateConnectorConfigRequest {
 
     public String getRejectReasonMessage() { return rejectReasonMessage; }
     public void setRejectReasonMessage(String rejectReasonMessage) { this.rejectReasonMessage = rejectReasonMessage; }
+
+    public String getMockDispatchMode() { return mockDispatchMode; }
+    public void setMockDispatchMode(String mockDispatchMode) { this.mockDispatchMode = mockDispatchMode; }
+
+    public String getMockStatusEnquiryResult() { return mockStatusEnquiryResult; }
+    public void setMockStatusEnquiryResult(String mockStatusEnquiryResult) { this.mockStatusEnquiryResult = mockStatusEnquiryResult; }
 }

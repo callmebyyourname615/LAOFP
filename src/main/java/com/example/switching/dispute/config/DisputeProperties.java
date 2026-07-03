@@ -49,6 +49,7 @@ public class DisputeProperties {
     public int slaDeadlineDays(String disputeType) {
         return switch (disputeType) {
             case "TECHNICAL_ERROR"               -> slaDaysTechnicalError;
+            case "POST_SETTLEMENT_DESTINATION_DISPUTE" -> slaDaysTechnicalError;
             case "NOT_RECEIVED"                  -> slaDaysNotReceived;
             case "WRONG_AMOUNT"                  -> slaDaysWrongAmount;
             case "FRAUD", "MERCHANT_DISPUTE",

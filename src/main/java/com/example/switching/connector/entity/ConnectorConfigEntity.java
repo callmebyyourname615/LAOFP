@@ -51,6 +51,12 @@ public class ConnectorConfigEntity {
     @Column(name = "reject_reason_message", length = 512)
     private String rejectReasonMessage;
 
+    @Column(name = "mock_dispatch_mode", length = 32)
+    private String mockDispatchMode;
+
+    @Column(name = "mock_status_enquiry_result", length = 32)
+    private String mockStatusEnquiryResult;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -134,6 +140,14 @@ public class ConnectorConfigEntity {
         return rejectReasonMessage;
     }
 
+    public String getMockDispatchMode() {
+        return mockDispatchMode;
+    }
+
+    public String getMockStatusEnquiryResult() {
+        return mockStatusEnquiryResult;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -180,6 +194,14 @@ public class ConnectorConfigEntity {
 
     public void setRejectReasonMessage(String rejectReasonMessage) {
         this.rejectReasonMessage = rejectReasonMessage;
+    }
+
+    public void setMockDispatchMode(String mockDispatchMode) {
+        this.mockDispatchMode = mockDispatchMode;
+    }
+
+    public void setMockStatusEnquiryResult(String mockStatusEnquiryResult) {
+        this.mockStatusEnquiryResult = mockStatusEnquiryResult;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

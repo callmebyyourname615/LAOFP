@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * Orchestrates expand → encrypted data backfill → contract migrations.
@@ -29,11 +31,14 @@ public class MigrationLifecycleRunner implements ApplicationRunner {
             MigrationVersion.fromVersion("44");
 
     private final DataSource dataSource;
+    private final Environment environment;
     private final WebhookSecretBackfillService backfillService;
 
     public MigrationLifecycleRunner(DataSource dataSource,
+                                    Environment environment,
                                     WebhookSecretBackfillService backfillService) {
         this.dataSource = dataSource;
+        this.environment = environment;
         this.backfillService = backfillService;
     }
 
@@ -66,12 +71,29 @@ public class MigrationLifecycleRunner implements ApplicationRunner {
     }
 
     private FluentConfiguration configure() {
-        return Flyway.configure()
-                .dataSource(dataSource)
+        FluentConfiguration configuration = Flyway.configure()
                 .locations("classpath:db/migration")
                 .validateOnMigrate(true)
                 .cleanDisabled(true)
                 .baselineOnMigrate(false)
                 .connectRetries(3);
+
+        String flywayUrl = firstText(
+                environment.getProperty("FLYWAY_URL"),
+                environment.getProperty("spring.flyway.url"));
+        String flywayUser = firstText(
+                environment.getProperty("FLYWAY_USERNAME"),
+                environment.getProperty("spring.flyway.user"));
+        String flywayPassword = firstText(
+                environment.getProperty("FLYWAY_PASSWORD"),
+                environment.getProperty("spring.flyway.password"));
+        if (StringUtils.hasText(flywayUrl) && StringUtils.hasText(flywayUser)) {
+            return configuration.dataSource(flywayUrl, flywayUser, flywayPassword);
+        }
+        return configuration.dataSource(dataSource);
+    }
+
+    private static String firstText(String first, String second) {
+        return StringUtils.hasText(first) ? first : second;
     }
 }

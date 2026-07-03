@@ -53,12 +53,16 @@ class LmpsCamtXmlBuilderTest {
         assertTrue(xml.contains("<MsgDefIdr>camt.006.001.08</MsgDefIdr>"));
         assertTrue(xml.contains("<RtrTran>"));
         assertTrue(xml.contains("<Prtry>ACTC</Prtry>"));
+        assertTrue(xml.contains("<SplmtryData>"));
+        assertTrue(xml.contains("<AdditionalData>"));
+        assertTrue(xml.contains("<ResDt>PENDING</ResDt>"));
 
         Camt006ParseResult parsed = new Camt006Parser().parse(xml);
         assertEquals("TRX-20260701000100-ABCDEF12", parsed.transactionId());
         assertEquals("E2E-TRX-20260701000100-ABCDEF12", parsed.endToEndId());
         assertEquals("0000", parsed.statusCode());
         assertEquals("ACTC", parsed.reasonCode());
+        assertEquals("PENDING", parsed.resultDetail());
         assertTrue(parsed.accepted());
     }
 

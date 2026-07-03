@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"Settlement instruction not found: null","path":"/api/operations/settlement/instructions/null/approve","phase":"VALIDATE_REQUEST","requestId":"098a35a0-b889-4e6b-8426-6b922bd8f7a5","retryable":false,"status":400,"timestamp":"2026-07-02T07:55:16.808309586","traceId":null}

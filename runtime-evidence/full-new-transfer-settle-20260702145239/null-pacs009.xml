@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"Settlement instruction not found: null","path":"/api/operations/settlement/instructions/null/rtgs-file","phase":"VALIDATE_REQUEST","requestId":"65604df4-c26c-433b-8cb1-465ef62f2894","retryable":false,"status":400,"timestamp":"2026-07-02T07:55:10.120773797","traceId":null}

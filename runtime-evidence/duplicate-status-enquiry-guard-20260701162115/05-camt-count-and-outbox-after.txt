@@ -1,0 +1,10 @@
+ message_type | direction | count 
+--------------+-----------+-------
+ CAMT_005     | OUTBOUND  |     1
+(1 row)
+
+ id |       transaction_ref       | status  | retry_count | next_retry_at | will_retry | last_error 
+----+-----------------------------+---------+-------------+---------------+------------+------------
+ 39 | TRX-20260701070726-CE644416 | SUCCESS |           4 |               | f          | 
+(1 row)
+

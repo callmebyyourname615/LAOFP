@@ -1,0 +1,6 @@
+UPDATE 1
+ id |       transaction_ref       | status  | retry_count |      next_retry_at      | will_retry |            last_error             
+----+-----------------------------+---------+-------------+-------------------------+------------+-----------------------------------
+ 42 | TRX-20260701084447-8AA3C764 | PENDING |           3 | 2026-07-01 08:45:36.839 | t          | Mock dispatch timeout/no response
+(1 row)
+

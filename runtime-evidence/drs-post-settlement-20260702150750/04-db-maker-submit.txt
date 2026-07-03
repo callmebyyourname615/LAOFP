@@ -1,0 +1,5 @@
+ dispute_id |           txn_ref           |            dispute_type             |      status      | proposed_resolution | proposed_by |       proposed_at       |                 proposed_note                  
+------------+-----------------------------+-------------------------------------+------------------+---------------------+-------------+-------------------------+------------------------------------------------
+         19 | TRX-20260702075738-456404E5 | POST_SETTLEMENT_DESTINATION_DISPUTE | PENDING_APPROVAL | NO_ACTION           | admin       | 2026-07-02 08:08:16.757 | Maker reviewed evidence and proposes no action
+(1 row)
+

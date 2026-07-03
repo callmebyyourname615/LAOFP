@@ -29,6 +29,7 @@ public class Camt006XmlBuilder {
         String responseMessageId = lmps.msgId(destinationBank, "CAMT006-" + transferRef);
         String status = statusReason(result);
         String responseCode = responseCode(result);
+        String resultDetail = resultDetail(result);
 
         return """
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -51,6 +52,7 @@ public class Camt006XmlBuilder {
                             <TxOrErr>
                 %s
                             </TxOrErr>
+                %s
                           </TxRpt>
                         </BizRpt>
                       </RptOrErr>
@@ -71,7 +73,8 @@ public class Camt006XmlBuilder {
                 xml(transferRef),
                 result.rejectedOrNotFound()
                         ? businessError(responseCode, result.responseMessage())
-                        : transactionReport(transferRef, endToEndId, amount, currency, status, responseCode, createdAt));
+                        : transactionReport(transferRef, endToEndId, amount, currency, status, responseCode, createdAt),
+                result.rejectedOrNotFound() ? "" : supplementaryData(resultDetail));
     }
 
     private String transactionReport(
@@ -118,6 +121,18 @@ public class Camt006XmlBuilder {
                 xml(endToEndId));
     }
 
+    private String supplementaryData(String resultDetail) {
+        return """
+                            <SplmtryData>
+                              <Envlp>
+                                <AdditionalData>
+                                  <ResDt>%s</ResDt>
+                                </AdditionalData>
+                              </Envlp>
+                            </SplmtryData>
+                """.formatted(xml(resultDetail));
+    }
+
     private String businessError(String errorCode, String description) {
         return """
                               <BizErr>
@@ -152,6 +167,16 @@ public class Camt006XmlBuilder {
             case REJECTED -> "RJCT";
             case NOT_FOUND -> "RJCT";
             case UNKNOWN -> "UNKNOWN";
+        };
+    }
+
+    private String resultDetail(StatusEnquiryResult result) {
+        if (result == null || result.status() == null) {
+            return "PENDING";
+        }
+        return switch (result.status()) {
+            case ACCEPTED, PROCESSING, UNKNOWN -> "PENDING";
+            case REJECTED, NOT_FOUND -> "REJECTED";
         };
     }
 

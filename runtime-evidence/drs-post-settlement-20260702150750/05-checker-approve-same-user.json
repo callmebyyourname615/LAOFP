@@ -1,0 +1,1 @@
+{"category":"BUSINESS","details":null,"error":"FORBIDDEN","errorCode":"LFP-9004","layer":"DISPUTE","message":"PSP is not authorized to act on dispute: 19","path":"/api/operations/disputes/19/approve-resolution","phase":"VALIDATE_REQUEST","requestId":"b0a3f0a4-58c7-4324-b3e3-8638104e3337","retryable":false,"status":403,"timestamp":"2026-07-02T08:08:52.621928137","traceId":null}

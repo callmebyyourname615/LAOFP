@@ -178,6 +178,11 @@ public class OutboxProcessorService {
             command = objectMapper.readValue(claimedEvent.getPayload(), DispatchTransferCommand.class);
             MDC.put("transferRef", command.getTransferRef());
 
+            if (closeOutboxIfTransferAlreadyResolved(claimedEvent, command.getTransferRef(),
+                    "OUTBOX_DISPATCH_SKIPPED_TRANSFER_ALREADY_RESOLVED")) {
+                return;
+            }
+
             Map<String, Object> isoDispatchPayload = new LinkedHashMap<>();
             isoDispatchPayload.put("outboxEventId", claimedEvent.getId());
             isoDispatchPayload.put("transferRef", command.getTransferRef());
@@ -348,33 +353,44 @@ public class OutboxProcessorService {
         transfer.setErrorCode(catalog.getErrorCode());
         transfer.setErrorMessage(trimMessage(result.getErrorMessage()));
         if (!shouldRetry) {
-            boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
-            transfer.setConfirmationStatus("DISPUTED");
-            transfer.setSettlementConfidence("DISPUTED");
-            transfer.setReference("Destination rejected transfer: " + trimMessage(result.getErrorMessage()));
-            transferRepository.save(transfer);
+            if (failureClass == FailureClass.TRANSIENT || failureClass == FailureClass.AMBIGUOUS) {
+                applyStatusEnquiryDecision(
+                        event,
+                        transfer,
+                        catalog,
+                        failureClass,
+                        new IllegalStateException(result.getErrorMessage()),
+                        nextRetryCount,
+                        connectorName);
+            } else {
+                boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
+                transfer.setConfirmationStatus("DISPUTED");
+                transfer.setSettlementConfidence("DISPUTED");
+                transfer.setReference("Destination rejected transfer: " + trimMessage(result.getErrorMessage()));
+                transferRepository.save(transfer);
 
-            auditLogService.log(
-                    "TRANSFER_DRS_REQUIRED",
-                    ENTITY_TYPE,
-                    transfer.getTransferRef(),
-                    SOURCE_SYSTEM,
-                    java.util.Map.of(
-                            "transferRef", transfer.getTransferRef(),
-                            "reason", "DESTINATION_REJECTED",
-                            "downstreamErrorCode", nullToEmpty(result.getErrorCode()),
-                            "downstreamErrorMessage", nullToEmpty(trimMessage(result.getErrorMessage())),
-                            "confirmationStatus", transfer.getConfirmationStatus(),
-                            "settlementConfidence", transfer.getSettlementConfidence()));
+                auditLogService.log(
+                        "TRANSFER_DRS_REQUIRED",
+                        ENTITY_TYPE,
+                        transfer.getTransferRef(),
+                        SOURCE_SYSTEM,
+                        java.util.Map.of(
+                                "transferRef", transfer.getTransferRef(),
+                                "reason", "DESTINATION_REJECTED",
+                                "downstreamErrorCode", nullToEmpty(result.getErrorCode()),
+                                "downstreamErrorMessage", nullToEmpty(trimMessage(result.getErrorMessage())),
+                                "confirmationStatus", transfer.getConfirmationStatus(),
+                                "settlementConfidence", transfer.getSettlementConfidence()));
 
-            if (drsNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
-                idempotencyService.updateStatus(
-                        IDEMPOTENCY_CHANNEL,
-                        transfer.getIdempotencyKey(),
-                        TransferStatus.DRS_REQUIRED.name());
+                if (drsNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
+                    idempotencyService.updateStatus(
+                            IDEMPOTENCY_CHANNEL,
+                            transfer.getIdempotencyKey(),
+                            TransferStatus.DRS_REQUIRED.name());
+                }
+                openDrsDisputeIfAbsent(transfer, event, catalog, failureClass,
+                        new IllegalStateException(result.getErrorMessage()), nextRetryCount);
             }
-            openDrsDisputeIfAbsent(transfer, event, catalog, failureClass,
-                    new IllegalStateException(result.getErrorMessage()), nextRetryCount);
         } else {
             transferRepository.save(transfer);
         }
@@ -483,84 +499,15 @@ public class OutboxProcessorService {
             transfer.setErrorMessage(trimMessage(ex.getMessage()));
 
             if (failureClassificationService.shouldRejectTransfer(failureClass, shouldRetry)) {
-                StatusEnquiryResult enquiryResult = nonTransactionalTemplate.execute(status ->
-                        outboxIsoMessageDispatchService.enquireDestinationStatus(event.getPayload()));
-                if (enquiryResult == null) {
-                    enquiryResult = StatusEnquiryResult.unknown(
-                            "STATUS-ENQUIRY-NULL",
-                            "Status enquiry returned no result");
-                }
-
-                if (enquiryResult.accepted()) {
-                    finalizeSuccess(event.getId(), transfer.getTransferRef(),
-                            BankDispatchResult.success(
-                                    enquiryResult.externalReference(),
-                                    "Status enquiry confirmed destination credited"),
-                            resolveConnectorName(event));
+                if (applyStatusEnquiryDecision(
+                        event,
+                        transfer,
+                        catalog,
+                        failureClass,
+                        ex,
+                        nextRetryCount,
+                        resolveConnectorName(event))) {
                     return;
-                }
-
-                if (enquiryResult.rejectedOrNotFound()) {
-                    boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
-                    transfer.setConfirmationStatus("DISPUTED");
-                    transfer.setSettlementConfidence("DISPUTED");
-                    transfer.setReference("Status enquiry confirmed destination did not credit: "
-                            + enquiryResult.status().name());
-                    transferRepository.save(transfer);
-
-                    auditLogService.log(
-                            "STATUS_ENQUIRY_CONFIRMED_REJECTED",
-                            ENTITY_TYPE,
-                            transfer.getTransferRef(),
-                            SOURCE_SYSTEM,
-                            java.util.Map.of(
-                                    "transferRef", transfer.getTransferRef(),
-                                    "statusEnquiryResult", enquiryResult.status().name(),
-                                    "responseCode", nullToEmpty(enquiryResult.responseCode()),
-                                    "responseMessage", nullToEmpty(enquiryResult.responseMessage()),
-                                    "confirmationStatus", transfer.getConfirmationStatus(),
-                                    "settlementConfidence", transfer.getSettlementConfidence()));
-
-                    if (drsNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
-                        idempotencyService.updateStatus(
-                                IDEMPOTENCY_CHANNEL,
-                                transfer.getIdempotencyKey(),
-                                TransferStatus.DRS_REQUIRED.name());
-                    }
-                    openDrsDisputeIfAbsent(transfer, event, catalog, failureClass, ex, nextRetryCount);
-                } else {
-                    markTransferProvisionalReadyForSettlement(transfer,
-                            "Provisional settlement: destination status unknown after retry/status enquiry");
-                    PoolBalance confirmedPoolBalance = poolService.confirmHold(transfer.getTransferRef());
-                    transferRepository.save(transfer);
-
-                    Map<String, Object> provisionalPayload = new LinkedHashMap<>();
-                    provisionalPayload.put("transferRef", transfer.getTransferRef());
-                    provisionalPayload.put("reason", "STATUS_ENQUIRY_UNKNOWN_AFTER_RETRY_EXHAUSTED");
-                    provisionalPayload.put("statusEnquiryResult", enquiryResult.status().name());
-                    provisionalPayload.put("statusEnquiryCode", nullToEmpty(enquiryResult.responseCode()));
-                    provisionalPayload.put("confirmationStatus", transfer.getConfirmationStatus());
-                    provisionalPayload.put("settlementConfidence", transfer.getSettlementConfidence());
-                    provisionalPayload.put("poolAvailableBalance", confirmedPoolBalance.availableBalance());
-                    provisionalPayload.put("poolHeldAmount", confirmedPoolBalance.heldAmount());
-                    provisionalPayload.put("failureClass", failureClass.name());
-                    provisionalPayload.put("attemptNo", nextRetryCount);
-                    provisionalPayload.put("maxRetry", maxRetry);
-
-                    auditLogService.log(
-                            "TRANSFER_PROVISIONAL_READY_FOR_SETTLEMENT",
-                            ENTITY_TYPE,
-                            transfer.getTransferRef(),
-                            SOURCE_SYSTEM,
-                            provisionalPayload);
-
-                    if (StringUtils.hasText(transfer.getIdempotencyKey())) {
-                        idempotencyService.updateStatus(
-                                IDEMPOTENCY_CHANNEL,
-                                transfer.getIdempotencyKey(),
-                                TransferStatus.READY_FOR_SETTLEMENT.name());
-                    }
-                    flowTracker.markReadyForSettlement(transfer.getTransferRef(), transfer.getBusinessDate());
                 }
             } else {
                 transferRepository.save(transfer);
@@ -661,6 +608,157 @@ public class OutboxProcessorService {
         }
     }
 
+    private boolean applyStatusEnquiryDecision(
+            OutboxEventEntity event,
+            TransferEntity transfer,
+            ErrorCatalog catalog,
+            FailureClass failureClass,
+            Exception ex,
+            int attemptNo,
+            String connectorName) {
+        if (closeOutboxIfTransferAlreadyResolved(event, transfer,
+                "STATUS_ENQUIRY_SKIPPED_TRANSFER_ALREADY_RESOLVED")) {
+            return true;
+        }
+
+        StatusEnquiryResult enquiryResult = nonTransactionalTemplate.execute(status ->
+                outboxIsoMessageDispatchService.enquireDestinationStatus(event.getPayload()));
+        if (enquiryResult == null) {
+            enquiryResult = StatusEnquiryResult.unknown(
+                    "STATUS-ENQUIRY-NULL",
+                    "Status enquiry returned no result");
+        }
+
+        if (enquiryResult.accepted()) {
+            finalizeSuccess(event.getId(), transfer.getTransferRef(),
+                    BankDispatchResult.success(
+                            enquiryResult.externalReference(),
+                            "Status enquiry confirmed destination credited"),
+                    connectorName);
+            return true;
+        }
+
+        if (enquiryResult.rejectedOrNotFound()) {
+            boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
+            transfer.setConfirmationStatus("DISPUTED");
+            transfer.setSettlementConfidence("DISPUTED");
+            transfer.setReference("Status enquiry confirmed destination did not credit: "
+                    + enquiryResult.status().name());
+            transferRepository.save(transfer);
+
+            auditLogService.log(
+                    "STATUS_ENQUIRY_CONFIRMED_REJECTED",
+                    ENTITY_TYPE,
+                    transfer.getTransferRef(),
+                    SOURCE_SYSTEM,
+                    java.util.Map.of(
+                            "transferRef", transfer.getTransferRef(),
+                            "statusEnquiryResult", enquiryResult.status().name(),
+                            "responseCode", nullToEmpty(enquiryResult.responseCode()),
+                            "responseMessage", nullToEmpty(enquiryResult.responseMessage()),
+                            "confirmationStatus", transfer.getConfirmationStatus(),
+                            "settlementConfidence", transfer.getSettlementConfidence()));
+
+            if (drsNow && StringUtils.hasText(transfer.getIdempotencyKey())) {
+                idempotencyService.updateStatus(
+                        IDEMPOTENCY_CHANNEL,
+                        transfer.getIdempotencyKey(),
+                        TransferStatus.DRS_REQUIRED.name());
+            }
+            openDrsDisputeIfAbsent(transfer, event, catalog, failureClass, ex, attemptNo);
+            return false;
+        }
+
+        markTransferProvisionalReadyForSettlement(transfer,
+                "Provisional settlement: destination status unknown after retry/status enquiry");
+        PoolBalance confirmedPoolBalance = poolService.confirmHold(transfer.getTransferRef());
+        transferRepository.save(transfer);
+
+        Map<String, Object> provisionalPayload = new LinkedHashMap<>();
+        provisionalPayload.put("transferRef", transfer.getTransferRef());
+        provisionalPayload.put("reason", "STATUS_ENQUIRY_UNKNOWN_AFTER_RETRY_EXHAUSTED");
+        provisionalPayload.put("statusEnquiryResult", enquiryResult.status().name());
+        provisionalPayload.put("statusEnquiryCode", nullToEmpty(enquiryResult.responseCode()));
+        provisionalPayload.put("confirmationStatus", transfer.getConfirmationStatus());
+        provisionalPayload.put("settlementConfidence", transfer.getSettlementConfidence());
+        provisionalPayload.put("poolAvailableBalance", confirmedPoolBalance.availableBalance());
+        provisionalPayload.put("poolHeldAmount", confirmedPoolBalance.heldAmount());
+        provisionalPayload.put("failureClass", failureClass.name());
+        provisionalPayload.put("attemptNo", attemptNo);
+        provisionalPayload.put("maxRetry", maxRetry);
+
+        auditLogService.log(
+                "TRANSFER_PROVISIONAL_READY_FOR_SETTLEMENT",
+                ENTITY_TYPE,
+                transfer.getTransferRef(),
+                SOURCE_SYSTEM,
+                provisionalPayload);
+
+        if (StringUtils.hasText(transfer.getIdempotencyKey())) {
+            idempotencyService.updateStatus(
+                    IDEMPOTENCY_CHANNEL,
+                    transfer.getIdempotencyKey(),
+                    TransferStatus.READY_FOR_SETTLEMENT.name());
+        }
+        flowTracker.markReadyForSettlement(transfer.getTransferRef(), transfer.getBusinessDate());
+        return false;
+    }
+
+    private boolean closeOutboxIfTransferAlreadyResolved(
+            OutboxEventEntity event,
+            String transferRef,
+            String auditEventType) {
+        if (!StringUtils.hasText(transferRef)) {
+            return false;
+        }
+        TransferEntity transfer = transferRepository.findByTransferRef(transferRef).orElse(null);
+        if (transfer == null) {
+            return false;
+        }
+        return closeOutboxIfTransferAlreadyResolved(event, transfer, auditEventType);
+    }
+
+    private boolean closeOutboxIfTransferAlreadyResolved(
+            OutboxEventEntity event,
+            TransferEntity transfer,
+            String auditEventType) {
+        if (transfer == null || !isOutboxWorkResolvedStatus(transfer.getStatus())) {
+            return false;
+        }
+
+        OutboxStatus resolvedOutboxStatus = isSuccessfulResolvedStatus(transfer.getStatus())
+                ? OutboxStatus.SUCCESS
+                : OutboxStatus.FAILED;
+        event.setStatus(resolvedOutboxStatus);
+        event.setWillRetry(false);
+        event.setNextRetryAt(null);
+        event.setFailureClass(null);
+        event.setLastError(resolvedOutboxStatus == OutboxStatus.SUCCESS
+                ? null
+                : "Skipped dispatch because transfer is already " + transfer.getStatus().name());
+        outboxEventRepository.save(event);
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("outboxEventId", event.getId());
+        payload.put("transferRef", transfer.getTransferRef());
+        payload.put("transferStatus", transfer.getStatus().name());
+        payload.put("outboxStatus", resolvedOutboxStatus.name());
+        payload.put("reason", "TRANSFER_ALREADY_RESOLVED");
+
+        auditLogService.log(
+                auditEventType,
+                ENTITY_TYPE,
+                transfer.getTransferRef(),
+                SOURCE_SYSTEM,
+                payload);
+        recordAttempt(event.getId(), safeRetryCount(event.getRetryCount()),
+                "SKIPPED_RESOLVED", null, null, null, resolveConnectorName(event));
+
+        log.info("Skipped outbox dispatch/status enquiry for outboxEventId={} transferRef={} because transfer status is already {}",
+                event.getId(), transfer.getTransferRef(), transfer.getStatus());
+        return true;
+    }
+
     private Map<String, Object> buildErrorPayload(ErrorCatalog catalog,
             Long outboxEventId,
             String transferRef,
@@ -732,6 +830,18 @@ public class OutboxProcessorService {
                 || status == TransferStatus.SETTLED
                 || status == TransferStatus.SUCCESS
                 || status == TransferStatus.REFUNDED;
+    }
+
+    private boolean isOutboxWorkResolvedStatus(TransferStatus status) {
+        return status == TransferStatus.READY_FOR_SETTLEMENT
+                || status == TransferStatus.DRS_REQUIRED
+                || isTerminalStatus(status);
+    }
+
+    private boolean isSuccessfulResolvedStatus(TransferStatus status) {
+        return status == TransferStatus.READY_FOR_SETTLEMENT
+                || status == TransferStatus.SETTLED
+                || status == TransferStatus.SUCCESS;
     }
 
     private void openDrsDisputeIfAbsent(TransferEntity transfer,

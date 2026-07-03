@@ -1,0 +1,6 @@
+UPDATE 0
+ id |       transaction_ref       | status | retry_count | next_retry_at | will_retry |                          last_error                          
+----+-----------------------------+--------+-------------+---------------+------------+--------------------------------------------------------------
+ 39 | TRX-20260701070726-CE644416 | FAILED |           4 |               | f          | Failed to dispatch encrypted ISO message from outbox payload
+(1 row)
+

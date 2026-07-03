@@ -12,6 +12,8 @@ public class UpdateConnectorConfigRequest {
     private Boolean forceReject;
     private String rejectReasonCode;
     private String rejectReasonMessage;
+    private String mockDispatchMode;
+    private String mockStatusEnquiryResult;
 
     public String getEndpointUrl() { return endpointUrl; }
     public void setEndpointUrl(String endpointUrl) { this.endpointUrl = endpointUrl; }
@@ -30,4 +32,10 @@ public class UpdateConnectorConfigRequest {
 
     public String getRejectReasonMessage() { return rejectReasonMessage; }
     public void setRejectReasonMessage(String rejectReasonMessage) { this.rejectReasonMessage = rejectReasonMessage; }
+
+    public String getMockDispatchMode() { return mockDispatchMode; }
+    public void setMockDispatchMode(String mockDispatchMode) { this.mockDispatchMode = mockDispatchMode; }
+
+    public String getMockStatusEnquiryResult() { return mockStatusEnquiryResult; }
+    public void setMockStatusEnquiryResult(String mockStatusEnquiryResult) { this.mockStatusEnquiryResult = mockStatusEnquiryResult; }
 }

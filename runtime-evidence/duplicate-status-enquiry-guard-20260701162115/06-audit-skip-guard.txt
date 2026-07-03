@@ -1,0 +1,5 @@
+  id  |                    event_type                     |        reference_id         | actor  |                                                                                payload                                                                                 |       created_at        
+------+---------------------------------------------------+-----------------------------+--------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------
+ 1396 | OUTBOX_DISPATCH_SKIPPED_TRANSFER_ALREADY_RESOLVED | TRX-20260701070726-CE644416 | WORKER | {"outboxEventId":39,"transferRef":"TRX-20260701070726-CE644416","transferStatus":"READY_FOR_SETTLEMENT","outboxStatus":"SUCCESS","reason":"TRANSFER_ALREADY_RESOLVED"} | 2026-07-01 09:23:17.894
+(1 row)
+

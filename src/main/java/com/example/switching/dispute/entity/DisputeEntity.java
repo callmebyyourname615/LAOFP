@@ -27,7 +27,7 @@ public class DisputeEntity {
     @Column(name = "responding_psp_id", nullable = false, length = 32)
     private String respondingPspId;
 
-    @Column(name = "dispute_type",      nullable = false, length = 30)
+    @Column(name = "dispute_type",      nullable = false, length = 50)
     private String disputeType;
 
     @Column(name = "status",            nullable = false, length = 30)

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Message xmlns="urn:apac"
+         xmlns:head="urn:iso:std:iso:20022:tech:xsd:head.001.001.01"
+         xmlns:rx="urn:iso:std:iso:20022:tech:xsd:camt.006.001.08">
+    <AppHdr>
+      <Fr>
+        <FIId>
+          <FinInstnId>
+            <ClrSysMmbId>
+              <MmbId>PETERBANK</MmbId>
+            </ClrSysMmbId>
+          </FinInstnId>
+        </FIId>
+      </Fr>
+      <To>
+        <FIId>
+          <FinInstnId>
+            <ClrSysMmbId>
+              <MmbId>SUNDAYBANK</MmbId>
+            </ClrSysMmbId>
+          </FinInstnId>
+        </FIId>
+      </To>
+      <BizMsgIdr>B202607010845506070108444783764</BizMsgIdr>
+      <MsgDefIdr>camt.006.001.08</MsgDefIdr>
+      <CreDt>2026-07-01T08:45:50.006Z</CreDt>
+    </AppHdr>
+
+  <RtrTran>
+    <RtrTx>
+      <MsgHdr>
+        <MsgId>M260701084550PETE6070108444783764</MsgId>
+        <CreDtTm>2026-07-01T08:45:50.006Z</CreDtTm>
+      </MsgHdr>
+      <RptOrErr>
+        <BizRpt>
+          <TxRpt>
+            <PmtId>
+              <TxId>TRX-20260701084447-8AA3C764</TxId>
+            </PmtId>
+            <TxOrErr>
+              <Tx>
+                <Pmt>
+                  <MsgId>M260701084550LMPS6070108444783764</MsgId>
+                  <Sts>
+                    <Cd>
+                      <Prtry>0000</Prtry>
+                    </Cd>
+                    <DtTm>
+                      <DtTm>2026-07-01T08:45:50.006Z</DtTm>
+                    </DtTm>
+                    <Rsn>
+                      <Prtry>ACTC</Prtry>
+                    </Rsn>
+                  </Sts>
+                  <IntrBkSttlmAmt>
+                    <AmtWthCcy Ccy="LAK">123000.00</AmtWthCcy>
+                  </IntrBkSttlmAmt>
+                  <TxId>TRX-20260701084447-8AA3C764</TxId>
+                  <IntrBkSttlmDt>2026-07-01</IntrBkSttlmDt>
+                  <EndToEndId>E2E-TRX-20260701084447-8AA3C764</EndToEndId>
+                </Pmt>
+              </Tx>
+
+            </TxOrErr>
+          </TxRpt>
+        </BizRpt>
+      </RptOrErr>
+    </RtrTx>
+  </RtrTran>
+</Message>
+

@@ -1,0 +1,4 @@
+ dispute_id | txn_ref | dispute_type | status | proposed_resolution | proposed_by | checked_by | checked_at | resolution_note 
+------------+---------+--------------+--------+---------------------+-------------+------------+------------+-----------------
+(0 rows)
+

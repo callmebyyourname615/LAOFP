@@ -1,7 +1,6 @@
 package com.example.switching.dispute.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -19,11 +18,11 @@ import com.example.switching.webhook.service.WebhookEventPublisher;
 
 /**
  * Executes the financial leg of a dispute refund:
- * hold funds from the responding PSP → insert SETTLED reversal transaction
- * → update {@code refund_transactions} to COMPLETED → confirm hold → fire webhook.
+ * hold funds from the responding PSP → update {@code refund_transactions} to
+ * COMPLETED → confirm hold → fire webhook.
  *
- * <p>This is called from {@link DisputeResolutionService} (manual RESOLVED_REFUND)
- * and from {@link DisputeSlaEnforcementService} (SLA auto-rule).
+ * <p>The refund reference is operational evidence only. It intentionally does
+ * not create a reverse transfer/reversal transaction.
  */
 @Service
 public class DisputeAutoRefundService {
@@ -52,7 +51,7 @@ public class DisputeAutoRefundService {
      * @param disputeId ID of the resolved dispute
      */
     @Transactional
-    public void initiateRefund(Long disputeId) {
+    public RefundExecutionResult initiateRefund(Long disputeId) {
         DisputeEntity dispute = disputeRepo.findById(disputeId)
                 .orElseThrow(() -> new DisputeNotFoundException(disputeId));
 
@@ -72,7 +71,6 @@ public class DisputeAutoRefundService {
         String     raisingPspId   = dispute.getRaisingPspId();      // receives refund
 
         LocalDateTime now   = LocalDateTime.now();
-        LocalDate     today = LocalDate.now();
 
         // 1. Insert refund_transactions INITIATED
         String refundRef = "DISP-HOLD-" + disputeId + "-" + System.nanoTime();
@@ -88,31 +86,10 @@ public class DisputeAutoRefundService {
         // 2. Hold from responding PSP pool
         poolService.holdFunds(respondingPspId, refundRef, amount);
 
-        // 3. Insert SETTLED reversal transaction (responding → raising)
-        String refundTxnRef = "DISP-TXN-" + disputeId + "-" + System.nanoTime();
-        jdbcTemplate.update("""
-                INSERT INTO transactions (
-                    transaction_ref, idempotency_key, flow_ref,
-                    source_bank, source_account_no,
-                    destination_bank, destination_account_no, destination_account_name,
-                    amount, currency, channel_id, route_code, connector_name,
-                    status, external_reference, reference,
-                    settlement_method, high_value,
-                    business_date, accepted_at, settled_at, created_at
-                ) VALUES (?, ?, ?, ?, 'DISPUTE_SRC', ?, 'DISPUTE_DST', 'Dispute Refund',
-                    ?, 'LAK', 'DISPUTE', 'ROUTE_DISPUTE', 'DISPUTE_SERVICE',
-                    'SETTLED', ?, ?,
-                    'DNS', false,
-                    ?, ?, ?, ?)
-                """,
-                refundTxnRef, refundTxnRef, "DISP-" + disputeId,
-                respondingPspId,
-                raisingPspId,
-                amount,
-                "DISP-" + disputeId, refundTxnRef,
-                today, now, now, now);
+        // 3. Create a refund reference only. This is not a transfer/reversal.
+        String refundTxnRef = "DRS-REFUND-" + disputeId + "-" + System.nanoTime();
 
-        // 4. Update refund_transactions COMPLETED
+        // 4. Update refund_transactions COMPLETED with the refund evidence ref
         jdbcTemplate.update(
                 "UPDATE refund_transactions SET status='COMPLETED', refund_txn_ref=?, completed_at=? WHERE refund_id=?",
                 refundTxnRef, now, refundId);
@@ -130,5 +107,29 @@ public class DisputeAutoRefundService {
                 "status",       "COMPLETED");
         webhookPublisher.publishQuietly("DISPUTE.REFUND.COMPLETED", raisingPspId,    refundTxnRef, payload);
         webhookPublisher.publishQuietly("DISPUTE.REFUND.COMPLETED", respondingPspId, refundTxnRef, payload);
+        return new RefundExecutionResult(
+                refundId,
+                disputeId,
+                dispute.getTxnRef(),
+                refundTxnRef,
+                amount,
+                "COMPLETED",
+                now,
+                now,
+                respondingPspId,
+                raisingPspId);
     }
+
+    public record RefundExecutionResult(
+            Long refundId,
+            Long disputeId,
+            String originalTxnRef,
+            String refundRef,
+            BigDecimal amount,
+            String status,
+            LocalDateTime initiatedAt,
+            LocalDateTime completedAt,
+            String debitedPspId,
+            String creditedPspId
+    ) {}
 }

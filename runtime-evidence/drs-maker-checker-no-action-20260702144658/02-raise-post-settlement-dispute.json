@@ -1,0 +1,1 @@
+{"category":"BUSINESS","details":null,"error":"UNPROCESSABLE_ENTITY","errorCode":"LFP-9001","layer":"DISPUTE","message":"Dispute not found: -1","path":"/api/operations/disputes/post-settlement","phase":"VALIDATE_REQUEST","requestId":"fe4c69ed-99ed-4ca4-9e62-da2ad45dff30","retryable":false,"status":422,"timestamp":"2026-07-02T07:47:17.295269124","traceId":null}

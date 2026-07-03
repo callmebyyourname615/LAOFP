@@ -1,0 +1,5 @@
+ dispute_id |           txn_ref           | raising_psp_id | responding_psp_id |            dispute_type             | status |        raised_at        |      sla_deadline       |                                  resolution_note                                   
+------------+-----------------------------+----------------+-------------------+-------------------------------------+--------+-------------------------+-------------------------+------------------------------------------------------------------------------------
+         18 | TRX-20260630090320-490D9697 | PETERBANK      | SUNDAYBANK        | POST_SETTLEMENT_DESTINATION_DISPUTE | OPEN   | 2026-07-02 07:19:59.977 | 2026-07-03 07:19:59.977 | Post-settlement destination dispute opened after STGS/RTGS settlement confirmation
+(1 row)
+

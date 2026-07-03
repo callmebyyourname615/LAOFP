@@ -1,0 +1,5 @@
+ id |       transaction_ref       | message_type | direction | security_status | validation_status |           message_id            |          end_to_end_id          |       created_at        
+----+-----------------------------+--------------+-----------+-----------------+-------------------+---------------------------------+---------------------------------+-------------------------
+ 70 | TRX-20260701074227-F45C4322 | PACS_008     | OUTBOUND  | ENCRYPTED       | NOT_VALIDATED     | MSG-TRX-20260701074227-F45C4322 | E2E-TRX-20260701074227-F45C4322 | 2026-07-01 07:42:28.002
+(1 row)
+

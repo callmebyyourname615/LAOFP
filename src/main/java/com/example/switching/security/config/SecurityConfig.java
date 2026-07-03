@@ -225,6 +225,8 @@ public class SecurityConfig {
                         // ── Settlement reports — camt.054 (P14) ─────────────────
                         .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/report").hasAnyRole("BANK", "OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/reports").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/ops-report").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/ops-report.csv").hasAnyRole("OPS", "ADMIN")
 
                         // ── QR Code Service (P15) ─────────────────────────────
                         .requestMatchers(HttpMethod.POST, v1("/qr/generate/static")).hasAnyRole("BANK", "ADMIN")
@@ -257,6 +259,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,  v1("/disputes/*")).hasAnyRole("BANK", "OPS", "ADMIN")
                         .requestMatchers(HttpMethod.PUT,  v1("/disputes/*/respond")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/disputes/*/resolve")).hasAnyRole("BANK", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/operations/disputes/**").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/operations/disputes/post-settlement").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/submit-resolution").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/approve-resolution").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/reject-resolution").hasAnyRole("OPS", "ADMIN")
 
                         // ── Cross-border Payment (P17) ────────────────────────────
                         .requestMatchers(HttpMethod.GET,  v1("/crossborder/corridors")).hasAnyRole("BANK", "OPS", "ADMIN")

@@ -16,6 +16,8 @@ public class ConnectorConfigResponse {
     private Boolean forceReject;
     private String rejectReasonCode;
     private String rejectReasonMessage;
+    private String mockDispatchMode;
+    private String mockStatusEnquiryResult;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -35,6 +37,8 @@ public class ConnectorConfigResponse {
         response.setForceReject(entity.getForceReject());
         response.setRejectReasonCode(entity.getRejectReasonCode());
         response.setRejectReasonMessage(entity.getRejectReasonMessage());
+        response.setMockDispatchMode(entity.getMockDispatchMode());
+        response.setMockStatusEnquiryResult(entity.getMockStatusEnquiryResult());
         response.setCreatedAt(entity.getCreatedAt());
         response.setUpdatedAt(entity.getUpdatedAt());
 
@@ -79,6 +83,14 @@ public class ConnectorConfigResponse {
 
     public String getRejectReasonMessage() {
         return rejectReasonMessage;
+    }
+
+    public String getMockDispatchMode() {
+        return mockDispatchMode;
+    }
+
+    public String getMockStatusEnquiryResult() {
+        return mockStatusEnquiryResult;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -127,6 +139,14 @@ public class ConnectorConfigResponse {
 
     public void setRejectReasonMessage(String rejectReasonMessage) {
         this.rejectReasonMessage = rejectReasonMessage;
+    }
+
+    public void setMockDispatchMode(String mockDispatchMode) {
+        this.mockDispatchMode = mockDispatchMode;
+    }
+
+    public void setMockStatusEnquiryResult(String mockStatusEnquiryResult) {
+        this.mockStatusEnquiryResult = mockStatusEnquiryResult;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

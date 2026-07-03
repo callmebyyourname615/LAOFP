@@ -20,6 +20,10 @@ import com.example.switching.participant.service.ParticipantService;
 public class ConnectorConfigManagementService {
 
     private static final int DEFAULT_TIMEOUT_MS = 5000;
+    private static final java.util.Set<String> MOCK_DISPATCH_MODES = java.util.Set.of(
+            "SUCCESS", "TIMEOUT", "REJECT");
+    private static final java.util.Set<String> MOCK_STATUS_ENQUIRY_RESULTS = java.util.Set.of(
+            "ACCEPTED", "REJECTED", "NOT_FOUND", "PROCESSING", "UNKNOWN");
 
     private final ConnectorConfigRepository connectorConfigRepository;
     private final ParticipantService participantService;
@@ -60,6 +64,14 @@ public class ConnectorConfigManagementService {
         entity.setForceReject(request.getForceReject() != null ? request.getForceReject() : false);
         entity.setRejectReasonCode(normalizeNullableText(request.getRejectReasonCode()));
         entity.setRejectReasonMessage(normalizeNullableText(request.getRejectReasonMessage()));
+        entity.setMockDispatchMode(normalizeOptionalEnum(
+                request.getMockDispatchMode(),
+                MOCK_DISPATCH_MODES,
+                "mockDispatchMode"));
+        entity.setMockStatusEnquiryResult(normalizeOptionalEnum(
+                request.getMockStatusEnquiryResult(),
+                MOCK_STATUS_ENQUIRY_RESULTS,
+                "mockStatusEnquiryResult"));
 
         ConnectorConfigEntity saved = connectorConfigRepository.save(entity);
 
@@ -98,6 +110,20 @@ public class ConnectorConfigManagementService {
             entity.setRejectReasonMessage(normalizeNullableText(request.getRejectReasonMessage()));
         }
 
+        if (request.getMockDispatchMode() != null) {
+            entity.setMockDispatchMode(normalizeOptionalEnum(
+                    request.getMockDispatchMode(),
+                    MOCK_DISPATCH_MODES,
+                    "mockDispatchMode"));
+        }
+
+        if (request.getMockStatusEnquiryResult() != null) {
+            entity.setMockStatusEnquiryResult(normalizeOptionalEnum(
+                    request.getMockStatusEnquiryResult(),
+                    MOCK_STATUS_ENQUIRY_RESULTS,
+                    "mockStatusEnquiryResult"));
+        }
+
         ConnectorConfigEntity saved = connectorConfigRepository.save(entity);
 
         return ConnectorConfigResponse.from(saved);
@@ -132,6 +158,19 @@ public class ConnectorConfigManagementService {
         }
 
         return value.trim();
+    }
+
+    private String normalizeOptionalEnum(String value, java.util.Set<String> allowed, String fieldName) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+
+        String normalized = value.trim().toUpperCase(Locale.ROOT);
+        if (!allowed.contains(normalized)) {
+            throw new IllegalArgumentException(
+                    "Invalid " + fieldName + ": " + value + ". Valid values: " + allowed);
+        }
+        return normalized;
     }
 
     private void requireField(String value, String fieldName) {

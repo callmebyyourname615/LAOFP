@@ -21,9 +21,11 @@ import com.example.switching.outbox.dto.StatusEnquiryResult;
  * Handles all connectors whose connector_configs.connector_type = MOCK.
  * Behaviour is driven entirely by {@link ConnectorConfigEntity}:
  * <ul>
- *   <li>enabled = false  → reject without PACS.002 (503)</li>
- *   <li>force_reject = true → reject with PACS.002 RJCT using configured reason</li>
- *   <li>otherwise         → accept with PACS.002 ACSC</li>
+ *   <li>enabled = false → no response / unavailable</li>
+ *   <li>mock_dispatch_mode = TIMEOUT → dispatch fails without PACS.002</li>
+ *   <li>mock_dispatch_mode = REJECT or force_reject = true → reject with PACS.002 RJCT</li>
+ *   <li>mock_status_enquiry_result controls CAMT.006-style mock status replies</li>
+ *   <li>otherwise → accept with PACS.002 ACSC and status enquiry ACCEPTED</li>
  * </ul>
  * This single class replaces the previous per-bank MockBankXConnector pattern
  * and works for any number of member banks as long as their connector_type is MOCK.
@@ -105,7 +107,15 @@ public class GenericMockConnector implements BankConnector {
                     command.transferRef());
         }
 
-        if (connectorConfig.forceReject()) {
+        String dispatchMode = normalize(connectorConfig.getMockDispatchMode());
+        if ("TIMEOUT".equals(dispatchMode)) {
+            return rejectedWithoutPacs002(
+                    "BANK-TIMEOUT",
+                    "Mock dispatch timeout/no response",
+                    command.transferRef());
+        }
+
+        if ("REJECT".equals(dispatchMode) || connectorConfig.forceReject()) {
             String reasonCode = StringUtils.hasText(connectorConfig.getRejectReasonCode())
                     ? connectorConfig.getRejectReasonCode()
                     : "AC01";
@@ -164,7 +174,28 @@ public class GenericMockConnector implements BankConnector {
                     "Connector is disabled: " + connectorConfig.getConnectorName());
         }
 
-        if (connectorConfig.forceReject()) {
+        String statusEnquiryResult = normalize(connectorConfig.getMockStatusEnquiryResult());
+        if ("UNKNOWN".equals(statusEnquiryResult)) {
+            return StatusEnquiryResult.unknown(
+                    "BANK-STATUS-UNKNOWN",
+                    "Mock status enquiry returned unknown/no response");
+        }
+        if ("NOT_FOUND".equals(statusEnquiryResult)) {
+            return new StatusEnquiryResult(
+                    StatusEnquiryResult.Status.NOT_FOUND,
+                    externalReference(),
+                    "TXN-NOT-FOUND",
+                    "Mock status enquiry could not find transfer");
+        }
+        if ("PROCESSING".equals(statusEnquiryResult)) {
+            return new StatusEnquiryResult(
+                    StatusEnquiryResult.Status.PROCESSING,
+                    externalReference(),
+                    "PDNG",
+                    "Mock status enquiry says transfer is still processing");
+        }
+
+        if ("REJECTED".equals(statusEnquiryResult) || connectorConfig.forceReject()) {
             String reasonCode = StringUtils.hasText(connectorConfig.getRejectReasonCode())
                     ? connectorConfig.getRejectReasonCode()
                     : "AC01";
@@ -177,6 +208,10 @@ public class GenericMockConnector implements BankConnector {
         return StatusEnquiryResult.accepted(
                 externalReference(),
                 "Mock status enquiry confirmed destination credited");
+    }
+
+    private String normalize(String value) {
+        return StringUtils.hasText(value) ? value.trim().toUpperCase() : null;
     }
 
     private BankIsoDispatchResponse rejectedWithoutPacs002(
