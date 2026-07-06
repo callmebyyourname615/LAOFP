@@ -18,21 +18,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.switching.settlement.dto.OpenCycleRequest;
+import com.example.switching.settlement.dto.SettlementCycleDetailResponse;
 import com.example.switching.settlement.dto.SettlementInstructionDecisionRequest;
 import com.example.switching.settlement.dto.SettlementInstructionResponse;
 import com.example.switching.settlement.dto.SettlementCycleResponse;
 import com.example.switching.settlement.dto.SettlementPositionResponse;
+import com.example.switching.settlement.dto.SettlementTimelineResponse;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
 import com.example.switching.settlement.entity.SettlementInstructionEntity;
 import com.example.switching.settlement.entity.SettlementPositionEntity;
 import com.example.switching.settlement.entity.SettlementReportEntity;
 import com.example.switching.settlement.service.Camt054ReportService;
 import com.example.switching.settlement.service.SettlementBatchService;
+import com.example.switching.settlement.service.SettlementCycleDetailService;
 import com.example.switching.settlement.service.SettlementCycleService;
 import com.example.switching.settlement.service.RtgsGatewayService;
 import com.example.switching.settlement.service.SettlementInstructionService;
 import com.example.switching.settlement.service.SettlementNetPositionService;
 import com.example.switching.settlement.service.SettlementOpsReportService;
+import com.example.switching.settlement.service.SettlementTimelineService;
 import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,6 +68,8 @@ public class SettlementController {
     private final RtgsGatewayService           rtgsGatewayService;
     private final Camt054ReportService         reportService;
     private final SettlementOpsReportService   opsReportService;
+    private final SettlementTimelineService    timelineService;
+    private final SettlementCycleDetailService cycleDetailService;
 
     public SettlementController(SettlementCycleService cycleService,
                                  SettlementBatchService batchService,
@@ -71,7 +77,9 @@ public class SettlementController {
                                  SettlementInstructionService instructionService,
                                  RtgsGatewayService rtgsGatewayService,
                                  Camt054ReportService reportService,
-                                 SettlementOpsReportService opsReportService) {
+                                 SettlementOpsReportService opsReportService,
+                                 SettlementTimelineService timelineService,
+                                 SettlementCycleDetailService cycleDetailService) {
         this.cycleService       = cycleService;
         this.batchService       = batchService;
         this.netPositionService = netPositionService;
@@ -79,6 +87,8 @@ public class SettlementController {
         this.rtgsGatewayService = rtgsGatewayService;
         this.reportService      = reportService;
         this.opsReportService   = opsReportService;
+        this.timelineService    = timelineService;
+        this.cycleDetailService = cycleDetailService;
     }
 
     // ── Open a new cycle ─────────────────────────────────────────────────────
@@ -118,6 +128,16 @@ public class SettlementController {
         List<SettlementPositionEntity> positions = netPositionService.getPositions(cycleRef);
         int itemCount = batchService.countItems(cycle.getId());
         return ResponseEntity.ok(toResponse(cycle, itemCount, positions));
+    }
+
+    @GetMapping("/cycles/{cycleRef}/timeline")
+    public ResponseEntity<SettlementTimelineResponse> getCycleTimeline(@PathVariable String cycleRef) {
+        return ResponseEntity.ok(timelineService.timeline(cycleRef));
+    }
+
+    @GetMapping("/cycles/{cycleRef}/detail")
+    public ResponseEntity<SettlementCycleDetailResponse> getCycleDetail(@PathVariable String cycleRef) {
+        return ResponseEntity.ok(cycleDetailService.detail(cycleRef));
     }
 
     // ── Batch transactions into cycle ────────────────────────────────────────
@@ -206,6 +226,12 @@ public class SettlementController {
         return ResponseEntity.ok(instructions.stream()
                 .map(i -> toInstructionResponse(cycleRef, i))
                 .toList());
+    }
+
+    @GetMapping("/instructions/{instructionRef}")
+    public ResponseEntity<SettlementInstructionResponse> getInstruction(@PathVariable String instructionRef) {
+        SettlementInstructionEntity instruction = instructionService.requireInstruction(instructionRef);
+        return ResponseEntity.ok(toInstructionResponse(cycleRefFor(instruction), instruction));
     }
 
     @PreAuthorize("hasAuthority('PERM_SETTLEMENT_APPROVE')")
