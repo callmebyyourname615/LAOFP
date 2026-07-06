@@ -131,17 +131,43 @@ public class DrsResolutionMakerCheckerService {
         applyTransferDecision(dispute, decision, note);
         if ("REFUND_REQUIRED".equals(decision)) {
             DisputeAutoRefundService.RefundExecutionResult refund = autoRefundService.initiateRefund(disputeId);
-            audit(dispute, "DRS_REFUND_COMPLETED", checker, Map.of(
-                    "decision", decision,
-                    "finalStatus", finalStatus,
-                    "refundId", refund.refundId(),
-                    "refundRef", refund.refundRef(),
-                    "refundAmount", refund.amount().toPlainString(),
-                    "refundStatus", refund.status(),
-                    "debitedPspId", refund.debitedPspId(),
-                    "creditedPspId", refund.creditedPspId(),
-                    "completedAt", refund.completedAt().toString(),
-                    "note", nullToEmpty(note)));
+            if ("FAILED".equals(refund.status())) {
+                finalStatus = "ESCALATED";
+                jdbc.update(
+                        """
+                        UPDATE disputes
+                           SET status = 'ESCALATED',
+                               resolved_at = NULL,
+                               resolution_note = ?,
+                               updated_at = NOW()
+                         WHERE dispute_id = ?
+                        """,
+                        "Checker approved REFUND_REQUIRED but refund execution failed: "
+                                + nullToEmpty(refund.lastError()),
+                        disputeId);
+                audit(dispute, "DRS_REFUND_FAILED", checker, Map.of(
+                        "decision", decision,
+                        "finalStatus", finalStatus,
+                        "refundId", refund.refundId(),
+                        "refundAmount", refund.amount().toPlainString(),
+                        "refundStatus", refund.status(),
+                        "debitedPspId", refund.debitedPspId(),
+                        "creditedPspId", refund.creditedPspId(),
+                        "lastError", nullToEmpty(refund.lastError()),
+                        "note", nullToEmpty(note)));
+            } else {
+                audit(dispute, "DRS_REFUND_COMPLETED", checker, Map.of(
+                        "decision", decision,
+                        "finalStatus", finalStatus,
+                        "refundId", refund.refundId(),
+                        "refundRef", refund.refundRef(),
+                        "refundAmount", refund.amount().toPlainString(),
+                        "refundStatus", refund.status(),
+                        "debitedPspId", refund.debitedPspId(),
+                        "creditedPspId", refund.creditedPspId(),
+                        "completedAt", refund.completedAt().toString(),
+                        "note", nullToEmpty(note)));
+            }
         }
         audit(dispute, "DRS_RESOLUTION_APPROVED", checker, Map.of(
                 "decision", decision,

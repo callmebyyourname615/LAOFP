@@ -33,5 +33,6 @@ public record DrsDisputeListItemResponse(
         BigDecimal refundAmount,
         String refundStatus,
         LocalDateTime refundInitiatedAt,
-        LocalDateTime refundCompletedAt
+        LocalDateTime refundCompletedAt,
+        String refundLastError
 ) {}

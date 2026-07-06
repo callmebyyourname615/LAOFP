@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.dispute.entity.DisputeEntity;
 import com.example.switching.dispute.exception.DisputeNotFoundException;
 import com.example.switching.dispute.repository.DisputeRepository;
+import com.example.switching.liquidity.exception.InsufficientPoolBalanceException;
 import com.example.switching.liquidity.service.PoolService;
 import com.example.switching.webhook.service.WebhookEventPublisher;
 
@@ -83,41 +84,119 @@ public class DisputeAutoRefundService {
                 """,
                 Long.class, disputeId, dispute.getTxnRef(), amount, now);
 
-        // 2. Hold from responding PSP pool
-        poolService.holdFunds(respondingPspId, refundRef, amount);
+        try {
+            RefundExecutionResult failedPrecheck = failIfInsufficientPool(
+                    refundId,
+                    disputeId,
+                    dispute.getTxnRef(),
+                    amount,
+                    respondingPspId,
+                    raisingPspId,
+                    now);
+            if (failedPrecheck != null) {
+                return failedPrecheck;
+            }
 
-        // 3. Create a refund reference only. This is not a transfer/reversal.
-        String refundTxnRef = "DRS-REFUND-" + disputeId + "-" + System.nanoTime();
+            // 2. Hold from responding PSP pool
+            poolService.holdFunds(respondingPspId, refundRef, amount);
 
-        // 4. Update refund_transactions COMPLETED with the refund evidence ref
+            // 3. Create a refund reference only. This is not a transfer/reversal.
+            String refundTxnRef = "DRS-REFUND-" + disputeId + "-" + System.nanoTime();
+
+            // 4. Update refund_transactions COMPLETED with the refund evidence ref
+            jdbcTemplate.update(
+                    "UPDATE refund_transactions SET status='COMPLETED', refund_txn_ref=?, completed_at=?, last_error=NULL WHERE refund_id=?",
+                    refundTxnRef, now, refundId);
+
+            // 5. Confirm pool hold
+            poolService.confirmHold(refundRef);
+
+            log.info("Dispute refund completed: disputeId={} refundTxnRef={} amount={}", disputeId, refundTxnRef, amount);
+
+            // 6. Fire webhook to both PSPs
+            Map<String, Object> payload = Map.of(
+                    "disputeId",    disputeId,
+                    "refundTxnRef", refundTxnRef,
+                    "amount",       amount.toPlainString(),
+                    "status",       "COMPLETED");
+            webhookPublisher.publishQuietly("DISPUTE.REFUND.COMPLETED", raisingPspId,    refundTxnRef, payload);
+            webhookPublisher.publishQuietly("DISPUTE.REFUND.COMPLETED", respondingPspId, refundTxnRef, payload);
+            return new RefundExecutionResult(
+                    refundId,
+                    disputeId,
+                    dispute.getTxnRef(),
+                    refundTxnRef,
+                    amount,
+                    "COMPLETED",
+                    now,
+                    now,
+                    respondingPspId,
+                    raisingPspId,
+                    null);
+        } catch (RuntimeException ex) {
+            String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+            jdbcTemplate.update(
+                    "UPDATE refund_transactions SET status='FAILED', last_error=?, completed_at=? WHERE refund_id=?",
+                    message, LocalDateTime.now(), refundId);
+            log.warn("Dispute refund failed: disputeId={} refundId={} amount={} error={}",
+                    disputeId, refundId, amount, message);
+            return new RefundExecutionResult(
+                    refundId,
+                    disputeId,
+                    dispute.getTxnRef(),
+                    null,
+                    amount,
+                    "FAILED",
+                    now,
+                    LocalDateTime.now(),
+                    respondingPspId,
+                    raisingPspId,
+                    message);
+        }
+    }
+
+    private RefundExecutionResult failIfInsufficientPool(
+            Long refundId,
+            Long disputeId,
+            String txnRef,
+            BigDecimal amount,
+            String respondingPspId,
+            String raisingPspId,
+            LocalDateTime initiatedAt) {
+        java.util.List<BigDecimal> availableRows = jdbcTemplate.queryForList(
+                "SELECT available_balance FROM psp_pools WHERE psp_id = ?",
+                BigDecimal.class,
+                respondingPspId);
+        if (availableRows.isEmpty()) {
+            return null;
+        }
+
+        BigDecimal available = availableRows.get(0);
+        if (available.compareTo(amount) >= 0) {
+            return null;
+        }
+
+        String message = new InsufficientPoolBalanceException(respondingPspId, amount, available).getMessage();
+        LocalDateTime failedAt = LocalDateTime.now();
         jdbcTemplate.update(
-                "UPDATE refund_transactions SET status='COMPLETED', refund_txn_ref=?, completed_at=? WHERE refund_id=?",
-                refundTxnRef, now, refundId);
-
-        // 5. Confirm pool hold
-        poolService.confirmHold(refundRef);
-
-        log.info("Dispute refund completed: disputeId={} refundTxnRef={} amount={}", disputeId, refundTxnRef, amount);
-
-        // 6. Fire webhook to both PSPs
-        Map<String, Object> payload = Map.of(
-                "disputeId",    disputeId,
-                "refundTxnRef", refundTxnRef,
-                "amount",       amount.toPlainString(),
-                "status",       "COMPLETED");
-        webhookPublisher.publishQuietly("DISPUTE.REFUND.COMPLETED", raisingPspId,    refundTxnRef, payload);
-        webhookPublisher.publishQuietly("DISPUTE.REFUND.COMPLETED", respondingPspId, refundTxnRef, payload);
+                "UPDATE refund_transactions SET status='FAILED', last_error=?, completed_at=? WHERE refund_id=?",
+                message,
+                failedAt,
+                refundId);
+        log.warn("Dispute refund precheck failed: disputeId={} refundId={} amount={} available={} psp={}",
+                disputeId, refundId, amount, available, respondingPspId);
         return new RefundExecutionResult(
                 refundId,
                 disputeId,
-                dispute.getTxnRef(),
-                refundTxnRef,
+                txnRef,
+                null,
                 amount,
-                "COMPLETED",
-                now,
-                now,
+                "FAILED",
+                initiatedAt,
+                failedAt,
                 respondingPspId,
-                raisingPspId);
+                raisingPspId,
+                message);
     }
 
     public record RefundExecutionResult(
@@ -130,6 +209,7 @@ public class DisputeAutoRefundService {
             LocalDateTime initiatedAt,
             LocalDateTime completedAt,
             String debitedPspId,
-            String creditedPspId
+            String creditedPspId,
+            String lastError
     ) {}
 }

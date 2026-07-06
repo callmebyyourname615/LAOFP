@@ -16,6 +16,7 @@ public record DrsDashboardSummaryResponse(
         long refundCompletedTodayCount,
         BigDecimal refundCompletedTodayAmount,
         long refundPendingCount,
+        long refundFailedCount,
         List<DrsStatusCountResponse> statusCounts,
         List<DrsDisputeListItemResponse> recentDisputes
 ) {}

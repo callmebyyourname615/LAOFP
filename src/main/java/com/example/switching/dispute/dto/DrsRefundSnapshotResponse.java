@@ -11,5 +11,6 @@ public record DrsRefundSnapshotResponse(
         BigDecimal amount,
         String status,
         LocalDateTime initiatedAt,
-        LocalDateTime completedAt
+        LocalDateTime completedAt,
+        String lastError
 ) {}

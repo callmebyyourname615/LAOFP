@@ -175,6 +175,7 @@ public class DrsOperationsQueryService {
             appendCsv(csv, "refund", "status", report.refund().status());
             appendCsv(csv, "refund", "initiatedAt", string(report.refund().initiatedAt()));
             appendCsv(csv, "refund", "completedAt", string(report.refund().completedAt()));
+            appendCsv(csv, "refund", "lastError", report.refund().lastError());
         }
         int index = 1;
         for (DrsTimelineItemResponse event : report.timeline()) {
@@ -251,6 +252,13 @@ public class DrsOperationsQueryService {
                  WHERE status = 'INITIATED'
                 """,
                 Long.class);
+        long refundFailed = jdbc.queryForObject(
+                """
+                SELECT COUNT(*)
+                  FROM refund_transactions
+                 WHERE status = 'FAILED'
+                """,
+                Long.class);
         List<DrsStatusCountResponse> statusCounts = jdbc.query(
                 """
                 SELECT status, COUNT(*) AS count
@@ -272,6 +280,7 @@ public class DrsOperationsQueryService {
                 refundCompletedToday,
                 refundCompletedTodayAmount == null ? BigDecimal.ZERO : refundCompletedTodayAmount,
                 refundPending,
+                refundFailed,
                 statusCounts,
                 recent);
     }
@@ -307,11 +316,12 @@ public class DrsOperationsQueryService {
                        r.status AS refund_status,
                        r.initiated_at AS refund_initiated_at,
                        r.completed_at AS refund_completed_at,
+                       r.last_error AS refund_last_error,
                        COALESCE(d.updated_at, t.updated_at, d.raised_at) AS updated_at
                   FROM disputes d
                   LEFT JOIN transactions t ON t.transaction_ref = d.txn_ref
                   LEFT JOIN LATERAL (
-                       SELECT refund_id, refund_txn_ref, amount, status, initiated_at, completed_at
+                       SELECT refund_id, refund_txn_ref, amount, status, initiated_at, completed_at, last_error
                          FROM refund_transactions
                         WHERE dispute_id = d.dispute_id
                         ORDER BY refund_id DESC
@@ -351,7 +361,8 @@ public class DrsOperationsQueryService {
                 rs.getBigDecimal("refund_amount"),
                 rs.getString("refund_status"),
                 time(rs, "refund_initiated_at"),
-                time(rs, "refund_completed_at"));
+                time(rs, "refund_completed_at"),
+                rs.getString("refund_last_error"));
     }
 
     private DrsTransferSnapshotResponse loadTransfer(String txnRef, DrsTransferSnapshotResponse fallback) {
@@ -391,7 +402,7 @@ public class DrsOperationsQueryService {
             return jdbc.queryForObject(
                     """
                     SELECT refund_id, dispute_id, original_txn_ref, refund_txn_ref,
-                           amount, status, initiated_at, completed_at
+                           amount, status, initiated_at, completed_at, last_error
                       FROM refund_transactions
                      WHERE dispute_id = ?
                      ORDER BY refund_id DESC
@@ -405,7 +416,8 @@ public class DrsOperationsQueryService {
                             rs.getBigDecimal("amount"),
                             rs.getString("status"),
                             time(rs, "initiated_at"),
-                            time(rs, "completed_at")),
+                            time(rs, "completed_at"),
+                            rs.getString("last_error")),
                     disputeId);
         } catch (EmptyResultDataAccessException ex) {
             return null;
