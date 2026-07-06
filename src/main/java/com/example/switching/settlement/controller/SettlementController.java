@@ -33,6 +33,7 @@ import com.example.switching.settlement.service.RtgsGatewayService;
 import com.example.switching.settlement.service.SettlementInstructionService;
 import com.example.switching.settlement.service.SettlementNetPositionService;
 import com.example.switching.settlement.service.SettlementOpsReportService;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -149,9 +150,9 @@ public class SettlementController {
             return ResponseEntity.ok(new SettleResult(cycleRef, "SETTLED", posResponses));
         }
         if (!instructionService.allInstructionsConfirmed(cycle.getId())) {
-            throw new IllegalStateException(
+            throw new SettlementCycleInvalidStateException(
                     "Cannot settle cycle " + cycleRef
-                    + " before all RTGS portal instructions are CONFIRMED");
+                            + " before all RTGS portal instructions are CONFIRMED");
         }
         List<SettlementPositionEntity> positions = netPositionService.settle(cycleRef);
         try {

@@ -17,6 +17,7 @@ import com.example.switching.dispute.dto.DrsDashboardSummaryResponse;
 import com.example.switching.dispute.dto.DrsDisputeDetailResponse;
 import com.example.switching.dispute.dto.DrsDisputeListItemResponse;
 import com.example.switching.dispute.dto.DrsDisputeListResponse;
+import com.example.switching.dispute.dto.DrsEvidenceAttachmentResponse;
 import com.example.switching.dispute.dto.DrsEvidenceReportResponse;
 import com.example.switching.dispute.dto.DrsRefundSnapshotResponse;
 import com.example.switching.dispute.dto.DrsStatusCountResponse;
@@ -141,6 +142,7 @@ public class DrsOperationsQueryService {
                 detail.dispute(),
                 detail.transfer(),
                 detail.refund(),
+                attachments(disputeId),
                 timeline.items());
     }
 
@@ -177,6 +179,19 @@ public class DrsOperationsQueryService {
             appendCsv(csv, "refund", "completedAt", string(report.refund().completedAt()));
             appendCsv(csv, "refund", "lastError", report.refund().lastError());
         }
+        int attachmentIndex = 1;
+        for (DrsEvidenceAttachmentResponse attachment : report.attachments()) {
+            appendCsv(csv, "attachment." + attachmentIndex, "attachmentId", string(attachment.attachmentId()));
+            appendCsv(csv, "attachment." + attachmentIndex, "fileName", attachment.fileName());
+            appendCsv(csv, "attachment." + attachmentIndex, "contentType", attachment.contentType());
+            appendCsv(csv, "attachment." + attachmentIndex, "fileSizeBytes", string(attachment.fileSizeBytes()));
+            appendCsv(csv, "attachment." + attachmentIndex, "sha256", attachment.sha256());
+            appendCsv(csv, "attachment." + attachmentIndex, "uploadedBy", attachment.uploadedBy());
+            appendCsv(csv, "attachment." + attachmentIndex, "uploadedAt", string(attachment.uploadedAt()));
+            appendCsv(csv, "attachment." + attachmentIndex, "description", attachment.description());
+            appendCsv(csv, "attachment." + attachmentIndex, "downloadPath", attachment.downloadPath());
+            attachmentIndex++;
+        }
         int index = 1;
         for (DrsTimelineItemResponse event : report.timeline()) {
             appendCsv(csv, "timeline." + index, "eventType", event.eventType());
@@ -186,6 +201,31 @@ public class DrsOperationsQueryService {
             index++;
         }
         return csv.toString();
+    }
+
+    public List<DrsEvidenceAttachmentResponse> attachments(Long disputeId) {
+        ensureDisputeExists(disputeId);
+        return jdbc.query(
+                """
+                SELECT attachment_id, dispute_id, file_name, content_type, file_size_bytes,
+                       sha256, uploaded_by, uploaded_at, description
+                  FROM drs_dispute_attachments
+                 WHERE dispute_id = ?
+                 ORDER BY uploaded_at DESC, attachment_id DESC
+                """,
+                (rs, rowNum) -> new DrsEvidenceAttachmentResponse(
+                        rs.getLong("attachment_id"),
+                        rs.getLong("dispute_id"),
+                        rs.getString("file_name"),
+                        rs.getString("content_type"),
+                        rs.getLong("file_size_bytes"),
+                        rs.getString("sha256"),
+                        rs.getString("uploaded_by"),
+                        time(rs, "uploaded_at"),
+                        rs.getString("description"),
+                        "/api/operations/disputes/" + rs.getLong("dispute_id")
+                                + "/attachments/" + rs.getLong("attachment_id") + "/download"),
+                disputeId);
     }
 
     public DrsDashboardSummaryResponse dashboardSummary(Integer requestedLimit) {
@@ -427,6 +467,16 @@ public class DrsOperationsQueryService {
     private long countStatus(String status) {
         Long count = jdbc.queryForObject("SELECT COUNT(*) FROM disputes WHERE status = ?", Long.class, status);
         return count == null ? 0L : count;
+    }
+
+    private void ensureDisputeExists(Long disputeId) {
+        Integer count = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM disputes WHERE dispute_id = ?",
+                Integer.class,
+                disputeId);
+        if (count == null || count == 0) {
+            throw new DisputeNotFoundException(disputeId);
+        }
     }
 
     private void appendFilter(StringBuilder where, List<Object> args, String column, String value) {

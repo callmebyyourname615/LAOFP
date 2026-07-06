@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
 import com.example.switching.settlement.entity.SettlementPositionEntity;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
 import com.example.switching.settlement.repository.SettlementPositionRepository;
 
 /**
@@ -65,9 +66,7 @@ public class SettlementNetPositionService {
     public List<SettlementPositionEntity> settle(String cycleRef) {
         SettlementCycleEntity cycle = settlementCycleService.requireCycle(cycleRef);
         if (!"CLOSED".equals(cycle.getStatus())) {
-            throw new IllegalStateException(
-                    "Cycle must be CLOSED before netting can run. Current status: "
-                    + cycle.getStatus() + " (cycleRef=" + cycleRef + ")");
+            throw new SettlementCycleInvalidStateException(cycleRef, "run netting", cycle.getStatus(), "CLOSED");
         }
 
         long cycleId = cycle.getId();

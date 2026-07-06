@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
+import com.example.switching.settlement.exception.SettlementCycleNotFoundException;
 import com.example.switching.settlement.repository.SettlementCycleRepository;
 
 /**
@@ -48,7 +50,7 @@ public class SettlementCycleService {
 
         int existing = cycleRepository.countBySettlementDate(effectiveSettlementDate);
         if (existing >= 4) {
-            throw new IllegalStateException(
+            throw new SettlementCycleInvalidStateException(
                     "Maximum 4 cycles per day reached for date: " + effectiveSettlementDate);
         }
 
@@ -134,22 +136,21 @@ public class SettlementCycleService {
     @Transactional(readOnly = true)
     public SettlementCycleEntity requireCycle(String cycleRef) {
         return cycleRepository.findByCycleRef(cycleRef)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement cycle not found: " + cycleRef));
+                .orElseThrow(() -> new SettlementCycleNotFoundException(cycleRef));
     }
 
     @Transactional(readOnly = true)
     public SettlementCycleEntity requireCycleById(Long cycleId) {
         return cycleRepository.findById(cycleId)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement cycle not found: " + cycleId));
+                .orElseThrow(() -> new SettlementCycleNotFoundException(cycleId));
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private void requireStatus(SettlementCycleEntity cycle, String expected) {
         if (!expected.equals(cycle.getStatus())) {
-            throw new IllegalStateException(
-                    "Cannot transition cycle " + cycle.getCycleRef()
-                    + " from " + cycle.getStatus() + " — expected " + expected);
+            throw new SettlementCycleInvalidStateException(cycle.getCycleRef(), "transition",
+                    cycle.getStatus(), expected);
         }
     }
 

@@ -619,6 +619,138 @@ public enum ErrorCatalog {
                         false,
                         "PSP is not authorized to act on this dispute"),
 
+        LFP_DISPUTE_005(
+                        HttpStatus.CONFLICT,
+                        "CONFLICT",
+                        "LFP-9005",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.DISPUTE,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Dispute is not in the required state for this action"),
+
+        LFP_DISPUTE_006(
+                        HttpStatus.BAD_REQUEST,
+                        "BAD_REQUEST",
+                        "LFP-9006",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.DISPUTE,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Invalid DRS resolution decision"),
+
+        LFP_DISPUTE_007(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "LFP-9007",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.DISPUTE,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Dispute not found"),
+
+        LFP_DISPUTE_008(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "LFP-9008",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.DISPUTE,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Dispute reference transaction not found or not settled"),
+
+        LFP_DISPUTE_009(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "LFP-9009",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.DISPUTE,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "DRS evidence attachment not found"),
+
+        LFP_DISPUTE_010(
+                        HttpStatus.BAD_REQUEST,
+                        "BAD_REQUEST",
+                        "LFP-9010",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.DISPUTE,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Invalid DRS evidence attachment"),
+
+        // ── Settlement / STGS-RTGS ────────────────────────────────────────────
+
+        SETTLEMENT_001(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "SET-001",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Settlement cycle not found"),
+
+        SETTLEMENT_002(
+                        HttpStatus.CONFLICT,
+                        "CONFLICT",
+                        "SET-002",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Settlement cycle is not in the required state for this action"),
+
+        SETTLEMENT_003(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "SET-003",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Settlement instruction not found"),
+
+        SETTLEMENT_004(
+                        HttpStatus.CONFLICT,
+                        "CONFLICT",
+                        "SET-004",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Settlement instruction is not in the required state for this action"),
+
+        SETTLEMENT_005(
+                        HttpStatus.BAD_GATEWAY,
+                        "BAD_GATEWAY",
+                        "SET-005",
+                        ErrorCategory.DOWNSTREAM,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.DISPATCH_TRANSFER,
+                        true,
+                        "STGS/RTGS submission failed"),
+
+        SETTLEMENT_006(
+                        HttpStatus.BAD_REQUEST,
+                        "BAD_REQUEST",
+                        "SET-006",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Invalid STGS/RTGS callback request"),
+
+        SETTLEMENT_007(
+                        HttpStatus.CONFLICT,
+                        "CONFLICT",
+                        "SET-007",
+                        ErrorCategory.BUSINESS,
+                        ErrorLayer.SETTLEMENT,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "Settlement report is not available for the current cycle state"),
+
         // ── P17 Cross-border ──────────────────────────────────────────────────
 
         LFP_CB_001(

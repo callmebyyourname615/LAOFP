@@ -14,8 +14,10 @@ import org.springframework.util.StringUtils;
 import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.dispute.dto.DisputeResponse;
 import com.example.switching.dispute.dto.DrsResolutionSubmitRequest;
+import com.example.switching.dispute.exception.DisputeInvalidStateException;
 import com.example.switching.dispute.exception.DisputeNotAuthorizedException;
 import com.example.switching.dispute.exception.DisputeNotFoundException;
+import com.example.switching.dispute.exception.DisputeResolutionDecisionInvalidException;
 import com.example.switching.webhook.service.WebhookEventPublisher;
 
 @Service
@@ -50,11 +52,11 @@ public class DrsResolutionMakerCheckerService {
         String decision = request.decision().toUpperCase();
 
         if (!SUBMITTABLE_STATUSES.contains(currentStatus)) {
-            throw new IllegalStateException("Dispute " + disputeId
-                    + " cannot be submitted for approval from status " + currentStatus);
+            throw new DisputeInvalidStateException(disputeId, "be submitted for approval", currentStatus,
+                    String.join("/", SUBMITTABLE_STATUSES));
         }
         if (!VALID_DECISIONS.contains(decision)) {
-            throw new IllegalArgumentException("Invalid DRS resolution decision: " + request.decision());
+            throw new DisputeResolutionDecisionInvalidException(request.decision());
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -102,7 +104,7 @@ public class DrsResolutionMakerCheckerService {
             case "NO_ACTION" -> "RESOLVED_NO_ACTION";
             case "REFUND_REQUIRED" -> "RESOLVED_REFUND";
             case "MANUAL_ADJUSTMENT_REQUIRED" -> "ESCALATED";
-            default -> throw new IllegalStateException("Missing proposed resolution for dispute " + disputeId);
+            default -> throw new DisputeInvalidStateException(disputeId, "missing proposed resolution");
         };
 
         LocalDateTime now = LocalDateTime.now();
@@ -215,6 +217,71 @@ public class DrsResolutionMakerCheckerService {
         return loadResponse(disputeId);
     }
 
+    @Transactional
+    public DisputeResponse retryRefund(Long disputeId, String actor, String note) {
+        Map<String, Object> dispute = load(disputeId);
+        if (!"ESCALATED".equals(string(dispute.get("status")))) {
+            throw new DisputeInvalidStateException(disputeId, "retry refund", string(dispute.get("status")),
+                    "ESCALATED");
+        }
+
+        Map<String, Object> latestRefund = loadLatestRefund(disputeId);
+        if (!"FAILED".equals(string(latestRefund.get("status")))) {
+            throw new DisputeInvalidStateException(disputeId,
+                    "latest refund is " + string(latestRefund.get("status")) + "; required FAILED");
+        }
+
+        audit(dispute, "DRS_REFUND_RETRY_STARTED", actor, Map.of(
+                "previousRefundId", latestRefund.get("refund_id"),
+                "previousLastError", nullToEmpty(string(latestRefund.get("last_error"))),
+                "note", nullToEmpty(note)));
+
+        DisputeAutoRefundService.RefundExecutionResult refund = autoRefundService.initiateRefund(disputeId);
+        if ("FAILED".equals(refund.status())) {
+            jdbc.update(
+                    """
+                    UPDATE disputes
+                       SET status = 'ESCALATED',
+                           resolution_note = ?,
+                           updated_at = NOW()
+                     WHERE dispute_id = ?
+                    """,
+                    "Refund retry failed: " + nullToEmpty(refund.lastError()),
+                    disputeId);
+            audit(dispute, "DRS_REFUND_RETRY_FAILED", actor, Map.of(
+                    "refundId", refund.refundId(),
+                    "refundAmount", refund.amount().toPlainString(),
+                    "refundStatus", refund.status(),
+                    "debitedPspId", refund.debitedPspId(),
+                    "creditedPspId", refund.creditedPspId(),
+                    "lastError", nullToEmpty(refund.lastError()),
+                    "note", nullToEmpty(note)));
+        } else {
+            jdbc.update(
+                    """
+                    UPDATE disputes
+                       SET status = 'RESOLVED_REFUND',
+                           resolved_at = NOW(),
+                           resolution_note = ?,
+                           updated_at = NOW()
+                     WHERE dispute_id = ?
+                    """,
+                    "Refund retry completed: " + refund.refundRef(),
+                    disputeId);
+            audit(dispute, "DRS_REFUND_RETRY_COMPLETED", actor, Map.of(
+                    "refundId", refund.refundId(),
+                    "refundRef", refund.refundRef(),
+                    "refundAmount", refund.amount().toPlainString(),
+                    "refundStatus", refund.status(),
+                    "debitedPspId", refund.debitedPspId(),
+                    "creditedPspId", refund.creditedPspId(),
+                    "completedAt", refund.completedAt().toString(),
+                    "note", nullToEmpty(note)));
+            publish(dispute, "RESOLVED_REFUND");
+        }
+        return loadResponse(disputeId);
+    }
+
     private void applyTransferDecision(Map<String, Object> dispute, String decision, String note) {
         String txnRef = string(dispute.get("txn_ref"));
         if ("NO_ACTION".equals(decision)) {
@@ -248,7 +315,8 @@ public class DrsResolutionMakerCheckerService {
 
     private void requirePendingApproval(Long disputeId, Map<String, Object> dispute) {
         if (!"PENDING_APPROVAL".equals(string(dispute.get("status")))) {
-            throw new IllegalStateException("Dispute " + disputeId + " is not PENDING_APPROVAL");
+            throw new DisputeInvalidStateException(disputeId, "be checked", string(dispute.get("status")),
+                    "PENDING_APPROVAL");
         }
     }
 
@@ -266,6 +334,23 @@ public class DrsResolutionMakerCheckerService {
                     disputeId);
         } catch (EmptyResultDataAccessException ex) {
             throw new DisputeNotFoundException(disputeId);
+        }
+    }
+
+    private Map<String, Object> loadLatestRefund(Long disputeId) {
+        try {
+            return jdbc.queryForMap(
+                    """
+                    SELECT refund_id, dispute_id, original_txn_ref, refund_txn_ref,
+                           amount, status, last_error, initiated_at, completed_at
+                      FROM refund_transactions
+                     WHERE dispute_id = ?
+                     ORDER BY refund_id DESC
+                     LIMIT 1
+                    """,
+                    disputeId);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new DisputeInvalidStateException(disputeId, "no refund attempt exists");
         }
     }
 

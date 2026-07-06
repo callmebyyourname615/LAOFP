@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.dispute.entity.DisputeEntity;
 import com.example.switching.dispute.exception.DisputeNotFoundException;
+import com.example.switching.dispute.exception.DisputeReferenceNotFoundException;
 import com.example.switching.dispute.repository.DisputeRepository;
 import com.example.switching.liquidity.exception.InsufficientPoolBalanceException;
 import com.example.switching.liquidity.service.PoolService;
@@ -64,7 +65,7 @@ public class DisputeAutoRefundService {
                     dispute.getTxnRef());
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             log.warn("Original transaction missing for dispute {}: {}", disputeId, dispute.getTxnRef());
-            throw new IllegalStateException("Original transaction not found: " + dispute.getTxnRef());
+            throw new DisputeReferenceNotFoundException(dispute.getTxnRef());
         }
 
         BigDecimal amount          = new BigDecimal(txn.get("amount").toString());

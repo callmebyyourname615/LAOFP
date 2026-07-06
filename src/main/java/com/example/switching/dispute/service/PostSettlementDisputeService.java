@@ -16,7 +16,7 @@ import com.example.switching.dispute.config.DisputeProperties;
 import com.example.switching.dispute.dto.DisputeRaiseResponse;
 import com.example.switching.dispute.dto.PostSettlementDisputeRequest;
 import com.example.switching.dispute.exception.DisputeAlreadyExistsException;
-import com.example.switching.dispute.exception.DisputeNotFoundException;
+import com.example.switching.dispute.exception.DisputeReferenceNotFoundException;
 import com.example.switching.dispute.exception.DisputeWindowExpiredException;
 import com.example.switching.webhook.service.WebhookEventPublisher;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -152,7 +152,7 @@ public class PostSettlementDisputeService {
                     """,
                     transferRef);
         } catch (EmptyResultDataAccessException ex) {
-            throw new DisputeNotFoundException(-1L);
+            throw new DisputeReferenceNotFoundException(transferRef);
         }
     }
 

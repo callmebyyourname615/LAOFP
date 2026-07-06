@@ -18,6 +18,7 @@ public enum ErrorLayer {
     QR,
     BILL,
     DISPUTE,
+    SETTLEMENT,
     CROSSBORDER,
     RTP
 }

@@ -264,6 +264,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/submit-resolution").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/approve-resolution").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/reject-resolution").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/operations/disputes/*/refund/retry").hasAnyRole("OPS", "ADMIN")
 
                         // ── Cross-border Payment (P17) ────────────────────────────
                         .requestMatchers(HttpMethod.GET,  v1("/crossborder/corridors")).hasAnyRole("BANK", "OPS", "ADMIN")

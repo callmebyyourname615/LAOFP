@@ -17,6 +17,10 @@ import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.iso.mapper.Pacs009XmlBuilder;
 import com.example.switching.settlement.dto.RtgsCallbackRequest;
 import com.example.switching.settlement.entity.SettlementInstructionEntity;
+import com.example.switching.settlement.exception.RtgsCallbackInvalidException;
+import com.example.switching.settlement.exception.RtgsSubmissionException;
+import com.example.switching.settlement.exception.SettlementInstructionInvalidStateException;
+import com.example.switching.settlement.exception.SettlementInstructionNotFoundException;
 import com.example.switching.settlement.repository.SettlementInstructionRepository;
 
 @Service
@@ -63,9 +67,8 @@ public class RtgsGatewayService {
     public SettlementInstructionEntity prepareManualRtgsFile(String instructionRef, String actor) {
         SettlementInstructionEntity instruction = instructionService.requireInstruction(instructionRef);
         if (!"APPROVED".equals(instruction.getStatus()) && !"SENT_RTGS".equals(instruction.getStatus())) {
-            throw new IllegalStateException(
-                    "Cannot prepare RTGS file for instruction " + instructionRef
-                    + " from " + instruction.getStatus() + " — expected APPROVED or SENT_RTGS");
+            throw new SettlementInstructionInvalidStateException(instructionRef, "prepare RTGS file",
+                    instruction.getStatus(), "APPROVED or SENT_RTGS");
         }
         ensureRtgsPayload(instruction);
         SettlementInstructionEntity saved = instructionRepository.save(instruction);
@@ -95,7 +98,7 @@ public class RtgsGatewayService {
         return saved;
     }
 
-    @Transactional(noRollbackFor = IllegalStateException.class)
+    @Transactional(noRollbackFor = RtgsSubmissionException.class)
     public SettlementInstructionEntity sendApprovedInstruction(String instructionRef, String actor) {
         SettlementInstructionEntity instruction = instructionService.requireInstruction(instructionRef);
         requireStatus(instruction, "APPROVED");
@@ -121,7 +124,7 @@ public class RtgsGatewayService {
                 auditLogService.log("SETTLEMENT_INSTRUCTION_RTGS_FAILED", ENTITY, instructionRef, actorOrSource(actor),
                         Map.of("instructionRef", instructionRef, "rtgsMsgId", rtgsMsgId,
                                 "statusCode", response.statusCode()));
-                throw new IllegalStateException(message);
+                throw new RtgsSubmissionException(message);
             }
 
             instruction.setStatus("SENT_RTGS");
@@ -132,7 +135,7 @@ public class RtgsGatewayService {
                     Map.of("instructionRef", instructionRef, "rtgsMsgId", rtgsMsgId,
                             "statusCode", response.statusCode()));
             return saved;
-        } catch (IllegalStateException ex) {
+        } catch (RtgsSubmissionException ex) {
             throw ex;
         } catch (Exception ex) {
             String message = "RTGS submission error: " + ex.getMessage();
@@ -140,14 +143,14 @@ public class RtgsGatewayService {
             instructionRepository.save(instruction);
             auditLogService.log("SETTLEMENT_INSTRUCTION_RTGS_ERROR", ENTITY, instructionRef, actorOrSource(actor),
                     Map.of("instructionRef", instructionRef, "rtgsMsgId", rtgsMsgId, "error", message));
-            throw new IllegalStateException(message, ex);
+            throw new RtgsSubmissionException(message, ex);
         }
     }
 
     @Transactional
     public SettlementInstructionEntity applyRtgsCallback(RtgsCallbackRequest request, String sourceIp) {
         if (request == null) {
-            throw new IllegalArgumentException("RTGS callback request is required");
+            throw new RtgsCallbackInvalidException("RTGS callback request is required");
         }
         SettlementInstructionEntity instruction = findCallbackInstruction(request);
         String callbackStatus = normalizeStatus(request.status());
@@ -159,9 +162,8 @@ public class RtgsGatewayService {
             return instruction;
         }
         if (!"SENT_RTGS".equals(instruction.getStatus())) {
-            throw new IllegalStateException(
-                    "Cannot apply RTGS callback to instruction " + instruction.getInstructionRef()
-                    + " from " + instruction.getStatus() + " — expected SENT_RTGS");
+            throw new SettlementInstructionInvalidStateException(instruction.getInstructionRef(),
+                    "apply RTGS callback", instruction.getStatus(), "SENT_RTGS");
         }
 
         if (isAcceptedCallback(callbackStatus)) {
@@ -174,7 +176,7 @@ public class RtgsGatewayService {
                     ? request.reason()
                     : "RTGS callback status: " + callbackStatus);
         } else {
-            throw new IllegalArgumentException("Unsupported RTGS callback status: " + request.status());
+            throw new RtgsCallbackInvalidException("Unsupported RTGS callback status: " + request.status());
         }
 
         SettlementInstructionEntity saved = instructionRepository.save(instruction);
@@ -222,27 +224,26 @@ public class RtgsGatewayService {
                     .POST(HttpRequest.BodyPublishers.ofString(requestPayload, StandardCharsets.UTF_8))
                     .build();
         } catch (IllegalArgumentException ex) {
-            throw new IllegalStateException("Invalid RTGS endpoint URL: " + bolRtgsUrl, ex);
+            throw new RtgsSubmissionException("Invalid RTGS endpoint URL: " + bolRtgsUrl, ex);
         }
     }
 
     private SettlementInstructionEntity findCallbackInstruction(RtgsCallbackRequest request) {
         if (request.instructionRef() != null && !request.instructionRef().isBlank()) {
             return instructionRepository.findByInstructionRef(request.instructionRef())
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Settlement instruction not found: " + request.instructionRef()));
+                    .orElseThrow(() -> new SettlementInstructionNotFoundException(request.instructionRef()));
         }
         if (request.rtgsMsgId() != null && !request.rtgsMsgId().isBlank()) {
             return instructionRepository.findByRtgsMsgId(request.rtgsMsgId())
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Settlement instruction not found for rtgsMsgId: " + request.rtgsMsgId()));
+                    .orElseThrow(() -> new SettlementInstructionNotFoundException(
+                            "rtgsMsgId=" + request.rtgsMsgId()));
         }
-        throw new IllegalArgumentException("RTGS callback requires instructionRef or rtgsMsgId");
+        throw new RtgsCallbackInvalidException("RTGS callback requires instructionRef or rtgsMsgId");
     }
 
     private String normalizeStatus(String status) {
         if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException("RTGS callback status is required");
+            throw new RtgsCallbackInvalidException("RTGS callback status is required");
         }
         return status.trim().toUpperCase();
     }
@@ -257,9 +258,8 @@ public class RtgsGatewayService {
 
     private void requireStatus(SettlementInstructionEntity instruction, String expected) {
         if (!expected.equals(instruction.getStatus())) {
-            throw new IllegalStateException(
-                    "Cannot send instruction " + instruction.getInstructionRef()
-                    + " from " + instruction.getStatus() + " — expected " + expected);
+            throw new SettlementInstructionInvalidStateException(instruction.getInstructionRef(), "send",
+                    instruction.getStatus(), expected);
         }
     }
 

@@ -8,5 +8,6 @@ public record DrsEvidenceReportResponse(
         DrsDisputeListItemResponse dispute,
         DrsTransferSnapshotResponse transfer,
         DrsRefundSnapshotResponse refund,
+        List<DrsEvidenceAttachmentResponse> attachments,
         List<DrsTimelineItemResponse> timeline
 ) {}

@@ -12,6 +12,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.switching.settlement.exception.SettlementCycleNotFoundException;
+import com.example.switching.settlement.exception.SettlementReportUnavailableException;
+
 @Service
 public class SettlementOpsReportService {
 
@@ -25,9 +28,7 @@ public class SettlementOpsReportService {
     public OpsSettlementReport load(String cycleRef) {
         Cycle cycle = loadCycle(cycleRef);
         if (!"SETTLED".equals(cycle.status())) {
-            throw new IllegalStateException(
-                    "Settlement ops report is available only after STGS/RTGS confirmation. "
-                    + "cycleRef=" + cycleRef + ", currentStatus=" + cycle.status());
+            throw new SettlementReportUnavailableException(cycleRef, cycle.status());
         }
 
         List<Position> positions = loadPositions(cycle.id());
@@ -133,7 +134,7 @@ public class SettlementOpsReportService {
                 """,
                 rs -> {
                     if (!rs.next()) {
-                        throw new IllegalArgumentException("Settlement cycle not found: " + cycleRef);
+                        throw new SettlementCycleNotFoundException(cycleRef);
                     }
                     return new Cycle(
                             rs.getLong("id"),

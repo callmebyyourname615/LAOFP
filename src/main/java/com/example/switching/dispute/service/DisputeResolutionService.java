@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.dispute.dto.DisputeResponse;
 import com.example.switching.dispute.entity.DisputeEntity;
+import com.example.switching.dispute.exception.DisputeInvalidStateException;
 import com.example.switching.dispute.exception.DisputeNotFoundException;
 import com.example.switching.dispute.exception.DisputeNotAuthorizedException;
 import com.example.switching.dispute.repository.DisputeRepository;
@@ -54,7 +55,7 @@ public class DisputeResolutionService {
             throw new DisputeNotAuthorizedException(disputeId);
         }
         if (!"OPEN".equals(dispute.getStatus())) {
-            throw new IllegalStateException("Dispute " + disputeId + " is not OPEN, cannot respond");
+            throw new DisputeInvalidStateException(disputeId, "respond", dispute.getStatus(), "OPEN");
         }
 
         // Merge evidence arrays (simple string append — both must be valid JSON arrays)

@@ -14,6 +14,9 @@ import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
 import com.example.switching.settlement.entity.SettlementInstructionEntity;
 import com.example.switching.settlement.entity.SettlementPositionEntity;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
+import com.example.switching.settlement.exception.SettlementInstructionInvalidStateException;
+import com.example.switching.settlement.exception.SettlementInstructionNotFoundException;
 import com.example.switching.settlement.repository.SettlementInstructionRepository;
 import com.example.switching.settlement.repository.SettlementPositionRepository;
 
@@ -42,9 +45,8 @@ public class SettlementInstructionService {
     public List<SettlementInstructionEntity> generateForCycle(String cycleRef) {
         SettlementCycleEntity cycle = cycleService.requireCycle(cycleRef);
         if (!"CLOSED".equals(cycle.getStatus())) {
-            throw new IllegalStateException(
-                    "Settlement instructions require CLOSED cycle. Current status: "
-                    + cycle.getStatus() + " (cycleRef=" + cycleRef + ")");
+            throw new SettlementCycleInvalidStateException(cycleRef, "generate settlement instructions",
+                    cycle.getStatus(), "CLOSED");
         }
 
         if (instructionRepository.existsByCycleId(cycle.getId())) {
@@ -159,14 +161,13 @@ public class SettlementInstructionService {
     @Transactional(readOnly = true)
     public SettlementInstructionEntity requireInstruction(String instructionRef) {
         return instructionRepository.findByInstructionRef(instructionRef)
-                .orElseThrow(() -> new IllegalArgumentException("Settlement instruction not found: " + instructionRef));
+                .orElseThrow(() -> new SettlementInstructionNotFoundException(instructionRef));
     }
 
     private void requireStatus(SettlementInstructionEntity instruction, String expected) {
         if (!expected.equals(instruction.getStatus())) {
-            throw new IllegalStateException(
-                    "Cannot update instruction " + instruction.getInstructionRef()
-                    + " from " + instruction.getStatus() + " — expected " + expected);
+            throw new SettlementInstructionInvalidStateException(instruction.getInstructionRef(), "update",
+                    instruction.getStatus(), expected);
         }
     }
 

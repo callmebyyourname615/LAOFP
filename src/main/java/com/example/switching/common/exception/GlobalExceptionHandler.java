@@ -63,10 +63,22 @@ import com.example.switching.billpayment.exception.BillTokenExpiredException;
 import com.example.switching.billpayment.exception.BillerTimeoutException;
 import com.example.switching.billpayment.exception.DuplicateBillPaymentException;
 import com.example.switching.dispute.exception.DisputeAlreadyExistsException;
+import com.example.switching.dispute.exception.DisputeInvalidStateException;
 import com.example.switching.dispute.exception.DisputeNotAuthorizedException;
 import com.example.switching.dispute.exception.DisputeNotFoundException;
+import com.example.switching.dispute.exception.DisputeReferenceNotFoundException;
+import com.example.switching.dispute.exception.DisputeResolutionDecisionInvalidException;
 import com.example.switching.dispute.exception.DisputeTypeInvalidException;
 import com.example.switching.dispute.exception.DisputeWindowExpiredException;
+import com.example.switching.dispute.exception.DrsEvidenceAttachmentInvalidException;
+import com.example.switching.dispute.exception.DrsEvidenceAttachmentNotFoundException;
+import com.example.switching.settlement.exception.RtgsCallbackInvalidException;
+import com.example.switching.settlement.exception.RtgsSubmissionException;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
+import com.example.switching.settlement.exception.SettlementCycleNotFoundException;
+import com.example.switching.settlement.exception.SettlementInstructionInvalidStateException;
+import com.example.switching.settlement.exception.SettlementInstructionNotFoundException;
+import com.example.switching.settlement.exception.SettlementReportUnavailableException;
 import com.example.switching.crossborder.exception.CorridorNotAvailableException;
 import com.example.switching.crossborder.exception.FxQuoteExpiredException;
 import com.example.switching.crossborder.exception.PurposeCodeRequiredException;
@@ -697,10 +709,84 @@ public class GlobalExceptionHandler {
                 return buildResponse(ErrorCatalog.LFP_DISPUTE_004, ex.getMessage(), request, null);
         }
 
+        @ExceptionHandler(DisputeInvalidStateException.class)
+        public ResponseEntity<ApiErrorResponse> handleDisputeInvalidState(
+                        DisputeInvalidStateException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.LFP_DISPUTE_005, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(DisputeResolutionDecisionInvalidException.class)
+        public ResponseEntity<ApiErrorResponse> handleDisputeResolutionDecisionInvalid(
+                        DisputeResolutionDecisionInvalidException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.LFP_DISPUTE_006, ex.getMessage(), request, null);
+        }
+
         @ExceptionHandler(DisputeNotFoundException.class)
         public ResponseEntity<ApiErrorResponse> handleDisputeNotFound(
                         DisputeNotFoundException ex, HttpServletRequest request) {
-                return buildResponse(ErrorCatalog.LFP_DISPUTE_001, ex.getMessage(), request, null);
+                return buildResponse(ErrorCatalog.LFP_DISPUTE_007, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(DisputeReferenceNotFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleDisputeReferenceNotFound(
+                        DisputeReferenceNotFoundException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.LFP_DISPUTE_008, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(DrsEvidenceAttachmentNotFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleDrsEvidenceAttachmentNotFound(
+                        DrsEvidenceAttachmentNotFoundException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.LFP_DISPUTE_009, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(DrsEvidenceAttachmentInvalidException.class)
+        public ResponseEntity<ApiErrorResponse> handleDrsEvidenceAttachmentInvalid(
+                        DrsEvidenceAttachmentInvalidException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.LFP_DISPUTE_010, ex.getMessage(), request, null);
+        }
+
+        // ── Settlement / STGS-RTGS ────────────────────────────────────────────
+
+        @ExceptionHandler(SettlementCycleNotFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleSettlementCycleNotFound(
+                        SettlementCycleNotFoundException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_001, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(SettlementCycleInvalidStateException.class)
+        public ResponseEntity<ApiErrorResponse> handleSettlementCycleInvalidState(
+                        SettlementCycleInvalidStateException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_002, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(SettlementInstructionNotFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleSettlementInstructionNotFound(
+                        SettlementInstructionNotFoundException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_003, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(SettlementInstructionInvalidStateException.class)
+        public ResponseEntity<ApiErrorResponse> handleSettlementInstructionInvalidState(
+                        SettlementInstructionInvalidStateException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_004, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtgsSubmissionException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtgsSubmission(
+                        RtgsSubmissionException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_005, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtgsCallbackInvalidException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtgsCallbackInvalid(
+                        RtgsCallbackInvalidException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_006, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(SettlementReportUnavailableException.class)
+        public ResponseEntity<ApiErrorResponse> handleSettlementReportUnavailable(
+                        SettlementReportUnavailableException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.SETTLEMENT_007, ex.getMessage(), request, null);
         }
 
         // ── P17 Cross-border ──────────────────────────────────────────────────

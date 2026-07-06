@@ -15,7 +15,7 @@ import com.example.switching.dispute.config.DisputeProperties;
 import com.example.switching.dispute.dto.DisputeRaiseRequest;
 import com.example.switching.dispute.dto.DisputeRaiseResponse;
 import com.example.switching.dispute.exception.DisputeAlreadyExistsException;
-import com.example.switching.dispute.exception.DisputeNotFoundException;
+import com.example.switching.dispute.exception.DisputeReferenceNotFoundException;
 import com.example.switching.dispute.exception.DisputeTypeInvalidException;
 import com.example.switching.dispute.exception.DisputeWindowExpiredException;
 import com.example.switching.webhook.service.WebhookEventPublisher;
@@ -72,7 +72,7 @@ public class DisputeRaiseService {
                     "SELECT created_at, source_bank, destination_bank FROM transactions WHERE transaction_ref = ? AND status = 'SETTLED' LIMIT 1",
                     req.txnRef());
         } catch (EmptyResultDataAccessException e) {
-            throw new DisputeNotFoundException(-1L); // treat missing txn as not-found
+            throw new DisputeReferenceNotFoundException(req.txnRef());
         }
 
         // 3. 90-day window check

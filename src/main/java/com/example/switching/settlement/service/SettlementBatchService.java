@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.audit.service.AuditLogService;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
 import com.example.switching.transfer.entity.TransferEntity;
 import com.example.switching.transfer.enums.TransferStatus;
 import com.example.switching.transfer.repository.TransferRepository;
@@ -94,9 +95,7 @@ public class SettlementBatchService {
         SettlementCycleEntity cycle = settlementCycleService.requireCycle(cycleRef);
         String status = cycle.getStatus();
         if (!"OPEN".equals(status) && !"CLOSED".equals(status)) {
-            throw new IllegalStateException(
-                    "Cannot batch transactions for cycle " + cycleRef
-                    + " in status: " + status + " (expected OPEN or CLOSED)");
+            throw new SettlementCycleInvalidStateException(cycleRef, "batch transactions", status, "OPEN or CLOSED");
         }
 
         LocalDate settlementDate = cycle.getSettlementDate();
