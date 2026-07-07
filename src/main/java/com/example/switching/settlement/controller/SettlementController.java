@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.switching.settlement.dto.OpenCycleRequest;
+import com.example.switching.settlement.dto.SettlementCycleActionsResponse;
 import com.example.switching.settlement.dto.SettlementCycleDetailResponse;
 import com.example.switching.settlement.dto.SettlementInstructionDecisionRequest;
 import com.example.switching.settlement.dto.SettlementInstructionResponse;
@@ -29,6 +30,7 @@ import com.example.switching.settlement.entity.SettlementInstructionEntity;
 import com.example.switching.settlement.entity.SettlementPositionEntity;
 import com.example.switching.settlement.entity.SettlementReportEntity;
 import com.example.switching.settlement.service.Camt054ReportService;
+import com.example.switching.settlement.service.SettlementActionReadinessService;
 import com.example.switching.settlement.service.SettlementBatchService;
 import com.example.switching.settlement.service.SettlementCycleDetailService;
 import com.example.switching.settlement.service.SettlementCycleService;
@@ -70,6 +72,7 @@ public class SettlementController {
     private final SettlementOpsReportService   opsReportService;
     private final SettlementTimelineService    timelineService;
     private final SettlementCycleDetailService cycleDetailService;
+    private final SettlementActionReadinessService actionReadinessService;
 
     public SettlementController(SettlementCycleService cycleService,
                                  SettlementBatchService batchService,
@@ -79,7 +82,8 @@ public class SettlementController {
                                  Camt054ReportService reportService,
                                  SettlementOpsReportService opsReportService,
                                  SettlementTimelineService timelineService,
-                                 SettlementCycleDetailService cycleDetailService) {
+                                 SettlementCycleDetailService cycleDetailService,
+                                 SettlementActionReadinessService actionReadinessService) {
         this.cycleService       = cycleService;
         this.batchService       = batchService;
         this.netPositionService = netPositionService;
@@ -89,6 +93,7 @@ public class SettlementController {
         this.opsReportService   = opsReportService;
         this.timelineService    = timelineService;
         this.cycleDetailService = cycleDetailService;
+        this.actionReadinessService = actionReadinessService;
     }
 
     // ── Open a new cycle ─────────────────────────────────────────────────────
@@ -138,6 +143,11 @@ public class SettlementController {
     @GetMapping("/cycles/{cycleRef}/detail")
     public ResponseEntity<SettlementCycleDetailResponse> getCycleDetail(@PathVariable String cycleRef) {
         return ResponseEntity.ok(cycleDetailService.detail(cycleRef));
+    }
+
+    @GetMapping("/cycles/{cycleRef}/actions")
+    public ResponseEntity<SettlementCycleActionsResponse> getCycleActions(@PathVariable String cycleRef) {
+        return ResponseEntity.ok(actionReadinessService.actions(cycleRef));
     }
 
     // ── Batch transactions into cycle ────────────────────────────────────────

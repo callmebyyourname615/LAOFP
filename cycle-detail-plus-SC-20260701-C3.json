@@ -1,1 +1,180 @@
-{"generatedAt":"2026-07-06T09:19:17.093253156","cycle":{"id":14,"cycleRef":"SC-20260701-C3","settlementDate":"2026-07-01","cycleNumber":3,"status":"CLOSED","openedAt":"2026-06-30T08:15:00.007","closedAt":"2026-06-30T08:15:00.024","settledAt":null,"itemCount":4,"positions":[{"id":331,"bankCode":"PETERBANK","currency":"LAK","debitAmount":0.0000,"creditAmount":300000.0000,"netPosition":300000.0000,"transactionCount":2,"status":"OPEN","settledAt":null},{"id":332,"bankCode":"SUNDAYBANK","currency":"LAK","debitAmount":300000.0000,"creditAmount":0.0000,"netPosition":-300000.0000,"transactionCount":2,"status":"OPEN","settledAt":null}]},"summary":{"itemCount":4,"transferCount":2,"participantCount":2,"instructionCount":1,"pendingApprovalCount":1,"approvedInstructionCount":0,"sentRtgsCount":0,"confirmedInstructionCount":0,"failedInstructionCount":0,"totalDebit":300000.0000,"totalCredit":300000.0000,"netImbalance":0.0000,"currency":"LAK","latestEventAt":"2026-06-30T08:15:00.035"},"positions":[{"id":331,"bankCode":"PETERBANK","currency":"LAK","debitAmount":0.0000,"creditAmount":300000.0000,"netPosition":300000.0000,"transactionCount":2,"status":"OPEN","settledAt":null},{"id":332,"bankCode":"SUNDAYBANK","currency":"LAK","debitAmount":300000.0000,"creditAmount":0.0000,"netPosition":-300000.0000,"transactionCount":2,"status":"OPEN","settledAt":null}],"instructions":[{"id":9,"instructionRef":"SC-20260701-C3-SI001","cycleRef":"SC-20260701-C3","sourceType":"DNS_CYCLE","transferRef":null,"debtorPspId":"SUNDAYBANK","creditorPspId":"PETERBANK","currency":"LAK","netAmount":450000.0000,"status":"PENDING_APPROVAL","approvalNote":null,"approvedBy":null,"approvedAt":null,"rejectedBy":null,"rejectedAt":null,"rejectionReason":null,"rtgsMsgId":null,"lastError":null,"sentAt":null,"confirmedAt":null,"createdAt":"2026-06-30T08:15:00.028"}],"transfers":[{"transferRef":"TRX-20260630075917-1A52A18F","clientTransferId":"IDEM-TRF-PROVISIONAL-20260630145904","sourceBank":"SUNDAYBANK","destinationBank":"PETERBANK","amount":150000.0000,"currency":"LAK","status":"READY_FOR_SETTLEMENT","confirmationStatus":"PROVISIONAL","settlementConfidence":"PROVISIONAL","externalReference":null,"createdAt":"2026-06-30T07:59:17.702","settledAt":null},{"transferRef":"TRX-20260630081051-49C01B6F","clientTransferId":"IDEM-TRF-PROVISIONAL-20260630151032","sourceBank":"SUNDAYBANK","destinationBank":"PETERBANK","amount":150000.0000,"currency":"LAK","status":"READY_FOR_SETTLEMENT","confirmationStatus":"PROVISIONAL","settlementConfidence":"PROVISIONAL","externalReference":null,"createdAt":"2026-06-30T08:10:51.724","settledAt":null}],"reports":[],"timelinePreview":{"cycleRef":"SC-20260701-C3","count":4,"items":[{"id":829,"eventType":"SETTLEMENT_CYCLE_OPENED","referenceType":"SETTLEMENT_CYCLE","referenceId":"SC-20260701-C3","actor":"SETTLEMENT","payload":"{\"cycleRef\":\"SC-20260701-C3\",\"settlementDate\":\"2026-07-01\",\"settlementModel\":\"T_PLUS_1\",\"businessDate\":\"2026-06-30\",\"cycleNumber\":3}","traceId":null,"createdAt":"2026-06-30T08:15:00.01"},{"id":830,"eventType":"SETTLEMENT_BATCH_COMPLETED","referenceType":"SETTLEMENT_BATCH","referenceId":"SC-20260701-C3","actor":"SETTLEMENT","payload":"{\"settlementModel\":\"T_PLUS_1\",\"itemRowsInserted\":6,\"businessDate\":\"2026-06-30\",\"cycleRef\":\"SC-20260701-C3\",\"transferCount\":3,\"settlementDate\":\"2026-07-01\"}","traceId":null,"createdAt":"2026-06-30T08:15:00.022"},{"id":831,"eventType":"SETTLEMENT_CYCLE_CLOSED","referenceType":"SETTLEMENT_CYCLE","referenceId":"SC-20260701-C3","actor":"SETTLEMENT","payload":"{\"cycleRef\":\"SC-20260701-C3\"}","traceId":null,"createdAt":"2026-06-30T08:15:00.025"},{"id":832,"eventType":"SETTLEMENT_INSTRUCTIONS_GENERATED","referenceType":"SETTLEMENT_INSTRUCTION","referenceId":"SC-20260701-C3","actor":"SETTLEMENT","payload":"{\"instructionCount\":1,\"cycleRef\":\"SC-20260701-C3\"}","traceId":null,"createdAt":"2026-06-30T08:15:00.035"}]}}
+{
+    "generatedAt": "2026-07-07T01:35:35.817144005",
+    "cycle": {
+        "id": 14,
+        "cycleRef": "SC-20260701-C3",
+        "settlementDate": "2026-07-01",
+        "cycleNumber": 3,
+        "status": "CLOSED",
+        "openedAt": "2026-06-30T08:15:00.007",
+        "closedAt": "2026-06-30T08:15:00.024",
+        "settledAt": null,
+        "itemCount": 4,
+        "positions": [
+            {
+                "id": 331,
+                "bankCode": "PETERBANK",
+                "currency": "LAK",
+                "debitAmount": 0.0000,
+                "creditAmount": 300000.0000,
+                "netPosition": 300000.0000,
+                "transactionCount": 2,
+                "status": "OPEN",
+                "settledAt": null
+            },
+            {
+                "id": 332,
+                "bankCode": "SUNDAYBANK",
+                "currency": "LAK",
+                "debitAmount": 300000.0000,
+                "creditAmount": 0.0000,
+                "netPosition": -300000.0000,
+                "transactionCount": 2,
+                "status": "OPEN",
+                "settledAt": null
+            }
+        ]
+    },
+    "summary": {
+        "itemCount": 4,
+        "transferCount": 2,
+        "participantCount": 2,
+        "instructionCount": 1,
+        "pendingApprovalCount": 1,
+        "approvedInstructionCount": 0,
+        "sentRtgsCount": 0,
+        "confirmedInstructionCount": 0,
+        "failedInstructionCount": 0,
+        "totalDebit": 300000.0000,
+        "totalCredit": 300000.0000,
+        "netImbalance": 0.0000,
+        "currency": "LAK",
+        "latestEventAt": "2026-06-30T08:15:00.035"
+    },
+    "positions": [
+        {
+            "id": 331,
+            "bankCode": "PETERBANK",
+            "currency": "LAK",
+            "debitAmount": 0.0000,
+            "creditAmount": 300000.0000,
+            "netPosition": 300000.0000,
+            "transactionCount": 2,
+            "status": "OPEN",
+            "settledAt": null
+        },
+        {
+            "id": 332,
+            "bankCode": "SUNDAYBANK",
+            "currency": "LAK",
+            "debitAmount": 300000.0000,
+            "creditAmount": 0.0000,
+            "netPosition": -300000.0000,
+            "transactionCount": 2,
+            "status": "OPEN",
+            "settledAt": null
+        }
+    ],
+    "instructions": [
+        {
+            "id": 9,
+            "instructionRef": "SC-20260701-C3-SI001",
+            "cycleRef": "SC-20260701-C3",
+            "sourceType": "DNS_CYCLE",
+            "transferRef": null,
+            "debtorPspId": "SUNDAYBANK",
+            "creditorPspId": "PETERBANK",
+            "currency": "LAK",
+            "netAmount": 450000.0000,
+            "status": "PENDING_APPROVAL",
+            "approvalNote": null,
+            "approvedBy": null,
+            "approvedAt": null,
+            "rejectedBy": null,
+            "rejectedAt": null,
+            "rejectionReason": null,
+            "rtgsMsgId": null,
+            "lastError": null,
+            "sentAt": null,
+            "confirmedAt": null,
+            "createdAt": "2026-06-30T08:15:00.028"
+        }
+    ],
+    "transfers": [
+        {
+            "transferRef": "TRX-20260630075917-1A52A18F",
+            "clientTransferId": "IDEM-TRF-PROVISIONAL-20260630145904",
+            "sourceBank": "SUNDAYBANK",
+            "destinationBank": "PETERBANK",
+            "amount": 150000.0000,
+            "currency": "LAK",
+            "status": "READY_FOR_SETTLEMENT",
+            "confirmationStatus": "PROVISIONAL",
+            "settlementConfidence": "PROVISIONAL",
+            "externalReference": null,
+            "createdAt": "2026-06-30T07:59:17.702",
+            "settledAt": null
+        },
+        {
+            "transferRef": "TRX-20260630081051-49C01B6F",
+            "clientTransferId": "IDEM-TRF-PROVISIONAL-20260630151032",
+            "sourceBank": "SUNDAYBANK",
+            "destinationBank": "PETERBANK",
+            "amount": 150000.0000,
+            "currency": "LAK",
+            "status": "READY_FOR_SETTLEMENT",
+            "confirmationStatus": "PROVISIONAL",
+            "settlementConfidence": "PROVISIONAL",
+            "externalReference": null,
+            "createdAt": "2026-06-30T08:10:51.724",
+            "settledAt": null
+        }
+    ],
+    "reports": [],
+    "timelinePreview": {
+        "cycleRef": "SC-20260701-C3",
+        "count": 4,
+        "items": [
+            {
+                "id": 829,
+                "eventType": "SETTLEMENT_CYCLE_OPENED",
+                "referenceType": "SETTLEMENT_CYCLE",
+                "referenceId": "SC-20260701-C3",
+                "actor": "SETTLEMENT",
+                "payload": "{\"cycleRef\":\"SC-20260701-C3\",\"settlementDate\":\"2026-07-01\",\"settlementModel\":\"T_PLUS_1\",\"businessDate\":\"2026-06-30\",\"cycleNumber\":3}",
+                "traceId": null,
+                "createdAt": "2026-06-30T08:15:00.01"
+            },
+            {
+                "id": 830,
+                "eventType": "SETTLEMENT_BATCH_COMPLETED",
+                "referenceType": "SETTLEMENT_BATCH",
+                "referenceId": "SC-20260701-C3",
+                "actor": "SETTLEMENT",
+                "payload": "{\"settlementModel\":\"T_PLUS_1\",\"itemRowsInserted\":6,\"businessDate\":\"2026-06-30\",\"cycleRef\":\"SC-20260701-C3\",\"transferCount\":3,\"settlementDate\":\"2026-07-01\"}",
+                "traceId": null,
+                "createdAt": "2026-06-30T08:15:00.022"
+            },
+            {
+                "id": 831,
+                "eventType": "SETTLEMENT_CYCLE_CLOSED",
+                "referenceType": "SETTLEMENT_CYCLE",
+                "referenceId": "SC-20260701-C3",
+                "actor": "SETTLEMENT",
+                "payload": "{\"cycleRef\":\"SC-20260701-C3\"}",
+                "traceId": null,
+                "createdAt": "2026-06-30T08:15:00.025"
+            },
+            {
+                "id": 832,
+                "eventType": "SETTLEMENT_INSTRUCTIONS_GENERATED",
+                "referenceType": "SETTLEMENT_INSTRUCTION",
+                "referenceId": "SC-20260701-C3",
+                "actor": "SETTLEMENT",
+                "payload": "{\"instructionCount\":1,\"cycleRef\":\"SC-20260701-C3\"}",
+                "traceId": null,
+                "createdAt": "2026-06-30T08:15:00.035"
+            }
+        ]
+    }
+}

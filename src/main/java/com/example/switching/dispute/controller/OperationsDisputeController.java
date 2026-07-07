@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.switching.dispute.dto.DisputeRaiseResponse;
 import com.example.switching.dispute.dto.DisputeResponse;
+import com.example.switching.dispute.dto.DrsActionsResponse;
 import com.example.switching.dispute.dto.DrsDashboardSummaryResponse;
 import com.example.switching.dispute.dto.DrsDisputeDetailResponse;
 import com.example.switching.dispute.dto.DrsEvidenceAttachmentDownload;
@@ -32,6 +33,7 @@ import com.example.switching.dispute.dto.DrsResolutionSubmitRequest;
 import com.example.switching.dispute.dto.DrsTimelineResponse;
 import com.example.switching.dispute.dto.PostSettlementDisputeRequest;
 import com.example.switching.dispute.service.DrsEvidenceAttachmentService;
+import com.example.switching.dispute.service.DrsActionReadinessService;
 import com.example.switching.dispute.service.DrsOperationsQueryService;
 import com.example.switching.dispute.service.DrsResolutionMakerCheckerService;
 import com.example.switching.dispute.service.PostSettlementDisputeService;
@@ -44,16 +46,19 @@ public class OperationsDisputeController {
     private final DrsResolutionMakerCheckerService makerCheckerService;
     private final DrsOperationsQueryService queryService;
     private final DrsEvidenceAttachmentService attachmentService;
+    private final DrsActionReadinessService actionReadinessService;
 
     public OperationsDisputeController(
             PostSettlementDisputeService postSettlementDisputeService,
             DrsResolutionMakerCheckerService makerCheckerService,
             DrsOperationsQueryService queryService,
-            DrsEvidenceAttachmentService attachmentService) {
+            DrsEvidenceAttachmentService attachmentService,
+            DrsActionReadinessService actionReadinessService) {
         this.postSettlementDisputeService = postSettlementDisputeService;
         this.makerCheckerService = makerCheckerService;
         this.queryService = queryService;
         this.attachmentService = attachmentService;
+        this.actionReadinessService = actionReadinessService;
     }
 
     @GetMapping
@@ -81,6 +86,11 @@ public class OperationsDisputeController {
     @GetMapping("/{disputeId}/timeline")
     public ResponseEntity<DrsTimelineResponse> disputeTimeline(@PathVariable Long disputeId) {
         return ResponseEntity.ok(queryService.timeline(disputeId));
+    }
+
+    @GetMapping("/{disputeId}/actions")
+    public ResponseEntity<DrsActionsResponse> disputeActions(@PathVariable Long disputeId) {
+        return ResponseEntity.ok(actionReadinessService.actions(disputeId));
     }
 
     @GetMapping("/{disputeId}/evidence-report")

@@ -3,8 +3,8 @@ Project: Switching
 Generated from Spring controller annotations under src/main/java.
 Resolved property placeholders:
 - ${switching.api.v1-prefix} = /v1
-Total endpoints: 215
-Total controller files scanned: 82
+Total endpoints: 238
+Total controller files scanned: 85
 
 METHOD   PATH                                                                     HANDLER
 --------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +71,21 @@ POST     /api/operations/continuous-assurance/hypercare/events                  
 POST     /api/operations/continuous-assurance/hypercare/start                     ContinuousAssuranceController.start  (src/main/java/com/example/switching/continuousassurance/controller/ContinuousAssuranceController.java)
 POST     /api/operations/continuous-assurance/scorecard                           ContinuousAssuranceController.score  (src/main/java/com/example/switching/continuousassurance/controller/ContinuousAssuranceController.java)
 GET      /api/operations/dashboard-summary                                        OperationsDashboardSummaryController.getDashboardSummary  (src/main/java/com/example/switching/operations/controller/OperationsDashboardSummaryController.java)
+GET      /api/operations/disputes                                                 OperationsDisputeController.listDisputes  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/dashboard-summary                               OperationsDisputeController.dashboardSummary  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+POST     /api/operations/disputes/post-settlement                                 OperationsDisputeController.raisePostSettlementDispute  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}                                     OperationsDisputeController.disputeDetail  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}/actions                             OperationsDisputeController.disputeActions  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+POST     /api/operations/disputes/{disputeId}/approve-resolution                  OperationsDisputeController.approveResolution  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}/attachments                         OperationsDisputeController.listAttachments  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+POST     /api/operations/disputes/{disputeId}/attachments                         OperationsDisputeController.uploadAttachment  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}/attachments/{attachmentId}/download OperationsDisputeController.downloadAttachment  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}/evidence-report                     OperationsDisputeController.evidenceReport  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}/evidence-report.csv                 OperationsDisputeController.evidenceReportCsv  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+POST     /api/operations/disputes/{disputeId}/refund/retry                        OperationsDisputeController.retryRefund  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+POST     /api/operations/disputes/{disputeId}/reject-resolution                   OperationsDisputeController.rejectResolution  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+POST     /api/operations/disputes/{disputeId}/submit-resolution                   OperationsDisputeController.submitResolution  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
+GET      /api/operations/disputes/{disputeId}/timeline                            OperationsDisputeController.disputeTimeline  (src/main/java/com/example/switching/dispute/controller/OperationsDisputeController.java)
 GET      /api/operations/health                                                   OperationsHealthController.getHealth  (src/main/java/com/example/switching/operations/controller/OperationsHealthController.java)
 GET      /api/operations/iso-inquiries                                            OperationsIsoInquiryQueryController.searchIsoInquiries  (src/main/java/com/example/switching/operations/controller/OperationsIsoInquiryQueryController.java)
 GET      /api/operations/iso-inquiries/{inquiryRef}                               OperationsIsoInquiryQueryController.findIsoInquiry  (src/main/java/com/example/switching/operations/controller/OperationsIsoInquiryQueryController.java)
@@ -104,15 +119,23 @@ POST     /api/operations/reconciliation/files/{fileRef}/rematch                 
 GET      /api/operations/settlement/cycles                                        SettlementController.listCycles  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/cycles                                        SettlementController.openCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 GET      /api/operations/settlement/cycles/{cycleRef}                             SettlementController.getCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/cycles/{cycleRef}/actions                     SettlementController.getCycleActions  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/cycles/{cycleRef}/batch                       SettlementController.batchTransactions  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/cycles/{cycleRef}/close                       SettlementController.closeCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/cycles/{cycleRef}/detail                      SettlementController.getCycleDetail  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 GET      /api/operations/settlement/cycles/{cycleRef}/instructions                SettlementController.listInstructions  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/cycles/{cycleRef}/instructions/generate       SettlementController.generateInstructions  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/cycles/{cycleRef}/ops-report                  SettlementController.getOpsSettlementReport  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/cycles/{cycleRef}/ops-report.csv              SettlementController.downloadOpsSettlementReportCsv  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 GET      /api/operations/settlement/cycles/{cycleRef}/report                      SettlementController.getSettlementReport  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 GET      /api/operations/settlement/cycles/{cycleRef}/reports                     SettlementController.listSettlementReports  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/cycles/{cycleRef}/settle                      SettlementController.settleCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/cycles/{cycleRef}/timeline                    SettlementController.getCycleTimeline  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/instructions/{instructionRef}                 SettlementController.getInstruction  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/instructions/{instructionRef}/approve         SettlementController.approveInstruction  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+POST     /api/operations/settlement/instructions/{instructionRef}/record-rtgs-upload SettlementController.recordRtgsPortalUpload  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/instructions/{instructionRef}/reject          SettlementController.rejectInstruction  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
+GET      /api/operations/settlement/instructions/{instructionRef}/rtgs-file       SettlementController.downloadRtgsFile  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 POST     /api/operations/settlement/instructions/{instructionRef}/send-rtgs       SettlementController.sendInstructionToRtgs  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)
 GET      /api/operations/transaction-events                                       OperationsTransactionEventsController.listEventsByDate  (src/main/java/com/example/switching/operations/controller/OperationsTransactionEventsController.java)
 GET      /api/operations/transaction-events/{transactionRef}                      OperationsTransactionEventsController.getEvents  (src/main/java/com/example/switching/operations/controller/OperationsTransactionEventsController.java)
@@ -129,7 +152,6 @@ PATCH    /api/participants/{bankCode}                                           
 GET      /api/routing-rules                                                       RoutingRuleController.list  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 POST     /api/routing-rules                                                       RoutingRuleController.create  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 POST     /api/routing-rules/cache/clear                                           RoutingRuleController.clearCache  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
-PATCH    /api/routing-rules/corridors                                             RoutingRuleController.updateCorridor  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 GET      /api/routing-rules/resolve                                               RoutingRuleController.resolve  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 PATCH    /api/routing-rules/{routeCode}                                           RoutingRuleController.update  (src/main/java/com/example/switching/routing/controller/RoutingRuleController.java)
 GET      /api/transfers                                                           TransferListController.searchTransfers  (src/main/java/com/example/switching/transfer/controller/TransferListController.java)
@@ -209,27 +231,6 @@ POST     /v1/rtp/requests/{id}/authorise                                        
 POST     /v1/rtp/requests/{id}/cancel                                             RequestToPayController.cancel  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)
 POST     /v1/rtp/requests/{id}/decline                                            RequestToPayController.decline  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)
 POST     /v1/rtp/requests/{id}/settlements                                        RequestToPayController.confirmSettlement  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)
-
-
-Non-Controller / Runtime Endpoints
-These are not declared by project @RestController methods, but may be served by Spring Boot, Actuator, SpringDoc, or static resources depending on runtime configuration and dependencies.
-
-METHOD   PATH                                                                     SOURCE
---------------------------------------------------------------------------------------------------------------------------------------------
-GET      /                                                                        Static index fallback if served from src/main/resources/static/index.html
-GET      /index.html                                                              Static resource src/main/resources/static/index.html
-GET      /actuator/health                                                         Spring Boot Actuator; permitted in SecurityConfig
-GET      /actuator/info                                                           Spring Boot Actuator; permitted in SecurityConfig
-GET      /actuator/prometheus                                                     Spring Boot Actuator Prometheus endpoint; ops/admin guarded in SecurityConfig
-GET      /actuator/metrics                                                        Spring Boot Actuator metrics endpoint; ops/admin guarded in SecurityConfig
-GET      /actuator/metrics/**                                                     Spring Boot Actuator metric detail endpoint; ops/admin guarded in SecurityConfig
-GET      /actuator/env                                                            Spring Boot Actuator env endpoint if exposed; ops/admin guarded in SecurityConfig
-GET      /actuator/env/**                                                         Spring Boot Actuator env detail endpoint if exposed; ops/admin guarded in SecurityConfig
-GET      /actuator/beans                                                          Spring Boot Actuator beans endpoint if exposed; ops/admin guarded in SecurityConfig
-GET      /actuator/configprops                                                    Spring Boot Actuator configprops endpoint if exposed; ops/admin guarded in SecurityConfig
-GET      /swagger-ui.html                                                         SpringDoc/Swagger UI if dependency/config enables it; permitted in SecurityConfig
-GET      /swagger-ui/**                                                           SpringDoc/Swagger UI assets if dependency/config enables it; permitted in SecurityConfig
-GET      /v3/api-docs/**                                                          OpenAPI docs if dependency/config enables it; permitted in SecurityConfig
 GET      /v1/settlement/balance                                                   LiquidityController.balance  (src/main/java/com/example/switching/liquidity/controller/LiquidityController.java)
 POST     /v1/settlement/liquidity/topup                                           LiquidityController.topUp  (src/main/java/com/example/switching/liquidity/controller/LiquidityController.java)
 GET      /v1/settlement/pool-history                                              LiquidityController.history  (src/main/java/com/example/switching/liquidity/controller/LiquidityController.java)
