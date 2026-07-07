@@ -519,7 +519,7 @@ public class CreateTransferService {
             throw new InquiryValidationException("Creditor account does not match inquiry");
         }
 
-        if (!equalsValue(stringValue(inquiry.getAmount()), stringValue(request.getAmount()))) {
+        if (!equalsAmount(inquiry.getAmount(), request.getAmount())) {
             throw new InquiryValidationException("Amount does not match inquiry");
         }
 
@@ -562,6 +562,11 @@ public class CreateTransferService {
 
     private String stringValue(Object value) {
         return value == null ? null : value.toString();
+    }
+
+    private boolean equalsAmount(java.math.BigDecimal a, java.math.BigDecimal b) {
+        if (a == null || b == null) return a == b;
+        return a.compareTo(b) == 0;
     }
 
     private String normalize(String value) {

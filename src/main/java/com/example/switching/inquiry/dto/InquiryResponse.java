@@ -1,5 +1,6 @@
 package com.example.switching.inquiry.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class InquiryResponse {
@@ -8,12 +9,39 @@ public class InquiryResponse {
     private String status;
     private String sourceBank;
     private String destinationBank;
+    private String debtorAccount;
     private String creditorAccount;
+    private BigDecimal amount;
+    private String currency;
     private String destinationAccountName;
     private Boolean accountFound;
     private Boolean bankAvailable;
     private Boolean eligibleForTransfer;
     private List<InquiryStatusHistoryItemResponse> history;
+
+    public String getDebtorAccount() {
+        return debtorAccount;
+    }
+
+    public void setDebtorAccount(String debtorAccount) {
+        this.debtorAccount = debtorAccount;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public String getInquiryRef() {
         return inquiryRef;

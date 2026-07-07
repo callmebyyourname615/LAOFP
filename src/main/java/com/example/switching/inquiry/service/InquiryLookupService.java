@@ -60,7 +60,10 @@ public class InquiryLookupService {
             response.setStatus(inquiry.getStatus() == null ? null : inquiry.getStatus().name());
             response.setSourceBank(inquiry.getSourceBank());
             response.setDestinationBank(inquiry.getDestinationBank());
+            response.setDebtorAccount(inquiry.getDebtorAccount());
             response.setCreditorAccount(inquiry.getCreditorAccount());
+            response.setAmount(inquiry.getAmount());
+            response.setCurrency(inquiry.getCurrency());
             response.setDestinationAccountName(inquiry.getDestinationAccountName());
             response.setAccountFound(inquiry.getAccountFound());
             response.setBankAvailable(inquiry.getBankAvailable());
