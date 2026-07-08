@@ -263,7 +263,7 @@ switching:
     screening-executor-max-size: ${AML_SCREENING_EXECUTOR_MAX_SIZE:16}
     screening-executor-queue-capacity: ${AML_SCREENING_EXECUTOR_QUEUE_CAPACITY:200}
     bol-fiu-url: ${BOL_FIU_URL:http://localhost:9099/fiu}
-    bol-fiu-api-key: ${BOL_FIU_API_KEY:dev-fiu-key}
+    bol-fiu-api-key: ${BOL_FIU_API_KEY:}
     str-submission-interval-minutes: ${AML_STR_SUBMISSION_INTERVAL:5}
     sanctions-sync-cron: ${AML_SANCTIONS_SYNC_CRON:0 0 2 * * *}
     sanctions:
@@ -281,7 +281,7 @@ switching:
         minimum-records: ${AML_BOL_SANCTIONS_MIN_RECORDS:1}
         allow-insecure-http: ${AML_BOL_SANCTIONS_ALLOW_HTTP:false}
         api-key-header: ${AML_BOL_SANCTIONS_API_KEY_HEADER:X-API-Key}
-        api-key: ${AML_BOL_SANCTIONS_API_KEY:${BOL_FIU_API_KEY:dev-fiu-key}}
+        api-key: ${AML_BOL_SANCTIONS_API_KEY:${BOL_FIU_API_KEY:}}
       ofac:
         enabled: ${AML_OFAC_SANCTIONS_ENABLED:false}
         url: ${AML_OFAC_SANCTIONS_URL:https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML}

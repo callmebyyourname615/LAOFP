@@ -16,8 +16,8 @@ public class AmlProperties {
     private int screeningExecutorCoreSize = 4;
     private int screeningExecutorMaxSize = 16;
     private int screeningExecutorQueueCapacity = 200;
-    private String bolFiuUrl = "http://localhost:9099/fiu";
-    private String bolFiuApiKey = "dev-fiu-key";
+    private String bolFiuUrl = "";
+    private String bolFiuApiKey = "";
     private int strSubmissionIntervalMinutes = 5;
     private String sanctionsSyncCron = "0 0 2 * * *";
     private final Sanctions sanctions = new Sanctions();
@@ -63,10 +63,8 @@ public class AmlProperties {
         private Duration maximumAge = Duration.ofHours(30);
         private boolean failClosedOnStale = true;
         private final Provider bol = new Provider(false, "", 1);
-        private final Provider ofac = new Provider(true,
-                "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML", 100);
-        private final Provider un = new Provider(true,
-                "https://scsanctions.un.org/resources/xml/en/consolidated.xml", 100);
+        private final Provider ofac = new Provider(true, "", 100);
+        private final Provider un = new Provider(true, "", 100);
 
         public Duration getConnectTimeout() { return connectTimeout; }
         public void setConnectTimeout(Duration connectTimeout) { this.connectTimeout = connectTimeout; }

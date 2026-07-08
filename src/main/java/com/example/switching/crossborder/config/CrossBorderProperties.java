@@ -14,11 +14,11 @@ public class CrossBorderProperties {
     private long purposeCodeThresholdLak = 5_000_000L;
 
     /** Adapter URLs and identifiers. */
-    private String promptpayUrl = "http://mock-promptpay:9099/promptpay";
-    private String cnapsUrl     = "http://mock-cnaps:9099/cnaps";
-    private String napasUrl     = "http://mock-napas:9099/napas";
-    private String swiftUrl     = "http://mock-swift:9099/swift";
-    private String swiftBic     = "BFILLALAXXX";
+    private String promptpayUrl = "";
+    private String cnapsUrl     = "";
+    private String napasUrl     = "";
+    private String swiftUrl     = "";
+    private String swiftBic     = "";
 
     /** HTTP connect + read timeout for adapter calls (seconds). Default 30. */
     private int adapterTimeoutSeconds = 30;

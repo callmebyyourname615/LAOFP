@@ -13,8 +13,8 @@ public class ArchiveProperties {
     private boolean partitionMaintenanceEnabled = true;
     private String archiveCron = "0 15 1 * * *";
     private String partitionCron = "0 5 0 * * *";
-    private String archiveDbUrl = "jdbc:postgresql://localhost:5434/switching_archive";
-    private String archiveDbUsername = "switching_archive";
+    private String archiveDbUrl = "";
+    private String archiveDbUsername = "";
     private String archiveDbPassword = "";
     private ObjectStorage objectStorage = new ObjectStorage();
 
@@ -99,9 +99,9 @@ public class ArchiveProperties {
     }
 
     public static class ObjectStorage {
-        private String endpoint = "http://localhost:9000";
-        private String bucket = "switching-archive";
-        private String accessKey = "switching_minio";
+        private String endpoint = "";
+        private String bucket = "";
+        private String accessKey = "";
         private String secretKey = "";
         private int retentionYears = 10;
 
