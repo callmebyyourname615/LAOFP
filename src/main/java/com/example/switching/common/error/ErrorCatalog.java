@@ -344,6 +344,15 @@ public enum ErrorCatalog {
                         ErrorPhase.RECEIVE_REQUEST,
                         false,
                         "PSP participant is suspended"),
+        SMOS_401(
+                        HttpStatus.UNAUTHORIZED,
+                        "UNAUTHORIZED",
+                        "SMOS-401",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.API,
+                        ErrorPhase.VALIDATE_REQUEST,
+                        false,
+                        "SMOS authentication failed"),
         LFP_FPRE_001(
                         HttpStatus.CONFLICT,
                         "CONFLICT",

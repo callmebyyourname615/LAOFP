@@ -69,6 +69,9 @@ public class ParticipantRateLimitPolicyService {
 
     @Scheduled(fixedDelayString = "${switching.security.rate-limit.policy-reload-interval:PT30S}")
     public void reloadIfChanged() {
+        if (policyPath == null) {
+            return;
+        }
         try {
             if (!Files.isRegularFile(policyPath)) {
                 return;
@@ -83,6 +86,9 @@ public class ParticipantRateLimitPolicyService {
     }
 
     public boolean reloadNow() {
+        if (objectMapper == null || policyPath == null) {
+            return false;
+        }
         try {
             byte[] bytes;
             long modified;

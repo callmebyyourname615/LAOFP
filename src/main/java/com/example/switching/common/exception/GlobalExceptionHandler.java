@@ -47,6 +47,7 @@ import com.example.switching.risk.exception.VelocityLimitException;
 import com.example.switching.transfer.exception.InquiryAlreadyUsedException;
 import com.example.switching.transfer.exception.InquiryValidationException;
 import com.example.switching.transfer.exception.TransferNotFoundException;
+import com.example.switching.usermgmt.service.SmosAuthenticationException;
 import com.example.switching.vpa.exception.BeneficiaryTokenExpiredException;
 import com.example.switching.vpa.exception.BeneficiaryTokenUsedException;
 import com.example.switching.vpa.exception.VpaDuplicateException;
@@ -245,6 +246,18 @@ public class GlobalExceptionHandler {
                 return buildResponse(
                                 ErrorCatalog.LFP_2004,
                                 "Access denied",
+                                request,
+                                null);
+        }
+
+        @ExceptionHandler(SmosAuthenticationException.class)
+        public ResponseEntity<ApiErrorResponse> handleSmosAuthentication(
+                        SmosAuthenticationException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.SMOS_401,
+                                ex.getMessage(),
                                 request,
                                 null);
         }
