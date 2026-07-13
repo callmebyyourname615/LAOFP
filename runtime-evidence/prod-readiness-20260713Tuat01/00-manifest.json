@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "evidenceType": "production-readiness",
+  "environment": "uat",
+  "baseUrl": "https://175.11.0.200",
+  "generatedAt": "20260713Tuat01",
+  "gitCommit": "939c1a88e22a76599132ad418b9de2f5acf11f50",
+  "productionReady": false,
+  "verdict": "NOT_READY_FOR_PRODUCTION",
+  "sections": [
+    {"id": "01-deployment-state", "status": "NOT_RUN", "required": true},
+    {"id": "02-auth-security", "status": "NOT_RUN", "required": true},
+    {"id": "03-payment-happy-path", "status": "NOT_RUN", "required": true},
+    {"id": "04-payment-failure-retry", "status": "NOT_RUN", "required": true},
+    {"id": "05-refund-reversal", "status": "NOT_RUN", "required": true},
+    {"id": "06-drs-matrix", "status": "NOT_RUN", "required": true},
+    {"id": "07-settlement", "status": "NOT_RUN", "required": true},
+    {"id": "08-outbox-recovery", "status": "NOT_RUN", "required": true},
+    {"id": "09-config-hardcode-check", "status": "NOT_RUN", "required": true},
+    {"id": "10-observability", "status": "NOT_RUN", "required": true}
+  ],
+  "passCriteria": {
+    "productionReadyRequires": [
+      "All required sections PASS",
+      "Operations health UP",
+      "No unresolved failed outbox events",
+      "Security negative tests reject unauthenticated and unauthorized access",
+      "Runtime config values are externalized from environment or config",
+      "Audit, trace, requestId, and deployment identity are captured"
+    ]
+  }
+}

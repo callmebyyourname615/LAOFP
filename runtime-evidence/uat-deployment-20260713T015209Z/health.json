@@ -1,0 +1,12 @@
+{
+  "groups": [
+    "liveness",
+    "readiness"
+  ],
+  "status": "UP",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/actuator/health",
+    "httpCode": 200,
+    "observedAt": "2026-07-13T01:52:09Z"
+  }
+}

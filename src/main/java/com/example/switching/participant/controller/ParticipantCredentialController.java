@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.switching.participant.dto.RegisterCertificateRequest;
 import com.example.switching.participant.dto.RegisterCertificateResponse;
+import com.example.switching.participant.dto.IssueCertificateRequest;
+import com.example.switching.participant.dto.IssueCertificateResponse;
+import com.example.switching.participant.dto.ParticipantCertificateInventoryResponse;
 import com.example.switching.participant.dto.RotateCredentialsResponse;
+
+import java.util.List;
+import com.example.switching.participant.service.ParticipantCertificateIssuerService;
 import com.example.switching.participant.service.ParticipantCredentialService;
 
 /**
@@ -33,9 +40,13 @@ import com.example.switching.participant.service.ParticipantCredentialService;
 public class ParticipantCredentialController {
 
     private final ParticipantCredentialService credentialService;
+    private final ParticipantCertificateIssuerService certificateIssuerService;
 
-    public ParticipantCredentialController(ParticipantCredentialService credentialService) {
+    public ParticipantCredentialController(
+            ParticipantCredentialService credentialService,
+            ParticipantCertificateIssuerService certificateIssuerService) {
         this.credentialService = credentialService;
+        this.certificateIssuerService = certificateIssuerService;
     }
 
     /**
@@ -49,6 +60,11 @@ public class ParticipantCredentialController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/certificates")
+    public ResponseEntity<List<ParticipantCertificateInventoryResponse>> listCertificates() {
+        return ResponseEntity.ok(credentialService.listCertificates());
+    }
+
     /**
      * Registers an X.509 client certificate for the given PSP.
      * The SHA-256 fingerprint of the cert is stored in {@code psp_certificates}
@@ -59,6 +75,14 @@ public class ParticipantCredentialController {
             @PathVariable String pspId,
             @RequestBody RegisterCertificateRequest request) {
         RegisterCertificateResponse response = credentialService.registerCertificate(pspId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/{pspId}/certificates/issue")
+    public ResponseEntity<IssueCertificateResponse> issueCertificate(
+            @PathVariable String pspId,
+            @RequestBody IssueCertificateRequest request) {
+        IssueCertificateResponse response = certificateIssuerService.issue(pspId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

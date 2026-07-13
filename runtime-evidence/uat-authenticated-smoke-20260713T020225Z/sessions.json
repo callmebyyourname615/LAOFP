@@ -1,0 +1,51 @@
+{
+  "data": [
+    {
+      "id": "618cd653-db46-4895-83dd-d4175c9003b1",
+      "sessionFamilyId": "26ac81bf-d5a7-482f-8a94-487457ab6244",
+      "createdAt": "2026-07-13T02:02:26.301873Z",
+      "lastUsedAt": null,
+      "expiresAt": "2026-07-13T10:02:26.590001Z"
+    },
+    {
+      "id": "4d6fdaed-785c-4894-a2e4-bec414c174e0",
+      "sessionFamilyId": "cdbdd904-1118-4dbb-a784-8ff5b7936b32",
+      "createdAt": "2026-07-13T02:02:25.907109Z",
+      "lastUsedAt": null,
+      "expiresAt": "2026-07-13T10:02:26.195910Z"
+    },
+    {
+      "id": "ab615f95-0e17-45af-97b1-2fc1e5cb880a",
+      "sessionFamilyId": "dd7b5c7c-bb15-45b1-b556-9c921437e527",
+      "createdAt": "2026-07-13T02:02:09.269259Z",
+      "lastUsedAt": null,
+      "expiresAt": "2026-07-13T10:02:09.558227Z"
+    },
+    {
+      "id": "aeb5435e-24ed-4189-b487-0313c76a6513",
+      "sessionFamilyId": "af25f719-c42b-4a4c-b526-e16e8883371f",
+      "createdAt": "2026-07-13T02:02:08.886434Z",
+      "lastUsedAt": null,
+      "expiresAt": "2026-07-13T10:02:09.175230Z"
+    },
+    {
+      "id": "b3fc3c25-ffc6-474a-8f3d-6d7db7317294",
+      "sessionFamilyId": "a1177a82-183f-4760-8c79-0b6fa4c31393",
+      "createdAt": "2026-07-13T02:01:38.356475Z",
+      "lastUsedAt": null,
+      "expiresAt": "2026-07-13T10:01:38.646010Z"
+    },
+    {
+      "id": "904d9e30-58f5-4332-82db-2b4f0234cb31",
+      "sessionFamilyId": "12f3efc8-d776-411a-bb6a-3fbaee18986d",
+      "createdAt": "2026-07-13T02:01:37.928900Z",
+      "lastUsedAt": null,
+      "expiresAt": "2026-07-13T10:01:38.271278Z"
+    }
+  ],
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/auth/sessions",
+    "method": "GET",
+    "httpCode": 200
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "scope": "production readiness evidence bundle",
+  "totalSections": 10,
+  "passed": 0,
+  "warnings": 0,
+  "failed": 0,
+  "blocked": 0,
+  "notRun": 10,
+  "scorePercent": 0,
+  "productionReady": false,
+  "verdict": "NOT_READY_FOR_PRODUCTION"
+}

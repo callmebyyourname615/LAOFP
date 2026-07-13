@@ -2,11 +2,13 @@ package com.example.switching.paymentorchestration;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,11 @@ public class PushPaymentPolicyController {
 
     public PushPaymentPolicyController(PolicyManagementService service) {
         this.service = service;
+    }
+
+    @GetMapping
+    public List<Map<String, Object>> list() {
+        return service.list();
     }
 
     @PostMapping

@@ -1,6 +1,7 @@
 package com.example.switching.promotion.controller;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +43,11 @@ public class PromotionController {
         return ResponseEntity.status(201).body(service.create(
                 request,
                 actor(authentication)));
+    }
+
+    @GetMapping
+    public List<PromotionResponse> list() {
+        return service.list();
     }
 
     @PostMapping("/{id}/activate")

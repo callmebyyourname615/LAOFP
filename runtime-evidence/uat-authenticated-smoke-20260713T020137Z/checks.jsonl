@@ -1,0 +1,4 @@
+{"id":"login","status":"PASS","detail":"HTTP 200; access token issued and redacted","observedAt":"2026-07-13T02:01:38Z"}
+{"id":"sessions","status":"PASS","detail":"HTTP 200; authenticated session inventory returned","observedAt":"2026-07-13T02:01:38Z"}
+{"id":"operations-health","status":"WARN","detail":"HTTP 200; status DEGRADED","observedAt":"2026-07-13T02:01:38Z"}
+{"id":"actuator-health","status":"PASS","detail":"HTTP 200; status UP","observedAt":"2026-07-13T02:01:38Z"}

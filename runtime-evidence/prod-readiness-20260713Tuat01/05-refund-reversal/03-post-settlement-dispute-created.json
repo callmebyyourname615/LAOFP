@@ -1,0 +1,17 @@
+{
+  "category": "REQUEST",
+  "details": {
+    "raisingPspId": "must not be blank"
+  },
+  "error": "BAD_REQUEST",
+  "errorCode": "REQ-001",
+  "layer": "API",
+  "message": "Request validation failed",
+  "path": "/api/operations/disputes/post-settlement",
+  "phase": "VALIDATE_REQUEST",
+  "requestId": "4299bf40-89e3-4858-8bb9-964d6b529809",
+  "retryable": false,
+  "status": 400,
+  "timestamp": "2026-07-13T06:18:13.041546589",
+  "traceId": null
+}

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.participant.dto.RegisterCertificateRequest;
 import com.example.switching.participant.dto.RegisterCertificateResponse;
+import com.example.switching.participant.dto.ParticipantCertificateInventoryResponse;
 import com.example.switching.participant.dto.RotateCredentialsResponse;
 import com.example.switching.participant.exception.ParticipantNotFoundException;
 import com.example.switching.participant.repository.ParticipantRepository;
@@ -108,6 +109,44 @@ public class ParticipantCredentialService {
     }
 
     // ── registerCertificate ──────────────────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public List<ParticipantCertificateInventoryResponse> listCertificates() {
+        return jdbcTemplate.query("""
+                SELECT c.cert_id,
+                       c.psp_id,
+                       COALESCE(p.bank_name, c.psp_id) AS psp_name,
+                       c.cert_fingerprint,
+                       c.subject_dn,
+                       c.issued_at,
+                       c.expires_at,
+                       CASE
+                         WHEN c.status = 'ACTIVE' AND c.expires_at < now() THEN 'EXPIRED'
+                         ELSE c.status
+                       END AS effective_status,
+                       c.created_at
+                  FROM psp_certificates c
+                  LEFT JOIN participants p ON p.bank_code = c.psp_id
+                 ORDER BY
+                       CASE
+                         WHEN c.status = 'ACTIVE' AND c.expires_at >= now() THEN 0
+                         WHEN c.status = 'ACTIVE' AND c.expires_at < now() THEN 1
+                         ELSE 2
+                       END,
+                       c.expires_at ASC,
+                       c.psp_id ASC
+                """,
+                (rs, rowNum) -> new ParticipantCertificateInventoryResponse(
+                        rs.getString("cert_id"),
+                        rs.getString("psp_id"),
+                        rs.getString("psp_name"),
+                        rs.getString("cert_fingerprint"),
+                        rs.getString("subject_dn"),
+                        rs.getTimestamp("issued_at").toLocalDateTime(),
+                        rs.getTimestamp("expires_at").toLocalDateTime(),
+                        rs.getString("effective_status"),
+                        rs.getTimestamp("created_at").toLocalDateTime()));
+    }
 
     /**
      * Parses the PEM certificate in the request, computes its SHA-256 fingerprint,

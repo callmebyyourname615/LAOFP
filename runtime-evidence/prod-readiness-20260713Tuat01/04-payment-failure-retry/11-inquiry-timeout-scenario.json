@@ -1,0 +1,9 @@
+{
+  "inquiryRef": "INQ-20260713031257-2746A8EF",
+  "status": "ELIGIBLE",
+  "accountFound": true,
+  "bankAvailable": true,
+  "eligibleForTransfer": true,
+  "destinationAccountName": "MOCK RECEIVER ACCOUNT",
+  "message": "Inquiry completed — eligible for transfer"
+}

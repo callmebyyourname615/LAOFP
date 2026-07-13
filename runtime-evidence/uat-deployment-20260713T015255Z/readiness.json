@@ -1,0 +1,12 @@
+{
+  "status": 401,
+  "error": "UNAUTHORIZED",
+  "errorCode": "SEC-001",
+  "message": "Missing or invalid authentication credential",
+  "path": "/actuator/health/readiness",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/actuator/health/readiness",
+    "httpCode": 401,
+    "observedAt": "2026-07-13T01:52:55Z"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "count": 1,
+  "limit": 50,
+  "status": null,
+  "transferRef": "TRX-20260713031302-4F87F8FE",
+  "items": [
+    {
+      "outboxEventId": 58,
+      "transferRef": "TRX-20260713031302-4F87F8FE",
+      "messageType": "TRANSFER_DISPATCH",
+      "status": "SUCCESS",
+      "retryCount": 1,
+      "createdAt": "2026-07-13T03:13:02.976",
+      "updatedAt": null
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"category":"BUSINESS","details":null,"error":"CONFLICT","errorCode":"SET-002","layer":"SETTLEMENT","message":"Maximum 4 cycles per day reached for date: 2026-07-13","path":"/api/operations/settlement/cycles","phase":"VALIDATE_REQUEST","requestId":"bbd0a73f-86f6-4318-aeef-479a2fe11662","retryable":false,"status":409,"timestamp":"2026-07-13T06:30:52.064932532","traceId":null}

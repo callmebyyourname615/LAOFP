@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-13T01:54:29Z",
+  "environment": "uat",
+  "deployment": {
+    "baseUrl": "https://175.11.0.200",
+    "server": "root@175.11.0.200",
+    "remoteDir": "/opt/switching",
+    "localGitCommit": "939c1a88e22a76599132ad418b9de2f5acf11f50"
+  },
+  "allChecksPassed": true,
+  "checks": [
+    {
+      "id": "health",
+      "status": "PASS",
+      "detail": "HTTP 200; status UP",
+      "observedAt": "2026-07-13T01:54:29Z"
+    },
+    {
+      "id": "liveness",
+      "status": "PASS",
+      "detail": "HTTP 401; endpoint is protected as expected",
+      "observedAt": "2026-07-13T01:54:29Z"
+    },
+    {
+      "id": "readiness",
+      "status": "PASS",
+      "detail": "HTTP 401; endpoint is protected as expected",
+      "observedAt": "2026-07-13T01:54:29Z"
+    },
+    {
+      "id": "remote-container-state",
+      "status": "PASS",
+      "detail": "docker compose state, image identity, and deployed jar checksum captured",
+      "observedAt": "2026-07-13T01:54:29Z"
+    }
+  ]
+}

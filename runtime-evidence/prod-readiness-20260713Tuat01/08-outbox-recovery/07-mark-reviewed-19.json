@@ -1,0 +1,12 @@
+{
+  "status": "REVIEWED",
+  "reviewedAt": "2026-07-13T03:06:48.639014377",
+  "outboxEventId": 19,
+  "transferRef": "TRX-20260630061223-57021B59",
+  "previousStatus": "FAILED",
+  "newStatus": "REVIEWED",
+  "retryCount": 4,
+  "reason": "Terminal transfer state already reviewed during production readiness evidence",
+  "reviewedBy": "admin",
+  "message": "Outbox event marked as reviewed"
+}

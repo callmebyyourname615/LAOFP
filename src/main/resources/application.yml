@@ -185,6 +185,12 @@ switching:
       policy-file: ${RATE_LIMIT_POLICY_FILE:config/phase70-participant-traffic-policy.yaml}
       policy-reload-interval: ${RATE_LIMIT_POLICY_RELOAD_INTERVAL:PT30S}
       max-identities: ${RATE_LIMIT_MAX_IDENTITIES:100000}
+  certificates:
+    issuer:
+      openssl-bin: ${CERT_ISSUER_OPENSSL_BIN:openssl}
+      ca-cert-path: ${CERT_ISSUER_CA_CERT_PATH:}
+      ca-key-path: ${CERT_ISSUER_CA_KEY_PATH:}
+      validity-days: ${CERT_ISSUER_VALIDITY_DAYS:365}
   webhook:
     endpoint-policy:
       enabled: ${WEBHOOK_ENDPOINT_POLICY_ENABLED:true}

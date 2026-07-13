@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"SET-001","layer":"SETTLEMENT","message":"Settlement cycle not found: null","path":"/api/operations/settlement/cycles/null/detail","phase":"VALIDATE_REQUEST","requestId":"c97f2b33-3858-476d-a8f8-d03889c0525f","retryable":false,"status":404,"timestamp":"2026-07-13T06:31:02.000900849","traceId":null}

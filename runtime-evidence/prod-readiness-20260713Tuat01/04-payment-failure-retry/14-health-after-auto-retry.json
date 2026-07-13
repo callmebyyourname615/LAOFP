@@ -1,0 +1,39 @@
+{
+  "status": "HEALTHY",
+  "checkedAt": "2026-07-13T03:13:25.024844343",
+  "database": {
+    "status": "UP",
+    "reachable": true
+  },
+  "transfers": {
+    "total": 59,
+    "received": 1,
+    "success": 16,
+    "failed": 5
+  },
+  "outbox": {
+    "total": 58,
+    "pending": 1,
+    "processing": 0,
+    "success": 44,
+    "failed": 0
+  },
+  "participants": {
+    "total": 5,
+    "active": 5,
+    "inactive": 0,
+    "maintenance": 0
+  },
+  "connectors": {
+    "total": 5,
+    "enabled": 5,
+    "disabled": 0,
+    "forceReject": 0
+  },
+  "routingRules": {
+    "total": 10,
+    "enabled": 10,
+    "disabled": 0
+  },
+  "message": "Switching is healthy"
+}

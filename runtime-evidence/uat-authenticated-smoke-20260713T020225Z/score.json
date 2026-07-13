@@ -1,0 +1,12 @@
+{
+  "scope": "authenticated UAT functional smoke only; performance, resilience, migration, and full regression controls are excluded",
+  "totalChecks": 4,
+  "passed": 3,
+  "warnings": 1,
+  "failed": 0,
+  "blocked": 0,
+  "notRun": 0,
+  "functionalScorePercent": 75,
+  "productionReady": false,
+  "verdict": "NOT_READY_FOR_PRODUCTION"
+}

@@ -1,0 +1,7 @@
+== compose ps ==
+NAME            IMAGE           COMMAND                  SERVICE   CREATED      STATUS      PORTS
+switching-app   switching-app   "sh -c 'exec java ${…"   app       4 days ago   Up 2 days   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+== image inspect ==
+["switching-app@sha256:04e0e58632e5b7da16d2a27916a8513e3917a5d88928b51183f9d217f7c541ee"] sha256:04e0e58632e5b7da16d2a27916a8513e3917a5d88928b51183f9d217f7c541ee
+== deployed jar sha256 ==
+3c09bd56333326831de3aa802f05a12d3592ce8332499bf6bfec71fcf44fefda  app.jar

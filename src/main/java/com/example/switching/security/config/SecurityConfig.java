@@ -275,7 +275,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, v1("/operator/crossborder/reconciliation/*/*")).hasAnyRole("OPS", "ADMIN")
 
                         // ── ADMIN only — P9 credential management ────────────────
+                        .requestMatchers(HttpMethod.GET,    v1("/participants/certificates")).hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,   v1("/participants/*/credentials/rotate")).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,   v1("/participants/*/certificates/issue")).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,   v1("/participants/*/certificates/register")).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, v1("/participants/*/certificates/*")).hasRole("ADMIN")
 
@@ -309,7 +311,7 @@ public class SecurityConfig {
 
                         // ── ADMIN only — configuration management ─────────────────
                         .requestMatchers(HttpMethod.POST,  "/api/participants").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/participants/**").denyAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/participants/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/participants/**").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/participants").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,  "/api/routing-rules/**").hasRole("ADMIN")
@@ -317,6 +319,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,   "/api/routing-rules/**").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,  "/api/connector-configs").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/connector-configs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,   "/api/connector-configs").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/connector-configs/**").hasAnyRole("OPS", "ADMIN")
 
                         // ── Participant certification evidence ────────────────────

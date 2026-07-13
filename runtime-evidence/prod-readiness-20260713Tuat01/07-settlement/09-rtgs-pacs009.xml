@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.009.001.08">
+  <FICdtTrf>
+    <GrpHdr>
+      <MsgId>RTGS-SC-20260713-C2-SI001-1783924379122</MsgId>
+      <CreDtTm>2026-07-13T06:32:59.123343209</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <SttlmInf>
+        <SttlmMtd>CLRG</SttlmMtd>
+      </SttlmInf>
+    </GrpHdr>
+    <CdtTrfTxInf>
+      <PmtId>
+        <InstrId>SC-20260713-C2-SI001</InstrId>
+        <EndToEndId>SC-20260713-C2-SI001</EndToEndId>
+        <TxId>RTGS-SC-20260713-C2-SI001-1783924379122</TxId>
+      </PmtId>
+      <IntrBkSttlmAmt Ccy="LAK">40000.00</IntrBkSttlmAmt>
+      <IntrBkSttlmDt>2026-07-13</IntrBkSttlmDt>
+      <DbtrAgt>
+        <FinInstnId>
+          <ClrSysMmbId>
+            <MmbId>SUNDAYBANK</MmbId>
+          </ClrSysMmbId>
+        </FinInstnId>
+      </DbtrAgt>
+      <CdtrAgt>
+        <FinInstnId>
+          <ClrSysMmbId>
+            <MmbId>PETERBANK</MmbId>
+          </ClrSysMmbId>
+        </FinInstnId>
+      </CdtrAgt>
+      <RmtInf>
+        <Ustrd>Settlement instruction SC-20260713-C2-SI001</Ustrd>
+      </RmtInf>
+    </CdtTrfTxInf>
+  </FICdtTrf>
+</Document>

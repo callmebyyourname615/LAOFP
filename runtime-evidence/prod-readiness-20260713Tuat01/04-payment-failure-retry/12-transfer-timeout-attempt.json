@@ -1,0 +1,7 @@
+{
+  "transferRef": "TRX-20260713031302-4F87F8FE",
+  "status": "ACCEPTED",
+  "message": "Transfer request accepted and queued for dispatch",
+  "result": "OK",
+  "resultDetail": "PENDING"
+}

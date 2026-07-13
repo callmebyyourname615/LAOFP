@@ -1,0 +1,39 @@
+{
+  "status": "DEGRADED",
+  "checkedAt": "2026-07-13T03:03:25.968946156",
+  "database": {
+    "status": "UP",
+    "reachable": true
+  },
+  "transfers": {
+    "total": 56,
+    "received": 0,
+    "success": 15,
+    "failed": 5
+  },
+  "outbox": {
+    "total": 56,
+    "pending": 0,
+    "processing": 0,
+    "success": 43,
+    "failed": 10
+  },
+  "participants": {
+    "total": 5,
+    "active": 5,
+    "inactive": 0,
+    "maintenance": 0
+  },
+  "connectors": {
+    "total": 5,
+    "enabled": 5,
+    "disabled": 0,
+    "forceReject": 0
+  },
+  "routingRules": {
+    "total": 10,
+    "enabled": 10,
+    "disabled": 0
+  },
+  "message": "Switching is running but there are failed outbox events"
+}

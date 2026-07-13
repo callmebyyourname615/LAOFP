@@ -1,0 +1,8 @@
+{
+  "disputeId": 24,
+  "txnRef": "TRX-20260702075738-456404E5",
+  "status": "OPEN",
+  "disputeType": "POST_SETTLEMENT_DESTINATION_DISPUTE",
+  "slaDeadline": "2026-07-14T06:19:35.754679261",
+  "raisedAt": "2026-07-13T06:19:35.754679261"
+}

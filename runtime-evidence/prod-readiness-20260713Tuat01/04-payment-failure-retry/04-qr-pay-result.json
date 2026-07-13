@@ -1,0 +1,10 @@
+{
+  "txnId": "QRP-06733366DA00-11819915501662506",
+  "qrId": "06733366-da00-4afe-82f7-fa070504fb30",
+  "issuingPspId": "SUNDAYBANK",
+  "acquiringPspId": "PETERBANK",
+  "amount": 1000.0000,
+  "currency": "LAK",
+  "status": "COMPLETED",
+  "completedAt": "2026-07-13T03:03:37.30926425"
+}

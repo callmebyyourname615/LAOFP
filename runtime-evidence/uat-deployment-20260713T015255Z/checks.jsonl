@@ -1,0 +1,4 @@
+{"id":"health","status":"PASS","detail":"HTTP 200; status UP","observedAt":"2026-07-13T01:52:55Z"}
+{"id":"liveness","status":"PASS","detail":"HTTP 401; endpoint is protected as expected","observedAt":"2026-07-13T01:52:55Z"}
+{"id":"readiness","status":"PASS","detail":"HTTP 401; endpoint is protected as expected","observedAt":"2026-07-13T01:52:55Z"}
+{"id":"remote-container-state","status":"FAIL","detail":"SSH or remote Docker inspection failed; see remote-container-state.txt","observedAt":"2026-07-13T01:52:55Z"}

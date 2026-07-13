@@ -8,6 +8,7 @@ import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -161,6 +162,13 @@ public class PromotionManagementService {
                 actor,
                 Map.of("code", saved.getCode(), "endsAt", endsAt.toString()));
         return view(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PromotionResponse> list() {
+        return repository.findAll().stream()
+                .map(PromotionManagementService::view)
+                .toList();
     }
 
     @Transactional(readOnly = true)

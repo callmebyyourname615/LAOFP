@@ -1,0 +1,32 @@
+{
+  "status": "READY_FOR_UAT_PORTAL_INTEGRATION",
+  "score": 90,
+  "assessedAt": "2026-07-13T07:11:00Z",
+  "environment": "UAT",
+  "target": "https://175.11.0.200",
+  "sections": {
+    "02-auth-security": "PASS",
+    "03-payment-happy-path": "PASS",
+    "04-payment-failure-retry": "PASS",
+    "05-refund-reversal": "PASS",
+    "07-settlement": "PASS",
+    "08-outbox-recovery": "PASS",
+    "09-config-hardcode-check": "PASS_WITH_NOTES",
+    "10-observability": "PASS_WITH_NOTES"
+  },
+  "fixesApplied": [
+    {
+      "area": "DRS SLA scheduler",
+      "summary": "Overdue TECHNICAL_ERROR disputes whose transfers are not settled are now escalated for manual review instead of attempting auto-refund.",
+      "evidence": "10-observability-scheduler-fix-v2"
+    }
+  ],
+  "remainingNotes": [
+    {
+      "severity": "low",
+      "area": "Configuration",
+      "summary": "Local/dev defaults remain in application.yml, while staging/prod profiles externalize critical values."
+    }
+  ],
+  "decision": "Ready for continued UAT and web portal integration. Final production sign-off should still include full regression, operational runbook review, and production secret/profile validation."
+}

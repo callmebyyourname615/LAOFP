@@ -1,6 +1,8 @@
 package com.example.switching.dispute.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +13,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Scheduled SLA enforcement: finds OPEN disputes whose {@code sla_deadline} has
- * passed and auto-resolves them in favour of the raising PSP (RESOLVED_REFUND,
- * {@code auto_ruled = true}).
+ * passed and applies the safest automatic outcome for the dispute state.
  *
  * <p>The method {@link #checkAndEnforceSlAs()} is public so tests can invoke
  * it directly without waiting for the scheduler.
@@ -42,33 +43,81 @@ public class DisputeSlaEnforcementService {
     }
 
     /**
-     * Scan for overdue OPEN disputes and auto-resolve each one.
+     * Scan for overdue OPEN disputes and apply SLA handling to each one.
      * Each dispute is resolved in its own transaction (via {@link DisputeResolutionService#resolve}).
      *
-     * @return number of disputes that were auto-resolved
+     * @return number of disputes that were handled
      */
     public int checkAndEnforceSlAs() {
-        List<Long> overdueIds = jdbcTemplate.queryForList(
-                "SELECT dispute_id FROM disputes WHERE status = 'OPEN' AND sla_deadline < NOW()",
-                Long.class);
+        List<Map<String, Object>> overdueDisputes = jdbcTemplate.queryForList("""
+                SELECT dispute_id, dispute_type, txn_ref
+                  FROM disputes
+                 WHERE status = 'OPEN'
+                   AND sla_deadline < NOW()
+                """);
 
-        if (overdueIds.isEmpty()) {
+        if (overdueDisputes.isEmpty()) {
             return 0;
         }
 
-        log.info("SLA enforcement: {} overdue dispute(s) found", overdueIds.size());
-        int resolved = 0;
+        log.info("SLA enforcement: {} overdue dispute(s) found", overdueDisputes.size());
+        int handled = 0;
 
-        for (Long disputeId : overdueIds) {
+        for (Map<String, Object> row : overdueDisputes) {
+            Long disputeId = ((Number) row.get("dispute_id")).longValue();
             try {
-                resolutionService.resolve(disputeId, null, "REFUND",
-                        "Auto-resolved: SLA deadline exceeded", true);
-                resolved++;
-                log.info("SLA auto-resolved dispute: id={}", disputeId);
+                String disputeType = string(row.get("dispute_type"));
+                String txnRef = string(row.get("txn_ref"));
+
+                if (canAutoRefund(disputeType, txnRef)) {
+                    resolutionService.resolve(disputeId, null, "REFUND",
+                            "Auto-resolved: SLA deadline exceeded", true);
+                    handled++;
+                    log.info("SLA auto-resolved dispute: id={}", disputeId);
+                    continue;
+                }
+
+                escalateForManualReview(disputeId);
+                handled++;
+                log.warn("SLA escalated dispute for manual review: id={} type={} txnRef={}",
+                        disputeId, disputeType, txnRef);
             } catch (Exception e) {
                 log.error("SLA auto-resolution failed for dispute {}: {}", disputeId, e.getMessage(), e);
             }
         }
-        return resolved;
+        return handled;
+    }
+
+    private boolean canAutoRefund(String disputeType, String txnRef) {
+        if ("POST_SETTLEMENT_DESTINATION_DISPUTE".equals(disputeType)) {
+            return true;
+        }
+        Integer settledCount = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*)
+                  FROM transactions
+                 WHERE transaction_ref = ?
+                   AND status = 'SETTLED'
+                """, Integer.class, txnRef);
+        return settledCount != null && settledCount > 0;
+    }
+
+    private void escalateForManualReview(Long disputeId) {
+        LocalDateTime now = LocalDateTime.now();
+        jdbcTemplate.update("""
+                UPDATE disputes
+                   SET status = 'ESCALATED',
+                       auto_ruled = true,
+                       resolution_note = ?,
+                       updated_at = ?
+                 WHERE dispute_id = ?
+                   AND status = 'OPEN'
+                """,
+                "SLA deadline exceeded; dispute requires manual review because the original transfer is not settled",
+                now,
+                disputeId);
+    }
+
+    private String string(Object value) {
+        return value != null ? value.toString() : "";
     }
 }

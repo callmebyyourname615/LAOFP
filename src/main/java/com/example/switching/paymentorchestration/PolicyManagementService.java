@@ -30,6 +30,32 @@ public class PolicyManagementService {
         this.audit = audit;
     }
 
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> list() {
+        return jdbc.query("""
+                SELECT id, channel, policy_version, status, timeout_ms,
+                       coalesce(array_length(retry_schedule_seconds, 1), 0) AS retry_count,
+                       finality_mode, idempotency_ttl_seconds, valid_from, valid_until,
+                       requested_by, approved_by, created_at
+                  FROM push_payment_policy
+                 ORDER BY channel ASC, policy_version DESC
+                """, (rs, rowNum) -> Map.<String, Object>ofEntries(
+                Map.entry("id", rs.getObject("id", UUID.class).toString()),
+                Map.entry("channel", rs.getString("channel")),
+                Map.entry("version", rs.getInt("policy_version")),
+                Map.entry("status", rs.getString("status")),
+                Map.entry("timeoutMs", rs.getLong("timeout_ms")),
+                Map.entry("retryCount", rs.getInt("retry_count")),
+                Map.entry("finalityMode", rs.getString("finality_mode")),
+                Map.entry("idempotencyTtlSeconds", rs.getLong("idempotency_ttl_seconds")),
+                Map.entry("validFrom", String.valueOf(rs.getObject("valid_from"))),
+                Map.entry("validUntil", String.valueOf(rs.getObject("valid_until"))),
+                Map.entry("requestedBy", rs.getString("requested_by")),
+                Map.entry("approvedBy", String.valueOf(rs.getObject("approved_by"))),
+                Map.entry("createdAt", String.valueOf(rs.getObject("created_at")))
+        ));
+    }
+
     @Transactional
     public UUID createDraft(Map<String, Object> command, String actor) {
         try {
