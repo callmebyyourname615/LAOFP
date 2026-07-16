@@ -1,0 +1,1 @@
+{"category":"UNKNOWN","details":null,"error":"INTERNAL_SERVER_ERROR","errorCode":"SYS-001","layer":"SYSTEM","message":"Internal server error","path":"/api/transfers","phase":"UNKNOWN","requestId":"4f02c99d-cb5f-4fa7-81c7-0745abaa691d","retryable":false,"status":500,"timestamp":"2026-07-16T03:51:14.60424818","traceId":null}

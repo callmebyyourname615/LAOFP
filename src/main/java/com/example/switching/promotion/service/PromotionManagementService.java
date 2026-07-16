@@ -164,6 +164,33 @@ public class PromotionManagementService {
         return view(saved);
     }
 
+    @Transactional
+    public void deleteDraft(UUID id, String actor) {
+        PromotionEntity promotion = lock(id);
+        if (promotion.getStatus() != PromotionStatus.DRAFT) {
+            throw new IllegalStateException("Only DRAFT promotions can be deleted");
+        }
+        Integer applicationCount = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM promotion_application WHERE promotion_id = ?",
+                Integer.class,
+                id);
+        if (applicationCount != null && applicationCount > 0) {
+            throw new IllegalStateException("Promotion has application history and cannot be deleted");
+        }
+        String requiredActor = requiredActor(actor);
+        audit.publish(
+                "promotion.deleted",
+                "PROMOTION",
+                id.toString(),
+                requiredActor,
+                Map.of(
+                        "code", promotion.getCode(),
+                        "type", promotion.getPromotionType().name(),
+                        "status", promotion.getStatus().name()));
+        repository.delete(promotion);
+        repository.flush();
+    }
+
     @Transactional(readOnly = true)
     public List<PromotionResponse> list() {
         return repository.findAll().stream()

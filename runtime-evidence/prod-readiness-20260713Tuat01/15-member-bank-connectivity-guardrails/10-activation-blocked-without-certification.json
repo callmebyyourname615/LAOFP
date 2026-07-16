@@ -1,0 +1,18 @@
+{
+  "httpStatus": 500,
+  "response": {
+    "category": "UNKNOWN",
+    "details": null,
+    "error": "INTERNAL_SERVER_ERROR",
+    "errorCode": "SYS-001",
+    "layer": "SYSTEM",
+    "message": "Internal server error",
+    "path": "/v1/operations/config-changes/1/execute",
+    "phase": "UNKNOWN",
+    "requestId": "bce0c224-5948-4244-8896-8b70a7cc9f38",
+    "retryable": false,
+    "status": 500,
+    "timestamp": "2026-07-16T02:35:11.910828303",
+    "traceId": null
+  }
+}

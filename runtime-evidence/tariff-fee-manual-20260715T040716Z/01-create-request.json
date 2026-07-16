@@ -1,0 +1,15 @@
+{
+  "name": "Evidence Tariff 20260715T040716Z",
+  "effectiveFrom": "2026-07-15T04:07:16Z",
+  "rules": [
+    {
+      "name": "Default transfer fee",
+      "messageType": "PACS_008",
+      "currency": "LAK",
+      "feeType": "FIXED",
+      "feeValue": 1000,
+      "minAmount": 0,
+      "maxAmount": 999999999
+    }
+  ]
+}

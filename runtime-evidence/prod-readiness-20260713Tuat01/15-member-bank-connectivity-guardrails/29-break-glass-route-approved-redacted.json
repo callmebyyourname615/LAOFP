@@ -1,0 +1,14 @@
+{
+  "id": 5,
+  "sessionRef": "BG-218FAD0EBD6A41EBB5DC",
+  "requestedBy": "admin",
+  "reason": "Execute approved UAT route enable change",
+  "ticketReference": "UAT-BG-ROUTE-20260716T022202Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-16T03:26:35.285410147",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_pjz3bxvjH"
+}

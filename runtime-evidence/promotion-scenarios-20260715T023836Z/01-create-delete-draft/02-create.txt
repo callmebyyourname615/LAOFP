@@ -1,0 +1,2 @@
+{"id":"770464cd-6f87-442b-9603-0bb36029201e","code":"DEL_TEST_20260715T023837Z","name":"Delete draft scenario 20260715T023837Z","type":"WAIVER","status":"DRAFT","priority":100,"combinable":false,"funderParticipantId":"SUNDAYBANK","currency":"LAK","budgetCap":1000000,"budgetReserved":0,"budgetConsumed":0,"budgetRemaining":1000000,"discountValue":1000,"discountMode":"FIXED","startsAt":"2026-07-15T02:38:37Z","endsAt":"2026-08-14T02:38:37Z"}
+HTTP_STATUS:201

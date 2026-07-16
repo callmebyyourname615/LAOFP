@@ -3,7 +3,7 @@
 Bundle: prod-readiness-20260713Tuat01
 Target: https://175.11.0.200
 Status: READY_FOR_UAT_PORTAL_INTEGRATION
-Score: 90/100
+Score: 91/100
 
 ## Passed
 
@@ -15,6 +15,8 @@ Score: 90/100
 - Outbox recovery: failed terminal outbox rows reviewed; operations health returned HEALTHY.
 - Observability: health, dashboard, outbox failure, dead-letter, Docker state, and application logs were collected.
 - Config hardcode check: production/staging profiles externalize critical runtime settings.
+- Admin portal deployment: production Node runtime, reverse proxy, UAT endpoint access, and Docker health checks passed.
+- Bank onboarding and certificates: inactive test bank was onboarded, a CSR was issued and registered, protected mTLS was accepted, then rejected after certificate revocation.
 
 ## Fix Applied
 

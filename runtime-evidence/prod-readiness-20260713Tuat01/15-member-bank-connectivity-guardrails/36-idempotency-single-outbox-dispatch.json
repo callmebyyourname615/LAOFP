@@ -1,0 +1,15 @@
+{
+  "transferRef": "TRX-20260716040832-A04C6E13",
+  "currentStatus": "READY_FOR_SETTLEMENT",
+  "transferSuccessful": true,
+  "outboxEventCount": 1,
+  "outboxEvents": [
+    {
+      "id": 61,
+      "messageType": "TRANSFER_DISPATCH",
+      "status": "SUCCESS",
+      "retryCount": 0,
+      "lastError": null
+    }
+  ]
+}

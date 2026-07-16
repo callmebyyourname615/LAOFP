@@ -1,0 +1,1 @@
+{"status":"TEST_PASSED","testedAt":"2026-07-16T03:15:39.518509279","connectorName":"MOCK_UAT260716T02220_CONNECTOR","bankCode":"UAT260716T02220","connectorType":"MOCK","enabled":true,"forceReject":false,"reachable":true,"responseCode":"00","responseMessage":"Mock connector is reachable and operational","responseTimeMs":3}

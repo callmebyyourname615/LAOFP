@@ -51,6 +51,7 @@ public class OutboxProcessorService {
     private static final String SOURCE_SYSTEM = "WORKER";
     private static final String IDEMPOTENCY_CHANNEL = "API";
     private static final int MAX_ERROR_MESSAGE_LENGTH = 500;
+    private static final int MAX_TRANSFER_REFERENCE_LENGTH = 100;
 
     private static final String OUTBOX_ATTEMPT_SQL = """
             INSERT INTO outbox_attempts
@@ -366,7 +367,8 @@ public class OutboxProcessorService {
                 boolean drsNow = markTransferDrsRequiredIfOpen(transfer, catalog.getErrorCode());
                 transfer.setConfirmationStatus("DISPUTED");
                 transfer.setSettlementConfidence("DISPUTED");
-                transfer.setReference("Destination rejected transfer: " + trimMessage(result.getErrorMessage()));
+                transfer.setReference(trimReference(
+                        "Destination rejected transfer: " + trimMessage(result.getErrorMessage())));
                 transferRepository.save(transfer);
 
                 auditLogService.log(
@@ -970,6 +972,13 @@ public class OutboxProcessorService {
         }
 
         return trimmed.substring(0, MAX_ERROR_MESSAGE_LENGTH);
+    }
+
+    private String trimReference(String reference) {
+        if (reference == null || reference.length() <= MAX_TRANSFER_REFERENCE_LENGTH) {
+            return reference;
+        }
+        return reference.substring(0, MAX_TRANSFER_REFERENCE_LENGTH);
     }
 
     /**

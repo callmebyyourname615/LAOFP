@@ -19,6 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.example.switching.common.PhaseIIAuditPublisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Service
 @ConditionalOnProperty(
@@ -105,7 +106,7 @@ public class PushPaymentOrchestrator {
                 """, request.channel().name(), request.idempotencyKey());
         if (!existing.isEmpty()) {
             Map<String, Object> row = existing.getFirst();
-            OffsetDateTime expiresAt = (OffsetDateTime) row.get("idempotency_expires_at");
+            OffsetDateTime expiresAt = asOffsetDateTime(row.get("idempotency_expires_at"));
             if (expiresAt != null && expiresAt.isAfter(OffsetDateTime.now())) {
                 if (!requestHash.equals(row.get("request_sha256"))) {
                     throw new IllegalStateException(
@@ -349,8 +350,10 @@ public class PushPaymentOrchestrator {
     private String hash(PushPaymentRequest request) {
         try {
             return HexFormat.of().formatHex(
-                    MessageDigest.getInstance("SHA-256")
-                            .digest(json(request).getBytes(StandardCharsets.UTF_8)));
+                    MessageDigest.getInstance("SHA-256").digest(
+                            mapper.copy()
+                                    .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                                    .writeValueAsBytes(request)));
         } catch (Exception exception) {
             throw new IllegalStateException(exception);
         }
@@ -421,6 +424,23 @@ public class PushPaymentOrchestrator {
 
     private static boolean blank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private static OffsetDateTime asOffsetDateTime(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof OffsetDateTime offsetDateTime) {
+            return offsetDateTime;
+        }
+        if (value instanceof java.sql.Timestamp timestamp) {
+            return timestamp.toInstant().atOffset(java.time.ZoneOffset.UTC);
+        }
+        if (value instanceof java.time.LocalDateTime localDateTime) {
+            return localDateTime.atOffset(java.time.ZoneOffset.UTC);
+        }
+        throw new IllegalStateException("Unsupported idempotency expiry timestamp type: "
+                + value.getClass().getName());
     }
 
     private record Claim(

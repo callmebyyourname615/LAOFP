@@ -1,7 +1,7 @@
 {
   "status": "READY_FOR_UAT_PORTAL_INTEGRATION",
-  "score": 90,
-  "assessedAt": "2026-07-13T07:11:00Z",
+  "score": 91,
+  "assessedAt": "2026-07-16T02:05:00Z",
   "environment": "UAT",
   "target": "https://175.11.0.200",
   "sections": {
@@ -12,7 +12,9 @@
     "07-settlement": "PASS",
     "08-outbox-recovery": "PASS",
     "09-config-hardcode-check": "PASS_WITH_NOTES",
-    "10-observability": "PASS_WITH_NOTES"
+    "10-observability": "PASS_WITH_NOTES",
+    "13-admin-portal-deployment": "PASS",
+    "14-bank-onboarding-certificates": "PASS"
   },
   "fixesApplied": [
     {

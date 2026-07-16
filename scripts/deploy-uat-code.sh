@@ -16,6 +16,11 @@ HEALTH_SLEEP_SECONDS="${HEALTH_SLEEP_SECONDS:-3}"
 CLIENT_CERT="${CLIENT_CERT:-$HOME/sundaybank-client.crt}"
 CLIENT_KEY="${CLIENT_KEY:-$HOME/sundaybank-client.key}"
 CA_CERT="${CA_CERT:-$HOME/uat-ca.crt}"
+ISSUER_CA_CERT="${ISSUER_CA_CERT:-$HOME/issuer-ca.crt}"
+MTLS_CONFIG="${MTLS_CONFIG:-nginx/mtls.conf}"
+REMOTE_CERT_DIR="${REMOTE_CERT_DIR:-$REMOTE_DIR/certs}"
+REMOTE_NGINX_CONFIG="${REMOTE_NGINX_CONFIG:-$REMOTE_DIR/nginx/mtls.conf}"
+MTLS_CONTAINER="${MTLS_CONTAINER:-switching-nginx-mtls}"
 
 log() {
   printf '\n==> %s\n' "$*"
@@ -35,6 +40,8 @@ cd "$PROJECT_DIR"
 require_file "$CLIENT_CERT"
 require_file "$CLIENT_KEY"
 require_file "$CA_CERT"
+require_file "$ISSUER_CA_CERT"
+require_file "$MTLS_CONFIG"
 
 if [[ -n "${DEPLOY_SSH_PASSWORD:-}" ]]; then
   if ! command -v sshpass >/dev/null 2>&1; then
@@ -59,6 +66,11 @@ log "Backing up current remote jar"
 
 log "Uploading jar to UAT"
 "${SCP_CMD[@]}" "$APP_JAR" "$SERVER:$REMOTE_DIR/$REMOTE_JAR"
+
+log "Updating mTLS trust bundle and edge configuration"
+"${SCP_CMD[@]}" "$ISSUER_CA_CERT" "$SERVER:$REMOTE_CERT_DIR/issuer-ca.crt"
+"${SCP_CMD[@]}" "$MTLS_CONFIG" "$SERVER:$REMOTE_NGINX_CONFIG"
+"${SSH_CMD[@]}" "$SERVER" "cat '$REMOTE_CERT_DIR/uat-ca.crt' '$REMOTE_CERT_DIR/issuer-ca.crt' > '$REMOTE_CERT_DIR/uat-client-ca-bundle.crt' && chmod 644 '$REMOTE_CERT_DIR/uat-client-ca-bundle.crt' && docker exec '$MTLS_CONTAINER' nginx -t && docker exec '$MTLS_CONTAINER' nginx -s reload"
 
 log "Building Docker image on UAT"
 "${SSH_CMD[@]}" "$SERVER" "cd '$REMOTE_DIR' && test -f '$DOCKERFILE'"

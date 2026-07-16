@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -74,6 +75,14 @@ public class PromotionController {
             throw new IllegalArgumentException("endsAt is required");
         }
         return service.extend(id, Instant.parse(value), actor(authentication));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID id,
+            Authentication authentication) {
+        service.deleteDraft(id, actor(authentication));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/report")

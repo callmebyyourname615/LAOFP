@@ -1,0 +1,125 @@
+{
+  "items": [
+    {
+      "connectorName": "MOCK_BANK_B_CONNECTOR",
+      "createdAt": "2026-06-25T02:43:28.591",
+      "destinationBank": "BANK_B",
+      "enabled": true,
+      "id": 5,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_A_TO_B_1782355408",
+      "sourceBank": "BANK_A",
+      "updatedAt": null
+    },
+    {
+      "connectorName": "MOCK_BANK_B_CONNECTOR",
+      "createdAt": "2026-06-25T01:31:55.088",
+      "destinationBank": "BANK_B",
+      "enabled": true,
+      "id": 1,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_BANK_A_TO_BANK_B_PACS008",
+      "sourceBank": "BANK_A",
+      "updatedAt": null
+    },
+    {
+      "connectorName": "MOCK_BANK_C_CONNECTOR",
+      "createdAt": "2026-06-25T01:31:55.088",
+      "destinationBank": "BANK_C",
+      "enabled": true,
+      "id": 2,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_BANK_A_TO_BANK_C_PACS008",
+      "sourceBank": "BANK_A",
+      "updatedAt": null
+    },
+    {
+      "connectorName": "MOCK_PETERBANK_CONNECTOR",
+      "createdAt": "2026-06-25T08:11:18.296",
+      "destinationBank": "PETERBANK",
+      "enabled": true,
+      "id": 7,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_BANK_A_TO_PETERBANK_PACS008",
+      "sourceBank": "BANK_A",
+      "updatedAt": "2026-06-25T08:11:18.296"
+    },
+    {
+      "connectorName": "MOCK_SUNDAYBANK_CONNECTOR",
+      "createdAt": "2026-06-25T08:11:10.363",
+      "destinationBank": "SUNDAYBANK",
+      "enabled": true,
+      "id": 6,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_BANK_A_TO_SUNDAYBANK_PACS008",
+      "sourceBank": "BANK_A",
+      "updatedAt": "2026-06-25T08:11:10.363"
+    },
+    {
+      "connectorName": "MOCK_BANK_A_CONNECTOR",
+      "createdAt": "2026-06-25T01:31:55.088",
+      "destinationBank": "BANK_A",
+      "enabled": true,
+      "id": 3,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_BANK_B_TO_BANK_A_PACS008",
+      "sourceBank": "BANK_B",
+      "updatedAt": null
+    },
+    {
+      "connectorName": "MOCK_BANK_A_CONNECTOR",
+      "createdAt": "2026-06-25T01:31:55.088",
+      "destinationBank": "BANK_A",
+      "enabled": true,
+      "id": 4,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_BANK_C_TO_BANK_A_PACS008",
+      "sourceBank": "BANK_C",
+      "updatedAt": null
+    },
+    {
+      "connectorName": "MOCK_PETERBANK_CONNECTOR",
+      "createdAt": "2026-06-26T02:00:08.131",
+      "destinationBank": "PETERBANK",
+      "enabled": true,
+      "id": 8,
+      "messageType": "INQUIRY",
+      "priority": 100,
+      "routeCode": "ROUTE_SUNDAYBANK_TO_PETERBANK_INQUIRY",
+      "sourceBank": "SUNDAYBANK",
+      "updatedAt": null
+    },
+    {
+      "connectorName": "MOCK_PETERBANK_CONNECTOR",
+      "createdAt": "2026-06-26T03:59:55.148",
+      "destinationBank": "PETERBANK",
+      "enabled": true,
+      "id": 10,
+      "messageType": "PACS_008",
+      "priority": 1,
+      "routeCode": "ROUTE_SUNDAYBANK_TO_PETERBANK_PACS008",
+      "sourceBank": "SUNDAYBANK",
+      "updatedAt": "2026-06-29T07:06:35.731"
+    },
+    {
+      "connectorName": "MOCK_PETERBANK_CONNECTOR",
+      "createdAt": "2026-06-26T02:00:54.566",
+      "destinationBank": "PETERBANK",
+      "enabled": true,
+      "id": 9,
+      "messageType": "TRANSFER",
+      "priority": 100,
+      "routeCode": "ROUTE_SUNDAYBANK_TO_PETERBANK_TRANSFER",
+      "sourceBank": "SUNDAYBANK",
+      "updatedAt": null
+    }
+  ],
+  "count": 10
+}

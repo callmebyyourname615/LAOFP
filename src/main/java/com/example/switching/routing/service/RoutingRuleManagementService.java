@@ -150,7 +150,9 @@ public class RoutingRuleManagementService {
             return IsoMessageType.valueOf(raw.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(
-                    "Invalid messageType: " + raw + ". Valid values: PACS_008, PACS_002, PACS_028, PACS_004");
+                    "Invalid messageType: "
+                            + raw
+                            + ". Valid values: INQUIRY, TRANSFER, PACS_008, PACS_002, PACS_028, PACS_004, CAMT_005, CAMT_006, CAMT_056");
         }
     }
 

@@ -1,0 +1,32 @@
+{
+  "mfaRequired": false,
+  "mfaToken": null,
+  "accessToken": "smos.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd2l0Y2hpbmctc21vcyIsImF1ZCI6InN3aXRjaGluZy1vcGVyYXRvci1hcGkiLCJqdGkiOiI2YmJiNmU4Mi0wOTAzLTQyYjktYTYyOC0xOTU0ZGYzYmI4OWQiLCJzdWIiOiJjaGVja2VyX3Byb2RfMDYyNjI4IiwidWlkIjo1LCJyb2xlcyI6WyJTWVNURU1fQURNSU4iXSwicGVybWlzc2lvbnMiOlsic2V0dGxlbWVudC5hcHByb3ZlIiwibWFrZXJfY2hlY2tlci5hcHByb3ZlIiwidXNlci5tYW5hZ2UiLCJkaXNwdXRlLnZpZXciLCJzZXNzaW9uLnJldm9rZSIsImRhc2hib2FyZC5zZXR0bGVtZW50IiwiZGlzcHV0ZS5yZXNvbHZlIiwic2VjdXJpdHkucmVzZXRfcGFzc3dvcmQiLCJ1c2VyLnZpZXciLCJtYWtlcl9jaGVja2VyLnN1Ym1pdCIsInJpc2sudmlldyIsImRhc2hib2FyZC5jcm9zc2JvcmRlciIsInNlY3VyaXR5LnJlc2V0X21mYSIsInBhcnRpY2lwYW50Lm1hbmFnZSIsInNldHRsZW1lbnQudmlldyIsImRhc2hib2FyZC5yaXNrIiwiYXVkaXQucmVhZCIsInBhcnRpY2lwYW50LnZpZXciLCJyaXNrLmludmVzdGlnYXRlIiwic2Vzc2lvbi52aWV3Il0sImlhdCI6MTc4NDA4Mjg0NSwibmJmIjoxNzg0MDgyNzg1LCJleHAiOjE3ODQwODY0NDV9.aFMiI2jMgyyN_PMGCCHezQfb39PMp6c64H3YhG-8mzU",
+  "refreshToken": "wAtGcsguBXn_BT5s-E5B1cqm_7YM7BdDfsdOKlE9IkA",
+  "expiresIn": 3600,
+  "roles": [
+    "SYSTEM_ADMIN"
+  ],
+  "permissions": [
+    "settlement.approve",
+    "maker_checker.approve",
+    "user.manage",
+    "dispute.view",
+    "session.revoke",
+    "dashboard.settlement",
+    "dispute.resolve",
+    "security.reset_password",
+    "user.view",
+    "maker_checker.submit",
+    "risk.view",
+    "dashboard.crossborder",
+    "security.reset_mfa",
+    "participant.manage",
+    "settlement.view",
+    "dashboard.risk",
+    "audit.read",
+    "participant.view",
+    "risk.investigate",
+    "session.view"
+  ]
+}

@@ -164,7 +164,7 @@ public class ConfigurationChangeService {
                 ParticipantEntity entity = participant(key);
                 ParticipantStatus targetStatus = ParticipantStatus.valueOf(desired);
                 if (targetStatus == ParticipantStatus.ACTIVE && !participantCertificationService.hasCurrentPass(key)) {
-                    throw new IllegalStateException("participant requires a current PASS certification before activation");
+                    throw new IllegalArgumentException("participant requires a current PASS certification before activation");
                 }
                 entity.setStatus(targetStatus);
                 participantRepository.save(entity);

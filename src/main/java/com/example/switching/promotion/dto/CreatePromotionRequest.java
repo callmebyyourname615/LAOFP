@@ -2,8 +2,8 @@ package com.example.switching.promotion.dto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import com.example.switching.promotion.enums.PromotionType;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.constraints.*;
 public record CreatePromotionRequest(
     @NotBlank @Size(max=64) String code,
@@ -18,4 +18,4 @@ public record CreatePromotionRequest(
     @NotBlank @Pattern(regexp="FIXED|PERCENT") String discountMode,
     @NotNull Instant startsAt,
     @NotNull Instant endsAt,
-    @NotEmpty List<JsonNode> eligibilityRules) {}
+    @NotEmpty List<Map<String, Object>> eligibilityRules) {}

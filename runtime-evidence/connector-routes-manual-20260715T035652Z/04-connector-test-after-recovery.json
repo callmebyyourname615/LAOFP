@@ -1,0 +1,13 @@
+{
+  "status": "TEST_PASSED",
+  "testedAt": "2026-07-15T03:56:53.072844325",
+  "connectorName": "MOCK_PETERBANK_CONNECTOR",
+  "bankCode": "PETERBANK",
+  "connectorType": "MOCK",
+  "enabled": true,
+  "forceReject": false,
+  "reachable": true,
+  "responseCode": "00",
+  "responseMessage": "Mock connector is reachable and operational",
+  "responseTimeMs": 0
+}

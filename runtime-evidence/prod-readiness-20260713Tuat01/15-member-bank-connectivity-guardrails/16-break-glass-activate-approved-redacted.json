@@ -1,0 +1,14 @@
+{
+  "id": 3,
+  "sessionRef": "BG-FAE66B2C73924CA58BA6",
+  "requestedBy": "admin",
+  "reason": "Execute certified UAT member-bank activation",
+  "ticketReference": "UAT-BG-ACTIVATE-20260716T022202Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-16T03:14:37.003798668",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_trXb5apNg"
+}

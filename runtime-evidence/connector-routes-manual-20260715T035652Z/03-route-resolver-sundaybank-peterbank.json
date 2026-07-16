@@ -1,0 +1,11 @@
+{
+  "connectorName": "MOCK_PETERBANK_CONNECTOR",
+  "destinationBank": "PETERBANK",
+  "destinationParticipantStatus": "ACTIVE",
+  "enabled": true,
+  "messageType": "PACS_008",
+  "priority": 1,
+  "routeCode": "ROUTE_SUNDAYBANK_TO_PETERBANK_PACS008",
+  "sourceBank": "SUNDAYBANK",
+  "sourceParticipantStatus": "ACTIVE"
+}

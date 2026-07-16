@@ -2,6 +2,7 @@ package com.example.switching.transfer.service;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Collections;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.env.Environment;
@@ -78,7 +79,7 @@ public class TransferSubmissionService {
         put(payload, "idempotencyKey", request.getIdempotencyKey());
         put(payload, "inquiryRef", request.getInquiryRef());
         put(payload, "beneficiaryToken", request.getBeneficiaryToken());
-        return Map.copyOf(payload);
+        return Collections.unmodifiableMap(new LinkedHashMap<>(payload));
     }
 
     private static void put(Map<String, Object> payload, String key, Object value) {

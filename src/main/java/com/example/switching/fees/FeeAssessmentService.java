@@ -33,7 +33,7 @@ public class FeeAssessmentService {
                AND (tp.participant_code IS NULL OR tp.participant_code=?)
                AND tr.message_type=? AND tr.currency=?
                AND ? >= tr.minimum_amount AND (tr.maximum_amount IS NULL OR ? <= tr.maximum_amount)
-             ORDER BY (tp.participant_code IS NOT NULL) DESC,tr.priority ASC LIMIT 1
+             ORDER BY (tp.participant_code IS NOT NULL) DESC,tv.valid_from DESC,tr.priority ASC LIMIT 1
             """,participantCode,messageType,currency,amount,amount);
         BigDecimal fee=calculate(amount,(BigDecimal)rule.get("flat_fee"),(BigDecimal)rule.get("rate_basis_points"),
                 (BigDecimal)rule.get("minimum_fee"),(BigDecimal)rule.get("maximum_fee"));

@@ -1,0 +1,14 @@
+{
+  "id": 2,
+  "sessionRef": "BG-B0C494F9857141CCB09D",
+  "requestedBy": "admin",
+  "reason": "Retest certification guardrail after API error mapping fix",
+  "ticketReference": "UAT-BG-RETEST-20260716T022202Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-16T02:59:39.747475154",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_nlKTmj4bK"
+}

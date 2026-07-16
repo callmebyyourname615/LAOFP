@@ -1,0 +1,9 @@
+{
+  "httpStatus": 403,
+  "response": {
+    "status": 403,
+    "error": "FORBIDDEN",
+    "errorCode": "SEC-BG-001",
+    "message": "Valid break-glass authorization required"
+  }
+}

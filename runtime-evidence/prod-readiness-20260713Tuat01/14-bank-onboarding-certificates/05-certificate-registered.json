@@ -1,0 +1,7 @@
+{
+  "certId": "0fc56219-c5e0-4b1a-8797-d82324d06f49",
+  "pspId": "EVD260716T02045",
+  "fingerprint": "801b90516d760f41e5328151029b9bd474c95592b99a35bea2512984df02aff2",
+  "subjectDn": "CN=EVD260716T02045_MTLS,OU=UAT Evidence,O=LAOFP,C=LA",
+  "expiresAt": "2027-07-16T02:04:56"
+}

@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "sessionRef": "BG-B450D0492003431E8080",
+  "requestedBy": "admin",
+  "reason": "Execute UAT member-bank activation configuration change",
+  "ticketReference": "UAT-BG-20260716T022202Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-16T02:38:14.456749303",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_vRilRnhSy"
+}

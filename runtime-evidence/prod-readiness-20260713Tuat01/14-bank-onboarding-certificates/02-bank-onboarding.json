@@ -1,0 +1,20 @@
+{
+  "status": "ONBOARDED",
+  "processedAt": "2026-07-16T02:04:56.156727628",
+  "bankCode": "EVD260716T02045",
+  "bankName": "UAT Evidence Bank 20260716T020455Z",
+  "connectorName": "MOCK_EVD260716T02045_CONNECTOR",
+  "connectorType": "MOCK",
+  "sourceBank": "SUNDAYBANK",
+  "destinationBank": "EVD260716T02045",
+  "messageType": "PACS_008",
+  "routeCode": "ROUTE_SUNDAYBANK_TO_EVD260716T02045_PACS_008_EVIDENCE",
+  "participantCreated": true,
+  "participantAlreadyExisted": false,
+  "connectorCreated": true,
+  "connectorAlreadyExisted": false,
+  "routingRuleCreated": true,
+  "routingRuleAlreadyExisted": false,
+  "nextStep": "Run route resolve test: GET /api/routing-rules/resolve?sourceBank=SUNDAYBANK&destinationBank=EVD260716T02045&messageType=PACS_008",
+  "message": "Bank onboarded successfully"
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 422,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "PRT-002",
+    "layer": "ROUTING",
+    "message": "Participant is not ACTIVE. bankCode=UAT260716T02220, status=INACTIVE",
+    "path": "/api/routing-rules/resolve",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "d09edeb3-7852-4424-b5d8-dd47d451c156",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-07-16T02:26:54.625858015",
+    "traceId": null
+  }
+}

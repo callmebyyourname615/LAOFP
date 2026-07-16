@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "participant requires a current PASS certification before activation",
+    "path": "/v1/operations/config-changes/1/execute",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "19efd378-9adc-4751-aaba-6b1b6587a9c4",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-16T02:56:05.732481257",
+    "traceId": null
+  }
+}

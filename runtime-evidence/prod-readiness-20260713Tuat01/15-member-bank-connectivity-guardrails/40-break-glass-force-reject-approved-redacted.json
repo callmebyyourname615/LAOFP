@@ -1,0 +1,14 @@
+{
+  "id": 7,
+  "sessionRef": "BG-4724D225BE9246F6ADFA",
+  "requestedBy": "admin",
+  "reason": "Execute approved UAT force-reject connector test",
+  "ticketReference": "UAT-BG-FORCE-REJECT-20260716T022202Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-16T04:25:17.676754716",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_VfdccfQ_4"
+}

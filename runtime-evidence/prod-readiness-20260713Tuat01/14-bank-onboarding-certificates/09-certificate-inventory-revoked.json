@@ -1,0 +1,13 @@
+[
+  {
+    "certId": "0fc56219-c5e0-4b1a-8797-d82324d06f49",
+    "pspId": "EVD260716T02045",
+    "pspName": "UAT Evidence Bank 20260716T020455Z",
+    "fingerprint": "801b90516d760f41e5328151029b9bd474c95592b99a35bea2512984df02aff2",
+    "subjectDn": "CN=EVD260716T02045_MTLS,OU=UAT Evidence,O=LAOFP,C=LA",
+    "issuedAt": "2026-07-16T02:04:56",
+    "expiresAt": "2027-07-16T02:04:56",
+    "status": "REVOKED",
+    "createdAt": "2026-07-16T02:04:59.385"
+  }
+]

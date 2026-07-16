@@ -1,0 +1,2 @@
+{"groups":["liveness","readiness"],"status":"UP"}
+HTTP_STATUS:200
