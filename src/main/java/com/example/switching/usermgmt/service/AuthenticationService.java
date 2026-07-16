@@ -126,7 +126,7 @@ public class AuthenticationService {
 
     private AuthResponse issueTokens(UserEntity user,UUID familyId,UUID rotatedFromId) {
         Set<String> roles=authorization.roles(user), permissions=authorization.permissions(user);
-        String accessToken=tokens.issue(user,roles,permissions);
+        String accessToken=tokens.issue(user,roles,permissions,familyId);
         String refreshToken=createSession(user,AuthSessionType.REFRESH_TOKEN,refreshTtlSeconds,familyId,rotatedFromId);
         user.setLastLoginAt(Instant.now()); clearFailures(user);
         audit.log("SMOS_LOGIN_SUCCEEDED","SMOS_USER",String.valueOf(user.getId()),user.getUsername(),Map.of("roles",roles));

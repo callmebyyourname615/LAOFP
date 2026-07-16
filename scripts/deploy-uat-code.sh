@@ -65,7 +65,17 @@ log "Backing up current remote jar"
 "${SSH_CMD[@]}" "$SERVER" "cd '$REMOTE_DIR' && if [ -f '$REMOTE_JAR' ]; then cp '$REMOTE_JAR' '$REMOTE_JAR.bak.'\$(date +%Y%m%d%H%M%S); fi"
 
 log "Uploading jar to UAT"
-"${SCP_CMD[@]}" "$APP_JAR" "$SERVER:$REMOTE_DIR/$REMOTE_JAR"
+LOCAL_JAR_SHA256="$(shasum -a 256 "$APP_JAR" | awk '{print $1}')"
+REMOTE_JAR_TMP="$REMOTE_DIR/.${REMOTE_JAR}.upload.$$"
+"${SCP_CMD[@]}" "$APP_JAR" "$SERVER:$REMOTE_JAR_TMP"
+
+REMOTE_JAR_SHA256="$("${SSH_CMD[@]}" "$SERVER" "sha256sum '$REMOTE_JAR_TMP' | awk '{print \$1}'")"
+if [[ "$REMOTE_JAR_SHA256" != "$LOCAL_JAR_SHA256" ]]; then
+  "${SSH_CMD[@]}" "$SERVER" "rm -f '$REMOTE_JAR_TMP'"
+  echo "Uploaded jar checksum does not match local build; refusing to deploy." >&2
+  exit 1
+fi
+"${SSH_CMD[@]}" "$SERVER" "mv '$REMOTE_JAR_TMP' '$REMOTE_DIR/$REMOTE_JAR'"
 
 log "Updating mTLS trust bundle and edge configuration"
 "${SCP_CMD[@]}" "$ISSUER_CA_CERT" "$SERVER:$REMOTE_CERT_DIR/issuer-ca.crt"

@@ -2,6 +2,7 @@ package com.example.switching.usermgmt.service;
 
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 
 public record SmosTokenClaims(
         Long userId,
@@ -10,5 +11,6 @@ public record SmosTokenClaims(
         Set<String> permissions,
         String tokenId,
         Long participantId,
+        UUID sessionFamilyId,
         Instant issuedAt,
         Instant expiresAt) {}

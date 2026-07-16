@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import com.example.switching.usermgmt.entity.UserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +20,9 @@ class SmosTokenServiceTest {
         user.setParticipantId(7L);
         user.setUsername("settlement.operator");
 
+        UUID sessionFamilyId = UUID.randomUUID();
         String token = service.issue(user, Set.of("SETTLEMENT_OFFICER"),
-                Set.of("settlement.view", "settlement.approve"));
+                Set.of("settlement.view", "settlement.approve"), sessionFamilyId);
         SmosTokenClaims claims = service.validate(token);
 
         assertThat(token).startsWith(SmosTokenService.TOKEN_PREFIX);
@@ -28,6 +30,7 @@ class SmosTokenServiceTest {
         assertThat(claims.username()).isEqualTo("settlement.operator");
         assertThat(claims.tokenId()).isNotBlank();
         assertThat(claims.participantId()).isEqualTo(7L);
+        assertThat(claims.sessionFamilyId()).isEqualTo(sessionFamilyId);
         assertThat(claims.issuedAt()).isBefore(claims.expiresAt());
         assertThat(claims.roles()).containsExactly("SETTLEMENT_OFFICER");
         assertThat(claims.permissions()).contains("settlement.view", "settlement.approve");
@@ -39,7 +42,7 @@ class SmosTokenServiceTest {
         UserEntity user = new UserEntity();
         user.setId(102L);
         user.setUsername("risk.operator");
-        String token = service.issue(user, Set.of("RISK_OFFICER"), Set.of("risk.view"));
+        String token = service.issue(user, Set.of("RISK_OFFICER"), Set.of("risk.view"), UUID.randomUUID());
 
         assertThatThrownBy(() -> service.validate(token.substring(0, token.length() - 2) + "xx"))
                 .isInstanceOf(IllegalArgumentException.class);

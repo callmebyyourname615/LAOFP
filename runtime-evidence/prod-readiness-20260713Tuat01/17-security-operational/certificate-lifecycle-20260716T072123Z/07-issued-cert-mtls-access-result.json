@@ -1,0 +1,10 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "status": 401,
+    "error": "UNAUTHORIZED",
+    "errorCode": "LFP-2002",
+    "message": "mTLS client certificate is not registered",
+    "path": "/api/operations/health"
+  }
+}

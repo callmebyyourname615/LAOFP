@@ -36,13 +36,15 @@ public class SmosTokenService {
     }
     public long ttlSeconds(){ return ttlSeconds; }
 
-    public String issue(UserEntity user,Set<String> roles,Set<String> permissions) {
+    public String issue(UserEntity user, Set<String> roles, Set<String> permissions, UUID sessionFamilyId) {
         try {
+            if (sessionFamilyId == null) throw new IllegalArgumentException("Session family is required");
             Instant now=Instant.now(); String jti=UUID.randomUUID().toString();
             Map<String,Object> header=Map.of("alg","HS256","typ","JWT");
             Map<String,Object> payload=new LinkedHashMap<>();
             payload.put("iss","switching-smos"); payload.put("aud","switching-operator-api"); payload.put("jti",jti);
             payload.put("sub",user.getUsername()); payload.put("uid",user.getId());
+            payload.put("sid", sessionFamilyId.toString());
             if (user.getParticipantId() != null) payload.put("participantId", user.getParticipantId());
             payload.put("roles",roles); payload.put("permissions",permissions);
             payload.put("iat",now.getEpochSecond()); payload.put("nbf",now.minusSeconds(MAX_CLOCK_SKEW_SECONDS).getEpochSecond());
@@ -71,7 +73,8 @@ public class SmosTokenService {
             if(!expires.isAfter(now.minusSeconds(MAX_CLOCK_SKEW_SECONDS))) throw new IllegalArgumentException("Token expired");
             if(expires.isAfter(issued.plusSeconds(ttlSeconds+MAX_CLOCK_SKEW_SECONDS))) throw new IllegalArgumentException("Token lifetime exceeds policy");
             Long participantId = payload.hasNonNull("participantId") ? payload.path("participantId").asLong() : null;
-            return new SmosTokenClaims(uid,subject,strings(payload.path("roles")),strings(payload.path("permissions")),tokenId,participantId,issued,expires);
+            UUID sessionFamilyId = UUID.fromString(payload.path("sid").asText());
+            return new SmosTokenClaims(uid,subject,strings(payload.path("roles")),strings(payload.path("permissions")),tokenId,participantId,sessionFamilyId,issued,expires);
         } catch(IllegalArgumentException ex){ throw ex; }
         catch(Exception ex){ throw new IllegalArgumentException("Invalid SMOS token",ex); }
     }

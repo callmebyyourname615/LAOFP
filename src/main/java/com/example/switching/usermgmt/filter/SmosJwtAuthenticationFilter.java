@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.time.Instant;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.switching.usermgmt.entity.UserEntity;
 import com.example.switching.usermgmt.enums.UserStatus;
+import com.example.switching.usermgmt.enums.AuthSessionType;
+import com.example.switching.usermgmt.repository.AuthSessionRepository;
 import com.example.switching.usermgmt.service.AuthorizationService;
 import com.example.switching.usermgmt.service.SmosTokenClaims;
 import com.example.switching.usermgmt.service.SmosTokenService;
@@ -28,9 +31,12 @@ public class SmosJwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String PREFIX = "Bearer " + SmosTokenService.TOKEN_PREFIX;
     private final SmosTokenService tokens;
     private final AuthorizationService authorization;
-    public SmosJwtAuthenticationFilter(SmosTokenService tokens, AuthorizationService authorization) {
+    private final AuthSessionRepository sessions;
+    public SmosJwtAuthenticationFilter(SmosTokenService tokens, AuthorizationService authorization,
+            AuthSessionRepository sessions) {
         this.tokens = tokens;
         this.authorization = authorization;
+        this.sessions = sessions;
     }
 
     @Override protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -42,6 +48,10 @@ public class SmosJwtAuthenticationFilter extends OncePerRequestFilter {
             UserEntity user = authorization.requireUser(claims.username());
             if (!user.getId().equals(claims.userId()) || user.getStatus() != UserStatus.ACTIVE) {
                 throw new IllegalArgumentException("SMOS user is disabled or token subject no longer matches");
+            }
+            if (!sessions.existsActiveFamily(user.getId(), claims.sessionFamilyId(),
+                    AuthSessionType.REFRESH_TOKEN, Instant.now())) {
+                throw new IllegalArgumentException("SMOS session is revoked or expired");
             }
             var currentRoles = authorization.roles(user);
             var currentPermissions = authorization.permissions(user);
@@ -70,8 +80,9 @@ public class SmosJwtAuthenticationFilter extends OncePerRequestFilter {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
             authorities.add(new SimpleGrantedAuthority("ROLE_OPS"));
         }
-        if (roles.contains("OPS_ADMIN") || roles.contains("SETTLEMENT_OFFICER") || roles.contains("DISPUTE_OFFICER")
-                || roles.contains("RISK_OFFICER") || roles.contains("AUDITOR") || roles.contains("READ_ONLY")) {
+        // Only the dedicated operations-admin role can satisfy broad ROLE_OPS endpoint rules.
+        // Specialist and read-only roles receive their narrowly scoped permissions above.
+        if (roles.contains("OPS_ADMIN")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_OPS"));
         }
         // PARTICIPANT_ADMIN is intentionally not mapped to ROLE_BANK. PSP credentials and

@@ -1,0 +1,14 @@
+{
+  "id": 8,
+  "sessionRef": "BG-E4862B49A5E049E1BCBE",
+  "requestedBy": "admin",
+  "reason": "Restore connector after completed UAT force-reject test",
+  "ticketReference": "UAT-BG-RESTORE-20260716T022202Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-16T06:22:48.370095163",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_6hBGPjylz"
+}

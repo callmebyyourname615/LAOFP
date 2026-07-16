@@ -21,6 +21,10 @@ public interface AuthSessionRepository extends JpaRepository<AuthSessionEntity, 
     @Query("select s from AuthSessionEntity s where s.user.id=:userId and s.sessionType=:type and s.revokedAt is null and s.expiresAt>:now order by s.createdAt desc")
     List<AuthSessionEntity> findActiveByUser(@Param("userId") Long userId, @Param("type") AuthSessionType type, @Param("now") Instant now);
 
+    @Query("select count(s) > 0 from AuthSessionEntity s where s.user.id=:userId and s.sessionFamilyId=:familyId and s.sessionType=:type and s.revokedAt is null and s.expiresAt>:now")
+    boolean existsActiveFamily(@Param("userId") Long userId, @Param("familyId") UUID familyId,
+            @Param("type") AuthSessionType type, @Param("now") Instant now);
+
     @Modifying
     @Query("update AuthSessionEntity s set s.revokedAt=:now where s.user.id=:userId and s.sessionType=:type and s.revokedAt is null")
     int revokeAll(@Param("userId") Long userId, @Param("type") AuthSessionType type, @Param("now") Instant now);

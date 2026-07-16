@@ -1,0 +1,42 @@
+{
+  "httpStatus": 200,
+  "response": {
+    "status": "DEGRADED",
+    "checkedAt": "2026-07-16T07:25:16.475021963",
+    "database": {
+      "status": "UP",
+      "reachable": true
+    },
+    "transfers": {
+      "total": 64,
+      "received": 0,
+      "success": 17,
+      "failed": 5
+    },
+    "outbox": {
+      "total": 63,
+      "pending": 0,
+      "processing": 0,
+      "success": 48,
+      "failed": 2
+    },
+    "participants": {
+      "total": 13,
+      "active": 6,
+      "inactive": 7,
+      "maintenance": 0
+    },
+    "connectors": {
+      "total": 11,
+      "enabled": 6,
+      "disabled": 5,
+      "forceReject": 0
+    },
+    "routingRules": {
+      "total": 16,
+      "enabled": 11,
+      "disabled": 5
+    },
+    "message": "Switching is running but there are failed outbox events"
+  }
+}

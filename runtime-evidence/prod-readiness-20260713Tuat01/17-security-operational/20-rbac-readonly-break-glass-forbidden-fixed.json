@@ -1,0 +1,10 @@
+{
+  "httpStatus": 403,
+  "response": {
+    "status": 403,
+    "error": "FORBIDDEN",
+    "errorCode": "SEC-002",
+    "message": "Insufficient role for this endpoint",
+    "path": "/v1/operations/break-glass"
+  }
+}

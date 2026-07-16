@@ -1,0 +1,19 @@
+{
+  "mfaRequired": false,
+  "mfaToken": null,
+  "expiresIn": 3600,
+  "roles": [
+    "READ_ONLY"
+  ],
+  "permissions": [
+    "dispute.view",
+    "dashboard.risk",
+    "dashboard.crossborder",
+    "participant.view",
+    "session.revoke",
+    "dashboard.settlement",
+    "risk.view",
+    "settlement.view",
+    "session.view"
+  ]
+}

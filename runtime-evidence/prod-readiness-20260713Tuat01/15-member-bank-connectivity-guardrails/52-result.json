@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "bankCode": "UAT260716T02220",
+  "connector": "MOCK_UAT260716T02220_CONNECTOR",
+  "route": "ROUTE_SUNDAYBANK_TO_UAT260716T02220_PACS_008"
+}

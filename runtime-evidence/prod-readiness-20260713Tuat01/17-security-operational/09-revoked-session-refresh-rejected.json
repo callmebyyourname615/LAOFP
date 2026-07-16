@@ -1,0 +1,18 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SMOS-401",
+    "layer": "API",
+    "message": "Refresh token is invalid or expired",
+    "path": "/api/auth/refresh",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "9307dcbe-1e4a-494b-a8e8-8567c8797817",
+    "retryable": false,
+    "status": 401,
+    "timestamp": "2026-07-16T06:42:29.021198881",
+    "traceId": null
+  }
+}
