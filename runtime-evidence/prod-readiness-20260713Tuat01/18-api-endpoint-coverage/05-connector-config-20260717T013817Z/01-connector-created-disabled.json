@@ -1,0 +1,1 @@
+{"bankCode":"UAT260716T02220","connectorName":"UAT_MOCK_CONNECTOR_20260717T013817Z","connectorType":"MOCK","createdAt":"2026-07-17T01:38:18.209679692","enabled":false,"endpointUrl":null,"forceReject":false,"id":12,"mockDispatchMode":"SUCCESS","mockStatusEnquiryResult":"ACCEPTED","rejectReasonCode":null,"rejectReasonMessage":null,"timeoutMs":5000,"updatedAt":null}

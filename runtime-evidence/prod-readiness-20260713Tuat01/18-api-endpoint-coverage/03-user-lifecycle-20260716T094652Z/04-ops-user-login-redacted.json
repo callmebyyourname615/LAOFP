@@ -1,0 +1,27 @@
+{
+  "mfaRequired": false,
+  "mfaToken": null,
+  "expiresIn": 3600,
+  "roles": [
+    "OPS_ADMIN"
+  ],
+  "permissions": [
+    "audit.read",
+    "user.view",
+    "maker_checker.approve",
+    "maker_checker.submit",
+    "dispute.resolve",
+    "session.view",
+    "participant.view",
+    "dashboard.risk",
+    "dashboard.settlement",
+    "risk.investigate",
+    "settlement.view",
+    "dashboard.crossborder",
+    "participant.manage",
+    "risk.view",
+    "dispute.view",
+    "settlement.approve",
+    "session.revoke"
+  ]
+}

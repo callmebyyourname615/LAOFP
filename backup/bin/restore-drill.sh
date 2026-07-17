@@ -24,15 +24,29 @@ work="$(mktemp -d "${BACKUP_WORK_DIR:-/var/lib/switching-backup/work}/drill.XXXX
 trap 'status=$?; pg_ctl -D "$RESTORE_TARGET_DIR" -m fast stop >/dev/null 2>&1 || true; if [[ $status -ne 0 ]]; then publish_failure_metric switching_restore_drill switching_restore_drill_failed || true; fi; cleanup_dir "$work"' EXIT
 
 restore-basebackup.sh
+# pg_basebackup restores the source directory mode, which may be 0755 when the
+# database uses a host bind mount. PostgreSQL requires its data directory to be
+# private before it will start the isolated drill instance.
+chmod 0700 "$RESTORE_TARGET_DIR"
+# A drill validates that the streamed base backup is independently recoverable.
+# Stop at the first consistent point rather than waiting for future archived WAL.
+printf "recovery_target = 'immediate'\n" >>"$RESTORE_TARGET_DIR/postgresql.auto.conf"
 socket_dir="${work}/socket"
 mkdir -p "$socket_dir"
 port="${RESTORE_DRILL_PORT:-55432}"
+max_connections="${RESTORE_DRILL_MAX_CONNECTIONS:-100}"
+# The deployed cluster is initialized with the switching owner role, not the
+# image's conventional `postgres` role. Allow an override for other installs.
+restore_db_user="${RESTORE_DRILL_DB_USER:-switching}"
 log_file="${work}/postgres.log"
 
-pg_ctl -D "$RESTORE_TARGET_DIR" \
+if ! pg_ctl -D "$RESTORE_TARGET_DIR" \
   -l "$log_file" \
-  -o "-p ${port} -k ${socket_dir} -c listen_addresses='' -c ssl=off -c archive_mode=off -c archive_command='' -c shared_preload_libraries='' -c max_connections=20" \
-  start
+  -o "-p ${port} -k ${socket_dir} -c listen_addresses='' -c ssl=off -c archive_mode=off -c archive_command='' -c shared_preload_libraries='' -c max_connections=${max_connections}" \
+  start; then
+  tail -200 "$log_file" >&2 || true
+  die "restored PostgreSQL failed to start"
+fi
 
 ready_deadline=$(( $(date +%s) + ${RESTORE_DRILL_TIMEOUT_SECONDS:-3600} ))
 until pg_isready -h "$socket_dir" -p "$port" -d postgres >/dev/null 2>&1; do
@@ -43,17 +57,28 @@ until pg_isready -h "$socket_dir" -p "$port" -d postgres >/dev/null 2>&1; do
   sleep 2
 done
 
+# A recovered cluster can accept connections before recovery_target_action has
+# promoted it. Wait for promotion so this drill proves a usable standalone DB.
+recovery_deadline=$(( $(date +%s) + ${RESTORE_DRILL_TIMEOUT_SECONDS:-3600} ))
+until [[ "$(psql -U "$restore_db_user" -h "$socket_dir" -p "$port" -d postgres -AtX -c 'SELECT NOT pg_is_in_recovery()' 2>/dev/null || true)" == "t" ]]; do
+  if (( $(date +%s) >= recovery_deadline )); then
+    tail -200 "$log_file" >&2 || true
+    die "restored PostgreSQL did not complete recovery before timeout"
+  fi
+  sleep 2
+done
+
 verification_sql="${RESTORE_VERIFICATION_SQL:-/opt/switching-backup/config/restore-verification.sql}"
 require_file "$verification_sql"
-psql -h "$socket_dir" -p "$port" -d "${PGDATABASE:-switching_db}" \
+psql -U "$restore_db_user" -h "$socket_dir" -p "$port" -d "${PGDATABASE:-switching_db}" \
   -v ON_ERROR_STOP=1 -X -f "$verification_sql" | tee "${work}/verification.log"
 
 completed_epoch="$(date +%s)"
 completed_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
 duration="$((completed_epoch - started_epoch))"
 backup_id="$(jq -er '.backupId' "$RESTORE_TARGET_DIR/.switching-restore-metadata.json")"
-transaction_count="$(psql -h "$socket_dir" -p "$port" -d "${PGDATABASE:-switching_db}" -AtX -v ON_ERROR_STOP=1 -c 'SELECT count(*) FROM transactions')"
-latest_transaction="$(psql -h "$socket_dir" -p "$port" -d "${PGDATABASE:-switching_db}" -AtX -v ON_ERROR_STOP=1 -c "SELECT COALESCE(to_char(max(created_at) AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"'),'none') FROM transactions")"
+transaction_count="$(psql -U "$restore_db_user" -h "$socket_dir" -p "$port" -d "${PGDATABASE:-switching_db}" -AtX -v ON_ERROR_STOP=1 -c 'SELECT count(*) FROM transactions')"
+latest_transaction="$(psql -U "$restore_db_user" -h "$socket_dir" -p "$port" -d "${PGDATABASE:-switching_db}" -AtX -v ON_ERROR_STOP=1 -c "SELECT COALESCE(to_char(max(created_at) AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"'),'none') FROM transactions")"
 
 cat >"${work}/evidence.json" <<EOF_EVIDENCE
 {

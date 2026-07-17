@@ -1,0 +1,15 @@
+{
+  "dispute": {
+    "disputeId": 28,
+    "status": "OPEN",
+    "disputeType": "POST_SETTLEMENT_DESTINATION_DISPUTE",
+    "refundStatus": null
+  },
+  "transfer": {
+    "transferRef": "QRP-06733366DA00-11819915501662506",
+    "status": "SETTLED",
+    "confirmationStatus": "DISPUTED",
+    "settlementConfidence": "DISPUTED",
+    "reference": "Post-settlement dispute opened: UAT_POST_SETTLEMENT_TEST"
+  }
+}

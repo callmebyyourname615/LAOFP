@@ -1,14 +1,14 @@
 package com.example.switching.usermgmt.dto;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import com.example.switching.usermgmt.enums.MakerCheckerStatus;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public record MakerCheckerResponse(
         UUID id,
         String requestType,
-        JsonNode payload,
+        Map<String, Object> payload,
         String payloadSha256,
         String maker,
         String checker,

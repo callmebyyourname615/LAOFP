@@ -40,6 +40,11 @@ public class MakerCheckerService {
     }
 
     @Transactional
+    public MakerCheckerResponse submit(String requestType, Map<String, Object> payload, String makerUsername) {
+        return submit(requestType, (JsonNode) mapper.valueToTree(payload), makerUsername);
+    }
+
+    @Transactional
     public MakerCheckerResponse submit(String requestType, JsonNode payload, String makerUsername) {
         String normalizedType = requestType.trim().toUpperCase(Locale.ROOT);
         ControlledActionHandler handler = handler(normalizedType);
@@ -144,7 +149,9 @@ public class MakerCheckerService {
         catch (Exception ex) { throw new IllegalStateException("SHA-256 unavailable", ex); }
     }
     private MakerCheckerResponse response(MakerCheckerRequestEntity request) {
-        return new MakerCheckerResponse(request.getId(), request.getRequestType(), readPayload(request), request.getPayloadSha256(),
+        return new MakerCheckerResponse(request.getId(), request.getRequestType(),
+                mapper.convertValue(readPayload(request), new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {}),
+                request.getPayloadSha256(),
                 request.getMaker().getUsername(), request.getChecker() == null ? null : request.getChecker().getUsername(),
                 request.getStatus(), request.getSubmittedAt(), request.getDecidedAt(), request.getDecisionNotes(), request.getExecutionReference());
     }

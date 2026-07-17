@@ -1,0 +1,9 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "status": 401,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SMOS-401",
+    "message": "Invalid or expired SMOS access token"
+  }
+}

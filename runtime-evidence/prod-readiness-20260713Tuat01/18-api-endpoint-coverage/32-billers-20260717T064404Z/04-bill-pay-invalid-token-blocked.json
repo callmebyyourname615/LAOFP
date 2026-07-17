@@ -1,0 +1,18 @@
+{
+  "httpStatus": 404,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "NOT_FOUND",
+    "errorCode": "LFP-6001",
+    "layer": "BILL",
+    "message": "Bill not found: Token 999999999",
+    "path": "/v1/bills/pay",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "d090376d-586c-48f7-bdea-99e7a564f567",
+    "retryable": false,
+    "status": 404,
+    "timestamp": "2026-07-17T06:46:00.388814137",
+    "traceId": null
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "CONFLICT",
+    "errorCode": "LFP-9005",
+    "layer": "DISPUTE",
+    "message": "Dispute 28 cannot retry refund from status RESOLVED_NO_ACTION; required ESCALATED",
+    "path": "/api/operations/disputes/28/refund/retry",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "90a5b675-f97e-451d-a271-56b8448b9abf",
+    "retryable": false,
+    "status": 409,
+    "timestamp": "2026-07-17T06:35:31.685788741",
+    "traceId": null
+  }
+}

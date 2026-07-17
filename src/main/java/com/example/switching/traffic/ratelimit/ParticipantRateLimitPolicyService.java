@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class ParticipantRateLimitPolicyService {
     private final AtomicReference<ParticipantRateLimitPolicySnapshot> current = new AtomicReference<>();
     private final AtomicLong lastModifiedMillis = new AtomicLong(Long.MIN_VALUE);
 
+    @Autowired
     public ParticipantRateLimitPolicyService(
             ObjectMapper objectMapper,
             @Value("${switching.security.rate-limit.policy-file:config/phase70-participant-traffic-policy.yaml}")
@@ -41,7 +43,7 @@ public class ParticipantRateLimitPolicyService {
         this(objectMapper, Path.of(policyFile), fallbackRequestsPerMinute);
     }
 
-    /** Required for CGLIB proxy ({@code @Scheduled} forces method-level interception). */
+    /** Required for the CGLIB proxy created for the scheduled reload method. */
     protected ParticipantRateLimitPolicyService() {
         this.objectMapper = null;
         this.policyPath = null;

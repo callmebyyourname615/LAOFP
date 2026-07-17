@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"FORBIDDEN","errorCode":"LFP-2004","layer":"API","message":"Access denied","path":"/api/dashboard/dr","phase":"RECEIVE_REQUEST","requestId":"fb2acc8c-b1e2-430c-86f2-3765684fd3c6","retryable":false,"status":403,"timestamp":"2026-07-17T02:15:43.040929868","traceId":null}

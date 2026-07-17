@@ -12,6 +12,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.example.switching.common.dto.ApiErrorResponse;
 import com.example.switching.common.error.ErrorCatalog;
@@ -142,6 +143,18 @@ public class GlobalExceptionHandler {
                                 null);
         }
 
+        @ExceptionHandler(IllegalStateException.class)
+        public ResponseEntity<ApiErrorResponse> handleRequestStateViolation(
+                        RuntimeException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.REQ_001,
+                                ex.getMessage(),
+                                request,
+                                null);
+        }
+
         @ExceptionHandler(InquiryValidationException.class)
         public ResponseEntity<ApiErrorResponse> handleInquiryValidation(
                         InquiryValidationException ex,
@@ -234,6 +247,18 @@ public class GlobalExceptionHandler {
                 return buildResponse(
                                 ErrorCatalog.REQ_004,
                                 ex.getMessage(),
+                                request,
+                                null);
+        }
+
+        @ExceptionHandler(NoResourceFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleRouteNotFound(
+                        NoResourceFoundException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.REQ_005,
+                                "API route not found",
                                 request,
                                 null);
         }

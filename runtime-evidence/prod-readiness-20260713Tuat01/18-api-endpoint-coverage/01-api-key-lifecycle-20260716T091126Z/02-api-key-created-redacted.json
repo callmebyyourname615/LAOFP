@@ -1,0 +1,11 @@
+{
+  "bankCode": null,
+  "createdAt": "2026-07-16T09:12:42.078545916",
+  "enabled": true,
+  "expiresAt": null,
+  "id": 6,
+  "keyPrefix": "sk-f8ef4d6e1",
+  "lastUsedAt": null,
+  "name": "UAT API key lifecycle 20260716T091126Z",
+  "role": "OPS"
+}

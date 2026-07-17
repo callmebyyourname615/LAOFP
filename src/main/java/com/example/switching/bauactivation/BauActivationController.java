@@ -15,6 +15,6 @@ public class BauActivationController {
     private final BauActivationService service;
     public BauActivationController(BauActivationService service){this.service=service;}
     @GetMapping("/status")
-    @PreAuthorize("hasAnyAuthority('READINESS_VIEWER','READINESS_OPERATOR','CHANGE_MANAGER')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','OPS_ADMIN','AUDITOR','READ_ONLY')")
     public ResponseEntity<BauActivationStatus> status(){return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service.status());}
 }

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "CORE",
+    "details": null,
+    "error": "CONFLICT",
+    "errorCode": "ISO-002",
+    "layer": "ISO",
+    "message": "ISO message encryptedPayload is empty and cannot be decrypted: 129",
+    "path": "/api/iso-messages/129/decrypt",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "504dc063-f149-4fee-8c46-323595c9b281",
+    "retryable": false,
+    "status": 409,
+    "timestamp": "2026-07-17T06:43:34.29205302",
+    "traceId": null
+  }
+}

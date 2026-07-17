@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"REQ-005","layer":"API","message":"API route not found","path":"/api/operations/continuous-assurance/hypercare","phase":"RECEIVE_REQUEST","requestId":"97c8ed4c-e9c0-4072-8612-68f5ca4dee95","retryable":false,"status":404,"timestamp":"2026-07-17T03:23:17.762123438","traceId":null}

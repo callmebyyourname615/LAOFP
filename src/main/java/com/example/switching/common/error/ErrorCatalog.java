@@ -40,6 +40,15 @@ public enum ErrorCatalog {
                         ErrorPhase.RECEIVE_REQUEST,
                         false,
                         "Unsupported media type"),
+        REQ_005(
+                        HttpStatus.NOT_FOUND,
+                        "NOT_FOUND",
+                        "REQ-005",
+                        ErrorCategory.REQUEST,
+                        ErrorLayer.API,
+                        ErrorPhase.RECEIVE_REQUEST,
+                        false,
+                        "API route not found"),
 
         INQ_001(
                         HttpStatus.NOT_FOUND,

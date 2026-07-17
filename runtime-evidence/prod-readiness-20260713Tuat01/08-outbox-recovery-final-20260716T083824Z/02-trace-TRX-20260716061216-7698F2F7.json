@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"REQ-005","layer":"API","message":"API route not found","path":"/api/operations/transactions/TRX-20260716061216-7698F2F7/trace","phase":"RECEIVE_REQUEST","requestId":"60469f1d-029f-4b67-b438-c9469794f4f7","retryable":false,"status":404,"timestamp":"2026-07-16T08:39:59.844270676","traceId":null}

@@ -131,7 +131,10 @@ public class LiquidityController {
     }
 
     private String resolvePspId(String requestedPspId, String overridePsp, Authentication auth) {
-        boolean adminOrOps = hasRole(auth, "ROLE_ADMIN") || hasRole(auth, "ROLE_OPS");
+        boolean adminOrOps = hasRole(auth, "ROLE_ADMIN")
+                || hasRole(auth, "ROLE_OPS")
+                || hasRole(auth, "ROLE_SYSTEM_ADMIN")
+                || hasRole(auth, "ROLE_OPS_ADMIN");
         if (adminOrOps) {
             if (hasText(overridePsp)) {
                 return overridePsp.trim();
@@ -139,6 +142,7 @@ public class LiquidityController {
             if (hasText(requestedPspId)) {
                 return requestedPspId.trim();
             }
+            throw new IllegalArgumentException("pspId is required for administrator access");
         }
         if (hasRole(auth, "ROLE_BANK")) {
             String bankCode = bankCodeFromDetails(auth);

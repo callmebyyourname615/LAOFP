@@ -1,0 +1,18 @@
+{
+  "httpStatus": 422,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "RTE-001",
+    "layer": "ROUTING",
+    "message": "Routing rule not found. sourceBank=SUNDAYBANK, destinationBank=UAT260716T02220, messageType=CAMT_005",
+    "path": "/api/routing-rules/resolve",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "efc7c7b1-4c3b-4349-983b-c060b6a0fadc",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-07-17T01:33:21.111636356",
+    "traceId": null
+  }
+}

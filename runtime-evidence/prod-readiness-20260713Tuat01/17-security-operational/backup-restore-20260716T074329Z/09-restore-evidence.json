@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "drillType": "isolated-pitr-restore",
+  "backupId": "20260716074331-6f8c8423",
+  "startedAt": "2026-07-16T07:55:23Z",
+  "completedAt": "2026-07-16T07:55:30Z",
+  "rtoSeconds": 7,
+  "targetRtoSeconds": 3600,
+  "transactionCount": 64,
+  "latestTransactionCreatedAt": "2026-07-16T06:12:16Z",
+  "verification": "PASS"
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 500,
+  "response": {
+    "category": "UNKNOWN",
+    "details": null,
+    "error": "INTERNAL_SERVER_ERROR",
+    "errorCode": "SYS-001",
+    "layer": "SYSTEM",
+    "message": "Internal server error",
+    "path": "/api/audit-logs/2495",
+    "phase": "UNKNOWN",
+    "requestId": "4b2e7bc8-1648-45da-a3a2-dd2a98106fd0",
+    "retryable": false,
+    "status": 500,
+    "timestamp": "2026-07-16T07:56:57.246844671",
+    "traceId": null
+  }
+}

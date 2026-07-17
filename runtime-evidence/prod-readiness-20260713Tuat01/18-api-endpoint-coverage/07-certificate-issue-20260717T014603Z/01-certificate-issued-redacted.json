@@ -1,0 +1,8 @@
+{
+  "pspId": "CRT260716T07212",
+  "fileName": "crt260716t07212-client.crt",
+  "subjectDn": "CN=CRT260716T07212,OU=UAT,O=LAOFP,C=LA",
+  "issuerDn": "CN=LAOFP UAT Issuer CA,OU=Switching,O=LAOFP,C=LA",
+  "serial": "4714FB5539F2ECB63B3C02BBD299A29CA27CF274",
+  "expiresAt": "2027-07-17T01:46:04"
+}

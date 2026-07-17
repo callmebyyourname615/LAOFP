@@ -1,0 +1,18 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "CONFLICT",
+    "errorCode": "LFP-9005",
+    "layer": "DISPUTE",
+    "message": "Dispute 28 cannot respond from status RESOLVED_NO_ACTION; required OPEN",
+    "path": "/v1/disputes/28/respond",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "2a163cb5-68b9-439f-991d-ae49580810db",
+    "retryable": false,
+    "status": 409,
+    "timestamp": "2026-07-17T06:39:30.052827902",
+    "traceId": null
+  }
+}

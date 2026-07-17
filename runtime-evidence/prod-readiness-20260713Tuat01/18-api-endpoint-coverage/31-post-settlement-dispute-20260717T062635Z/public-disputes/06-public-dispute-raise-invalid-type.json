@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "LFP-9002",
+    "layer": "DISPUTE",
+    "message": "Invalid dispute type: INVALID_UAT_TYPE",
+    "path": "/v1/disputes/raise",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "6f01bd7b-56da-4547-afd8-43f35011d95d",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-17T06:40:31.434363398",
+    "traceId": null
+  }
+}

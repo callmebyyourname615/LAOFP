@@ -1,0 +1,18 @@
+{
+  "httpStatus": 504,
+  "response": {
+    "category": "DOWNSTREAM",
+    "details": null,
+    "error": "GATEWAY_TIMEOUT",
+    "errorCode": "LFP-6004",
+    "layer": "BILL",
+    "message": "Biller API did not respond within the timeout window: fetch:UAT-NOT-FOUND-20260717T064521Z",
+    "path": "/v1/bills/fetch",
+    "phase": "DISPATCH_TRANSFER",
+    "requestId": "013d90c4-9c8d-4411-86ca-2967e76389ea",
+    "retryable": true,
+    "status": 504,
+    "timestamp": "2026-07-17T06:45:21.713262615",
+    "traceId": null
+  }
+}

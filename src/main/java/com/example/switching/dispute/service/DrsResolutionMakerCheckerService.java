@@ -23,6 +23,7 @@ import com.example.switching.webhook.service.WebhookEventPublisher;
 @Service
 public class DrsResolutionMakerCheckerService {
 
+    private static final int MAX_TRANSFER_REFERENCE_LENGTH = 100;
     private static final Set<String> SUBMITTABLE_STATUSES = Set.of("OPEN", "UNDER_REVIEW", "ESCALATED");
     private static final Set<String> VALID_DECISIONS = Set.of(
             "NO_ACTION",
@@ -295,7 +296,7 @@ public class DrsResolutionMakerCheckerService {
                      WHERE transaction_ref = ?
                        AND status = 'SETTLED'
                     """,
-                    "DRS resolved no action: " + nullToEmpty(note),
+                    transferReference("DRS resolved no action: " + nullToEmpty(note)),
                     txnRef);
         } else {
             jdbc.update(
@@ -308,9 +309,15 @@ public class DrsResolutionMakerCheckerService {
                      WHERE transaction_ref = ?
                        AND status = 'SETTLED'
                     """,
-                    "DRS approved " + decision + ": " + nullToEmpty(note),
+                    transferReference("DRS approved " + decision + ": " + nullToEmpty(note)),
                     txnRef);
         }
+    }
+
+    private String transferReference(String reference) {
+        return reference.length() <= MAX_TRANSFER_REFERENCE_LENGTH
+                ? reference
+                : reference.substring(0, MAX_TRANSFER_REFERENCE_LENGTH);
     }
 
     private void requirePendingApproval(Long disputeId, Map<String, Object> dispute) {

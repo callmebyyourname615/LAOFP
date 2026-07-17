@@ -1,0 +1,10 @@
+{
+  "error": "TOO_MANY_REQUESTS",
+  "retryAfterSeconds": 60,
+  "limit": 1,
+  "policyRevision": "fallback",
+  "status": 429,
+  "errorCode": "REQ-004",
+  "path": "/api/auth/login",
+  "message": "Participant request quota exceeded"
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "pspId is required for administrator access",
+    "path": "/v1/settlement/balance",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "c24da439-5344-48f8-ad59-eda35687d17d",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-17T04:07:09.959570519",
+    "traceId": null
+  }
+}

@@ -21,6 +21,8 @@ MTLS_CONFIG="${MTLS_CONFIG:-nginx/mtls.conf}"
 REMOTE_CERT_DIR="${REMOTE_CERT_DIR:-$REMOTE_DIR/certs}"
 REMOTE_NGINX_CONFIG="${REMOTE_NGINX_CONFIG:-$REMOTE_DIR/nginx/mtls.conf}"
 MTLS_CONTAINER="${MTLS_CONTAINER:-switching-nginx-mtls}"
+DEPLOY_SYNC_CONFIG="${DEPLOY_SYNC_CONFIG:-false}"
+DEPLOY_SYNC_ENV="${DEPLOY_SYNC_ENV:-false}"
 
 log() {
   printf '\n==> %s\n' "$*"
@@ -49,8 +51,11 @@ if [[ -n "${DEPLOY_SSH_PASSWORD:-}" ]]; then
     echo "Install it first, or unset DEPLOY_SSH_PASSWORD and use SSH_KEY instead." >&2
     exit 1
   fi
-  SSH_CMD=(sshpass -p "$DEPLOY_SSH_PASSWORD" ssh -o StrictHostKeyChecking=accept-new)
-  SCP_CMD=(sshpass -p "$DEPLOY_SSH_PASSWORD" scp -o StrictHostKeyChecking=accept-new)
+  # `sshpass -e` avoids exposing the password in the process command line and
+  # is more reliable than `-p` with non-interactive macOS shell sessions.
+  export SSHPASS="$DEPLOY_SSH_PASSWORD"
+  SSH_CMD=(sshpass -e ssh -o StrictHostKeyChecking=accept-new)
+  SCP_CMD=(sshpass -e scp -o StrictHostKeyChecking=accept-new)
 else
   require_file "$SSH_KEY"
   SSH_CMD=(ssh -i "$SSH_KEY")
@@ -76,6 +81,18 @@ if [[ "$REMOTE_JAR_SHA256" != "$LOCAL_JAR_SHA256" ]]; then
   exit 1
 fi
 "${SSH_CMD[@]}" "$SERVER" "mv '$REMOTE_JAR_TMP' '$REMOTE_DIR/$REMOTE_JAR'"
+
+if [[ "$DEPLOY_SYNC_CONFIG" == "true" ]]; then
+  log "Synchronizing deployment configuration"
+  require_file "docker-compose.yml"
+  "${SCP_CMD[@]}" "docker-compose.yml" "$SERVER:$REMOTE_DIR/docker-compose.yml"
+fi
+
+if [[ "$DEPLOY_SYNC_ENV" == "true" ]]; then
+  log "Synchronizing environment file"
+  require_file ".env"
+  "${SCP_CMD[@]}" ".env" "$SERVER:$REMOTE_DIR/.env"
+fi
 
 log "Updating mTLS trust bundle and edge configuration"
 "${SCP_CMD[@]}" "$ISSUER_CA_CERT" "$SERVER:$REMOTE_CERT_DIR/issuer-ca.crt"

@@ -94,7 +94,7 @@ public class InquiryMonitorQueryService {
                     bank_available,
                     eligible_for_transfer,
                     destination_account_name,
-                    message,
+                    error_message AS message,
                     reference,
                     created_at,
                     updated_at
@@ -142,7 +142,7 @@ public class InquiryMonitorQueryService {
                     bank_available,
                     eligible_for_transfer,
                     destination_account_name,
-                    message,
+                    error_message AS message,
                     reference,
                     created_at,
                     updated_at

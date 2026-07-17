@@ -1,0 +1,18 @@
+{
+  "httpStatus": 403,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "FORBIDDEN",
+    "errorCode": "LFP-9004",
+    "layer": "DISPUTE",
+    "message": "PSP is not authorized to act on dispute: 28",
+    "path": "/v1/disputes/28/resolve",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "5d8f6818-55b5-4a6a-a9b6-bec5576b9afb",
+    "retryable": false,
+    "status": 403,
+    "timestamp": "2026-07-17T06:40:00.422863205",
+    "traceId": null
+  }
+}

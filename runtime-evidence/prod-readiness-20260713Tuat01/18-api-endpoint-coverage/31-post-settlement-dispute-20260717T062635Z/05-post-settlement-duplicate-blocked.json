@@ -1,0 +1,18 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "CONFLICT",
+    "errorCode": "LFP-9003",
+    "layer": "DISPUTE",
+    "message": "An active dispute already exists for transaction: QRP-06733366DA00-11819915501662506",
+    "path": "/api/operations/disputes/post-settlement",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "32b0dddf-201c-44b3-b0d7-2be9df0d810d",
+    "retryable": false,
+    "status": 409,
+    "timestamp": "2026-07-17T06:28:34.860594826",
+    "traceId": null
+  }
+}

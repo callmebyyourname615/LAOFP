@@ -1,0 +1,1 @@
+{"category":"INFRASTRUCTURE","details":null,"error":"CONFLICT","errorCode":"INF-DB-002","layer":"DATABASE","message":"Database constraint violation","path":"/api/operations/disputes/28/approve-resolution","phase":"WRITE_DATABASE","requestId":"3c17562f-08cb-4eef-96bb-89a0a8487e4f","retryable":false,"status":409,"timestamp":"2026-07-17T06:29:52.208768239","traceId":null}

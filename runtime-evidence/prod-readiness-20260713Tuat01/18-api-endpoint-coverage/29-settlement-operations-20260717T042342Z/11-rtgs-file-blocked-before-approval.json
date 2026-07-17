@@ -1,0 +1,18 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "CONFLICT",
+    "errorCode": "SET-004",
+    "layer": "SETTLEMENT",
+    "message": "Settlement instruction SC-20260717-C4-SI001 cannot prepare RTGS file from status PENDING_APPROVAL; required APPROVED or SENT_RTGS",
+    "path": "/api/operations/settlement/instructions/SC-20260717-C4-SI001/rtgs-file",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "5452de56-7661-4994-9ec4-27f039d300fc",
+    "retryable": false,
+    "status": 409,
+    "timestamp": "2026-07-17T06:17:38.961700573",
+    "traceId": null
+  }
+}

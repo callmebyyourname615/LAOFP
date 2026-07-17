@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "Maker and checker must be different users",
+    "path": "/api/admin/requests/3d5334f9-c98f-49d6-8847-5085f5e18b57/approve",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "cc331a69-83ce-4cdc-b800-a2198a51b87f",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-16T09:44:47.76189151",
+    "traceId": null
+  }
+}

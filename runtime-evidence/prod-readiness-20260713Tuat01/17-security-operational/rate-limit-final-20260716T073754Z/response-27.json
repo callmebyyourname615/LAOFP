@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"UNAUTHORIZED","errorCode":"SMOS-401","layer":"API","message":"Invalid username or password","path":"/api/auth/login","phase":"VALIDATE_REQUEST","requestId":"71be0d12-9161-4ac7-a6b7-57e6bdf4be2f","retryable":false,"status":401,"timestamp":"2026-07-16T07:37:55.671674431","traceId":null}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SMOS-401",
+    "layer": "API",
+    "message": "User account is not active",
+    "path": "/api/auth/login",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "80eefd37-b3a9-4945-8b44-fd6a87df778c",
+    "retryable": false,
+    "status": 401,
+    "timestamp": "2026-07-16T09:48:58.712819468",
+    "traceId": null
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "CONFLICT",
+    "errorCode": "SET-007",
+    "layer": "SETTLEMENT",
+    "message": "Settlement ops report is available only after STGS/RTGS confirmation. cycleRef=SC-20260717-C4, currentStatus=CLOSED",
+    "path": "/api/operations/settlement/cycles/SC-20260717-C4/ops-report",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "6e29d3a9-3670-46a7-ba20-78d64f42fd82",
+    "retryable": false,
+    "status": 409,
+    "timestamp": "2026-07-17T06:17:01.119895671",
+    "traceId": null
+  }
+}

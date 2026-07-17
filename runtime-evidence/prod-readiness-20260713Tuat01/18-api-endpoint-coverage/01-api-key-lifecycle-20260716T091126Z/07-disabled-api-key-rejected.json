@@ -1,0 +1,10 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "status": 401,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SEC-001",
+    "message": "Missing or invalid authentication credential",
+    "path": "/api/operations/health"
+  }
+}

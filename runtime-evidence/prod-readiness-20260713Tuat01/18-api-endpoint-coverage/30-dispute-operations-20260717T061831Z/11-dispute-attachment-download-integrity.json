@@ -1,0 +1,6 @@
+{
+  "attachmentId": 3,
+  "expectedSha256": "a70c732060b111bfe82e6a12bbc3cd9381631f863796c8b185cd18df3e57cc05",
+  "actualSha256": "a70c732060b111bfe82e6a12bbc3cd9381631f863796c8b185cd18df3e57cc05",
+  "integrityMatch": true
+}

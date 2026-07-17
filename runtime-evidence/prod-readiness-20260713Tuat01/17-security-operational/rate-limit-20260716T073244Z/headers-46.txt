@@ -1,0 +1,17 @@
+HTTP/1.1 429 
+Server: nginx/1.27.5
+Date: Thu, 16 Jul 2026 07:32:46 GMT
+Content-Type: application/json;charset=UTF-8
+Content-Length: 197
+Connection: keep-alive
+X-RateLimit-Limit: 1
+X-RateLimit-Remaining: 0
+X-RateLimit-Policy: fallback
+Retry-After: 59
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+

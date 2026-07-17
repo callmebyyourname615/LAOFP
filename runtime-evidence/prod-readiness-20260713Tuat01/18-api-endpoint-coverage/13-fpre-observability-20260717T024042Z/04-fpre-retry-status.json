@@ -1,0 +1,1 @@
+{"txnId":"TRX-20260716085658-AD6A6E5B","transferStatus":"READY_FOR_SETTLEMENT","outboxStatus":"SUCCESS","attemptCount":3,"maxAttempts":4,"nextRetryAt":null,"failureClass":null,"willAutoReverse":false,"willRetry":false,"errorCode":null,"errorMessage":null}
