@@ -1,0 +1,14 @@
+{
+  "postHttpStatus": 200,
+  "approvals": [
+    {
+      "role": "UAT_ENDPOINT_COVERAGE",
+      "approver": "admin",
+      "status": "APPROVED",
+      "gitCommit": "4eeb8df65ad27a62cf47c5b56e42ce63d76a9cf1",
+      "approvedAt": "2026-07-17T07:07:26Z",
+      "expiresAt": "2026-07-17T08:07:26Z",
+      "evidenceTailHash": "6b01b25a75fccbf09a7890b821561611608621334e86d23dacd5cf55e2c5c86e"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "UNAUTHORIZED",
+    "errorCode": "LFP-2001",
+    "layer": "API",
+    "message": "OAuth client not found",
+    "path": "/v1/oauth/token",
+    "phase": "RECEIVE_REQUEST",
+    "requestId": "24927003-06fa-48d2-a262-13eca6b1fc6a",
+    "retryable": false,
+    "status": 401,
+    "timestamp": "2026-07-17T07:25:13.253892289",
+    "traceId": null
+  }
+}

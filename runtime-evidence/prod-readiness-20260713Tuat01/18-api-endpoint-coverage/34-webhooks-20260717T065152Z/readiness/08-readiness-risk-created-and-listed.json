@@ -1,0 +1,15 @@
+{
+  "postHttpStatus": 200,
+  "risks": [
+    {
+      "riskId": "UAT-READINESS-RISK-20260717T071450Z",
+      "category": "UAT_ENDPOINT_COVERAGE",
+      "severity": "LOW",
+      "waiverRequested": true,
+      "waiverApproved": true,
+      "owner": "UAT_ENDPOINT_COVERAGE",
+      "expiresAt": "2026-07-17T08:14:50Z",
+      "compensatingControl": "Synthetic UAT evidence is explicitly marked and linked to the readiness ledger"
+    }
+  ]
+}

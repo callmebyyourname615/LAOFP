@@ -1,0 +1,18 @@
+{
+  "httpStatus": 404,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "NOT_FOUND",
+    "errorCode": "LFP-3001",
+    "layer": "VPA",
+    "message": "No active VPA found for type=EMAIL value=uat-vpa-20260717T072850Z@example.test",
+    "path": "/v1/lookup/resolve",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "5411bfc9-80de-48d4-bc78-118e7e5896d0",
+    "retryable": false,
+    "status": 404,
+    "timestamp": "2026-07-17T07:37:46.489722703",
+    "traceId": null
+  }
+}

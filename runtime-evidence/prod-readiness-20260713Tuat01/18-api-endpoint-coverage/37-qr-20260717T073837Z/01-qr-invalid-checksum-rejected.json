@@ -1,0 +1,18 @@
+{
+  "httpStatus": 422,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "LFP-QR-005",
+    "layer": "QR",
+    "message": "QR code CRC-16/CCITT checksum verification failed",
+    "path": "/v1/qr/decode",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "f0075b94-472f-437f-b23d-d07ed62ea273",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-07-17T07:38:37.977050644",
+    "traceId": null
+  }
+}

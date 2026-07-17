@@ -1,6 +1,6 @@
 # API Endpoint Evidence Matrix
 
-Generated: 2026-07-17T06:48:21Z
+Generated: 2026-07-17T07:45:40Z
 Inventory source: `/Users/macbookpro/Desktop/Switching/API_ENDPOINTS.txt`
 Total endpoints: 241
 
@@ -16,7 +16,7 @@ Total endpoints: 241
 - Methods: `DELETE` 6, `GET` 115, `PATCH` 6, `POST` 110, `PUT` 4
 - Risk: `high` 50, `read` 115, `standard` 76
 - Domains: 33
-- Verified on UAT: 144/241
+- Verified on UAT: 170/241
 
 ## admin (13)
 
@@ -155,18 +155,18 @@ Total endpoints: 241
 | [ ] | POST | `/api/operations/outbox-stuck/recover-all` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/api/operations/payment-flows/{transactionRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/14-operations-events-20260717T024646Z` |
 | [ ] | GET | `/api/operations/promotions/funder-ledger/reconciliation` | read | authenticated read + unauthorized negative | - |
-| [ ] | GET | `/api/operations/readiness/approvals` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/readiness/approvals` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/api/operations/readiness/controls` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/readiness/controls` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/operations/readiness/decisions` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/api/operations/readiness/evidence` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/readiness/evidence` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/api/operations/readiness/evidence/integrity` | read | authenticated read + unauthorized negative | - |
-| [ ] | GET | `/api/operations/readiness/incidents` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/readiness/incidents` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/api/operations/readiness/risks` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/readiness/risks` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | GET | `/api/operations/readiness/approvals` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | POST | `/api/operations/readiness/approvals` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | GET | `/api/operations/readiness/controls` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | POST | `/api/operations/readiness/controls` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | POST | `/api/operations/readiness/decisions` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | GET | `/api/operations/readiness/evidence` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | POST | `/api/operations/readiness/evidence` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | GET | `/api/operations/readiness/evidence/integrity` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | GET | `/api/operations/readiness/incidents` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | POST | `/api/operations/readiness/incidents` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | GET | `/api/operations/readiness/risks` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
+| [x] | POST | `/api/operations/readiness/risks` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
 | [ ] | GET | `/api/operations/reconciliation/files` | read | authenticated read + unauthorized negative | - |
 | [ ] | POST | `/api/operations/reconciliation/files` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | GET | `/api/operations/reconciliation/files/{fileRef}` | read | authenticated read + unauthorized negative | - |
@@ -289,28 +289,28 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/v1/lookup/resolve` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/v1/lookup/vpa/register` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | DELETE | `/v1/lookup/vpa/{vpaId}` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/v1/lookup/vpa/{vpaId}` | read | authenticated read + unauthorized negative | - |
-| [ ] | PUT | `/v1/lookup/vpa/{vpaId}` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/v1/lookup/resolve` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/36-vpa-lookup` |
+| [x] | POST | `/v1/lookup/vpa/register` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/36-vpa-lookup` |
+| [x] | DELETE | `/v1/lookup/vpa/{vpaId}` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/36-vpa-lookup` |
+| [x] | GET | `/v1/lookup/vpa/{vpaId}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/36-vpa-lookup` |
+| [x] | PUT | `/v1/lookup/vpa/{vpaId}` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/36-vpa-lookup` |
 
 ## v1-oauth (2)
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/v1/oauth/token` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
-| [ ] | POST | `/v1/oauth/token/revoke` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/v1/oauth/token` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/35-oauth` |
+| [x] | POST | `/v1/oauth/token/revoke` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/35-oauth` |
 
 ## v1-operations (21)
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | GET | `/v1/operations/break-glass` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/v1/operations/break-glass` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/33-compliance-20260717T064657Z/participant-certifications/config-changes/break-glass` |
 | [x] | POST | `/v1/operations/break-glass` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | POST | `/v1/operations/break-glass/{id}/approve` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | POST | `/v1/operations/break-glass/{id}/revoke` | high | happy path + authorization + validation + audit + rollback/cleanup | `17-security-operational` |
-| [ ] | GET | `/v1/operations/config-changes` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/v1/operations/config-changes` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/33-compliance-20260717T064657Z/participant-certifications/config-changes` |
 | [x] | POST | `/v1/operations/config-changes` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | POST | `/v1/operations/config-changes/{id}/approve` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | POST | `/v1/operations/config-changes/{id}/execute` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
@@ -325,7 +325,7 @@ Total endpoints: 241
 | [ ] | POST | `/v1/operations/legal-holds/{id}/approve` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [ ] | POST | `/v1/operations/legal-holds/{id}/approve-release` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [ ] | POST | `/v1/operations/legal-holds/{id}/request-release` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
-| [ ] | GET | `/v1/operations/participant-certifications` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/v1/operations/participant-certifications` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/33-compliance-20260717T064657Z/participant-certifications` |
 | [ ] | POST | `/v1/operations/participant-certifications` | standard | happy path + authorization + validation + cleanup | - |
 
 ## v1-operator (6)
@@ -365,9 +365,9 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/v1/qr/decode` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/v1/qr/generate/dynamic` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/v1/qr/generate/static` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/v1/qr/decode` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/37-qr` |
+| [x] | POST | `/v1/qr/generate/dynamic` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/37-qr` |
+| [x] | POST | `/v1/qr/generate/static` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/37-qr` |
 | [ ] | POST | `/v1/qr/pay` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | POST | `/v1/qr/refund` | standard | happy path + authorization + validation + cleanup | - |
 
@@ -417,7 +417,7 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | GET | `/v1/webhooks` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/v1/webhooks` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z` |
 | [ ] | POST | `/v1/webhooks` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | DELETE | `/v1/webhooks/{webhookId}` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | GET | `/v1/webhooks/{webhookId}` | read | authenticated read + unauthorized negative | - |

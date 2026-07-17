@@ -1,0 +1,12 @@
+{
+  "postHttpStatus": 200,
+  "incidents": [
+    {
+      "incidentId": "UAT-READINESS-INCIDENT-20260717T071635Z",
+      "severity": "INFO",
+      "summary": "Synthetic UAT readiness endpoint coverage record; no production incident",
+      "open": false,
+      "occurredAt": "2026-07-17T07:16:35Z"
+    }
+  ]
+}

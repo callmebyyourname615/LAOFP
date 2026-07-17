@@ -1,0 +1,22 @@
+{
+  "postHttpStatus": 200,
+  "controls": [
+    {
+      "controlId": "UAT-READINESS-EVIDENCE-API",
+      "status": "PASS",
+      "required": false,
+      "synthetic": true,
+      "gitCommit": "4eeb8df65ad27a62cf47c5b56e42ce63d76a9cf1",
+      "observedAt": "2026-07-17T07:05:01Z",
+      "observed": {
+        "entryCount": 1,
+        "integrityValid": true
+      },
+      "threshold": {
+        "integrityRequired": true,
+        "minimumEntryCount": 1
+      },
+      "evidenceId": "dae14bfa-74f4-4958-b13c-f5f36c837052"
+    }
+  ]
+}
