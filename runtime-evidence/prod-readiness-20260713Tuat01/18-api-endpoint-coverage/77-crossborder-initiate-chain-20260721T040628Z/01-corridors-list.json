@@ -1,0 +1,1 @@
+{"httpStatus":200,"endpoint":"GET /v1/crossborder/corridors","response":"4 corridors returned (LAK->THB PromptPay, LAK->CNY CNAPS, LAK->VND NAPAS, LAK->USD SWIFT), each with rate/fee/min-max/validForSeconds"}

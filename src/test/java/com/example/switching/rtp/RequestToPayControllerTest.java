@@ -2,6 +2,7 @@ package com.example.switching.rtp;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,6 +100,27 @@ class RequestToPayControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void authoriseRejectsBlankInquiryReferenceBeforeServiceInvocation() throws Exception {
+        UUID id = UUID.randomUUID();
+
+        mockMvc.perform(post("/v1/rtp/requests/{id}/authorise", id)
+                        .principal(bankPrincipal("BANK_B"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "authorisationReference":"RTP-AUTH-1",
+                                  "mode":"FULL",
+                                  "authorisedAmount":1000.00,
+                                  "inquiryRef":""
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("REQ-001"));
+
+        verifyNoInteractions(authorisationService);
     }
 
     @Test

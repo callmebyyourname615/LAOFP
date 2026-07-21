@@ -1,0 +1,1 @@
+{"httpStatus":201,"endpoint":"POST /api/admin/requests","response":{"id":"61ec3bae-6a5c-4c13-8518-54b2c5bde6f3","requestType":"SETTLEMENT_INSTRUCTION_APPROVE","maker":"admin","status":"PENDING"}}

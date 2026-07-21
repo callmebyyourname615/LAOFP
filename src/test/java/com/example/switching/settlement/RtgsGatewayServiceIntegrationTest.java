@@ -63,6 +63,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
     static void overrideRtgsProperties(DynamicPropertyRegistry registry) {
         registry.add("switching.settlement.bol-rtgs-url", () -> RTGS_URL);
         registry.add("switching.settlement.rtgs-timeout-ms", () -> "5000");
+        registry.add("switching.settlement.rtgs-callback.enabled", () -> "true");
         registry.add("switching.settlement.rtgs-callback-ip-whitelist", () -> "127.0.0.1");
     }
 

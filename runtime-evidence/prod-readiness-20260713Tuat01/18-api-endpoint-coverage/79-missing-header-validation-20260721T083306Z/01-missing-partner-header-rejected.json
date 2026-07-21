@@ -1,0 +1,20 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": {
+      "header": "X-Partner-Key"
+    },
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "Required request header is missing: X-Partner-Key",
+    "path": "/v1/crossborder/inbound/PROMPTPAY",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "cd267ab1-4373-4cd9-94a8-fd682c3494da",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-21T08:33:06.880621922",
+    "traceId": null
+  }
+}

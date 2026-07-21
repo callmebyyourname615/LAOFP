@@ -9,6 +9,8 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -148,6 +150,30 @@ public class GlobalExceptionHandler {
                                 null);
         }
 
+        @ExceptionHandler(MissingServletRequestParameterException.class)
+        public ResponseEntity<ApiErrorResponse> handleMissingRequestParameter(
+                        MissingServletRequestParameterException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.REQ_001,
+                                "Required query parameter is missing: " + ex.getParameterName(),
+                                request,
+                                Map.of("parameter", ex.getParameterName(), "parameterType", ex.getParameterType()));
+        }
+
+        @ExceptionHandler(MissingRequestHeaderException.class)
+        public ResponseEntity<ApiErrorResponse> handleMissingRequestHeader(
+                        MissingRequestHeaderException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.REQ_001,
+                                "Required request header is missing: " + ex.getHeaderName(),
+                                request,
+                                Map.of("header", ex.getHeaderName()));
+        }
+
         @ExceptionHandler(IllegalStateException.class)
         public ResponseEntity<ApiErrorResponse> handleRequestStateViolation(
                         RuntimeException ex,
@@ -271,6 +297,18 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(AuthorizationDeniedException.class)
         public ResponseEntity<ApiErrorResponse> handleAuthorizationDenied(
                         AuthorizationDeniedException ex,
+                        HttpServletRequest request) {
+
+                return buildResponse(
+                                ErrorCatalog.LFP_2004,
+                                "Access denied",
+                                request,
+                                null);
+        }
+
+        @ExceptionHandler(SecurityException.class)
+        public ResponseEntity<ApiErrorResponse> handleSecurityException(
+                        SecurityException ex,
                         HttpServletRequest request) {
 
                 return buildResponse(

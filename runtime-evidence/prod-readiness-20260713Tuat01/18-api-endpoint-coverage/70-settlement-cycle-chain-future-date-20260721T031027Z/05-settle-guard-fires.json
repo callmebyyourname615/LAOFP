@@ -1,0 +1,1 @@
+{"httpStatus":409,"response":{"errorCode":"SET-002","message":"Cannot settle cycle SC-20260722-C3 before all RTGS portal instructions are CONFIRMED"},"note":"Guard fires correctly since no instructions exist. Blocks reaching the settle happy path today."}

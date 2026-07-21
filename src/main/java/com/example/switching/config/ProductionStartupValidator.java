@@ -2,6 +2,7 @@ package com.example.switching.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,6 +190,39 @@ public class ProductionStartupValidator implements InitializingBean {
     @Value("${switching.payment.json-initiation.enabled}")
     private boolean jsonInitiationEnabled;
 
+    @Value("${switching.phase-ii.report-delivery.enabled:false}")
+    private boolean reportDeliveryEnabled;
+
+    @Value("${switching.phase-ii.report-delivery.link-signing-secret:}")
+    private String reportLinkSigningSecret;
+
+    @Value("${switching.phase-ii.cross-border-adapters.enabled:false}")
+    private boolean crossBorderAdaptersEnabled;
+
+    @Value("${switching.phase-ii.cross-border-adapters.promptpay.enabled:false}")
+    private boolean promptpayAdapterEnabled;
+
+    @Value("${switching.phase-ii.cross-border-adapters.promptpay.inbound-api-key:}")
+    private String promptpayInboundApiKey;
+
+    @Value("${switching.phase-ii.cross-border-adapters.bakong.enabled:false}")
+    private boolean bakongAdapterEnabled;
+
+    @Value("${switching.phase-ii.cross-border-adapters.bakong.inbound-api-key:}")
+    private String bakongInboundApiKey;
+
+    @Value("${switching.phase-ii.cross-border-adapters.napas.enabled:false}")
+    private boolean napasAdapterEnabled;
+
+    @Value("${switching.phase-ii.cross-border-adapters.napas.inbound-api-key:}")
+    private String napasInboundApiKey;
+
+    @Value("${switching.phase-ii.cross-border-adapters.upi.enabled:false}")
+    private boolean upiAdapterEnabled;
+
+    @Value("${switching.phase-ii.cross-border-adapters.upi.inbound-api-key:}")
+    private String upiInboundApiKey;
+
     @Value("${switching.mock-bank.pacs002.force-reject}")
     private boolean mockForceReject;
 
@@ -264,6 +298,37 @@ public class ProductionStartupValidator implements InitializingBean {
         }
         if (jsonInitiationEnabled) {
             violations.add("switching.payment.json-initiation.enabled must be false in production; ISO initiation is required.");
+        }
+        if (reportDeliveryEnabled) {
+            rejectBlankOrPlaceholder(
+                    violations,
+                    "switching.phase-ii.report-delivery.link-signing-secret",
+                    reportLinkSigningSecret);
+            if (reportLinkSigningSecret != null && reportLinkSigningSecret.length() < 32) {
+                violations.add("switching.phase-ii.report-delivery.link-signing-secret must contain at least 32 characters in production.");
+            }
+        }
+        if (crossBorderAdaptersEnabled) {
+            validateInboundPartnerKey(
+                    violations,
+                    "PROMPTPAY",
+                    promptpayAdapterEnabled,
+                    promptpayInboundApiKey);
+            validateInboundPartnerKey(
+                    violations,
+                    "BAKONG",
+                    bakongAdapterEnabled,
+                    bakongInboundApiKey);
+            validateInboundPartnerKey(
+                    violations,
+                    "NAPAS",
+                    napasAdapterEnabled,
+                    napasInboundApiKey);
+            validateInboundPartnerKey(
+                    violations,
+                    "UPI",
+                    upiAdapterEnabled,
+                    upiInboundApiKey);
         }
 
         rejectBlankOrPlaceholder(violations, "spring.kafka.bootstrap-servers", kafkaBootstrapServers);
@@ -428,6 +493,24 @@ public class ProductionStartupValidator implements InitializingBean {
         }
         if (!normalized.contains("sslrootcert=")) {
             violations.add(property + " must set sslrootcert in production.");
+        }
+    }
+
+    private void validateInboundPartnerKey(
+            List<String> violations,
+            String rail,
+            boolean enabled,
+            String value) {
+        if (!enabled) {
+            return;
+        }
+
+        String property = "switching.phase-ii.cross-border-adapters."
+                + rail.toLowerCase(Locale.ROOT)
+                + ".inbound-api-key";
+        rejectBlankOrPlaceholder(violations, property, value);
+        if (value != null && value.length() < 32) {
+            violations.add(property + " must contain at least 32 characters when " + rail + " is enabled.");
         }
     }
 

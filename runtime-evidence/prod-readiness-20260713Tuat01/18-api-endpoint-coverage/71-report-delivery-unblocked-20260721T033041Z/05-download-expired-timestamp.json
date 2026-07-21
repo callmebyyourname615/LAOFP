@@ -1,0 +1,1 @@
+{"httpStatus":400,"endpoint":"GET /v1/reports/download/{id}?expires=1&token=deadbeef","response":{"errorCode":"REQ-001","message":"Download link is expired or has an invalid lifetime"}}

@@ -1,0 +1,1 @@
+{"httpStatus":200,"endpoint":"POST /v1/operator/crossborder/reconciliation/promptpay/2026-07-21","request":"[]","response":{"mismatched":0,"missingExternal":0,"matched":0,"total":0,"missingInternal":0},"note":"FULL HAPPY PATH — empty statement reconciled successfully."}

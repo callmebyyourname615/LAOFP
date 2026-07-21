@@ -1,0 +1,1 @@
+{"httpStatus":200,"scenario":"Same request after sleep 3s","result":"BANK_TOKEN length 311, valid","note":"Sleep works around the race, confirming the root cause is a same-second iat vs rotationEpoch comparison."}

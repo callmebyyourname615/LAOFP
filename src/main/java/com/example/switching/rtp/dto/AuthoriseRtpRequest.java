@@ -13,6 +13,6 @@ public record AuthoriseRtpRequest(
         @NotBlank @Size(max = 64) String authorisationReference,
         @NotNull RtpAuthorisationMode mode,
         @NotNull @DecimalMin(value = "0.0001") BigDecimal authorisedAmount,
-        @Size(max = 64) String inquiryRef,
+        @NotBlank @Size(max = 64) String inquiryRef,
         @Valid List<RtpInstallmentRequest> installments) {
 }

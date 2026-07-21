@@ -1,0 +1,1 @@
+{"httpStatus":200,"endpoint":"POST /api/auth/login","note":"admin2 logged in successfully with mfaRequired=false. Has SYSTEM_ADMIN role which grants ROLE_ADMIN + ROLE_OPS via SmosJwtAuthenticationFilter compatibility mapping, plus PERM_MAKER_CHECKER_APPROVE via role permissions."}

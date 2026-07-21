@@ -1,0 +1,1 @@
+{"httpStatus":200,"endpoint":"POST /v1/settlement/liquidity/topup","note":"Full happy path succeeded via OAuth Bearer. Actually credited BANK_A pool by 10000 LAK (balance now 999710000). topUpId=51."}

@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("${switching.api.v1-prefix}/settlement")
+@ConditionalOnProperty(
+        prefix = "switching.settlement.rtgs-callback",
+        name = "enabled",
+        havingValue = "true")
 public class RtgsCallbackController {
 
     private final RtgsGatewayService rtgsGatewayService;

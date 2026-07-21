@@ -1,0 +1,1 @@
+{"httpStatus":200,"endpoint":"POST /v1/crossborder/quote","request":{"corridorId":1,"amount":1000000.00},"response":{"quoteId":2,"sourceCurrency":"LAK","destCurrency":"THB","targetNetwork":"PROMPTPAY","sourceAmount":1000000.00,"destAmount":1781.82,"rate":0.0018,"fee":10100.00,"validForSeconds":30}}

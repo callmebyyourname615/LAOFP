@@ -158,6 +158,9 @@ switching:
   settlement:
     bol-rtgs-url: ${BOL_RTGS_URL:http://localhost:9099/rtgs/pacs009}
     rtgs-timeout-ms: ${SETTLEMENT_RTGS_TIMEOUT_MS:5000}
+    rtgs-callback:
+      # Keep the external confirmation endpoint closed until RTGS mTLS and callback contract exist.
+      enabled: ${RTGS_CALLBACK_ENABLED:false}
     rtgs-callback-ip-whitelist: ${RTGS_CALLBACK_IP_WHITELIST:127.0.0.1,::1,0:0:0:0:0:0:0:1}
     rtgs-threshold-lak: ${SETTLEMENT_RTGS_THRESHOLD_LAK:500000000}
     time-zone: ${SETTLEMENT_TIME_ZONE:Asia/Vientiane}

@@ -1,0 +1,1 @@
+{"httpStatus":401,"scenario":"POST /v1/oauth/token immediately after POST /v1/participants/BANK_A/credentials/rotate","response":{"errorCode":"LFP-2001","message":"Token invalidated by credential rotation"},"note":"Client secret is correct (freshly rotated). Failure is a race condition in the issuance path."}

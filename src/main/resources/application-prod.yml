@@ -69,6 +69,8 @@ switching:
       force-reject: false   # hardcoded — mock reject must never be active in prod
   settlement:
     bol-rtgs-url: ${BOL_RTGS_URL}
+    rtgs-callback:
+      enabled: ${RTGS_CALLBACK_ENABLED:false}
     rtgs-callback-ip-whitelist: ${RTGS_CALLBACK_IP_WHITELIST}
   archive:
     archive-db-url: ${ARCHIVE_DB_URL}

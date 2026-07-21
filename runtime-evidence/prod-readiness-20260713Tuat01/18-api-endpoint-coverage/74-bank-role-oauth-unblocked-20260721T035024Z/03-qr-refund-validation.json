@@ -1,0 +1,1 @@
+{"httpStatus":404,"endpoint":"POST /v1/qr/refund","response":{"errorCode":"TRF-001","message":"Original QR transaction not found: NONEXISTENT-TXN-001"},"note":"Auth + business validation confirmed live."}

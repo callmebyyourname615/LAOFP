@@ -1,0 +1,917 @@
+Script started on Tue Jul 21 11:09:51 2026
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h>....                                                   
+[7mBANK_TOKEN=$(curl -k -sS "${CERT[@]}" \[27m[K
+[7m  -X POST "$BASE/v1/oauth/token" \[27m[K
+[7m  -H 'Content-Type: application/x-www-form-urlencoded' \[27m[K
+[7m  -d "grant_type=client_credentials&client_id=$CID&client_secret=$CSEC" \[27m[K
+[7m  | jq -r '.access_token')[27m[K
+[7mBAUTH=(-H "Authorization: Bearer $BANK_TOKEN")[27m[K
+[7mecho "admin token: ${#ADMIN_TOKEN}, bank token: ${#BANK_TOKEN}"[27m[K
+[K
+[7mFAKEUUID="00000000-0000-0000-0000-000000000001"[27m[K
+[7mFAKEINSTR="PROBE-NONEXISTENT-INSTRUCTION-0001"[27m[K
+[K
+[7mecho[27m[K
+[7mecho "=== Settlement instruction mutations (should reach business 404) ==="[27m[K
+[7mfor ACT in approve reject send-rtgs record-rtgs-upload; do[27m[K
+[7m  echo "--- POST .../instructions/$FAKEINSTR/$ACT ---"[27m[K
+[7m  curl -k -sS -w '\nHTTP:%{http_code}\n' "${CERT[@]}" "${AUTH[@]}" \[27m[K
+[7m    -X POST "$BASE/api/operations/settlement/instructions/$FAKEINSTR/$ACT" \[27m[K
+[7m    -H 'Content-Type: application/json' -d '{"note":"probe","reason":"probe"}'[27m[K
+[7mdone[27m[K
+[K
+[7mecho[27m[K
+[7mecho "=== Dead-letter mutations (should reach business 404 or 400) ==="[27m[K
+[7mfor ACT in request-replay approve-replay execute-replay discard; do[27m[K
+[7m  echo "--- POST /v1/operations/dead-letters/999999/$ACT ---"[27m[K
+[7m  curl -k -sS -w '\nHTTP:%{http_code}\n' "${CERT[@]}" "${AUTH[@]}" \[27m[K
+[7m    -X POST "$BASE/v1/operations/dead-letters/999999/$ACT" \[27m[K
+[7m    -H 'Content-Type: application/json' -d '{"reason":"probe"}'[27m[K
+[7mdone[27m[K
+[K
+[7mecho[27m[K
+[7mecho "=== Webhook mutations with fake webhookId (should reach 404 not found) ==="[27m[K
+[7mfor M in "GET|" "DELETE|" "POST|/test" "POST|/secret/rotate"; do[27m[K
+[7m  METHOD="${M%|*}"; SUB="${M#*|}"[27m[K
+[7m  echo "--- $METHOD /v1/webhooks/$FAKEUUID$SUB ---"[27m[K
+[7m  BODY=""[27m[K
+[7m  [ "$SUB" = "/secret/rotate" ] && BODY='{"newSigningSecret":"probe-min-32-chars-y[7my[7myyyyyyyyyyyy"}'[27m[K
+[7m  if [ -n "$BODY" ]; then[27m[K
+[7m    curl -k -sS -w '\nHTTP:%{http_code}\n' "${CERT[@]}" "${BAUTH[@]}" \[27m[K
+[7m      -X "$METHOD" "$BASE/v1/webhooks/$FAKEUUID$SUB" \[27m[K
+[7m      -H 'Content-Type: application/json' -d "$BODY"[27m[K
+[7m  else[27m[K
+[7m    curl -k -sS -w '\nHTTP:%{http_code}\n' "${CERT[@]}" "${BAUTH[@]}" \[27m[K
+[7m      -X "$METHOD" "$BASE/v1/webhooks/$FAKEUUID$SUB"[27m[K
+[7m  fi[27m[K
+[7mdone[27m[K
+[7mSCRIPT[27m[K
+[7mbash /tmp/probe_remaining.sh[27m[K[47A[27mB[27mA[27mN[27mK[27m_[27mT[27mO[27mK[27mE[27mN[27m=[27m$[27m([27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m"[27m$[27m{[27mC[27mE[27mR[27mT[27m[[27m@[27m][27m}[27m"[27m [27m\[1B[27m [27m [27m-[27mX[27m [27mP[27mO[27mS[27mT[27m [27m"[27m$[27mB[27mA[27mS[27mE[27m/[27mv[27m1[27m/[27mo[27ma[27mu[27mt[27mh[27m/[27mt[27mo[27mk[27me[27mn[27m"[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mx[27m-[27mw[27mw[27mw[27m-[27mf[27mo[27mr[27mm[27m-[27mu[27mr[27ml[27me[27mn[27mc[27mo[27md[27me[27md[27m'[27m [27m\[1B[27m [27m [27m-[27md[27m [27m"[27mg[27mr[27ma[27mn[27mt[27m_[27mt[27my[27mp[27me[27m=[27mc[27ml[27mi[27me[27mn[27mt[27m_[27mc[27mr[27me[27md[27me[27mn[27mt[27mi[27ma[27ml[27ms[27m&[27mc[27ml[27mi[27me[27mn[27mt[27m_[27mi[27md[27m=[27m$[27mC[27mI[27mD[27m&[27mc[27ml[27mi[27me[27mn[27mt[27m_[27ms[27me[27mc[27mr[27me[27mt[27m=[27m$[27mC[27mS[27mE[27mC[27m"[27m [27m\[1B[27m [27m [27m|[27m [27mj[27mq[27m [27m-[27mr[27m [27m'[27m.[27ma[27mc[27mc[27me[27ms[27ms[27m_[27mt[27mo[27mk[27me[27mn[27m'[27m)[1B[27mB[27mA[27mU[27mT[27mH[27m=[27m([27m-[27mH[27m [27m"[27mA[27mu[27mt[27mh[27mo[27mr[27mi[27mz[27ma[27mt[27mi[27mo[27mn[27m:[27m [27mB[27me[27ma[27mr[27me[27mr[27m [27m$[27mB[27mA[27mN[27mK[27m_[27mT[27mO[27mK[27mE[27mN[27m"[27m)[1B[27me[27mc[27mh[27mo[27m [27m"[27ma[27md[27mm[27mi[27mn[27m [27mt[27mo[27mk[27me[27mn[27m:[27m [27m$[27m{[27m#[27mA[27mD[27mM[27mI[27mN[27m_[27mT[27mO[27mK[27mE[27mN[27m}[27m,[27m [27mb[27ma[27mn[27mk[27m [27mt[27mo[27mk[27me[27mn[27m:[27m [27m$[27m{[27m#[27mB[27mA[27mN[27mK[27m_[27mT[27mO[27mK[27mE[27mN[27m}[27m"[2B[27mF[27mA[27mK[27mE[27mU[27mU[27mI[27mD[27m=[27m"[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m1[27m"[1B[27mF[27mA[27mK[27mE[27mI[27mN[27mS[27mT[27mR[27m=[27m"[27mP[27mR[27mO[27mB[27mE[27m-[27mN[27mO[27mN[27mE[27mX[27mI[27mS[27mT[27mE[27mN[27mT[27m-[27mI[27mN[27mS[27mT[27mR[27mU[27mC[27mT[27mI[27mO[27mN[27m-[27m0[27m0[27m0[27m1[27m"[2B[27me[27mc[27mh[27mo[1B[27me[27mc[27mh[27mo[27m [27m"[27m=[27m=[27m=[27m [27mS[27me[27mt[27mt[27ml[27me[27mm[27me[27mn[27mt[27m [27mi[27mn[27ms[27mt[27mr[27mu[27mc[27mt[27mi[27mo[27mn[27m [27mm[27mu[27mt[27ma[27mt[27mi[27mo[27mn[27ms[27m [27m([27ms[27mh[27mo[27mu[27ml[27md[27m [27mr[27me[27ma[27mc[27mh[27m [27mb[27mu[27ms[27mi[27mn[27me[27ms[27ms[27m [27m4[27m0[27m4[27m)[27m [27m=[27m=[27m=[27m"[1B[27mf[27mo[27mr[27m [27mA[27mC[27mT[27m [27mi[27mn[27m [27ma[27mp[27mp[27mr[27mo[27mv[27me[27m [27mr[27me[27mj[27me[27mc[27mt[27m [27ms[27me[27mn[27md[27m-[27mr[27mt[27mg[27ms[27m [27mr[27me[27mc[27mo[27mr[27md[27m-[27mr[27mt[27mg[27ms[27m-[27mu[27mp[27ml[27mo[27ma[27md[27m;[27m [27md[27mo[1B[27m [27m [27me[27mc[27mh[27mo[27m [27m"[27m-[27m-[27m-[27m [27mP[27mO[27mS[27mT[27m [27m.[27m.[27m.[27m/[27mi[27mn[27ms[27mt[27mr[27mu[27mc[27mt[27mi[27mo[27mn[27ms[27m/[27m$[27mF[27mA[27mK[27mE[27mI[27mN[27mS[27mT[27mR[27m/[27m$[27mA[27mC[27mT[27m [27m-[27m-[27m-[27m"[1B[27m [27m [27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mw[27m [27m'[27m\[27mn[27mH[27mT[27mT[27mP[27m:[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m\[27mn[27m'[27m [27m"[27m$[27m{[27mC[27mE[27mR[27mT[27m[[27m@[27m][27m}[27m"[27m [27m"[27m$[27m{[27mA[27mU[27mT[27mH[27m[[27m@[27m][27m}[27m"[27m [27m\[1B[27m [27m [27m [27m [27m-[27mX[27m [27mP[27mO[27mS[27mT[27m [27m"[27m$[27mB[27mA[27mS[27mE[27m/[27ma[27mp[27mi[27m/[27mo[27mp[27me[27mr[27ma[27mt[27mi[27mo[27mn[27ms[27m/[27ms[27me[27mt[27mt[27ml[27me[27mm[27me[27mn[27mt[27m/[27mi[27mn[27ms[27mt[27mr[27mu[27mc[27mt[27mi[27mo[27mn[27ms[27m/[27m$[27mF[27mA[27mK[27mE[27mI[27mN[27mS[27mT[27mR[27m/[27m$[27mA[27mC[27mT[27m"[27m [27m\[1B[27m [27m [27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m-[27md[27m [27m'[27m{[27m"[27mn[27mo[27mt[27me[27m"[27m:[27m"[27mp[27mr[27mo[27mb[27me[27m"[27m,[27m"[27mr[27me[27ma[27ms[27mo[27mn[27m"[27m:[27m"[27mp[27mr[27mo[27mb[27me[27m"[27m}[27m'[1B[27md[27mo[27mn[27me[2B[27me[27mc[27mh[27mo[1B[27me[27mc[27mh[27mo[27m [27m"[27m=[27m=[27m=[27m [27mD[27me[27ma[27md[27m-[27ml[27me[27mt[27mt[27me[27mr[27m [27mm[27mu[27mt[27ma[27mt[27mi[27mo[27mn[27ms[27m [27m([27ms[27mh[27mo[27mu[27ml[27md[27m [27mr[27me[27ma[27mc[27mh[27m [27mb[27mu[27ms[27mi[27mn[27me[27ms[27ms[27m [27m4[27m0[27m4[27m [27mo[27mr[27m [27m4[27m0[27m0[27m)[27m [27m=[27m=[27m=[27m"[1B[27mf[27mo[27mr[27m [27mA[27mC[27mT[27m [27mi[27mn[27m [27mr[27me[27mq[27mu[27me[27ms[27mt[27m-[27mr[27me[27mp[27ml[27ma[27my[27m [27ma[27mp[27mp[27mr[27mo[27mv[27me[27m-[27mr[27me[27mp[27ml[27ma[27my[27m [27me[27mx[27me[27mc[27mu[27mt[27me[27m-[27mr[27me[27mp[27ml[27ma[27my[27m [27md[27mi[27ms[27mc[27ma[27mr[27md[27m;[27m [27md[27mo[1B[27m [27m [27me[27mc[27mh[27mo[27m [27m"[27m-[27m-[27m-[27m [27mP[27mO[27mS[27mT[27m [27m/[27mv[27m1[27m/[27mo[27mp[27me[27mr[27ma[27mt[27mi[27mo[27mn[27ms[27m/[27md[27me[27ma[27md[27m-[27ml[27me[27mt[27mt[27me[27mr[27ms[27m/[27m9[27m9[27m9[27m9[27m9[27m9[27m/[27m$[27mA[27mC[27mT[27m [27m-[27m-[27m-[27m"[1B[27m [27m [27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mw[27m [27m'[27m\[27mn[27mH[27mT[27mT[27mP[27m:[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m\[27mn[27m'[27m [27m"[27m$[27m{[27mC[27mE[27mR[27mT[27m[[27m@[27m][27m}[27m"[27m [27m"[27m$[27m{[27mA[27mU[27mT[27mH[27m[[27m@[27m][27m}[27m"[27m [27m\[1B[27m [27m [27m [27m [27m-[27mX[27m [27mP[27mO[27mS[27mT[27m [27m"[27m$[27mB[27mA[27mS[27mE[27m/[27mv[27m1[27m/[27mo[27mp[27me[27mr[27ma[27mt[27mi[27mo[27mn[27ms[27m/[27md[27me[27ma[27md[27m-[27ml[27me[27mt[27mt[27me[27mr[27ms[27m/[27m9[27m9[27m9[27m9[27m9[27m9[27m/[27m$[27mA[27mC[27mT[27m"[27m [27m\[1B[27m [27m [27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m-[27md[27m [27m'[27m{[27m"[27mr[27me[27ma[27ms[27mo[27mn[27m"[27m:[27m"[27mp[27mr[27mo[27mb[27me[27m"[27m}[27m'[1B[27md[27mo[27mn[27me[2B[27me[27mc[27mh[27mo[1B[27me[27mc[27mh[27mo[27m [27m"[27m=[27m=[27m=[27m [27mW[27me[27mb[27mh[27mo[27mo[27mk[27m [27mm[27mu[27mt[27ma[27mt[27mi[27mo[27mn[27ms[27m [27mw[27mi[27mt[27mh[27m [27mf[27ma[27mk[27me[27m [27mw[27me[27mb[27mh[27mo[27mo[27mk[27mI[27md[27m [27m([27ms[27mh[27mo[27mu[27ml[27md[27m [27mr[27me[27ma[27mc[27mh[27m [27m4[27m0[27m4[27m [27mn[27mo[27mt[27m [27mf[27mo[27mu[27mn[27md[27m)[27m [27m=[27m=[27m=[27m"[1B[27mf[27mo[27mr[27m [27mM[27m [27mi[27mn[27m [27m"[27mG[27mE[27mT[27m|[27m"[27m [27m"[27mD[27mE[27mL[27mE[27mT[27mE[27m|[27m"[27m [27m"[27mP[27mO[27mS[27mT[27m|[27m/[27mt[27me[27ms[27mt[27m"[27m [27m"[27mP[27mO[27mS[27mT[27m|[27m/[27ms[27me[27mc[27mr[27me[27mt[27m/[27mr[27mo[27mt[27ma[27mt[27me[27m"[27m;[27m [27md[27mo[1B[27m [27m [27mM[27mE[27mT[27mH[27mO[27mD[27m=[27m"[27m$[27m{[27mM[27m%[27m|[27m*[27m}[27m"[27m;[27m [27mS[27mU[27mB[27m=[27m"[27m$[27m{[27mM[27m#[27m*[27m|[27m}[27m"[1B[27m [27m [27me[27mc[27mh[27mo[27m [27m"[27m-[27m-[27m-[27m [27m$[27mM[27mE[27mT[27mH[27mO[27mD[27m [27m/[27mv[27m1[27m/[27mw[27me[27mb[27mh[27mo[27mo[27mk[27ms[27m/[27m$[27mF[27mA[27mK[27mE[27mU[27mU[27mI[27mD[27m$[27mS[27mU[27mB[27m [27m-[27m-[27m-[27m"[1B[27m [27m [27mB[27mO[27mD[27mY[27m=[27m"[27m"[1B[27m [27m [27m[[27m [27m"[27m$[27mS[27mU[27mB[27m"[27m [27m=[27m [27m"[27m/[27ms[27me[27mc[27mr[27me[27mt[27m/[27mr[27mo[27mt[27ma[27mt[27me[27m"[27m [27m][27m [27m&[27m&[27m [27mB[27mO[27mD[27mY[27m=[27m'[27m{[27m"[27mn[27me[27mw[27mS[27mi[27mg[27mn[27mi[27mn[27mg[27mS[27me[27mc[27mr[27me[27mt[27m"[27m:[27m"[27mp[27mr[27mo[27mb[27me[27m-[27mm[27mi[27mn[27m-[27m3[27m2[27m-[27mc[27mh[27ma[27mr[27ms[27m-[27myy[27my[27my[27my[27my[27my[27my[27my[27my[27my[27my[27my[27my[27m"[27m}[27m'[1B[27m [27m [27mi[27mf[27m [27m[[27m [27m-[27mn[27m [27m"[27m$[27mB[27mO[27mD[27mY[27m"[27m [27m][27m;[27m [27mt[27mh[27me[27mn[1B[27m [27m [27m [27m [27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mw[27m [27m'[27m\[27mn[27mH[27mT[27mT[27mP[27m:[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m\[27mn[27m'[27m [27m"[27m$[27m{[27mC[27mE[27mR[27mT[27m[[27m@[27m][27m}[27m"[27m [27m"[27m$[27m{[27mB[27mA[27mU[27mT[27mH[27m[[27m@[27m][27m}[27m"[27m [27m\[1B[27m [27m [27m [27m [27m [27m [27m-[27mX[27m [27m"[27m$[27mM[27mE[27mT[27mH[27mO[27mD[27m"[27m [27m"[27m$[27mB[27mA[27mS[27mE[27m/[27mv[27m1[27m/[27mw[27me[27mb[27mh[27mo[27mo[27mk[27ms[27m/[27m$[27mF[27mA[27mK[27mE[27mU[27mU[27mI[27mD[27m$[27mS[27mU[27mB[27m"[27m [27m\[1B[27m [27m [27m [27m [27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m-[27md[27m [27m"[27m$[27mB[27mO[27mD[27mY[27m"[1B[27m [27m [27me[27ml[27ms[27me[1B[27m [27m [27m [27m [27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mw[27m [27m'[27m\[27mn[27mH[27mT[27mT[27mP[27m:[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m\[27mn[27m'[27m [27m"[27m$[27m{[27mC[27mE[27mR[27mT[27m[[27m@[27m][27m}[27m"[27m [27m"[27m$[27m{[27mB[27mA[27mU[27mT[27mH[27m[[27m@[27m][27m}[27m"[27m [27m\[1B[27m [27m [27m [27m [27m [27m [27m-[27mX[27m [27m"[27m$[27mM[27mE[27mT[27mH[27mO[27mD[27m"[27m [27m"[27m$[27mB[27mA[27mS[27mE[27m/[27mv[27m1[27m/[27mw[27me[27mb[27mh[27mo[27mo[27mk[27ms[27m/[27m$[27mF[27mA[27mK[27mE[27mU[27mU[27mI[27mD[27m$[27mS[27mU[27mB[27m"[1B[27m [27m [27mf[27mi[1B[27md[27mo[27mn[27me[1B[27mS[27mC[27mR[27mI[27mP[27mT[1B[27mb[27ma[27ms[27mh[27m [27m/[27mt[27mm[27mp[27m/[27mp[27mr[27mo[27mb[27me[27m_[27mr[27me[27mm[27ma[27mi[27mn[27mi[27mn[27mg[27m.[27ms[27mh[?2004l
+admin token: 1048, bank token: 311
+
+=== Settlement instruction mutations (should reach business 404) ===
+--- POST .../instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/approve ---
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"SET-003","layer":"SETTLEMENT","message":"Settlement instruction not found: PROBE-NONEXISTENT-INSTRUCTION-0001","path":"/api/operations/settlement/instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/approve","phase":"VALIDATE_REQUEST","requestId":"84a5de04-37c1-45c1-9710-1386296ca3c9","retryable":false,"status":404,"timestamp":"2026-07-21T04:10:11.46281968","traceId":null}
+HTTP:404
+--- POST .../instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/reject ---
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"SET-003","layer":"SETTLEMENT","message":"Settlement instruction not found: PROBE-NONEXISTENT-INSTRUCTION-0001","path":"/api/operations/settlement/instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/reject","phase":"VALIDATE_REQUEST","requestId":"9c9fc7ea-bd46-4e5c-9d52-b84cc7285331","retryable":false,"status":404,"timestamp":"2026-07-21T04:10:11.494799484","traceId":null}
+HTTP:404
+--- POST .../instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/send-rtgs ---
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"SET-003","layer":"SETTLEMENT","message":"Settlement instruction not found: PROBE-NONEXISTENT-INSTRUCTION-0001","path":"/api/operations/settlement/instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/send-rtgs","phase":"VALIDATE_REQUEST","requestId":"fe599ba9-a95a-4515-ae5c-999735420fa5","retryable":false,"status":404,"timestamp":"2026-07-21T04:10:11.523873016","traceId":null}
+HTTP:404
+--- POST .../instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/record-rtgs-upload ---
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"SET-003","layer":"SETTLEMENT","message":"Settlement instruction not found: PROBE-NONEXISTENT-INSTRUCTION-0001","path":"/api/operations/settlement/instructions/PROBE-NONEXISTENT-INSTRUCTION-0001/record-rtgs-upload","phase":"VALIDATE_REQUEST","requestId":"d3f81e3f-bbe3-4245-9aef-1f3c45f73881","retryable":false,"status":404,"timestamp":"2026-07-21T04:10:11.550879369","traceId":null}
+HTTP:404
+
+=== Dead-letter mutations (should reach business 404 or 400) ===
+--- POST /v1/operations/dead-letters/999999/request-replay ---
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"dead letter not found: 999999","path":"/v1/operations/dead-letters/999999/request-replay","phase":"VALIDATE_REQUEST","requestId":"32f2b691-2e12-4f97-9893-d6dbcbde67b0","retryable":false,"status":400,"timestamp":"2026-07-21T04:10:11.577962949","traceId":null}
+HTTP:400
+--- POST /v1/operations/dead-letters/999999/approve-replay ---
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"dead letter not found: 999999","path":"/v1/operations/dead-letters/999999/approve-replay","phase":"VALIDATE_REQUEST","requestId":"53b2f098-0a35-43e0-8e2e-1210ee39b2b8","retryable":false,"status":400,"timestamp":"2026-07-21T04:10:11.604729579","traceId":null}
+HTTP:400
+--- POST /v1/operations/dead-letters/999999/execute-replay ---
+{"status":403,"error":"FORBIDDEN","errorCode":"SEC-BG-001","message":"Valid break-glass authorization required"}
+HTTP:403
+--- POST /v1/operations/dead-letters/999999/discard ---
+{"status":403,"error":"FORBIDDEN","errorCode":"SEC-BG-001","message":"Valid break-glass authorization required"}
+HTTP:403
+
+=== Webhook mutations with fake webhookId (should reach 404 not found) ===
+--- GET /v1/webhooks/00000000-0000-0000-0000-000000000001 ---
+
+HTTP:404
+--- DELETE /v1/webhooks/00000000-0000-0000-0000-000000000001 ---
+
+HTTP:204
+--- POST /v1/webhooks/00000000-0000-0000-0000-000000000001/test ---
+
+HTTP:404
+--- POST /v1/webhooks/00000000-0000-0000-0000-000000000001/secret/rotate ---
+{"category":"REQUEST","details":{"signingSecret":"signingSecret is required"},"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"Request validation failed","path":"/v1/webhooks/00000000-0000-0000-0000-000000000001/secret/rotate","phase":"VALIDATE_REQUEST","requestId":"52bc7938-b9e4-41bc-8071-a7f6c6215dde","retryable":false,"status":400,"timestamp":"2026-07-21T04:10:11.752588812","traceId":null}
+HTTP:400
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hsssh root@175.11.0.200[?2004l
+root@175.11.0.200's password: 
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Last login: Tue Jul 21 13:15:24 2026 from 175.17.5.14
+]0;root@localhost:~[?2004h[root@localhost ~]# 
+[?2004l]0;root@localhost:~[?2004h[root@localhost ~]# 
+[?2004l]0;root@localhost:~[?2004h[root@localhost ~]# 
+[?2004l]0;root@localhost:~[?2004h[root@localhost ~]# cd p[Ko/[K[K/oย[Kpt/d[Kswitching/
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# docker p[Kimages;
+[?2004l                                                              [1m[106m[30mi[0m[0m [96mInfo → [0m[0m [38;5;0m[48;5;14m U [0m In Use
+[39m[1mIMAGE[0m                             [39m[1mID[0m             [39m[1mDISK USAGE[0m   [39m[1mCONTENT SIZE[0m   [39m[1mEXTRA[0m
+[34m[1madmin-switching-portal:latest[0m     [39mcc5c5a349380[0m        [39m232MB[0m         [39m58.3MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:latest[0m
+                                  [39mef92344183a1[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-141527[0m
+                                  [39m0e9f9d85d374[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-141558[0m
+                                  [39m0e9f9d85d374[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-141758[0m
+                                  [39m0e9f9d85d374[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-142040[0m
+                                  [39m49bfffbd35e8[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-142120[0m
+                                  [39m49bfffbd35e8[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal:latest[0m      [39m21a4b64605f7[0m       [39m72.9MB[0m         [39m21.2MB[0m        
+[34m[1meclipse-temurin:21-jdk[0m            [39m762d16be48b9[0m        [39m722MB[0m          [39m229MB[0m        
+[34m[1mgrafana/grafana:13.1.0[0m            [39m121a7a9ece6d[0m       [39m1.57GB[0m          [39m378MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mjenkins/jenkins:lts-jdk21[0m         [39me82bbdcffb63[0m        [39m804MB[0m          [39m292MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mlapnet-admin:v2[0m                   [39m32d91d61e636[0m        [39m106MB[0m           [39m37MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mlapnet-backend:v2[0m                 [39m0b9e086429a2[0m       [39m1.25GB[0m          [39m342MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mlapnet-website:v2[0m                 [39mbbd44dc540c7[0m        [39m290MB[0m          [39m126MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mminio/mc:RELEASE.2025-04-16T18-13-26Z[0m
+                                  [39maead63c77f9d[0m        [39m115MB[0m         [39m29.6MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mminio/minio:RELEASE.2025-04-22T22-12-26Z[0m
+                                  [39ma1ea29fa2835[0m        [39m249MB[0m           [39m64MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mmysql:8.0[0m                         [39m7dcddc01f13b[0m        [39m1.1GB[0m          [39m249MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mnginx:1.27-alpine[0m                 [39m65645c7bb6a0[0m         [39m73MB[0m         [39m21.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mpostgres:16[0m                       [39mab47a724d0e3[0m        [39m636MB[0m          [39m166MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mprom/prometheus:v3.12.0[0m           [39m69f524141883[0m        [39m592MB[0m          [39m156MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mredpandadata/redpanda:v24.3.6[0m     [39m04baa40ed34e[0m        [39m688MB[0m          [39m203MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mswitching-app:latest[0m              [39m957a77f54307[0m        [39m881MB[0m          [39m319MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mswitching-backup-full:latest[0m      [39m98cbe6e4df80[0m        [39m843MB[0m          [39m193MB[0m        
+]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# dic[K[Kokcer[K[K[K[Kcker ps -a
+[?2004lCONTAINER ID   IMAGE                                      COMMAND                   CREATED       STATUS                   PORTS                                                                                                                   NAMES
+4dd9e319bbcf   switching-app                              "sh -c 'exec java ${…"    4 hours ago   Up 4 hours               0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp                                                                             switching-app
+852f70a0220a   postgres:16                                "docker-entrypoint.s…"    4 days ago    Up 4 days (healthy)      0.0.0.0:5435->5432/tcp, [::]:5435->5432/tcp                                                                             switching-postgres-read-replica
+e6d39be37fee   minio/mc:RELEASE.2025-04-16T18-13-26Z      "/bin/sh -c '\n  mc a…"   4 days ago    Exited (0) 4 hours ago                                                                                                                           switching-minio-init
+28e2caaf1ff0   postgres:16                                "docker-entrypoint.s…"    4 days ago    Up 4 days (healthy)      0.0.0.0:5434->5432/tcp, [::]:5434->5432/tcp                                                                             switching-postgres-archive
+7f68b7d7a055   postgres:16                                "docker-entrypoint.s…"    4 days ago    Up 4 days (healthy)      0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp                                                                             switching-postgres
+8072def5893a   minio/minio:RELEASE.2025-04-22T22-12-26Z   "/usr/bin/docker-ent…"    4 days ago    Up 4 days (healthy)      0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp                                                         switching-minio
+86256774f082   nginx:1.27-alpine                          "/docker-entrypoint.…"    5 days ago    Up 5 days                0.0.0.0:18085->80/tcp, [::]:18085->80/tcp                                                                               admin-switching-portal
+47351df17c24   admin-switching-portal:latest              "docker-entrypoint.s…"    5 days ago    Up 5 days (healthy)      3000/tcp                                                                                                                admin-switching-app
+e27f71fc7a84   nginx:1.27-alpine                          "/docker-entrypoint.…"    6 days ago    Up 6 days                0.0.0.0:18082->80/tcp, [::]:18082->80/tcp                                                                               bank-portal
+fe933e6fe5cf   bank-simulator-portal-app:latest           "docker-entrypoint.s…"    6 days ago    Up 6 days                3000/tcp                                                                                                                bank-portal-app
+7891e26315f2   redpandadata/redpanda:v24.3.6              "/entrypoint.sh redp…"    7 days ago    Up 7 days (healthy)      8081-8082/tcp, 0.0.0.0:9644->9644/tcp, [::]:9644->9644/tcp, 9092/tcp, 0.0.0.0:19092->19092/tcp, [::]:19092->19092/tcp   switching-redpanda
+e82a964cb6a7   jenkins/jenkins:lts-jdk21                  "/usr/bin/tini -- /u…"    12 days ago   Up 11 days (healthy)     50000/tcp, 0.0.0.0:18083->8080/tcp, [::]:18083->8080/tcp                                                                jenkins-controller
+8fc6747f0b5c   nginx:1.27-alpine                          "/docker-entrypoint.…"    13 days ago   Up 11 days               80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp                                                                         switching-nginx-mtls
+ff1060b88d31   lapnet-website:v2                          "/docker-entrypoint.…"    2 weeks ago   Up 11 days (healthy)     0.0.0.0:18080->80/tcp                                                                                                   lapnet-v2-website
+ff323b518e16   lapnet-backend:v2                          "docker-entrypoint.s…"    2 weeks ago   Up 11 days               0.0.0.0:13000->3000/tcp                                                                                                 lapnet-v2-backend
+656a72f90c90   lapnet-admin:v2                            "/docker-entrypoint.…"    2 weeks ago   Up 11 days (healthy)     0.0.0.0:18081->80/tcp                                                                                                   lapnet-v2-admin
+0fc92538566d   mysql:8.0                                  "docker-entrypoint.s…"    2 weeks ago   Up 11 days (healthy)     33060/tcp, 127.0.0.1:13306->3306/tcp                                                                                    lapnet-v2-mysql
+33212521b2c2   grafana/grafana:13.1.0                     "/run.sh"                 3 weeks ago   Up 11 days               127.0.0.1:3000->3000/tcp                                                                                                switching-grafana
+1944eb7b8251   prom/prometheus:v3.12.0                    "/bin/prometheus --c…"    3 weeks ago   Up 11 days (healthy)     127.0.0.1:9090->9090/tcp                                                                                                switching-prometheus
+]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# clear
+[?2004l[H[2J[3J]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# docker [K ima[Kages;
+[?2004l                                                              [1m[106m[30mi[0m[0m [96mInfo → [0m[0m [38;5;0m[48;5;14m U [0m In Use
+[39m[1mIMAGE[0m                             [39m[1mID[0m             [39m[1mDISK USAGE[0m   [39m[1mCONTENT SIZE[0m   [39m[1mEXTRA[0m
+[34m[1madmin-switching-portal:latest[0m     [39mcc5c5a349380[0m        [39m232MB[0m         [39m58.3MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:latest[0m
+                                  [39mef92344183a1[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-141527[0m
+                                  [39m0e9f9d85d374[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-141558[0m
+                                  [39m0e9f9d85d374[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-141758[0m
+                                  [39m0e9f9d85d374[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-142040[0m
+                                  [39m49bfffbd35e8[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal-app:rollback-20260710-142120[0m
+                                  [39m49bfffbd35e8[0m        [39m229MB[0m         [39m57.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mbank-simulator-portal:latest[0m      [39m21a4b64605f7[0m       [39m72.9MB[0m         [39m21.2MB[0m        
+[34m[1meclipse-temurin:21-jdk[0m            [39m762d16be48b9[0m        [39m722MB[0m          [39m229MB[0m        
+[34m[1mgrafana/grafana:13.1.0[0m            [39m121a7a9ece6d[0m       [39m1.57GB[0m          [39m378MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mjenkins/jenkins:lts-jdk21[0m         [39me82bbdcffb63[0m        [39m804MB[0m          [39m292MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mlapnet-admin:v2[0m                   [39m32d91d61e636[0m        [39m106MB[0m           [39m37MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mlapnet-backend:v2[0m                 [39m0b9e086429a2[0m       [39m1.25GB[0m          [39m342MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mlapnet-website:v2[0m                 [39mbbd44dc540c7[0m        [39m290MB[0m          [39m126MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mminio/mc:RELEASE.2025-04-16T18-13-26Z[0m
+                                  [39maead63c77f9d[0m        [39m115MB[0m         [39m29.6MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mminio/minio:RELEASE.2025-04-22T22-12-26Z[0m
+                                  [39ma1ea29fa2835[0m        [39m249MB[0m           [39m64MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mmysql:8.0[0m                         [39m7dcddc01f13b[0m        [39m1.1GB[0m          [39m249MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mnginx:1.27-alpine[0m                 [39m65645c7bb6a0[0m         [39m73MB[0m         [39m21.9MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mpostgres:16[0m                       [39mab47a724d0e3[0m        [39m636MB[0m          [39m166MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mprom/prometheus:v3.12.0[0m           [39m69f524141883[0m        [39m592MB[0m          [39m156MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mredpandadata/redpanda:v24.3.6[0m     [39m04baa40ed34e[0m        [39m688MB[0m          [39m203MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mswitching-app:latest[0m              [39m957a77f54307[0m        [39m881MB[0m          [39m319MB[0m   [38;5;0m[48;5;14m U [0m  
+[34m[1mswitching-backup-full:latest[0m      [39m98cbe6e4df80[0m        [39m843MB[0m          [39m193MB[0m        
+]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# แสำฟพ
+[?2004lbash: แสำฟพ: command not found...
+c]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# c[Kclear
+[?2004l[H[2J[3J]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# cat >/tmp/remove-retired-apps.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+images=(
+  admin-switching-portal:latest
+  bank-simulator-portal-app:latest
+[7m  bank-simulator-portal-app:rollback-20260710-141527[27m
+[7m  bank-simulator-portal-app:rollback-20260710-141558[27m
+[7m  bank-simulator-portal-app:rollback-20260710-141758[27m
+[7m  bank-simulator-portal-app:rollback-20260710-142040[27m
+[7m  bank-simulator-portal-app:rollback-20260710-142120[27m
+[7m  lapnet-admin:v2[27m
+[7m  lapnet-backend:v2[27m
+[7m  lapnet-website:v2[27m
+[7m)[27m
+
+[7mcontainers=()[27m
+[7mfor image in "${images[@]}"; do[27m
+[7m  while IFS= read -r id; do[27m
+[7m    [ -n "$id" ] && containers+=("$id")[27m
+[7m  done < <(docker ps -aq --filter "ancestor=$image")[27m
+[7mdone[27m
+
+[7mmapfile -t containers < <(printf '%s\n' "${containers[@]:-}" | sort -u | sed '/^$/[27m[7md[27m[7m') [27m
+
+[7mvolumes=()[27m
+[7mif [ "${#containers[@]}" -gt 0 ]; then[27m
+[7m  mapfile -t volumes < <([27m
+[7m    docker inspect -f '{{range .Mounts}}{{if eq .Type "volume"}}{{.Name}}{{"\n"}}{[27m[7m{[27m[7mend}}{{end}}' \ [27m
+[7m      "${containers[@]}" | sort -u | sed '/^$/d'[27m
+[7m  )[27m
+
+[7m  echo "Stopping containers:"[27m
+[7m  printf '  %s\n' "${containers[@]}"[27m
+[7m  docker stop "${containers[@]}"[27m
+
+[7m  echo "Removing containers:"[27m
+[7m  docker rm "${containers[@]}"[27m
+[7mfi[27m
+
+[7mecho "Removing images:"[27m
+[7mdocker image rm "${images[@]}"[27m
+
+[7mif [ "${#volumes[@]}" -gt 0 ]; then[27m
+[7m  echo "Removing named volumes:"[27m
+[7m  printf '  %s\n' "${volumes[@]}"[27m
+[7m  docker volume rm "${volumes[@]}"[27m[7mfi[27m[7mdocker system df[27m[7mEOF[27m[7mbash /tmp/remove-retired-apps.sh[27m[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A  bank-simulator-portal-app:rollback-20260710-141527
+  bank-simulator-portal-app:rollback-20260710-141558
+  bank-simulator-portal-app:rollback-20260710-141758
+  bank-simulator-portal-app:rollback-20260710-142040
+  bank-simulator-portal-app:rollback-20260710-142120
+  lapnet-admin:v2
+  lapnet-backend:v2
+  lapnet-website:v2
+)
+
+containers=()
+for image in "${images[@]}"; do
+  while IFS= read -r id; do
+    [ -n "$id" ] && containers+=("$id")
+  done < <(docker ps -aq --filter "ancestor=$image")
+done
+
+mapfile -t containers < <(printf '%s\n' "${containers[@]:-}" | sort -u | sed '/^$/d')
+
+volumes=()
+if [ "${#containers[@]}" -gt 0 ]; then
+  mapfile -t volumes < <(
+    docker inspect -f '{{range .Mounts}}{{if eq .Type "volume"}}{{.Name}}{{"\n"}}{{end}}{{end}}' \
+      "${containers[@]}" | sort -u | sed '/^$/d'
+  )
+
+  echo "Stopping containers:"
+  printf '  %s\n' "${containers[@]}"
+  docker stop "${containers[@]}"
+
+  echo "Removing containers:"
+  docker rm "${containers[@]}"
+fi
+
+echo "Removing images:"
+docker image rm "${images[@]}"
+
+if [ "${#volumes[@]}" -gt 0 ]; then
+  echo "Removing named volumes:"
+  printf '  %s\n' "${volumes[@]}"
+  docker volume rm "${volumes[@]}"fidocker system dfEOFbash /tmp/remove-retired-apps.sh
+[?2004lStopping containers:
+  47351df17c24
+  656a72f90c90
+  fe933e6fe5cf
+  ff1060b88d31
+  ff323b518e16
+47351df17c24
+656a72f90c90
+fe933e6fe5cf
+ff1060b88d31
+ff323b518e16
+Removing containers:
+47351df17c24
+656a72f90c90
+fe933e6fe5cf
+ff1060b88d31
+ff323b518e16
+Removing images:
+Untagged: admin-switching-portal:latest
+Deleted: sha256:cc5c5a349380b1bd094918fdaeaf0ebc038dc49d68099f0643734640fc3fda35
+Untagged: bank-simulator-portal-app:latest
+Deleted: sha256:ef92344183a18b29b1a7d25d75706f596fe9d78667cf15a37c5a7826cc822431
+Untagged: bank-simulator-portal-app:rollback-20260710-141527
+Untagged: bank-simulator-portal-app:rollback-20260710-141558
+Untagged: bank-simulator-portal-app:rollback-20260710-141758
+Deleted: sha256:0e9f9d85d3745782c60752b17eb908b47f0d1289f136c763912a4ac2efb88b31
+Untagged: bank-simulator-portal-app:rollback-20260710-142040
+Untagged: bank-simulator-portal-app:rollback-20260710-142120
+Deleted: sha256:49bfffbd35e882bd82879e0dae4692c82d5f55c1992a5c0148e91891f2701eaa
+Untagged: lapnet-admin:v2
+Deleted: sha256:32d91d61e636f98ba5d41280c7338a5a34737275045554faeaaa0efbd211bfb2
+Untagged: lapnet-backend:v2
+Deleted: sha256:0b9e086429a2a7e38240f69a2f21721e7aaea0b29568469ac3cccaf5adf7bdf6
+Untagged: lapnet-website:v2
+Deleted: sha256:bbd44dc540c777658a70241b3415b6e1ba7b126c9e3e8435398955bafbd93e8a
+Removing named volumes:
+  lapnet-v2-backend-uploads
+lapnet-v2-backend-uploads
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          13        10        8.24GB    1.566GB (19%)
+Containers      14        13        5.059MB   16.38kB (0%)
+Local Volumes   11        9         1.463GB   1.108kB (0%)
+Build Cache     79        0         6.155GB   5.253GB
+]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# แสำฟพ
+[?2004lbash: แสำฟพ: command not found...
+]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# clear
+[?2004l[H[2J[3J]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# ^C[?2004l[?2004h[?2004l
+]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# clear
+[?2004l[H[2J[3J]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# 
+[?2004l]0;root@localhost:/opt/switching[?2004h[root@localhost switching]# exit
+[?2004llogout
+Connection to 175.11.0.200 closed.
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mcd /Users/macbookpro/Desktop/Switching[27m
+[K
+[7mssh root@175.11.0.200 '[27m[K
+[7m  cd /opt/switching[27m[K
+[7m  sed -i "/^RTGS_CALLBACK_ENABLED=/d" .env[27m[K
+[7m  echo "RTGS_CALLBACK_ENABLED=false" >> .env[27m[K
+[7m'[27m[K
+[K
+[7mDEPLOY_SSH_PASSWORD='root' DEPLOY_SYNC_CONFIG=true scripts/deploy-uat-code.sh[27m[K[8A[51D[27mc[27md[27m [27m/[27mU[27ms[27me[27mr[27ms[27m/[27mm[27ma[27mc[27mb[27mo[27mo[27mk[27mp[27mr[27mo[27m/[27mD[27me[27ms[27mk[27mt[27mo[27mp[27m/[27mS[27mw[27mi[27mt[27mc[27mh[27mi[27mn[27mg[2B[27ms[27ms[27mh[27m [27mr[27mo[27mo[27mt[27m@[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m [27m'[1B[27m [27m [27mc[27md[27m [27m/[27mo[27mp[27mt[27m/[27ms[27mw[27mi[27mt[27mc[27mh[27mi[27mn[27mg[1B[27m [27m [27ms[27me[27md[27m [27m-[27mi[27m [27m"[27m/[27m^[27mR[27mT[27mG[27mS[27m_[27mC[27mA[27mL[27mL[27mB[27mA[27mC[27mK[27m_[27mE[27mN[27mA[27mB[27mL[27mE[27mD[27m=[27m/[27md[27m"[27m [27m.[27me[27mn[27mv[1B[27m [27m [27me[27mc[27mh[27mo[27m [27m"[27mR[27mT[27mG[27mS[27m_[27mC[27mA[27mL[27mL[27mB[27mA[27mC[27mK[27m_[27mE[27mN[27mA[27mB[27mL[27mE[27mD[27m=[27mf[27ma[27ml[27ms[27me[27m"[27m [27m>[27m>[27m [27m.[27me[27mn[27mv[1B[27m'[2B[27mD[27mE[27mP[27mL[27mO[27mY[27m_[27mS[27mS[27mH[27m_[27mP[27mA[27mS[27mS[27mW[27mO[27mR[27mD[27m=[27m'[27mr[27mo[27mo[27mt[27m'[27m [27mD[27mE[27mP[27mL[27mO[27mY[27m_[27mS[27mY[27mN[27mC[27m_[27mC[27mO[27mN[27mF[27mI[27mG[27m=[27mt[27mr[27mu[27me[27m [27ms[27mc[27mr[27mi[27mp[27mt[27ms[27m/[27md[27me[27mp[27ml[27mo[27my[27m-[27mu[27ma[27mt[27m-[27mc[27mo[27md[27me[27m.[27ms[27mh[?2004l
+root@175.11.0.200's password: 
+
+==> Building application jar locally
+[0m[0m
+==> Backing up current remote jar
+
+==> Uploading jar to UAT
+
+==> Synchronizing deployment configuration
+
+==> Updating mTLS trust bundle and edge configuration
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+2026/07/21 08:00:45 [notice] 616#616: signal process started
+
+==> Building Docker image on UAT
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.uat
+#1 transferring dockerfile: 515B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#2 DONE 1.8s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 468B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/eclipse-temurin:21-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3
+#4 resolve docker.io/library/eclipse-temurin:21-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3 done
+#4 DONE 0.0s
+
+#5 [2/5] WORKDIR /app
+#5 CACHED
+
+#6 [internal] load build context
+#6 ...
+
+#7 [3/5] RUN addgroup --system --gid 10001 switching  && adduser --system --uid 10001 --ingroup switching --no-create-home switching
+#7 0.203 useradd warning: switching's uid 10001 is greater than SYS_UID_MAX 999
+#7 DONE 0.2s
+
+#6 [internal] load build context
+#6 transferring context: 113.15MB 0.3s done
+#6 DONE 0.3s
+
+#8 [4/5] COPY app.jar /app/app.jar
+#8 DONE 0.1s
+
+#9 [5/5] RUN chown -R switching:switching /app
+#9 DONE 0.1s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 2.6s done
+#10 exporting manifest sha256:19f2a70ace036482539eec42b753ceb6fd17c76a11d4e83d8a92f0f8316b2948 done
+#10 exporting config sha256:55331964c0ede650705b1df6da83182064993399cea9f59526d565b0aea428df done
+#10 exporting attestation manifest sha256:8d83888b4d50188a00d2ebd66b4d150292b97a1ff87ad4110173c22c8c2db439 done
+#10 exporting manifest list sha256:0fa7b3c157350cb4aa842456acd5e96e43e4b4af0d8d4f8ec747c742614dea3e done
+#10 naming to docker.io/library/switching-app:latest done
+#10 unpacking to docker.io/library/switching-app:latest
+#10 unpacking to docker.io/library/switching-app:latest 1.0s done
+#10 DONE 3.6s
+WARNING: current commit information was not captured by the build: failed to read current commit information with git rev-parse --is-inside-work-tree
+
+==> Restarting app service
+ Container switching-minio Running 
+ Container switching-redpanda Running 
+ Container switching-postgres Running 
+ Container switching-postgres-read-replica Running 
+ Container switching-postgres-archive Running 
+ Container switching-app Recreate 
+ Container switching-app Recreated 
+ Container switching-minio Waiting 
+ Container switching-postgres Waiting 
+ Container switching-minio Healthy 
+ Container switching-minio-init Starting 
+ Container switching-postgres Healthy 
+ Container switching-minio-init Started 
+ Container switching-redpanda Waiting 
+ Container switching-postgres Waiting 
+ Container switching-postgres-read-replica Waiting 
+ Container switching-postgres-archive Waiting 
+ Container switching-minio-init Waiting 
+ Container switching-minio-init Exited 
+ Container switching-postgres-read-replica Healthy 
+ Container switching-redpanda Healthy 
+ Container switching-postgres Healthy 
+ Container switching-postgres-archive Healthy 
+ Container switching-app Starting 
+ Container switching-app Started 
+
+==> Waiting for health: https://175.11.0.200/actuator/health
+health attempt 1/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+health attempt 2/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+health attempt 3/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+{"groups":["liveness","readiness"],"status":"UP"}
+
+==> Deploy finished successfully
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mTOKEN=$(curl -k -sS https://175.11.0.200/api/auth/login [7m\[27m[K
+[7m  --cert ~/sundaybank-client.crt \[27m[K
+[7m  --key ~/sundaybank-client.key \[27m[K
+[7m  --cacert ~/uat-ca.crt \[27m[K
+[7m  -H 'Content-Type: application/json' \[27m[K
+[7m  -d '{"username":"admin","password":"SundayAdmin@2026Strong!2323"}' \[27m[K
+[7m  | jq -r '.accessToken')[27m[K
+[K
+[7mcurl -k -sS -o /tmp/rtgs-callback-disabled.json -w '%{http_code}\n' \[27m[K
+[7m  -X POST https://175.11.0.200/v1/settlement/rtgs-callback \[27m[K
+[7m  --cert ~/sundaybank-client.crt \[27m[K
+[7m  --key ~/sundaybank-client.key \[27m[K
+[7m  --cacert ~/uat-ca.crt \[27m[K
+[7m  -H "Authorization: Bearer $TOKEN" \[27m[K
+[7m  -H 'Content-Type: application/json' \[27m[K
+[7m  -d '{"instructionRef":"UAT-NONEXISTENT","status":"CONFIRMED"}'[27m[K
+[K
+[7mjq . /tmp/rtgs-callback-disabled.json[27m[K[18A[11D[27mT[27mO[27mK[27mE[27mN[27m=[27m$[27m([27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27mh[27mt[27mt[27mp[27ms[27m:[27m/[27m/[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m/[27ma[27mp[27mi[27m/[27ma[27mu[27mt[27mh[27m/[27ml[27mo[27mg[27mi[27mn[27m \[1B[27m [27m [27m-[27m-[27mc[27me[27mr[27mt[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27m-[27mk[27me[27my[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mk[27me[27my[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27ma[27mc[27me[27mr[27mt[27m [27m~[27m/[27mu[27ma[27mt[27m-[27mc[27ma[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27md[27m [27m'[27m{[27m"[27mu[27ms[27me[27mr[27mn[27ma[27mm[27me[27m"[27m:[27m"[27ma[27md[27mm[27mi[27mn[27m"[27m,[27m"[27mp[27ma[27ms[27ms[27mw[27mo[27mr[27md[27m"[27m:[27m"[27mS[27mu[27mn[27md[27ma[27my[27mA[27md[27mm[27mi[27mn[27m@[27m2[27m0[27m2[27m6[27mS[27mt[27mr[27mo[27mn[27mg[27m![27m2[27m3[27m2[27m3[27m"[27m}[27m'[27m [27m\[1B[27m [27m [27m|[27m [27mj[27mq[27m [27m-[27mr[27m [27m'[27m.[27ma[27mc[27mc[27me[27ms[27ms[27mT[27mo[27mk[27me[27mn[27m'[27m)[2B[27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mo[27m [27m/[27mt[27mm[27mp[27m/[27mr[27mt[27mg[27ms[27m-[27mc[27ma[27ml[27ml[27mb[27ma[27mc[27mk[27m-[27md[27mi[27ms[27ma[27mb[27ml[27me[27md[27m.[27mj[27ms[27mo[27mn[27m [27m-[27mw[27m [27m'[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m\[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27mX[27m [27mP[27mO[27mS[27mT[27m [27mh[27mt[27mt[27mp[27ms[27m:[27m/[27m/[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m/[27mv[27m1[27m/[27ms[27me[27mt[27mt[27ml[27me[27mm[27me[27mn[27mt[27m/[27mr[27mt[27mg[27ms[27m-[27mc[27ma[27ml[27ml[27mb[27ma[27mc[27mk[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27me[27mr[27mt[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27m-[27mk[27me[27my[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mk[27me[27my[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27ma[27mc[27me[27mr[27mt[27m [27m~[27m/[27mu[27ma[27mt[27m-[27mc[27ma[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m"[27mA[27mu[27mt[27mh[27mo[27mr[27mi[27mz[27ma[27mt[27mi[27mo[27mn[27m:[27m [27mB[27me[27ma[27mr[27me[27mr[27m [27m$[27mT[27mO[27mK[27mE[27mN[27m"[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27md[27m [27m'[27m{[27m"[27mi[27mn[27ms[27mt[27mr[27mu[27mc[27mt[27mi[27mo[27mn[27mR[27me[27mf[27m"[27m:[27m"[27mU[27mA[27mT[27m-[27mN[27mO[27mN[27mE[27mX[27mI[27mS[27mT[27mE[27mN[27mT[27m"[27m,[27m"[27ms[27mt[27ma[27mt[27mu[27ms[27m"[27m:[27m"[27mC[27mO[27mN[27mF[27mI[27mR[27mM[27mE[27mD[27m"[27m}[27m'[2B[27mj[27mq[27m [27m.[27m [27m/[27mt[27mm[27mp[27m/[27mr[27mt[27mg[27ms[27m-[27mc[27ma[27ml[27ml[27mb[27ma[27mc[27mk[27m-[27md[27mi[27ms[27ma[27mb[27ml[27me[27md[27m.[27mj[27ms[27mo[27mn[?2004l
+404
+[1;39m{[0m
+  [1;34m"category"[0m[1;39m:[0m [0;32m"REQUEST"[0m[1;39m,[0m
+  [1;34m"details"[0m[1;39m:[0m [0;90mnull[0m[1;39m,[0m
+  [1;34m"error"[0m[1;39m:[0m [0;32m"NOT_FOUND"[0m[1;39m,[0m
+  [1;34m"errorCode"[0m[1;39m:[0m [0;32m"REQ-005"[0m[1;39m,[0m
+  [1;34m"layer"[0m[1;39m:[0m [0;32m"API"[0m[1;39m,[0m
+  [1;34m"message"[0m[1;39m:[0m [0;32m"API route not found"[0m[1;39m,[0m
+  [1;34m"path"[0m[1;39m:[0m [0;32m"/v1/settlement/rtgs-callback"[0m[1;39m,[0m
+  [1;34m"phase"[0m[1;39m:[0m [0;32m"RECEIVE_REQUEST"[0m[1;39m,[0m
+  [1;34m"requestId"[0m[1;39m:[0m [0;32m"5a4389b7-dd92-4caa-832b-a18edbae5359"[0m[1;39m,[0m
+  [1;34m"retryable"[0m[1;39m:[0m [0;39mfalse[0m[1;39m,[0m
+  [1;34m"status"[0m[1;39m:[0m [0;39m404[0m[1;39m,[0m
+  [1;34m"timestamp"[0m[1;39m:[0m [0;32m"2026-07-21T08:02:05.559624546"[0m[1;39m,[0m
+  [1;34m"traceId"[0m[1;39m:[0m [0;90mnull[0m
+[1;39m}[0m
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mTOKEN=$(curl -k -sS https://175.11.0.200/api/auth/login [7m\[27m[K
+[7m  --cert ~/sundaybank-client.crt \[27m[K
+[7m  --key ~/sundaybank-client.key \[27m[K
+[7m  --cacert ~/uat-ca.crt \[27m[K
+[7m  -H 'Content-Type: application/json' \[27m[K
+[7m  -d '{"username":"admin","password":"SundayAdmin@2026Strong!2323"}' \[27m[K
+[7m  | jq -r '.accessToken')[27m[K
+[K
+[7mcurl -k -sS -o /tmp/rtgs-callback-disabled.json -w '%{http_code}\n' \[27m[K
+[7m  -X POST https://175.11.0.200/v1/settlement/rtgs-callback \[27m[K
+[7m  --cert ~/sundaybank-client.crt \[27m[K
+[7m  --key ~/sundaybank-client.key \[27m[K
+[7m  --cacert ~/uat-ca.crt \[27m[K
+[7m  -H "Authorization: Bearer $TOKEN" \[27m[K
+[7m  -H 'Content-Type: application/json' \[27m[K
+[7m  -d '{"instructionRef":"UAT-NONEXISTENT","status":"CONFIRMED"}'[27m[K
+[K
+[7mjq . /tmp/rtgs-callback-disabled.json[27m[K[18A[11D[27mT[27mO[27mK[27mE[27mN[27m=[27m$[27m([27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27mh[27mt[27mt[27mp[27ms[27m:[27m/[27m/[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m/[27ma[27mp[27mi[27m/[27ma[27mu[27mt[27mh[27m/[27ml[27mo[27mg[27mi[27mn[27m \[1B[27m [27m [27m-[27m-[27mc[27me[27mr[27mt[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27m-[27mk[27me[27my[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mk[27me[27my[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27ma[27mc[27me[27mr[27mt[27m [27m~[27m/[27mu[27ma[27mt[27m-[27mc[27ma[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27md[27m [27m'[27m{[27m"[27mu[27ms[27me[27mr[27mn[27ma[27mm[27me[27m"[27m:[27m"[27ma[27md[27mm[27mi[27mn[27m"[27m,[27m"[27mp[27ma[27ms[27ms[27mw[27mo[27mr[27md[27m"[27m:[27m"[27mS[27mu[27mn[27md[27ma[27my[27mA[27md[27mm[27mi[27mn[27m@[27m2[27m0[27m2[27m6[27mS[27mt[27mr[27mo[27mn[27mg[27m![27m2[27m3[27m2[27m3[27m"[27m}[27m'[27m [27m\[1B[27m [27m [27m|[27m [27mj[27mq[27m [27m-[27mr[27m [27m'[27m.[27ma[27mc[27mc[27me[27ms[27ms[27mT[27mo[27mk[27me[27mn[27m'[27m)[2B[27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mo[27m [27m/[27mt[27mm[27mp[27m/[27mr[27mt[27mg[27ms[27m-[27mc[27ma[27ml[27ml[27mb[27ma[27mc[27mk[27m-[27md[27mi[27ms[27ma[27mb[27ml[27me[27md[27m.[27mj[27ms[27mo[27mn[27m [27m-[27mw[27m [27m'[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m\[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27mX[27m [27mP[27mO[27mS[27mT[27m [27mh[27mt[27mt[27mp[27ms[27m:[27m/[27m/[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m/[27mv[27m1[27m/[27ms[27me[27mt[27mt[27ml[27me[27mm[27me[27mn[27mt[27m/[27mr[27mt[27mg[27ms[27m-[27mc[27ma[27ml[27ml[27mb[27ma[27mc[27mk[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27me[27mr[27mt[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27m-[27mk[27me[27my[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mk[27me[27my[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27ma[27mc[27me[27mr[27mt[27m [27m~[27m/[27mu[27ma[27mt[27m-[27mc[27ma[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m"[27mA[27mu[27mt[27mh[27mo[27mr[27mi[27mz[27ma[27mt[27mi[27mo[27mn[27m:[27m [27mB[27me[27ma[27mr[27me[27mr[27m [27m$[27mT[27mO[27mK[27mE[27mN[27m"[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27md[27m [27m'[27m{[27m"[27mi[27mn[27ms[27mt[27mr[27mu[27mc[27mt[27mi[27mo[27mn[27mR[27me[27mf[27m"[27m:[27m"[27mU[27mA[27mT[27m-[27mN[27mO[27mN[27mE[27mX[27mI[27mS[27mT[27mE[27mN[27mT[27m"[27m,[27m"[27ms[27mt[27ma[27mt[27mu[27ms[27m"[27m:[27m"[27mC[27mO[27mN[27mF[27mI[27mR[27mM[27mE[27mD[27m"[27m}[27m'[2B[27mj[27mq[27m [27m.[27m [27m/[27mt[27mm[27mp[27m/[27mr[27mt[27mg[27ms[27m-[27mc[27ma[27ml[27ml[27mb[27ma[27mc[27mk[27m-[27md[27mi[27ms[27ma[27mb[27ml[27me[27md[27m.[27mj[27ms[27mo[27mn[?2004l
+404
+[1;39m{[0m
+  [1;34m"category"[0m[1;39m:[0m [0;32m"REQUEST"[0m[1;39m,[0m
+  [1;34m"details"[0m[1;39m:[0m [0;90mnull[0m[1;39m,[0m
+  [1;34m"error"[0m[1;39m:[0m [0;32m"NOT_FOUND"[0m[1;39m,[0m
+  [1;34m"errorCode"[0m[1;39m:[0m [0;32m"REQ-005"[0m[1;39m,[0m
+  [1;34m"layer"[0m[1;39m:[0m [0;32m"API"[0m[1;39m,[0m
+  [1;34m"message"[0m[1;39m:[0m [0;32m"API route not found"[0m[1;39m,[0m
+  [1;34m"path"[0m[1;39m:[0m [0;32m"/v1/settlement/rtgs-callback"[0m[1;39m,[0m
+  [1;34m"phase"[0m[1;39m:[0m [0;32m"RECEIVE_REQUEST"[0m[1;39m,[0m
+  [1;34m"requestId"[0m[1;39m:[0m [0;32m"0ed0fe93-2278-440a-9144-7625604e3566"[0m[1;39m,[0m
+  [1;34m"retryable"[0m[1;39m:[0m [0;39mfalse[0m[1;39m,[0m
+  [1;34m"status"[0m[1;39m:[0m [0;39m404[0m[1;39m,[0m
+  [1;34m"timestamp"[0m[1;39m:[0m [0;32m"2026-07-21T08:02:13.876249814"[0m[1;39m,[0m
+  [1;34m"traceId"[0m[1;39m:[0m [0;90mnull[0m
+[1;39m}[0m
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mcd /Users/macbookpro/Desktop/Switching[27m
+[7mDEPLOY_SSH_PASSWORD='root' DEPLOY_SYNC_CONFIG=true scripts/deploy-uat-code.sh[27m[K[A[51D[27mc[27md[27m [27m/[27mU[27ms[27me[27mr[27ms[27m/[27mm[27ma[27mc[27mb[27mo[27mo[27mk[27mp[27mr[27mo[27m/[27mD[27me[27ms[27mk[27mt[27mo[27mp[27m/[27mS[27mw[27mi[27mt[27mc[27mh[27mi[27mn[27mg[1B[27mD[27mE[27mP[27mL[27mO[27mY[27m_[27mS[27mS[27mH[27m_[27mP[27mA[27mS[27mS[27mW[27mO[27mR[27mD[27m=[27m'[27mr[27mo[27mo[27mt[27m'[27m [27mD[27mE[27mP[27mL[27mO[27mY[27m_[27mS[27mY[27mN[27mC[27m_[27mC[27mO[27mN[27mF[27mI[27mG[27m=[27mt[27mr[27mu[27me[27m [27ms[27mc[27mr[27mi[27mp[27mt[27ms[27m/[27md[27me[27mp[27ml[27mo[27my[27m-[27mu[27ma[27mt[27m-[27mc[27mo[27md[27me[27m.[27ms[27mh[?2004l
+
+==> Building application jar locally
+[0m[0m
+==> Backing up current remote jar
+
+==> Uploading jar to UAT
+
+==> Synchronizing deployment configuration
+
+==> Updating mTLS trust bundle and edge configuration
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+2026/07/21 08:14:53 [notice] 636#636: signal process started
+
+==> Building Docker image on UAT
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.uat
+#1 transferring dockerfile: 515B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#2 DONE 1.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 468B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/eclipse-temurin:21-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3
+#4 resolve docker.io/library/eclipse-temurin:21-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3 done
+#4 DONE 0.0s
+
+#5 [2/5] WORKDIR /app
+#5 CACHED
+
+#6 [internal] load build context
+#6 ...
+
+#7 [3/5] RUN addgroup --system --gid 10001 switching  && adduser --system --uid 10001 --ingroup switching --no-create-home switching
+#7 0.195 useradd warning: switching's uid 10001 is greater than SYS_UID_MAX 999
+#7 DONE 0.2s
+
+#6 [internal] load build context
+#6 transferring context: 113.15MB 0.3s done
+#6 DONE 0.3s
+
+#8 [4/5] COPY app.jar /app/app.jar
+#8 DONE 0.1s
+
+#9 [5/5] RUN chown -R switching:switching /app
+#9 DONE 0.1s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 2.5s done
+#10 exporting manifest sha256:79fdf03ad0e6b226f08126028e968922aca2c1de3f434408ec4277a430c7e2ae done
+#10 exporting config sha256:1f23cc6276e1d3ad178c2408445c9d973217d362744b7f88bb0c7d710d82df9c done
+#10 exporting attestation manifest sha256:aa92fce52feb71ae93f5d4324fdfd80024fb897085c29527aaf48df8ce58943b done
+#10 exporting manifest list sha256:e382ae843f36d543018099b2d2964741c52932ff2ad460123da05bb2fede3114 done
+#10 naming to docker.io/library/switching-app:latest done
+#10 unpacking to docker.io/library/switching-app:latest
+#10 unpacking to docker.io/library/switching-app:latest 1.0s done
+#10 DONE 3.5s
+WARNING: current commit information was not captured by the build: failed to read current commit information with git rev-parse --is-inside-work-tree
+
+==> Restarting app service
+ Container switching-redpanda Running 
+ Container switching-minio Running 
+ Container switching-postgres-read-replica Running 
+ Container switching-postgres-archive Running 
+ Container switching-postgres Running 
+ Container switching-app Recreate 
+ Container switching-app Recreated 
+ Container switching-minio Waiting 
+ Container switching-postgres Waiting 
+ Container switching-postgres Healthy 
+ Container switching-minio Healthy 
+ Container switching-minio-init Starting 
+ Container switching-minio-init Started 
+ Container switching-postgres-read-replica Waiting 
+ Container switching-postgres-archive Waiting 
+ Container switching-minio-init Waiting 
+ Container switching-redpanda Waiting 
+ Container switching-postgres Waiting 
+ Container switching-minio-init Exited 
+ Container switching-redpanda Healthy 
+ Container switching-postgres Healthy 
+ Container switching-postgres-read-replica Healthy 
+ Container switching-postgres-archive Healthy 
+ Container switching-app Starting 
+ Container switching-app Started 
+
+==> Waiting for health: https://175.11.0.200/actuator/health
+health attempt 1/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+health attempt 2/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+health attempt 3/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+
+{"groups":["liveness","readiness"],"status":"UP"}
+
+==> Deploy finished successfully
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mHTTP_STATUS=$(curl -k -sS -o /tmp/report-download-missin[7mg[7m-params.json -w '%{http_code}' \[27m[K
+[7m  "https://175.11.0.200/v1/reports/download/00000000-0000-0000-0000-000000000001" [7m\[27m[K
+[7m  --cert ~/sundaybank-client.crt \[27m[K
+[7m  --key ~/sundaybank-client.key \[27m[K
+[7m  --cacert ~/uat-ca.crt)[27m[K
+[K
+[7mjq -n \[27m[K
+[7m  --arg status "$HTTP_STATUS" \[27m[K
+[7m  --slurpfile response /tmp/report-download-missing-params.json \[27m[K
+[7m  '{httpStatus: ($status | tonumber), response: $response[0]}' \[27m[K
+[7m  | jq .[27m[K[12A[18C[27mH[27mT[27mT[27mP[27m_[27mS[27mT[27mA[27mT[27mU[27mS[27m=[27m$[27m([27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mo[27m [27m/[27mt[27mm[27mp[27m/[27mr[27me[27mp[27mo[27mr[27mt[27m-[27md[27mo[27mw[27mn[27ml[27mo[27ma[27md[27m-[27mm[27mi[27ms[27ms[27mi[27mng[27m-[27mp[27ma[27mr[27ma[27mm[27ms[27m.[27mj[27ms[27mo[27mn[27m [27m-[27mw[27m [27m'[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m'[27m [27m\[1B[27m [27m [27m"[27mh[27mt[27mt[27mp[27ms[27m:[27m/[27m/[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m/[27mv[27m1[27m/[27mr[27me[27mp[27mo[27mr[27mt[27ms[27m/[27md[27mo[27mw[27mn[27ml[27mo[27ma[27md[27m/[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m1[27m"[27m \[1B[27m [27m [27m-[27m-[27mc[27me[27mr[27mt[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27m-[27mk[27me[27my[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mk[27me[27my[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27ma[27mc[27me[27mr[27mt[27m [27m~[27m/[27mu[27ma[27mt[27m-[27mc[27ma[27m.[27mc[27mr[27mt[27m)[2B[27mj[27mq[27m [27m-[27mn[27m [27m\[1B[27m [27m [27m-[27m-[27ma[27mr[27mg[27m [27ms[27mt[27ma[27mt[27mu[27ms[27m [27m"[27m$[27mH[27mT[27mT[27mP[27m_[27mS[27mT[27mA[27mT[27mU[27mS[27m"[27m [27m\[1B[27m [27m [27m-[27m-[27ms[27ml[27mu[27mr[27mp[27mf[27mi[27ml[27me[27m [27mr[27me[27ms[27mp[27mo[27mn[27ms[27me[27m [27m/[27mt[27mm[27mp[27m/[27mr[27me[27mp[27mo[27mr[27mt[27m-[27md[27mo[27mw[27mn[27ml[27mo[27ma[27md[27m-[27mm[27mi[27ms[27ms[27mi[27mn[27mg[27m-[27mp[27ma[27mr[27ma[27mm[27ms[27m.[27mj[27ms[27mo[27mn[27m [27m\[1B[27m [27m [27m'[27m{[27mh[27mt[27mt[27mp[27mS[27mt[27ma[27mt[27mu[27ms[27m:[27m [27m([27m$[27ms[27mt[27ma[27mt[27mu[27ms[27m [27m|[27m [27mt[27mo[27mn[27mu[27mm[27mb[27me[27mr[27m)[27m,[27m [27mr[27me[27ms[27mp[27mo[27mn[27ms[27me[27m:[27m [27m$[27mr[27me[27ms[27mp[27mo[27mn[27ms[27me[27m[[27m0[27m][27m}[27m'[27m [27m\[1B[27m [27m [27m|[27m [27mj[27mq[27m [27m.[?2004l
+[1;39m{[0m
+  [1;34m"httpStatus"[0m[1;39m:[0m [0;39m400[0m[1;39m,[0m
+  [1;34m"response"[0m[1;39m:[0m [1;39m{[0m
+    [1;34m"category"[0m[1;39m:[0m [0;32m"REQUEST"[0m[1;39m,[0m
+    [1;34m"details"[0m[1;39m:[0m [1;39m{[0m
+      [1;34m"parameterType"[0m[1;39m:[0m [0;32m"long"[0m[1;39m,[0m
+      [1;34m"parameter"[0m[1;39m:[0m [0;32m"expires"[0m
+    [1;39m}[0m[1;39m,[0m
+    [1;34m"error"[0m[1;39m:[0m [0;32m"BAD_REQUEST"[0m[1;39m,[0m
+    [1;34m"errorCode"[0m[1;39m:[0m [0;32m"REQ-001"[0m[1;39m,[0m
+    [1;34m"layer"[0m[1;39m:[0m [0;32m"API"[0m[1;39m,[0m
+    [1;34m"message"[0m[1;39m:[0m [0;32m"Required query parameter is missing: expires"[0m[1;39m,[0m
+    [1;34m"path"[0m[1;39m:[0m [0;32m"/v1/reports/download/00000000-0000-0000-0000-000000000001"[0m[1;39m,[0m
+    [1;34m"phase"[0m[1;39m:[0m [0;32m"VALIDATE_REQUEST"[0m[1;39m,[0m
+    [1;34m"requestId"[0m[1;39m:[0m [0;32m"09e3f5ea-e0a7-45a5-82bf-6381b29d0043"[0m[1;39m,[0m
+    [1;34m"retryable"[0m[1;39m:[0m [0;39mfalse[0m[1;39m,[0m
+    [1;34m"status"[0m[1;39m:[0m [0;39m400[0m[1;39m,[0m
+    [1;34m"timestamp"[0m[1;39m:[0m [0;32m"2026-07-21T08:15:14.099037501"[0m[1;39m,[0m
+    [1;34m"traceId"[0m[1;39m:[0m [0;90mnull[0m
+  [1;39m}[0m
+[1;39m}[0m
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hcclear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mcd /Users/macbookpro/Desktop/Switching[27m
+[7mDEPLOY_SSH_PASSWORD='root' DEPLOY_SYNC_CONFIG=true scripts/deploy-uat-code.sh[27m[K[A[51D[27mc[27md[27m [27m/[27mU[27ms[27me[27mr[27ms[27m/[27mm[27ma[27mc[27mb[27mo[27mo[27mk[27mp[27mr[27mo[27m/[27mD[27me[27ms[27mk[27mt[27mo[27mp[27m/[27mS[27mw[27mi[27mt[27mc[27mh[27mi[27mn[27mg[1B[27mD[27mE[27mP[27mL[27mO[27mY[27m_[27mS[27mS[27mH[27m_[27mP[27mA[27mS[27mS[27mW[27mO[27mR[27mD[27m=[27m'[27mr[27mo[27mo[27mt[27m'[27m [27mD[27mE[27mP[27mL[27mO[27mY[27m_[27mS[27mY[27mN[27mC[27m_[27mC[27mO[27mN[27mF[27mI[27mG[27m=[27mt[27mr[27mu[27me[27m [27ms[27mc[27mr[27mi[27mp[27mt[27ms[27m/[27md[27me[27mp[27ml[27mo[27my[27m-[27mu[27ma[27mt[27m-[27mc[27mo[27md[27me[27m.[27ms[27mh[?2004l
+
+==> Building application jar locally
+[0m[0m
+==> Backing up current remote jar
+
+==> Uploading jar to UAT
+
+==> Synchronizing deployment configuration
+
+==> Updating mTLS trust bundle and edge configuration
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+2026/07/21 08:26:32 [notice] 656#656: signal process started
+
+==> Building Docker image on UAT
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.uat
+#1 transferring dockerfile: 515B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#2 DONE 1.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 468B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/eclipse-temurin:21-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3
+#4 resolve docker.io/library/eclipse-temurin:21-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3 done
+#4 DONE 0.0s
+
+#5 [2/5] WORKDIR /app
+#5 CACHED
+
+#6 [internal] load build context
+#6 ...
+
+#7 [3/5] RUN addgroup --system --gid 10001 switching  && adduser --system --uid 10001 --ingroup switching --no-create-home switching
+#7 0.220 useradd warning: switching's uid 10001 is greater than SYS_UID_MAX 999
+#7 DONE 0.3s
+
+#6 [internal] load build context
+#6 transferring context: 113.15MB 0.3s done
+#6 DONE 0.3s
+
+#8 [4/5] COPY app.jar /app/app.jar
+#8 DONE 0.1s
+
+#9 [5/5] RUN chown -R switching:switching /app
+#9 DONE 0.1s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 2.6s done
+#10 exporting manifest sha256:8c1a3f16180d11972c8bfa21148a7e0f281afb812ec52ceb22a37c6154e2ddca done
+#10 exporting config sha256:f3589309e5f2d707f754ca0032a7fc3afa4e987f2aca524e85c099f811d9a3e0 done
+#10 exporting attestation manifest sha256:341115ed309c1b66317fa1b75aa709c419190224df07bd39cfa326ac23fa1096 done
+#10 exporting manifest list sha256:797e18818fea7b4abf7085a84072f3b915d63e0c0320485d7215b83fa031de28 done
+#10 naming to docker.io/library/switching-app:latest done
+#10 unpacking to docker.io/library/switching-app:latest
+#10 unpacking to docker.io/library/switching-app:latest 1.0s done
+#10 DONE 3.6s
+WARNING: current commit information was not captured by the build: failed to read current commit information with git rev-parse --is-inside-work-tree
+
+==> Restarting app service
+ Container switching-postgres-read-replica Running 
+ Container switching-minio Running 
+ Container switching-postgres-archive Running 
+ Container switching-redpanda Running 
+ Container switching-postgres Running 
+ Container switching-app Recreate 
+ Container switching-app Recreated 
+ Container switching-postgres Waiting 
+ Container switching-minio Waiting 
+ Container switching-postgres Healthy 
+ Container switching-minio Healthy 
+ Container switching-minio-init Starting 
+ Container switching-minio-init Started 
+ Container switching-minio-init Waiting 
+ Container switching-redpanda Waiting 
+ Container switching-postgres Waiting 
+ Container switching-postgres-read-replica Waiting 
+ Container switching-postgres-archive Waiting 
+ Container switching-postgres Healthy 
+ Container switching-redpanda Healthy 
+ Container switching-minio-init Exited 
+ Container switching-postgres-read-replica Healthy 
+ Container switching-postgres-archive Healthy 
+ Container switching-app Starting 
+ Container switching-app Started 
+
+==> Waiting for health: https://175.11.0.200/actuator/health
+health attempt 1/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+health attempt 2/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+health attempt 3/30: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+{"groups":["liveness","readiness"],"status":"UP"}
+
+==> Deploy finished successfully
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004hccl;ear    ear[?2004l
+[H[2J[3J[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h[7mHTTP_STATUS=$(curl -k -sS -o /tmp/rtp-blank-inquiry.json[7m [7m-w '%{http_code}' \[27m[K
+[7m  -X POST "https://175.11.0.200/v1/rtp/requests/00000000-0000-0000-0000-0000000000[7m0[7m1/authorise" \[27m[K
+[7m  --cert ~/sundaybank-client.crt \[27m[K
+[7m  --key ~/sundaybank-client.key \[27m[K
+[7m  --cacert ~/uat-ca.crt \[27m[K
+[7m  -H "Authorization: Bearer $TOKEN" \[27m[K
+[7m  -H 'Content-Type: application/json' \[27m[K
+[7m  -d '{[27m[K
+[7m    "authorisationReference":"UAT-RTP-VALIDATION",[27m[K
+[7m    "mode":"FULL",[27m[K
+[7m    "authorisedAmount":1000,[27m[K
+[7m    "inquiryRef":""[27m[K
+[7m  }')[27m[K
+[K
+[7mjq -n \[27m[K
+[7m  --arg status "$HTTP_STATUS" \[27m[K
+[7m  --slurpfile response /tmp/rtp-blank-inquiry.json \[27m[K
+[7m  '{httpStatus: ($status | tonumber), response: $response[0]}' \[27m[K
+[7m  | jq .[27m[K[20A[18C[27mH[27mT[27mT[27mP[27m_[27mS[27mT[27mA[27mT[27mU[27mS[27m=[27m$[27m([27mc[27mu[27mr[27ml[27m [27m-[27mk[27m [27m-[27ms[27mS[27m [27m-[27mo[27m [27m/[27mt[27mm[27mp[27m/[27mr[27mt[27mp[27m-[27mb[27ml[27ma[27mn[27mk[27m-[27mi[27mn[27mq[27mu[27mi[27mr[27my[27m.[27mj[27ms[27mo[27mn [27m-[27mw[27m [27m'[27m%[27m{[27mh[27mt[27mt[27mp[27m_[27mc[27mo[27md[27me[27m}[27m'[27m [27m\[1B[27m [27m [27m-[27mX[27m [27mP[27mO[27mS[27mT[27m [27m"[27mh[27mt[27mt[27mp[27ms[27m:[27m/[27m/[27m1[27m7[27m5[27m.[27m1[27m1[27m.[27m0[27m.[27m2[27m0[27m0[27m/[27mv[27m1[27m/[27mr[27mt[27mp[27m/[27mr[27me[27mq[27mu[27me[27ms[27mt[27ms[27m/[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m-[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m0[27m00[27m1[27m/[27ma[27mu[27mt[27mh[27mo[27mr[27mi[27ms[27me[27m"[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27me[27mr[27mt[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27m-[27mk[27me[27my[27m [27m~[27m/[27ms[27mu[27mn[27md[27ma[27my[27mb[27ma[27mn[27mk[27m-[27mc[27ml[27mi[27me[27mn[27mt[27m.[27mk[27me[27my[27m [27m\[1B[27m [27m [27m-[27m-[27mc[27ma[27mc[27me[27mr[27mt[27m [27m~[27m/[27mu[27ma[27mt[27m-[27mc[27ma[27m.[27mc[27mr[27mt[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m"[27mA[27mu[27mt[27mh[27mo[27mr[27mi[27mz[27ma[27mt[27mi[27mo[27mn[27m:[27m [27mB[27me[27ma[27mr[27me[27mr[27m [27m$[27mT[27mO[27mK[27mE[27mN[27m"[27m [27m\[1B[27m [27m [27m-[27mH[27m [27m'[27mC[27mo[27mn[27mt[27me[27mn[27mt[27m-[27mT[27my[27mp[27me[27m:[27m [27ma[27mp[27mp[27ml[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27m/[27mj[27ms[27mo[27mn[27m'[27m [27m\[1B[27m [27m [27m-[27md[27m [27m'[27m{[1B[27m [27m [27m [27m [27m"[27ma[27mu[27mt[27mh[27mo[27mr[27mi[27ms[27ma[27mt[27mi[27mo[27mn[27mR[27me[27mf[27me[27mr[27me[27mn[27mc[27me[27m"[27m:[27m"[27mU[27mA[27mT[27m-[27mR[27mT[27mP[27m-[27mV[27mA[27mL[27mI[27mD[27mA[27mT[27mI[27mO[27mN[27m"[27m,[1B[27m [27m [27m [27m [27m"[27mm[27mo[27md[27me[27m"[27m:[27m"[27mF[27mU[27mL[27mL[27m"[27m,[1B[27m [27m [27m [27m [27m"[27ma[27mu[27mt[27mh[27mo[27mr[27mi[27ms[27me[27md[27mA[27mm[27mo[27mu[27mn[27mt[27m"[27m:[27m1[27m0[27m0[27m0[27m,[1B[27m [27m [27m [27m [27m"[27mi[27mn[27mq[27mu[27mi[27mr[27my[27mR[27me[27mf[27m"[27m:[27m"[27m"[1B[27m [27m [27m}[27m'[27m)[2B[27mj[27mq[27m [27m-[27mn[27m [27m\[1B[27m [27m [27m-[27m-[27ma[27mr[27mg[27m [27ms[27mt[27ma[27mt[27mu[27ms[27m [27m"[27m$[27mH[27mT[27mT[27mP[27m_[27mS[27mT[27mA[27mT[27mU[27mS[27m"[27m [27m\[1B[27m [27m [27m-[27m-[27ms[27ml[27mu[27mr[27mp[27mf[27mi[27ml[27me[27m [27mr[27me[27ms[27mp[27mo[27mn[27ms[27me[27m [27m/[27mt[27mm[27mp[27m/[27mr[27mt[27mp[27m-[27mb[27ml[27ma[27mn[27mk[27m-[27mi[27mn[27mq[27mu[27mi[27mr[27my[27m.[27mj[27ms[27mo[27mn[27m [27m\[1B[27m [27m [27m'[27m{[27mh[27mt[27mt[27mp[27mS[27mt[27ma[27mt[27mu[27ms[27m:[27m [27m([27m$[27ms[27mt[27ma[27mt[27mu[27ms[27m [27m|[27m [27mt[27mo[27mn[27mu[27mm[27mb[27me[27mr[27m)[27m,[27m [27mr[27me[27ms[27mp[27mo[27mn[27ms[27me[27m:[27m [27m$[27mr[27me[27ms[27mp[27mo[27mn[27ms[27me[27m[[27m0[27m][27m}[27m'[27m [27m\[1B[27m [27m [27m|[27m [27mj[27mq[27m [27m.[?2004l
+[1;39m{[0m
+  [1;34m"httpStatus"[0m[1;39m:[0m [0;39m400[0m[1;39m,[0m
+  [1;34m"response"[0m[1;39m:[0m [1;39m{[0m
+    [1;34m"category"[0m[1;39m:[0m [0;32m"REQUEST"[0m[1;39m,[0m
+    [1;34m"details"[0m[1;39m:[0m [1;39m{[0m
+      [1;34m"inquiryRef"[0m[1;39m:[0m [0;32m"must not be blank"[0m
+    [1;39m}[0m[1;39m,[0m
+    [1;34m"error"[0m[1;39m:[0m [0;32m"BAD_REQUEST"[0m[1;39m,[0m
+    [1;34m"errorCode"[0m[1;39m:[0m [0;32m"REQ-001"[0m[1;39m,[0m
+    [1;34m"layer"[0m[1;39m:[0m [0;32m"API"[0m[1;39m,[0m
+    [1;34m"message"[0m[1;39m:[0m [0;32m"Request validation failed"[0m[1;39m,[0m
+    [1;34m"path"[0m[1;39m:[0m [0;32m"/v1/rtp/requests/00000000-0000-0000-0000-000000000001/authorise"[0m[1;39m,[0m
+    [1;34m"phase"[0m[1;39m:[0m [0;32m"VALIDATE_REQUEST"[0m[1;39m,[0m
+    [1;34m"requestId"[0m[1;39m:[0m [0;32m"10969d18-4cca-435f-8f40-c16e49bd7fbd"[0m[1;39m,[0m
+    [1;34m"retryable"[0m[1;39m:[0m [0;39mfalse[0m[1;39m,[0m
+    [1;34m"status"[0m[1;39m:[0m [0;39m400[0m[1;39m,[0m
+    [1;34m"timestamp"[0m[1;39m:[0m [0;32m"2026-07-21T08:27:06.336357568"[0m[1;39m,[0m
+    [1;34m"traceId"[0m[1;39m:[0m [0;90mnull[0m
+  [1;39m}[0m
+[1;39m}[0m
+[1m[7m%[27m[1m[0m                                                                                  [0m[27m[24m[Jmacbookpro@14 Switching % [K[?2004h

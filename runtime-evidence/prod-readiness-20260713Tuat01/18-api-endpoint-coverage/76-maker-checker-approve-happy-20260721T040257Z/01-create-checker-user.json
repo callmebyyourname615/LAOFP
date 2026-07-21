@@ -1,0 +1,1 @@
+{"httpStatus":201,"endpoint":"POST /api/admin/users","response":{"id":11,"username":"checker-coverage-1784606576","status":"ACTIVE","roles":["SYSTEM_ADMIN"]},"note":"Second admin created programmatically to satisfy maker != checker rule."}

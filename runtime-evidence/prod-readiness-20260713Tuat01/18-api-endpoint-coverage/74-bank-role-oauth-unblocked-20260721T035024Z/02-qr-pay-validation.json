@@ -1,0 +1,1 @@
+{"httpStatus":404,"endpoint":"POST /v1/qr/pay","response":{"errorCode":"LFP-QR-006","message":"QR code not found: NONEXISTENT-QR-001"},"note":"Auth + business validation confirmed live."}

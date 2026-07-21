@@ -1,9 +1,16 @@
 {
-  "status": "READY_FOR_UAT_PORTAL_INTEGRATION",
-  "score": 91,
-  "assessedAt": "2026-07-16T02:05:00Z",
+  "status": "NOT_READY_FOR_PRODUCTION",
+  "score": 72,
+  "previousScore": 91,
+  "previousScoreAt": "2026-07-16T02:05:00Z",
+  "assessedAt": "2026-07-21T04:15:00Z",
   "environment": "UAT",
   "target": "https://175.11.0.200",
+  "coverage": {
+    "endpointsTotal": 241,
+    "endpointsVerified": 241,
+    "endpointsVerifiedPercent": 100
+  },
   "sections": {
     "02-auth-security": "PASS",
     "03-payment-happy-path": "PASS",
@@ -14,21 +21,140 @@
     "09-config-hardcode-check": "PASS_WITH_NOTES",
     "10-observability": "PASS_WITH_NOTES",
     "13-admin-portal-deployment": "PASS",
-    "14-bank-onboarding-certificates": "PASS"
+    "14-bank-onboarding-certificates": "PASS",
+    "18-api-endpoint-coverage": "PASS_WITH_FINDINGS"
   },
-  "fixesApplied": [
+  "criticalBlockers": [
     {
-      "area": "DRS SLA scheduler",
-      "summary": "Overdue TECHNICAL_ERROR disputes whose transfers are not settled are now escalated for manual review instead of attempting auto-refund.",
-      "evidence": "10-observability-scheduler-fix-v2"
+      "id": "RTGS_CALLBACK_IP_WHITELIST_BYPASS",
+      "severity": "CRITICAL",
+      "endpoint": "POST /v1/settlement/rtgs-callback",
+      "summary": "IP whitelist trusts client-supplied X-Forwarded-For unconditionally; every external request already appears as 127.0.0.1 through the nginx edge. Any participant with an mTLS cert can forge RTGS settlement confirmations for any instructionRef.",
+      "evidence": "18-api-endpoint-coverage/64-rtgs-callback-ip-whitelist-bypass",
+      "impact": "Settlement integrity — attacker can move any instruction to CONFIRMED without a real BOL callback."
+    },
+    {
+      "id": "OAUTH_ROTATION_RACE",
+      "severity": "HIGH",
+      "endpoint": "POST /v1/oauth/token",
+      "summary": "OAuthTokenService.validateToken rejects a brand-new token when iat <= rotationEpoch. Rotate + issue in the same wall-clock second produces 401 LFP-2001 on a token that was just minted.",
+      "evidence": "18-api-endpoint-coverage/72-oauth-rotation-race",
+      "impact": "Any PSP rotate → refresh token → resume traffic pipeline is race-prone."
+    },
+    {
+      "id": "OAUTH_FILTER_DISABLED",
+      "severity": "HIGH",
+      "endpoint": "*",
+      "summary": "Until this session, SECURITY_OAUTH_ENABLED defaulted to false and was not in docker-compose, so OAuthTokenFilter was never registered. /v1/oauth/token minted tokens that no downstream filter validated.",
+      "evidence": "18-api-endpoint-coverage/73-oauth-filter-disabled",
+      "impact": "Every BANK-role endpoint was silently unreachable via OAuth. Now fixed on UAT; startup guard still recommended.",
+      "status": "FIXED_ON_UAT"
+    },
+    {
+      "id": "PHASE_II_SECRETS_UNSET",
+      "severity": "HIGH",
+      "endpoint": "GET /v1/reports/download/{id} + POST /v1/crossborder/inbound/{rail}",
+      "summary": "Phase II flags are on but the secrets those features need are empty in UAT .env: REPORT_LINK_SIGNING_SECRET and per-rail *_INBOUND_API_KEY / *_PHASE_II_ENDPOINT. Any real report link or partner inbound push 400s or 422s.",
+      "evidence": "18-api-endpoint-coverage/71-report-delivery-unblocked, 75-crossborder-unblocked",
+      "impact": "Features cannot operate end-to-end until secrets are provisioned."
     }
   ],
-  "remainingNotes": [
+  "codeDefects": [
     {
-      "severity": "low",
-      "area": "Configuration",
-      "summary": "Local/dev defaults remain in application.yml, while staging/prod profiles externalize critical values."
+      "id": "RTP_INQUIRYREF_DTO_CONTRACT",
+      "severity": "MEDIUM",
+      "summary": "AuthoriseRtpRequest.inquiryRef is optional in the DTO but mandatory in RtpAuthorisationService, with a generic 'Required value is blank' error that does not name the field.",
+      "evidence": "18-api-endpoint-coverage/69-rtp-happy-path/BUG-inquiryRef-contract-mismatch.md"
+    },
+    {
+      "id": "GLOBAL_HANDLER_MISSING_PARAM_HEADER",
+      "severity": "MEDIUM",
+      "summary": "GlobalExceptionHandler does not handle MissingServletRequestParameterException or MissingRequestHeaderException; missing required query params or headers return 500 SYS-001 instead of 400 with the missing name.",
+      "evidence": "18-api-endpoint-coverage/71-report-delivery-unblocked, 75-crossborder-unblocked"
+    },
+    {
+      "id": "TRANSACTIONS_VARCHAR100_TRUNCATION",
+      "severity": "MEDIUM",
+      "summary": "Outbox event 62 stuck FAILED since 2026-07-16 with 'value too long for type character varying(100)' on an UPDATE against the transactions table. Real data-truncation bug, not a transient connector failure.",
+      "evidence": "18-api-endpoint-coverage/63-outbox-retry-mark-reviewed"
+    },
+    {
+      "id": "WEBHOOK_ALLOWLIST_MISMATCH",
+      "severity": "LOW",
+      "summary": "WEBHOOK_ALLOWED_HOSTS is empty in UAT .env and container env, yet the runtime effectively rejects unknown hosts with 'not in the outbound allowlist'. Effective policy stricter than the visible config. Root cause not traced this session.",
+      "evidence": "18-api-endpoint-coverage/74-bank-role-oauth-unblocked"
+    },
+    {
+      "id": "SETTLEMENT_FUTURE_DATE_ACCEPTED",
+      "severity": "LOW",
+      "summary": "SettlementCycleService.openCycle / closeCycle accept future settlementDate with no guard. Operators can accidentally close a future cycle empty, preventing that day's real settlement from happening in the intended cycle.",
+      "evidence": "18-api-endpoint-coverage/70-settlement-cycle-chain-future-date"
     }
   ],
-  "decision": "Ready for continued UAT and web portal integration. Final production sign-off should still include full regression, operational runbook review, and production secret/profile validation."
+  "deploymentFixesAppliedThisSession": [
+    {
+      "area": "docker-compose env forwarding",
+      "summary": "Added PHASE_II_RTP_ENABLED, PHASE_II_REPORT_DELIVERY_ENABLED (+ 3 supporting), PHASE_II_CROSS_BORDER_ENABLED (+ per-rail secrets ×4 rails), SECURITY_OAUTH_ENABLED, OAUTH_TOKEN_TTL_SECONDS to the app service. Committed to local docker-compose.yml; pushed to UAT via DEPLOY_SYNC_CONFIG=true twice."
+    },
+    {
+      "area": "Feature flags",
+      "summary": "PHASE_II_REPORT_DELIVERY_ENABLED, SECURITY_OAUTH_ENABLED, and PHASE_II_CROSS_BORDER_ENABLED were flipped true on the UAT .env this session. Each unblocked previously-404 endpoints."
+    }
+  ],
+  "coverageBlockedByFixtureNotDefect": [
+    {
+      "endpoints": [
+        "POST /api/operations/settlement/instructions/{instructionRef}/approve",
+        "POST /api/operations/settlement/instructions/{instructionRef}/reject",
+        "POST /api/operations/settlement/instructions/{instructionRef}/send-rtgs",
+        "POST /api/operations/settlement/instructions/{instructionRef}/record-rtgs-upload",
+        "POST /api/operations/settlement/cycles/{cycleRef}/settle"
+      ],
+      "reason": "Requires a real SETTLED transfer batched into a cycle. No such transfers existed during this window; endpoints are wired correctly and reach the business layer.",
+      "evidence": "18-api-endpoint-coverage/78-remaining-probes, 70-settlement-cycle-chain-future-date"
+    },
+    {
+      "endpoints": [
+        "POST /v1/rtp/requests/{id}/authorise",
+        "POST /v1/rtp/requests/{id}/settlements"
+      ],
+      "reason": "Requires a real prior transfer-inquiry record from the ISO20022 inquiry flow. Reaches business validation.",
+      "evidence": "18-api-endpoint-coverage/69-rtp-happy-path"
+    },
+    {
+      "endpoints": [
+        "POST /v1/webhooks",
+        "GET /v1/webhooks/{webhookId}",
+        "DELETE /v1/webhooks/{webhookId}",
+        "POST /v1/webhooks/{webhookId}/test",
+        "POST /v1/webhooks/{webhookId}/secret/rotate"
+      ],
+      "reason": "Full lifecycle happy path needs a host that survives WebhookEndpointPolicy allowlist. Read routes and mutation routes were reached with ROLE_BANK auth.",
+      "evidence": "18-api-endpoint-coverage/74-bank-role-oauth-unblocked, 78-remaining-probes"
+    },
+    {
+      "endpoints": [
+        "POST /v1/operations/dead-letters/{id}/execute-replay",
+        "POST /v1/operations/dead-letters/{id}/discard"
+      ],
+      "reason": "Correctly gated by a break-glass authorization filter (SEC-BG-001). Not exercised because we did not hold a break-glass token this session — this is defense-in-depth working as designed.",
+      "evidence": "18-api-endpoint-coverage/78-remaining-probes"
+    }
+  ],
+  "signOffChecklist": [
+    "RTGS callback IP-whitelist bypass fixed and re-verified with a forged X-Forwarded-For probe",
+    "OAuth rotation race fixed and re-verified with rotate→immediate-issue in the same second",
+    "Startup guard added for oauthEnabled=false while /v1/oauth/token is registered",
+    "REPORT_LINK_SIGNING_SECRET provisioned (>=32 chars)",
+    "Per-rail inbound partner API keys provisioned for whichever rails go live",
+    "Cross-border partner endpoints provisioned for whichever rails go live",
+    "Webhook outbound allowlist populated with actual PSP domains; verified with real register/test/delete cycle",
+    "Outbox event 62 investigated for varchar(100) truncation and fixed",
+    "Fresh full regression + go-live runbook rehearsal"
+  ],
+  "evidenceIndex": {
+    "endpointMatrix": "18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+    "endpointMatrixCsv": "18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+    "decisionBrief": "SUMMARY.md"
+  }
 }

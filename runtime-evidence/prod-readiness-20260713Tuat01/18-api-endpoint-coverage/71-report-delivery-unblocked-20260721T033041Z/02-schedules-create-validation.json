@@ -1,0 +1,1 @@
+{"httpStatus":400,"endpoint":"POST /v1/operator/report-delivery-schedules","response":{"errorCode":"REQ-001","message":"Missing cronExpression"}}

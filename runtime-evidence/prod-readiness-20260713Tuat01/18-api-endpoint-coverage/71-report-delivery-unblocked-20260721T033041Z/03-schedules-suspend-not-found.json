@@ -1,0 +1,1 @@
+{"httpStatus":400,"endpoint":"PATCH /v1/operator/report-delivery-schedules/{id}/suspend","response":{"errorCode":"REQ-001","message":"Active report schedule not found"}}
