@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "Missing channel",
+    "path": "/v1/operator/push-payment-policies",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "ece0904f-889f-4143-be48-ccaa04c4f959",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-21T01:41:46.197560306",
+    "traceId": null
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "effectiveTo must not be before effectiveFrom",
+    "path": "/v1/operations/legal-holds",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "106bb4ee-36fc-4fee-ae25-82378076d098",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-17T09:14:02.05534539",
+    "traceId": null
+  }
+}

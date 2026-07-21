@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"NOT_FOUND","errorCode":"REQ-005","layer":"API","message":"API route not found","path":"/v1/operator/crossborder/reconciliation/PROMPTPAY/2099-01-01","phase":"RECEIVE_REQUEST","requestId":"9d30d6a6-b2c0-4b6c-94a3-adb5bcac0879","retryable":false,"status":404,"timestamp":"2026-07-17T08:29:53.622928709","traceId":null}

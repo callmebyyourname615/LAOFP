@@ -1,6 +1,6 @@
 # API Endpoint Evidence Matrix
 
-Generated: 2026-07-17T07:45:40Z
+Generated: 2026-07-21T01:35:00Z
 Inventory source: `/Users/macbookpro/Desktop/Switching/API_ENDPOINTS.txt`
 Total endpoints: 241
 
@@ -16,7 +16,7 @@ Total endpoints: 241
 - Methods: `DELETE` 6, `GET` 115, `PATCH` 6, `POST` 110, `PUT` 4
 - Risk: `high` 50, `read` 115, `standard` 76
 - Domains: 33
-- Verified on UAT: 170/241
+- Verified on UAT: 200/241
 
 ## admin (13)
 
@@ -48,9 +48,9 @@ Total endpoints: 241
 | --- | --- | --- | --- | --- | --- |
 | [x] | POST | `/api/auth/login` | high | happy path + authorization + validation + audit + rollback/cleanup | `02-auth-security` |
 | [x] | POST | `/api/auth/logout` | high | happy path + authorization + validation + audit + rollback/cleanup | `17-security-operational` |
-| [ ] | POST | `/api/auth/mfa` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/api/auth/mfa` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/41-mfa` |
 | [x] | POST | `/api/auth/refresh` | high | happy path + authorization + validation + audit + rollback/cleanup | `17-security-operational` |
-| [ ] | DELETE | `/api/auth/sessions` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | DELETE | `/api/auth/sessions` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/54-revoke-all-sessions` |
 | [x] | GET | `/api/auth/sessions` | read | authenticated read + unauthorized negative | `17-security-operational` |
 | [x] | DELETE | `/api/auth/sessions/{id}` | high | happy path + authorization + validation + audit + rollback/cleanup | `17-security-operational` |
 
@@ -106,28 +106,28 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/api/iso20022/acmt023` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/api/iso20022/acmt023` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/46-iso-acmt023` |
 | [ ] | POST | `/api/iso20022/application/*+xml` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/iso20022/pacs008` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/api/iso20022/pacs008` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/45-iso-pacs008` |
 
 ## operations (87)
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/api/operations/aggregation/run` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/operations/aggregation/run/{date}` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/api/operations/aggregation/run` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/47-aggregation` |
+| [x] | POST | `/api/operations/aggregation/run/{date}` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/47-aggregation` |
 | [x] | GET | `/api/operations/audit-logs` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/21-operations-audit-logs-20260717T033222Z` |
 | [x] | POST | `/api/operations/bank-onboarding` | standard | happy path + authorization + validation + cleanup | `15-member-bank-connectivity-guardrails` |
-| [ ] | POST | `/api/operations/bank-onboarding/generate-routes` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/api/operations/bank-onboarding/generate-routes` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/49-generate-routes` |
 | [x] | GET | `/api/operations/bank-status` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/17-bank-status-20260717T030530Z` |
 | [x] | GET | `/api/operations/bau/status` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/18-bau-status-20260717T030801Z` |
 | [x] | GET | `/api/operations/connectors/health` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/17-bank-status-20260717T030530Z` |
 | [x] | POST | `/api/operations/connectors/{connectorName}/test` | standard | happy path + authorization + validation + cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | GET | `/api/operations/continuous-assurance/hypercare` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/19-hypercare-20260717T032317Z` |
-| [ ] | POST | `/api/operations/continuous-assurance/hypercare/complete` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/operations/continuous-assurance/hypercare/events` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/operations/continuous-assurance/hypercare/start` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/operations/continuous-assurance/scorecard` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/api/operations/continuous-assurance/hypercare/complete` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/56-hypercare-flow` |
+| [x] | POST | `/api/operations/continuous-assurance/hypercare/events` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/56-hypercare-flow` |
+| [x] | POST | `/api/operations/continuous-assurance/hypercare/start` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/56-hypercare-flow` |
+| [x] | POST | `/api/operations/continuous-assurance/scorecard` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/55-continuous-assurance-scorecard` |
 | [x] | GET | `/api/operations/dashboard-summary` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/20-operations-dashboard-summary-20260717T033103Z` |
 | [x] | GET | `/api/operations/disputes` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/30-dispute-operations-20260717T061831Z` |
 | [x] | GET | `/api/operations/disputes/dashboard-summary` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/31-post-settlement-dispute-20260717T062635Z/dispute-dashboard` |
@@ -152,9 +152,9 @@ Total endpoints: 241
 | [x] | GET | `/api/operations/outbox-failures` | read | authenticated read + unauthorized negative | `08-outbox-recovery` |
 | [ ] | POST | `/api/operations/outbox-failures/retry-all` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/api/operations/outbox-stuck` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/22-outbox-stuck-20260717T033305Z` |
-| [ ] | POST | `/api/operations/outbox-stuck/recover-all` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/api/operations/outbox-stuck/recover-all` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/57-outbox-stuck-recovery` |
 | [x] | GET | `/api/operations/payment-flows/{transactionRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/14-operations-events-20260717T024646Z` |
-| [ ] | GET | `/api/operations/promotions/funder-ledger/reconciliation` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/api/operations/promotions/funder-ledger/reconciliation` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/38-promotion-funder-ledger` |
 | [x] | GET | `/api/operations/readiness/approvals` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
 | [x] | POST | `/api/operations/readiness/approvals` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
 | [x] | GET | `/api/operations/readiness/controls` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
@@ -167,13 +167,13 @@ Total endpoints: 241
 | [x] | POST | `/api/operations/readiness/incidents` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
 | [x] | GET | `/api/operations/readiness/risks` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
 | [x] | POST | `/api/operations/readiness/risks` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/34-webhooks-20260717T065152Z/readiness` |
-| [ ] | GET | `/api/operations/reconciliation/files` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/reconciliation/files` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/api/operations/reconciliation/files/{fileRef}` | read | authenticated read + unauthorized negative | - |
-| [ ] | GET | `/api/operations/reconciliation/files/{fileRef}/discrepancies` | read | authenticated read + unauthorized negative | - |
-| [ ] | GET | `/api/operations/reconciliation/files/{fileRef}/items` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/api/operations/reconciliation/files/{fileRef}/items` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/api/operations/reconciliation/files/{fileRef}/rematch` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | GET | `/api/operations/reconciliation/files` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/39-reconciliation-files` |
+| [x] | POST | `/api/operations/reconciliation/files` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/39-reconciliation-files` |
+| [x] | GET | `/api/operations/reconciliation/files/{fileRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/39-reconciliation-files` |
+| [x] | GET | `/api/operations/reconciliation/files/{fileRef}/discrepancies` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/39-reconciliation-files` |
+| [x] | GET | `/api/operations/reconciliation/files/{fileRef}/items` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/39-reconciliation-files` |
+| [x] | POST | `/api/operations/reconciliation/files/{fileRef}/items` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/39-reconciliation-files` |
+| [x] | POST | `/api/operations/reconciliation/files/{fileRef}/rematch` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/39-reconciliation-files` |
 | [x] | GET | `/api/operations/settlement/cycles` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [ ] | POST | `/api/operations/settlement/cycles` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
@@ -184,8 +184,8 @@ Total endpoints: 241
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/instructions` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [ ] | POST | `/api/operations/settlement/cycles/{cycleRef}/instructions/generate` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/ops-report` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
-| [ ] | GET | `/api/operations/settlement/cycles/{cycleRef}/ops-report.csv` | read | authenticated read + unauthorized negative | - |
-| [ ] | GET | `/api/operations/settlement/cycles/{cycleRef}/report` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/ops-report.csv` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations` |
+| [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/report` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations` |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/reports` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [ ] | POST | `/api/operations/settlement/cycles/{cycleRef}/settle` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/timeline` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
@@ -267,7 +267,7 @@ Total endpoints: 241
 | [x] | GET | `/v1/crossborder/fx-rates` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/27-crossborder-reads-20260717T035247Z` |
 | [ ] | POST | `/v1/crossborder/inbound/{rail}` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | POST | `/v1/crossborder/initiate` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/v1/crossborder/quote` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/v1/crossborder/quote` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/42-crossborder-quote` |
 
 ## v1-disputes (5)
 
@@ -314,19 +314,19 @@ Total endpoints: 241
 | [x] | POST | `/v1/operations/config-changes` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | POST | `/v1/operations/config-changes/{id}/approve` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
 | [x] | POST | `/v1/operations/config-changes/{id}/execute` | high | happy path + authorization + validation + audit + rollback/cleanup | `15-member-bank-connectivity-guardrails` |
-| [ ] | POST | `/v1/operations/config-changes/{id}/reject` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/v1/operations/config-changes/{id}/reject` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/53-config-change-reject` |
 | [x] | GET | `/v1/operations/dead-letters` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/24-dead-letters-20260717T033528Z` |
 | [ ] | POST | `/v1/operations/dead-letters/{id}/approve-replay` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | POST | `/v1/operations/dead-letters/{id}/discard` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | POST | `/v1/operations/dead-letters/{id}/execute-replay` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | POST | `/v1/operations/dead-letters/{id}/request-replay` | standard | happy path + authorization + validation + cleanup | - |
 | [x] | GET | `/v1/operations/legal-holds` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/25-legal-holds-20260717T033808Z` |
-| [ ] | POST | `/v1/operations/legal-holds` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
-| [ ] | POST | `/v1/operations/legal-holds/{id}/approve` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
-| [ ] | POST | `/v1/operations/legal-holds/{id}/approve-release` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
-| [ ] | POST | `/v1/operations/legal-holds/{id}/request-release` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/v1/operations/legal-holds` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/58-legal-hold-guardrail` |
+| [x] | POST | `/v1/operations/legal-holds/{id}/approve` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/58-legal-hold-guardrail` |
+| [x] | POST | `/v1/operations/legal-holds/{id}/approve-release` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/58-legal-hold-guardrail` |
+| [x] | POST | `/v1/operations/legal-holds/{id}/request-release` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/58-legal-hold-guardrail` |
 | [x] | GET | `/v1/operations/participant-certifications` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/33-compliance-20260717T064657Z/participant-certifications` |
-| [ ] | POST | `/v1/operations/participant-certifications` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/v1/operations/participant-certifications` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/51-participant-certification` |
 
 ## v1-operator (6)
 
@@ -381,7 +381,7 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | GET | `/v1/risk/scores/{txnId}` | read | authenticated read + unauthorized negative | - |
+| [x] | GET | `/v1/risk/scores/{txnId}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/44-risk-score` |
 
 ## v1-rtp (6)
 

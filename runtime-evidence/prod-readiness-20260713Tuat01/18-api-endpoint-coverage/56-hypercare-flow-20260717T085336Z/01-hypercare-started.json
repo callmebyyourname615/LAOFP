@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"Hypercare already started","path":"/api/operations/continuous-assurance/hypercare/start","phase":"VALIDATE_REQUEST","requestId":"4600e59d-db91-4861-a75f-3376cb7dc13e","retryable":false,"status":400,"timestamp":"2026-07-17T09:04:16.699791866","traceId":null}

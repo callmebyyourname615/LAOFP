@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "Hypercare exit criteria are not complete",
+    "path": "/api/operations/continuous-assurance/hypercare/complete",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "559b8bb8-072a-4259-a7e9-021d39f77fd3",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-17T09:10:33.670630095",
+    "traceId": null
+  }
+}

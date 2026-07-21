@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "fileId": 1,
+      "lineNumber": 1,
+      "transactionRef": "UAT-NONEXISTENT-RECON-20260717T074953Z",
+      "externalRef": "UAT-EXTERNAL-20260717T074953Z",
+      "amount": 1000.0000,
+      "currency": "LAK",
+      "matchStatus": "UNMATCHED",
+      "mismatchReason": "Transaction not found in switching system",
+      "reconciliationDate": "2026-07-17",
+      "matchedAt": null
+    }
+  ],
+  "discrepancies": {
+    "fileRef": "RF-20260717-A85951A4",
+    "totalRecords": 1,
+    "matchedCount": 0,
+    "unmatchedCount": 1,
+    "disputedCount": 0,
+    "discrepancies": [
+      {
+        "id": 1,
+        "fileId": 1,
+        "lineNumber": 1,
+        "transactionRef": "UAT-NONEXISTENT-RECON-20260717T074953Z",
+        "externalRef": "UAT-EXTERNAL-20260717T074953Z",
+        "amount": 1000.0000,
+        "currency": "LAK",
+        "matchStatus": "UNMATCHED",
+        "mismatchReason": "Transaction not found in switching system",
+        "reconciliationDate": "2026-07-17",
+        "matchedAt": null
+      }
+    ]
+  }
+}

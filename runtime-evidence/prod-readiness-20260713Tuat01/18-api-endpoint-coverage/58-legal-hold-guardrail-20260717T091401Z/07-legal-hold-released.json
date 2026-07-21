@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"release requester cannot approve own release","path":"/v1/operations/legal-holds/1/approve-release","phase":"VALIDATE_REQUEST","requestId":"567423e6-aa46-468a-a21e-99958775806e","retryable":false,"status":400,"timestamp":"2026-07-17T09:28:45.251962231","traceId":null}

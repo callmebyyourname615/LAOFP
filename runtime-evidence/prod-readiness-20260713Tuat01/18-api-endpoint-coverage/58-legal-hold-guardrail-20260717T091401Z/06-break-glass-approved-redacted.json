@@ -1,0 +1,14 @@
+{
+  "id": 10,
+  "sessionRef": "BG-E1C4D0E0C6904F63B7BF",
+  "requestedBy": "admin",
+  "reason": "Release synthetic UAT legal hold after endpoint coverage test",
+  "ticketReference": "UAT-BG-LEGAL-RELEASE-20260717T092757Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-17T09:33:17.343008726",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_HKINJ9sfB"
+}

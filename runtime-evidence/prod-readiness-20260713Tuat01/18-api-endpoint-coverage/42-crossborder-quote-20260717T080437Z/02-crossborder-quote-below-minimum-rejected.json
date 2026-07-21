@@ -1,0 +1,18 @@
+{
+  "httpStatus": 422,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "LFP-CB-002",
+    "layer": "CROSSBORDER",
+    "message": "FX corridor is not available: Amount below minimum 10000.0000",
+    "path": "/v1/crossborder/quote",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "7235e109-8615-48db-9a11-30a22eabe9eb",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-07-17T08:05:40.667050316",
+    "traceId": null
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "httpStatus": 200,
+  "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:acmt.024.001.03\">\n  <IdVrfctnRpt>\n    <Assgnmt>\n      <MsgId>ACMT024-UNKNOWN-1784276027194</MsgId>\n      <CreDtTm>2026-07-17T08:13:47.194079803Z</CreDtTm>\n    </Assgnmt>\n    <OrgnlAssgnmt>\n      <MsgId>UNKNOWN</MsgId>\n    </OrgnlAssgnmt>\n    <Rpt>\n      <OrgnlId>UNKNOWN</OrgnlId>\n      <Vrfctn>NMTC</Vrfctn>\n      <Rsn>\n  <Cd>FF01</Cd>\n  <AddtlInf>Invalid ACMT.023 XML: The element type &quot;Broken&quot; must be terminated by the matching end-tag &quot;&lt;/Broken&gt;&quot;.</AddtlInf>\n</Rsn>\n\n    </Rpt>\n    \n  </IdVrfctnRpt>\n</Document>\n"
+}

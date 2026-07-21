@@ -1,0 +1,18 @@
+{
+  "httpStatus": 401,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SMOS-401",
+    "layer": "API",
+    "message": "MFA challenge is invalid or expired",
+    "path": "/api/auth/mfa",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "e09f80eb-2808-426b-b112-1df09faa861d",
+    "retryable": false,
+    "status": 401,
+    "timestamp": "2026-07-17T08:03:31.082286167",
+    "traceId": null
+  }
+}

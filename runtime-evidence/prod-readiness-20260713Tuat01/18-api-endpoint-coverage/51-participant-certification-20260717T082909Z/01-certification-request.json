@@ -1,0 +1,11 @@
+{
+  "bankCode": "UAT260716T02220",
+  "suiteVersion": "endpoint-coverage-uat-v1",
+  "gitCommit": "4eeb8df65ad27a62cf47c5b56e42ce63d76a9cf1",
+  "imageDigest": "sha256:3fdf38bd03827fb2efd143237764c27bbca384d6907b199b8b004749f8e8095e",
+  "evidenceSha256": "ab7c4c3f6a3ac065911622c2018312f8024a0cce9c8b259f45f4047c4156bedf",
+  "result": "PASS",
+  "executedAt": "2026-07-17T08:29:09",
+  "expiresAt": "2026-08-16T08:29:09",
+  "detailsJson": "{\"purpose\":\"UAT endpoint coverage\",\"financialImpact\":\"none\"}"
+}

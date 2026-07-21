@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "Webhook URL must use HTTPS",
+    "path": "/v1/webhooks",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "71476f79-4a39-478e-815a-26a90a650945",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-17T07:57:03.380650166",
+    "traceId": null
+  }
+}

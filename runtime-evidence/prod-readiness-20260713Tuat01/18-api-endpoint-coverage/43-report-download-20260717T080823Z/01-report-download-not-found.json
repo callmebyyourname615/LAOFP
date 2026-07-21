@@ -1,0 +1,18 @@
+{
+  "httpStatus": 404,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "NOT_FOUND",
+    "errorCode": "REQ-005",
+    "layer": "API",
+    "message": "API route not found",
+    "path": "/v1/reports/download/999999999",
+    "phase": "RECEIVE_REQUEST",
+    "requestId": "ea37e372-00b1-46ca-aaff-6955841f2673",
+    "retryable": false,
+    "status": 404,
+    "timestamp": "2026-07-17T08:08:23.605846901",
+    "traceId": null
+  }
+}

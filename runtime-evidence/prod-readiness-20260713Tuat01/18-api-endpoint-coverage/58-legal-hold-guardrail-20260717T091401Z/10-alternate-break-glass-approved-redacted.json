@@ -1,0 +1,14 @@
+{
+  "id": 11,
+  "sessionRef": "BG-0E693DED900E4B2C8B87",
+  "requestedBy": "legal_release_20260717t092935z",
+  "reason": "Approve release of synthetic UAT legal hold",
+  "ticketReference": "UAT-BG-ALT-LEGAL-RELEASE-20260717T092955Z",
+  "ttlMinutes": 5,
+  "maxUses": 1,
+  "approvedBy": "checker_prod_062628",
+  "expiresAt": "2026-07-17T09:35:20.306390915",
+  "useCount": 0,
+  "status": "ACTIVE",
+  "tokenPrefix": "bg_TGaM0u1vK"
+}

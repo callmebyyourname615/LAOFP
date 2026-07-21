@@ -1,0 +1,10 @@
+{
+  "username": "session_all_20260717T084014Z",
+  "email": "session_all_20260717T084014Z@laofp.local",
+  "fullName": "UAT Revoke All Sessions",
+  "initialPassword": "Uatdev(openssl rand -hex 16)",
+  "roles": [
+    "READ_ONLY"
+  ],
+  "mfaEnabled": false
+}

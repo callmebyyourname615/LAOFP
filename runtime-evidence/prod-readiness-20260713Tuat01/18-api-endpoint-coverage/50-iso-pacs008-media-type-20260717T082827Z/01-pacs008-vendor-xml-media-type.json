@@ -1,0 +1,4 @@
+{
+  "httpStatus": 200,
+  "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pacs.002.001.12\"><FIToFIPmtStsRpt><GrpHdr><MsgId>PACS002-UNKNOWN-1784276907513</MsgId><CreDtTm>2026-07-17T08:28:27.513322904Z</CreDtTm></GrpHdr><OrgnlGrpInfAndSts><OrgnlMsgId>UNKNOWN</OrgnlMsgId><OrgnlMsgNmId>pacs.008.001.12</OrgnlMsgNmId><GrpSts>RJCT</GrpSts></OrgnlGrpInfAndSts><TxInfAndSts><OrgnlInstrId>UNKNOWN</OrgnlInstrId><OrgnlEndToEndId>UNKNOWN</OrgnlEndToEndId><TxSts>RJCT</TxSts><StsRsnInf><Rsn><Cd>FF01</Cd></Rsn><AddtlInf>Invalid PACS.008 XML</AddtlInf></StsRsnInf></TxInfAndSts></FIToFIPmtStsRpt></Document>"
+}
