@@ -1,0 +1,10 @@
+{
+  "httpStatus": 200,
+  "pspId": "BANK_A",
+  "response": {
+    "clientId": "client-bank-a",
+    "clientSecret": "[REDACTED — not persisted per evidence rules]",
+    "pspId": "BANK_A",
+    "expiresAt": null
+  }
+}

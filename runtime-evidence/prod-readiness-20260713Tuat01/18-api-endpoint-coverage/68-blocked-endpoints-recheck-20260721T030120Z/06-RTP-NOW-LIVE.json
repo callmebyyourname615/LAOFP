@@ -1,0 +1,9 @@
+{
+  "note": "MAJOR CHANGE since evidence 61 (2026-07-21T01:43:57Z): RTP endpoints now return real business-layer responses instead of 404 REQ-005 route-not-found. PHASE_II_RTP_ENABLED must have been deployed between 01:43Z and 03:01Z.",
+  "postRtpRequests": {"httpStatus":400,"errorCode":"REQ-001","message":"Request validation failed (fields required) — route exists"},
+  "getRtpRequestById": {"httpStatus":404,"errorCode":"RTP-001","message":"RTP request not found: <id> — business-layer 404, route exists"},
+  "postAuthorise": {"httpStatus":400,"errorCode":"REQ-001","message":"Request validation failed (authorisationReference, authorisedAmount, mode required) — route exists"},
+  "postCancel": {"httpStatus":404,"errorCode":"RTP-001","message":"RTP request not found — route exists"},
+  "postDecline": {"httpStatus":400,"errorCode":"REQ-001","message":"Request validation failed (reason required) — route exists"},
+  "postSettlements": {"httpStatus":400,"errorCode":"REQ-001","message":"Request validation failed (settlementReference, settledAmount required) — route exists"}
+}

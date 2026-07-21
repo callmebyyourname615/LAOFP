@@ -1,0 +1,23 @@
+{
+  "httpStatus": 200,
+  "response": {
+    "status": "REQUEUED",
+    "processedAt": "2026-07-21T02:39:18.707879423",
+    "requestedLimit": 5,
+    "totalFailedBefore": 1,
+    "requeuedCount": 1,
+    "items": [
+      {
+        "outboxEventId": 63,
+        "transferRef": "TRX-20260716061216-7698F2F7",
+        "messageType": "TRANSFER_DISPATCH",
+        "previousStatus": "FAILED",
+        "newStatus": "PENDING",
+        "retryCount": 1,
+        "requeued": true,
+        "message": "Outbox event requeued for worker dispatch"
+      }
+    ]
+  },
+  "note": "id 63 flipped back to FAILED between round 4 and round 5 (background worker retried and hit the same AC01 mock-connector rejection again) — retry-all correctly found and requeued it. Confirms retry-all works against real data, not just an empty-list no-op."
+}

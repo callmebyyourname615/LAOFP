@@ -1,0 +1,18 @@
+{
+  "httpStatus": 404,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "NOT_FOUND",
+    "errorCode": "REQ-005",
+    "layer": "API",
+    "message": "API route not found",
+    "path": "/v1/rtp/requests/00000000-0000-0000-0000-000000000001",
+    "phase": "RECEIVE_REQUEST",
+    "requestId": "463b4927-c6d5-4611-a1a4-65121bb6d518",
+    "retryable": false,
+    "status": 404,
+    "timestamp": "2026-07-21T01:43:57.523887036",
+    "traceId": null
+  }
+}

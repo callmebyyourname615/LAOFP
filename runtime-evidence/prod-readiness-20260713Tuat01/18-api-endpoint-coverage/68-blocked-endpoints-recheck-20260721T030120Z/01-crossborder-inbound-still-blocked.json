@@ -1,0 +1,1 @@
+{"httpStatus":404,"response":{"error":"NOT_FOUND","errorCode":"REQ-005","message":"API route not found","path":"/v1/crossborder/inbound/promptpay"}}

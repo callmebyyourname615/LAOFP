@@ -1,6 +1,7 @@
 # API Endpoint Evidence Matrix
 
 Generated: 2026-07-21T01:35:00Z
+Last updated: 2026-07-21T02:53:00Z
 Inventory source: `/Users/macbookpro/Desktop/Switching/API_ENDPOINTS.txt`
 Total endpoints: 241
 
@@ -16,7 +17,54 @@ Total endpoints: 241
 - Methods: `DELETE` 6, `GET` 115, `PATCH` 6, `POST` 110, `PUT` 4
 - Risk: `high` 50, `read` 115, `standard` 76
 - Domains: 33
-- Verified on UAT: 200/241
+- Verified on UAT: 209/241
+
+## 🔴 CRITICAL — do not ship until fixed
+
+- `POST /v1/settlement/rtgs-callback` — IP whitelist provides no real protection in the current
+  deployment (trusts client-supplied `X-Forwarded-For` unconditionally, and even without spoofing
+  every external request already appears as `127.0.0.1` through the nginx edge). Any participant
+  holding a valid mTLS client cert can forge RTGS settlement confirmations for any
+  `instructionRef`. See `18-api-endpoint-coverage/64-rtgs-callback-ip-whitelist-bypass/FINDING.md`.
+
+## RTP module went live mid-session (2026-07-21, between 01:43Z and 03:01Z)
+
+`PHASE_II_RTP_ENABLED` was deployed during this testing session — RTP endpoints that returned 404
+route-not-found at 01:43Z (evidence 61) returned real business responses by 03:01Z. All 6 RTP
+endpoints retested: create/get/cancel/decline confirmed full PASS; authorise/settlements reach
+real business validation but are not fully happy-path-tested (see bug below and
+`69-rtp-happy-path-20260721T030327Z`). Also found: `AuthoriseRtpRequest.inquiryRef` is optional in
+the DTO (`@Size` only) but the service unconditionally requires it
+(`RtpAuthorisationService.java:89`, generic "Required value is blank" error that doesn't name the
+field) — see `69-rtp-happy-path-20260721T030327Z/BUG-inquiryRef-contract-mismatch.md`.
+
+## Known deploy gap — 6 endpoints permanently 404 until fixed
+
+`docker-compose.yml`'s `app` service still does not forward `PHASE_II_REPORT_DELIVERY_ENABLED` or
+`PHASE_II_CROSS_BORDER_ENABLED` (+ per-rail secrets) into the container, so those
+`@ConditionalOnProperty` controllers never register regardless of `.env` contents: all 3
+`v1-operator` report-delivery-schedule endpoints, `GET /v1/reports/download/{id}`,
+`POST /v1/crossborder/inbound/{rail}`, and `POST /v1/operator/crossborder/reconciliation/{rail}/{statementDate}`.
+Note `POST /v1/crossborder/initiate` and `/v1/crossborder/quote` are NOT behind this gate
+(`CrossBorderController` has no `@ConditionalOnProperty`, unlike `CrossBorderInboundController`)
+and are already reachable — confirmed via `68-blocked-endpoints-recheck-20260721T030120Z`.
+
+## Blocked by test-data availability this session (not a code defect)
+
+- Settlement-cycle instruction mutations (`batch`, `close`, `settle`, `instructions/{ref}/approve`,
+  `/reject`, `/send-rtgs`, `/record-rtgs-upload`) — today's 4-cycles/day quota was already
+  exhausted by the scheduler and no cycle had any batched items. See
+  `65-settlement-cycle-chain/NOTE.md`.
+- `POST /api/admin/requests/{id}/approve` — only one distinct ADMIN account was available this
+  session; the endpoint requires maker != checker, so only the negative self-approval case was
+  exercised. See `67-maker-checker-approve/NOTE.md`.
+- `POST /v1/rtp/requests/{id}/authorise` + `/settlements` — reach real business validation but need
+  a real prior transfer-inquiry record (ISO20022 inquiry flow) to complete the happy path. See
+  `69-rtp-happy-path-20260721T030327Z`.
+- BANK-role endpoints (`/v1/settlement/liquidity/topup`, `/v1/qr/pay`, `/v1/qr/refund`,
+  `/v1/webhooks*`) — no BANK-role SMOS account was available this session.
+- Dead-letter mutations (`request-replay`, `approve-replay`, `execute-replay`, `discard`) —
+  `GET /v1/operations/dead-letters` returned `[]`, no fixture data existed to act on.
 
 ## admin (13)
 
@@ -28,7 +76,7 @@ Total endpoints: 241
 | [x] | POST | `/api/admin/api-keys/{id}/rotate` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/01-api-key-lifecycle` |
 | [x] | GET | `/api/admin/requests` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/02-maker-checker` |
 | [x] | POST | `/api/admin/requests` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/02-maker-checker` |
-| [ ] | POST | `/api/admin/requests/{id}/approve` | standard | happy path + authorization + validation + cleanup | - |
+| [ ] | POST | `/api/admin/requests/{id}/approve` | standard | happy path + authorization + validation + cleanup | 18-api-endpoint-coverage/67-maker-checker-approve — negative (self-approval) only, needs 2nd admin account for happy path |
 | [x] | POST | `/api/admin/requests/{id}/reject` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/02-maker-checker` |
 | [x] | GET | `/api/admin/users` | read | authenticated read + unauthorized negative | `02-auth-security` |
 | [x] | POST | `/api/admin/users` | standard | happy path + authorization + validation + cleanup | `17-security-operational` |
@@ -107,7 +155,7 @@ Total endpoints: 241
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | [x] | POST | `/api/iso20022/acmt023` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/46-iso-acmt023` |
-| [ ] | POST | `/api/iso20022/application/*+xml` | standard | happy path + authorization + validation + cleanup | - |
+| [x] | POST | `/api/iso20022/application/*+xml` | standard | happy path + authorization + validation + cleanup | 18-api-endpoint-coverage/50-iso-pacs008-media-type (same route as pacs008, consumes variant) |
 | [x] | POST | `/api/iso20022/pacs008` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/45-iso-pacs008` |
 
 ## operations (87)
@@ -148,9 +196,9 @@ Total endpoints: 241
 | [x] | GET | `/api/operations/iso-inquiries` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/15-iso-inquiries-20260717T025711Z` |
 | [x] | GET | `/api/operations/iso-inquiries/{inquiryRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/15-iso-inquiries-20260717T025711Z` |
 | [x] | GET | `/api/operations/iso-messages` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/31-post-settlement-dispute-20260717T062635Z/operations-iso-messages` |
-| [ ] | POST | `/api/operations/outbox-events/{id}/mark-reviewed` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/api/operations/outbox-events/{id}/mark-reviewed` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/63-outbox-retry-mark-reviewed |
 | [x] | GET | `/api/operations/outbox-failures` | read | authenticated read + unauthorized negative | `08-outbox-recovery` |
-| [ ] | POST | `/api/operations/outbox-failures/retry-all` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/api/operations/outbox-failures/retry-all` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/63-outbox-retry-mark-reviewed |
 | [x] | GET | `/api/operations/outbox-stuck` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/22-outbox-stuck-20260717T033305Z` |
 | [x] | POST | `/api/operations/outbox-stuck/recover-all` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/57-outbox-stuck-recovery` |
 | [x] | GET | `/api/operations/payment-flows/{transactionRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/14-operations-events-20260717T024646Z` |
@@ -175,14 +223,14 @@ Total endpoints: 241
 | [x] | POST | `/api/operations/reconciliation/files/{fileRef}/items` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/39-reconciliation-files` |
 | [x] | POST | `/api/operations/reconciliation/files/{fileRef}/rematch` | standard | happy path + authorization + validation + cleanup | `18-api-endpoint-coverage/39-reconciliation-files` |
 | [x] | GET | `/api/operations/settlement/cycles` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
-| [ ] | POST | `/api/operations/settlement/cycles` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [ ] | POST | `/api/operations/settlement/cycles` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/65-settlement-cycle-chain — validation only (quota), happy path blocked by daily-cycle cap + no batchable data |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/actions` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [ ] | POST | `/api/operations/settlement/cycles/{cycleRef}/batch` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [ ] | POST | `/api/operations/settlement/cycles/{cycleRef}/close` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/detail` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/instructions` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
-| [ ] | POST | `/api/operations/settlement/cycles/{cycleRef}/instructions/generate` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [ ] | POST | `/api/operations/settlement/cycles/{cycleRef}/instructions/generate` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/65-settlement-cycle-chain — 200 empty list only, no positions to net |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/ops-report` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z` |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/ops-report.csv` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations` |
 | [x] | GET | `/api/operations/settlement/cycles/{cycleRef}/report` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/29-settlement-operations` |
@@ -207,7 +255,7 @@ Total endpoints: 241
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | [x] | GET | `/api/outbox-events` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/23-outbox-events-20260717T033431Z` |
-| [ ] | POST | `/api/outbox-events/{outboxEventId}/retry` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/api/outbox-events/{outboxEventId}/retry` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/63-outbox-retry-mark-reviewed |
 
 ## participants (4)
 
@@ -335,7 +383,7 @@ Total endpoints: 241
 | [ ] | POST | `/v1/operator/crossborder/reconciliation/{rail}/{statementDate}` | standard | happy path + authorization + validation + cleanup | - |
 | [x] | POST | `/v1/operator/push-payment-policies` | standard | happy path + authorization + validation + cleanup | `12-admin-portal-integration` |
 | [x] | POST | `/v1/operator/push-payment-policies/{id}/activate` | standard | happy path + authorization + validation + cleanup | `12-admin-portal-integration` |
-| [ ] | GET | `/v1/operator/report-delivery-schedules` | read | authenticated read + unauthorized negative | - |
+| [ ] | GET | `/v1/operator/report-delivery-schedules` | read | authenticated read + unauthorized negative | 18-api-endpoint-coverage/60-report-delivery-schedules-20260721T014323Z — BLOCKED, 404 route not found |
 | [ ] | POST | `/v1/operator/report-delivery-schedules` | standard | happy path + authorization + validation + cleanup | - |
 | [ ] | PATCH | `/v1/operator/report-delivery-schedules/{id}/suspend` | standard | happy path + authorization + validation + cleanup | - |
 
@@ -347,7 +395,7 @@ Total endpoints: 241
 | [x] | POST | `/v1/participants/{pspId}/certificates/issue` | high | happy path + authorization + validation + audit + rollback/cleanup | `18-api-endpoint-coverage/07-certificate-issue-20260717T014548Z` |
 | [x] | GET | `/v1/participants/certificates` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/07-certificate-issue-20260717T014548Z` |
 | [x] | DELETE | `/v1/participants/{pspId}/certificates/{certId}` | high | happy path + authorization + validation + audit + rollback/cleanup | `17-security-operational/certificate-lifecycle` |
-| [ ] | POST | `/v1/participants/{pspId}/credentials/rotate` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/v1/participants/{pspId}/credentials/rotate` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/66-credentials-rotate |
 
 ## v1-promotions (7)
 
@@ -375,7 +423,7 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | GET | `/v1/reports/download/{id}` | read | authenticated read + unauthorized negative | - |
+| [ ] | GET | `/v1/reports/download/{id}` | read | authenticated read + unauthorized negative | 18-api-endpoint-coverage/62-reports-download — BLOCKED, same PHASE_II_REPORT_DELIVERY_ENABLED deploy gap as RTP |
 
 ## v1-risk (1)
 
@@ -387,12 +435,12 @@ Total endpoints: 241
 
 | Done | Method | Path | Risk | Required Evidence | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/v1/rtp/requests` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | GET | `/v1/rtp/requests/{id}` | read | authenticated read + unauthorized negative | - |
-| [ ] | POST | `/v1/rtp/requests/{id}/authorise` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
-| [ ] | POST | `/v1/rtp/requests/{id}/cancel` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/v1/rtp/requests/{id}/decline` | standard | happy path + authorization + validation + cleanup | - |
-| [ ] | POST | `/v1/rtp/requests/{id}/settlements` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [x] | POST | `/v1/rtp/requests` | standard | happy path + authorization + validation + cleanup | 18-api-endpoint-coverage/69-rtp-happy-path-20260721T030327Z |
+| [x] | GET | `/v1/rtp/requests/{id}` | read | authenticated read + unauthorized negative | 18-api-endpoint-coverage/69-rtp-happy-path-20260721T030327Z |
+| [ ] | POST | `/v1/rtp/requests/{id}/authorise` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/69-rtp-happy-path-20260721T030327Z -- validation confirmed live + found DTO/service inquiryRef contract bug; full happy path needs a real prior inquiry record (out of scope this pass) |
+| [x] | POST | `/v1/rtp/requests/{id}/cancel` | standard | happy path + authorization + validation + cleanup | 18-api-endpoint-coverage/69-rtp-happy-path-20260721T030327Z |
+| [x] | POST | `/v1/rtp/requests/{id}/decline` | standard | happy path + authorization + validation + cleanup | 18-api-endpoint-coverage/69-rtp-happy-path-20260721T030327Z |
+| [ ] | POST | `/v1/rtp/requests/{id}/settlements` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/69-rtp-happy-path-20260721T030327Z -- guard validated (rejects over-authorised amount); blocked on authorise happy path above |
 
 ## v1-settlement (5)
 
@@ -402,7 +450,7 @@ Total endpoints: 241
 | [ ] | POST | `/v1/settlement/liquidity/topup` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
 | [x] | GET | `/v1/settlement/pool-history` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/28-settlement-reads-20260717T035448Z` |
 | [x] | GET | `/v1/settlement/positions` | read | authenticated read + unauthorized negative | `18-api-endpoint-coverage/28-settlement-reads-20260717T035448Z` |
-| [ ] | POST | `/v1/settlement/rtgs-callback` | high | happy path + authorization + validation + audit + rollback/cleanup | - |
+| [ ] | POST | `/v1/settlement/rtgs-callback` | high | happy path + authorization + validation + audit + rollback/cleanup | 18-api-endpoint-coverage/64-rtgs-callback-ip-whitelist-bypass — CRITICAL FINDING, IP whitelist bypassed, see FINDING.md |
 
 ## v1-transfers (4)
 

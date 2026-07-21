@@ -1,0 +1,9 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "message": "Maker and checker must be different users",
+    "path": "/api/admin/requests/e35ec1e5-68b7-4bed-b51d-596ae92bb97c/approve"
+  }
+}

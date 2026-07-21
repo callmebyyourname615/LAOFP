@@ -1,0 +1,5 @@
+{
+  "httpStatus": 200,
+  "response": [],
+  "note": "Called on SC-20260721-C4 (already CLOSED by scheduler, itemCount=0). Endpoint responds correctly with an empty list when there is nothing to net — proves the endpoint itself works, but does not exercise the approve/send-rtgs/record-rtgs-upload/settle chain since no instructions were produced."
+}

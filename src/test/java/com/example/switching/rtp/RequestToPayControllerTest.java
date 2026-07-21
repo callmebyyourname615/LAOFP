@@ -1,7 +1,9 @@
 package com.example.switching.rtp;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -10,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,11 +27,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.switching.rtp.controller.RequestToPayController;
+import com.example.switching.common.exception.GlobalExceptionHandler;
+import com.example.switching.observability.tracing.TraceContextSupport;
 import com.example.switching.rtp.dto.RtpCreateResult;
 import com.example.switching.rtp.dto.RtpRequestResponse;
 import com.example.switching.rtp.enums.RtpStatus;
 import com.example.switching.rtp.service.RtpRequestService;
 import com.example.switching.rtp.service.RtpAuthorisationService;
+import com.example.switching.rtp.exception.RtpNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class RequestToPayControllerTest {
@@ -39,11 +45,16 @@ class RequestToPayControllerTest {
     @Mock
     private RtpAuthorisationService authorisationService;
 
+    @Mock
+    private TraceContextSupport traceContext;
+
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
+        lenient().when(traceContext.currentTraceId()).thenReturn(Optional.empty());
         mockMvc = MockMvcBuilders.standaloneSetup(new RequestToPayController(requestService, authorisationService))
+                .setControllerAdvice(new GlobalExceptionHandler(traceContext))
                 .build();
     }
 
@@ -88,6 +99,18 @@ class RequestToPayControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void missingRequestReturnsRtpNotFoundResponse() throws Exception {
+        UUID id = UUID.randomUUID();
+        when(requestService.get(any(), any())).thenThrow(new RtpNotFoundException(id));
+
+        mockMvc.perform(get("/v1/rtp/requests/{id}", id)
+                        .principal(bankPrincipal("BANK_A")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").value("RTP-001"))
+                .andExpect(jsonPath("$.message").value("RTP request not found: " + id));
     }
 
     private static UsernamePasswordAuthenticationToken bankPrincipal(String participantId) {

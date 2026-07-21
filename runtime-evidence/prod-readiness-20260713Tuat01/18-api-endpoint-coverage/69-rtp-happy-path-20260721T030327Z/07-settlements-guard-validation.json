@@ -1,0 +1,1 @@
+{"httpStatus":400,"response":{"errorCode":"REQ-001","message":"Settlement exceeds authorised amount"},"note":"Correctly rejected since authorisedAmount stayed 0.00 (authorise never succeeded). Confirms the settlement-vs-authorised-amount guard works."}

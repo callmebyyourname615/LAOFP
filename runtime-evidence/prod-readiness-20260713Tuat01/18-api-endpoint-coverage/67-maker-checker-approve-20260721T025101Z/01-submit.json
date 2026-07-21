@@ -1,0 +1,11 @@
+{
+  "httpStatus": 200,
+  "response": {
+    "id": "e35ec1e5-68b7-4bed-b51d-596ae92bb97c",
+    "requestType": "SETTLEMENT_INSTRUCTION_APPROVE",
+    "payload": {"instructionRef": "PROBE-NONEXISTENT-0002", "note": "endpoint coverage test"},
+    "maker": "admin",
+    "checker": null,
+    "status": "PENDING"
+  }
+}

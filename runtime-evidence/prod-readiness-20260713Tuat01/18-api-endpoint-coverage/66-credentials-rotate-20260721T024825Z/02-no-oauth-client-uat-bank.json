@@ -1,0 +1,9 @@
+{
+  "httpStatus": 400,
+  "pspId": "UAT260716T02220",
+  "response": {
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "message": "No OAuth client registered for PSP: UAT260716T02220"
+  }
+}

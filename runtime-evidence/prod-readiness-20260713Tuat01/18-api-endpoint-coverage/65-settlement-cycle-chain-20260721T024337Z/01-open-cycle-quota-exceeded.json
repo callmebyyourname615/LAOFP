@@ -1,0 +1,10 @@
+{
+  "httpStatus": 409,
+  "response": {
+    "category": "BUSINESS",
+    "error": "CONFLICT",
+    "errorCode": "SET-002",
+    "message": "Maximum 4 cycles per day reached for date: 2026-07-21",
+    "path": "/api/operations/settlement/cycles"
+  }
+}

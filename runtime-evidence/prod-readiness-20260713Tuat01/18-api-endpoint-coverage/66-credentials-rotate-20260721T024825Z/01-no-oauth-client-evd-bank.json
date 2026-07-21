@@ -1,0 +1,9 @@
+{
+  "httpStatus": 400,
+  "pspId": "EVD260716T01591",
+  "response": {
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "message": "No OAuth client registered for PSP: EVD260716T01591"
+  }
+}

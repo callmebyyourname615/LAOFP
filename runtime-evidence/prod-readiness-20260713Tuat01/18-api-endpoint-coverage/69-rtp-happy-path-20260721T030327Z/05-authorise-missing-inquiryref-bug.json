@@ -1,0 +1,1 @@
+{"httpStatus":400,"response":{"errorCode":"REQ-001","message":"Required value is blank"},"note":"Sent authorisationReference+authorisedAmount+mode only (the 3 fields @Valid rejects when missing). Got past bean validation but failed in service layer on inquiryRef."}

@@ -1,0 +1,12 @@
+{
+  "httpStatus": 404,
+  "response": {
+    "category": "REQUEST",
+    "error": "NOT_FOUND",
+    "errorCode": "SET-003",
+    "message": "Settlement instruction not found: PROBE-NONEXISTENT-0001",
+    "path": "/v1/settlement/rtgs-callback",
+    "status": 404
+  },
+  "note": "No X-Forwarded-For header was sent by the client at all. A correctly enforced IP whitelist should have returned 403 for a request originating from an external caller. Instead it reached business logic (404 instruction-not-found), proving the whitelist check already passes without any spoofing."
+}

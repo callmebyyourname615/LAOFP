@@ -45,6 +45,11 @@ import com.example.switching.liquidity.exception.InsufficientPoolBalanceExceptio
 import com.example.switching.liquidity.exception.PoolHoldNotFoundException;
 import com.example.switching.risk.exception.HighRiskBlockException;
 import com.example.switching.risk.exception.VelocityLimitException;
+import com.example.switching.rtp.exception.RtpAccessDeniedException;
+import com.example.switching.rtp.exception.RtpExpiryInvalidException;
+import com.example.switching.rtp.exception.RtpIdempotencyConflictException;
+import com.example.switching.rtp.exception.RtpInvalidTransitionException;
+import com.example.switching.rtp.exception.RtpNotFoundException;
 import com.example.switching.transfer.exception.InquiryAlreadyUsedException;
 import com.example.switching.transfer.exception.InquiryValidationException;
 import com.example.switching.transfer.exception.TransferNotFoundException;
@@ -845,6 +850,38 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ApiErrorResponse> handlePurposeCodeRequired(
                         PurposeCodeRequiredException ex, HttpServletRequest request) {
                 return buildResponse(ErrorCatalog.LFP_CB_003, ex.getMessage(), request, null);
+        }
+
+        // ── Phase II Request-to-Pay ─────────────────────────────────────────
+
+        @ExceptionHandler(RtpNotFoundException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpNotFound(
+                        RtpNotFoundException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_001, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpIdempotencyConflictException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpIdempotencyConflict(
+                        RtpIdempotencyConflictException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_002, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpInvalidTransitionException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpInvalidTransition(
+                        RtpInvalidTransitionException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_003, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpAccessDeniedException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpAccessDenied(
+                        RtpAccessDeniedException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_004, ex.getMessage(), request, null);
+        }
+
+        @ExceptionHandler(RtpExpiryInvalidException.class)
+        public ResponseEntity<ApiErrorResponse> handleRtpExpiryInvalid(
+                        RtpExpiryInvalidException ex, HttpServletRequest request) {
+                return buildResponse(ErrorCatalog.RTP_005, ex.getMessage(), request, null);
         }
 
         private ResponseEntity<ApiErrorResponse> buildResponse(

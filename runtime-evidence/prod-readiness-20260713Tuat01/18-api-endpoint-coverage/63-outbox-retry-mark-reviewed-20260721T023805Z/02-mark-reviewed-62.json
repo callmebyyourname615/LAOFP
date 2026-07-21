@@ -1,0 +1,15 @@
+{
+  "httpStatus": 200,
+  "response": {
+    "status": "REVIEWED",
+    "reviewedAt": "2026-07-21T02:38:05.876153241",
+    "outboxEventId": 62,
+    "transferRef": "TRX-20260716043110-B32607EF",
+    "previousStatus": "FAILED",
+    "newStatus": "REVIEWED",
+    "retryCount": 1,
+    "reason": "Known varchar(100) truncation bug on transaction update — not auto-retryable, tracked for dev fix",
+    "reviewedBy": "admin",
+    "message": "Outbox event marked as reviewed"
+  }
+}

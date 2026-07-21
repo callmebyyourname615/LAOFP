@@ -1,0 +1,11 @@
+{
+  "httpStatus": 200,
+  "response": {
+    "outboxEventId": 63,
+    "transferRef": "TRX-20260716061216-7698F2F7",
+    "previousStatus": "FAILED",
+    "newStatus": "PENDING",
+    "retryCount": 1,
+    "message": "Outbox event reset to PENDING for manual retry"
+  }
+}

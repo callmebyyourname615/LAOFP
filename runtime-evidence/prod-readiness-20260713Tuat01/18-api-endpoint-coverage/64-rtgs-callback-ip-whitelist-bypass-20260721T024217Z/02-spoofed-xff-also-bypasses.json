@@ -1,0 +1,12 @@
+{
+  "httpStatus": 404,
+  "response": {
+    "category": "REQUEST",
+    "error": "NOT_FOUND",
+    "errorCode": "SET-003",
+    "message": "Settlement instruction not found: PROBE-NONEXISTENT-0001",
+    "path": "/v1/settlement/rtgs-callback",
+    "status": 404
+  },
+  "note": "Sent X-Forwarded-For: 127.0.0.1 explicitly. Same result as the unspoofed request."
+}
