@@ -87,6 +87,8 @@ common_env=(
 docker run --rm --network "$network" \
   "${common_env[@]}" \
   -e BACKUP_AGE_RECIPIENT="$recipient" \
+  -e BACKUP_AGE_IDENTITY_FILE=/var/run/secrets/backup/age-identity.txt \
+  -v "$work/age-identity.txt:/var/run/secrets/backup/age-identity.txt:ro" \
   -v "$work/backup-work:/var/lib/switching-backup/work" \
   -v "$work/metrics:/var/lib/switching-backup/metrics" \
   "$image" /opt/switching-backup/bin/full-backup.sh

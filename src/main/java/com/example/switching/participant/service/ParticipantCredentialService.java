@@ -95,8 +95,8 @@ public class ParticipantCredentialService {
         client.setClientSecretHash(newSecretHash);
         oauthClientRepository.save(client);
 
-        // Invalidate all tokens issued at or before now.
-        long rotationEpoch = Instant.now().getEpochSecond();
+        // Invalidate all tokens issued at or before now with millisecond precision.
+        long rotationEpoch = Instant.now().toEpochMilli();
         tokenService.markClientRotated(client.getClientId(), rotationEpoch);
 
         log.info("Credentials rotated for pspId={} clientId={}", pspId, client.getClientId());

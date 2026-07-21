@@ -1,0 +1,39 @@
+== compose backup services ==
+minio
+postgres
+postgres-archive
+redpanda
+minio-init
+postgres-read-replica
+app
+backup-full
+backup-wal
+
+== backup containers ==
+NAME                              IMAGE                                      COMMAND                  SERVICE                 CREATED         STATUS                PORTS
+switching-app                     switching-app                              "sh -c 'exec java ${…"   app                     4 minutes ago   Up 4 minutes          0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+switching-backup-wal              switching-backup-wal                       "/usr/bin/tini -- /o…"   backup-wal              6 minutes ago   Up 6 minutes          5432/tcp
+switching-minio                   minio/minio:RELEASE.2025-04-22T22-12-26Z   "/usr/bin/docker-ent…"   minio                   4 days ago      Up 4 days (healthy)   0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+switching-postgres                postgres:16                                "docker-entrypoint.s…"   postgres                4 days ago      Up 4 days (healthy)   0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp
+switching-postgres-archive        postgres:16                                "docker-entrypoint.s…"   postgres-archive        4 days ago      Up 4 days (healthy)   0.0.0.0:5434->5432/tcp, [::]:5434->5432/tcp
+switching-postgres-read-replica   postgres:16                                "docker-entrypoint.s…"   postgres-read-replica   4 days ago      Up 4 days (healthy)   0.0.0.0:5435->5432/tcp, [::]:5435->5432/tcp
+switching-redpanda                redpandadata/redpanda:v24.3.6              "/entrypoint.sh redp…"   redpanda                8 days ago      Up 8 days (healthy)   8081-8082/tcp, 0.0.0.0:9644->9644/tcp, [::]:9644->9644/tcp, 9092/tcp, 0.0.0.0:19092->19092/tcp, [::]:19092->19092/tcp
+
+== backup artifacts ==
+2026-06-18T08:00:00.0000000000 4420 /opt/switching/backup/test/integration-smoke.sh
+2026-06-18T08:00:00.0000000000 1539 /opt/switching/backup/bin/verify-replication.sh
+2026-06-18T08:00:00.0000000000 1753 /opt/switching/backup/bin/common.sh
+2026-06-18T08:00:00.0000000000 3476 /opt/switching/backup/bin/restore-basebackup.sh
+2026-06-18T08:00:00.0000000000 1339 /opt/switching/backup/bin/verify-backup.sh
+2026-06-18T08:00:00.0000000000 1359 /opt/switching/backup/bin/wal-receiver.sh
+2026-06-18T08:00:00.0000000000 2564 /opt/switching/backup/bin/wal-uploader.sh
+2026-06-18T08:00:00.0000000000 3545 /opt/switching/backup/bin/s3.sh
+2026-06-18T08:00:00.0000000000 1178 /opt/switching/backup/bin/restore-wal.sh
+2026-06-18T08:00:00.0000000000 1289 /opt/switching/backup/bin/metrics.sh
+2026-07-16T14:55:14.4885498840 5884 /opt/switching/backup/bin/restore-drill.sh
+2026-06-18T08:00:00.0000000000 753 /opt/switching/backup/bin/apply-retention.sh
+2026-06-18T08:00:00.0000000000 4654 /opt/switching/backup/bin/full-backup.sh
+2026-06-18T08:00:00.0000000000 611 /opt/switching/backup/config/restore-verification.sql
+2026-06-18T08:00:00.0000000000 688 /opt/switching/backup/config/s3-lifecycle.json
+2026-06-18T08:00:00.0000000000 1091 /opt/switching/backup/Dockerfile
+2026-06-18T08:00:00.0000000000 1212 /opt/switching/backup/.env.example

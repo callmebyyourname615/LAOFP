@@ -26,6 +26,18 @@ require_file() {
   [[ -r "$1" ]] || die "required readable file not found: $1"
 }
 
+require_age_identity_for_recipient() {
+  local identity_file="$1"
+  local expected_recipient="$2"
+  local actual_recipient
+
+  require_file "$identity_file"
+  actual_recipient="$(age-keygen -y "$identity_file" 2>/dev/null)" \
+    || die "cannot derive age recipient from backup identity"
+  [[ "$actual_recipient" == "$expected_recipient" ]] \
+    || die "backup identity does not match BACKUP_AGE_RECIPIENT"
+}
+
 is_true() {
   [[ "${1,,}" == "true" || "$1" == "1" || "${1,,}" == "yes" ]]
 }

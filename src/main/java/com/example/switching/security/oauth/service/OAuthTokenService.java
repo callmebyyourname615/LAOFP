@@ -49,11 +49,10 @@ public class OAuthTokenService {
     private final Set<String> revokedTokenSignatures = ConcurrentHashMap.newKeySet();
 
     /**
-     * Per-client rotation epoch (seconds).
-     * Any token with {@code iat <= rotationEpoch} for that client is invalidated.
-     * Set by {@link #markClientRotated(String, long)}.
+     * Per-client credential rotation timestamp in milliseconds. Tokens issued at or
+     * before this point are invalidated. Set by {@link #markClientRotated(String, long)}.
      */
-    private final Map<String, Long> clientRotationEpochs = new ConcurrentHashMap<>();
+    private final Map<String, Long> clientRotationEpochMillis = new ConcurrentHashMap<>();
 
     @Autowired
     public OAuthTokenService(
@@ -100,6 +99,7 @@ public class OAuthTokenService {
         payload.put("psp", client.getPspId());
         payload.put("scope", String.join(" ", scopes));
         payload.put("iat", now.getEpochSecond());
+        payload.put("iat_ms", now.toEpochMilli());
         payload.put("exp", expiresAt.getEpochSecond());
 
         String signingInput = base64Json(header) + "." + base64Json(payload);
@@ -129,10 +129,12 @@ public class OAuthTokenService {
         String clientId = stringClaim(payload, "sub");
         long iat = longClaim(payload, "iat");
 
-        // Check credential-rotation invalidation: any token issued at or before the
-        // rotation epoch for this client is no longer valid.
-        Long rotationEpoch = clientRotationEpochs.get(clientId);
-        if (rotationEpoch != null && iat <= rotationEpoch) {
+        // New tokens carry millisecond precision so a credential rotation does not
+        // reject a newly-issued token merely because both events share a second.
+        // Legacy tokens without iat_ms remain conservatively invalidated by iat.
+        Long rotationEpoch = clientRotationEpochMillis.get(clientId);
+        long issuedAtMillis = optionalLongClaim(payload, "iat_ms", iat * 1_000L);
+        if (rotationEpoch != null && issuedAtMillis <= rotationEpoch) {
             throw new OAuthTokenInvalidException("Token invalidated by credential rotation");
         }
 
@@ -161,14 +163,14 @@ public class OAuthTokenService {
 
     /**
      * Marks all tokens issued for {@code clientId} at or before
-     * {@code rotationEpochSeconds} as invalid.
+     * {@code rotationEpochMillis} as invalid.
      *
      * <p>Called by {@code ParticipantCredentialService.rotateCredentials()} after
      * updating the client secret hash so that any Bearer tokens the PSP issued
      * before the rotation are immediately rejected.
      */
-    public void markClientRotated(String clientId, long rotationEpochSeconds) {
-        clientRotationEpochs.put(clientId, rotationEpochSeconds);
+    public void markClientRotated(String clientId, long rotationEpochMillis) {
+        clientRotationEpochMillis.put(clientId, rotationEpochMillis);
     }
 
     public boolean verifyClientSecret(String clientId, String clientSecret) {
@@ -256,6 +258,10 @@ public class OAuthTokenService {
         } catch (Exception ex) {
             throw new OAuthTokenInvalidException("Invalid OAuth token claim: " + claim);
         }
+    }
+
+    private long optionalLongClaim(Map<String, Object> payload, String claim, long defaultValue) {
+        return payload.containsKey(claim) ? longClaim(payload, claim) : defaultValue;
     }
 
     private void requireSigningSecret() {

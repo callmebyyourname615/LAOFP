@@ -1,0 +1,16 @@
+== configured backup variables ==
+BACKUP_AGE_RECIPIENT=<configured>
+BACKUP_AGE_IDENTITY_FILE_HOST=<configured>
+
+== restore script requirements ==
+backup/bin/restore-drill.sh:13:require_env S3_BUCKET BACKUP_AGE_IDENTITY_FILE
+
+== candidate identity files (names only) ==
+/opt/switching/scripts/enterprise/verify_input_identity.py
+/opt/switching/scripts/assurance/verify_input_identity.py
+/opt/switching/scripts/phase64/verify_release_identity.py
+/opt/switching/scripts/phase67/67A-release-identity-freeze-gate.sh
+
+== backup service environment names ==
+      BACKUP_AGE_RECIPIENT: age1gq47dtlmme9jgr2snrrg5mdwjvk9mtr58rcydt4qpwnr0w4vn4asvhsjfr
+      BACKUP_AGE_RECIPIENT: age1gq47dtlmme9jgr2snrrg5mdwjvk9mtr58rcydt4qpwnr0w4vn4asvhsjfr

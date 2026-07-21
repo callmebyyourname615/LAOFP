@@ -199,12 +199,14 @@ services:
       AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env; run security/scripts/generate-local-env.sh}
       S3_SERVER_SIDE_ENCRYPTION: none
       BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
+      BACKUP_AGE_IDENTITY_FILE: /run/secrets/switching-backup/age-identity.txt
       RESTORE_DRILL_DB_USER: ${POSTGRES_USER:-switching}
       SECONDARY_S3_ENABLED: "false"
     command: ["/opt/switching-backup/bin/full-backup.sh"]
     volumes:
       - backup_work:/var/lib/switching-backup/work
       - backup_metrics:/var/lib/switching-backup/metrics
+      - ${BACKUP_AGE_IDENTITY_FILE_HOST:-./backup/.missing-age-identity}:/run/secrets/switching-backup/age-identity.txt:ro
     restart: "no"
 
   # Continuous WAL receiver for PITR. Keep this service running in UAT:
@@ -305,6 +307,7 @@ services:
       SECURITY_OAUTH_ENABLED: ${SECURITY_OAUTH_ENABLED:-false}
       OAUTH_TOKEN_TTL_SECONDS: ${OAUTH_TOKEN_TTL_SECONDS:-3600}
       RTGS_CALLBACK_ENABLED: ${RTGS_CALLBACK_ENABLED:-false}
+      RTGS_CALLBACK_AUTHENTICATION_TOKEN: ${RTGS_CALLBACK_AUTHENTICATION_TOKEN:-}
       RTGS_CALLBACK_IP_WHITELIST: ${RTGS_CALLBACK_IP_WHITELIST:-127.0.0.1,172.18.0.1}
       SWITCHING_SMOS_ENABLED: ${SWITCHING_SMOS_ENABLED:-true}
       SWITCHING_SMOS_MFA_REQUIRED: ${SWITCHING_SMOS_MFA_REQUIRED:-false}

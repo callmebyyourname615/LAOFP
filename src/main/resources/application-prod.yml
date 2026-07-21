@@ -71,6 +71,7 @@ switching:
     bol-rtgs-url: ${BOL_RTGS_URL}
     rtgs-callback:
       enabled: ${RTGS_CALLBACK_ENABLED:false}
+      authentication-token: ${RTGS_CALLBACK_AUTHENTICATION_TOKEN:}
     rtgs-callback-ip-whitelist: ${RTGS_CALLBACK_IP_WHITELIST}
   archive:
     archive-db-url: ${ARCHIVE_DB_URL}

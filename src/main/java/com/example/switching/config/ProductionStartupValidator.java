@@ -223,6 +223,12 @@ public class ProductionStartupValidator implements InitializingBean {
     @Value("${switching.phase-ii.cross-border-adapters.upi.inbound-api-key:}")
     private String upiInboundApiKey;
 
+    @Value("${switching.settlement.rtgs-callback.enabled:false}")
+    private boolean rtgsCallbackEnabled;
+
+    @Value("${switching.settlement.rtgs-callback.authentication-token:}")
+    private String rtgsCallbackAuthenticationToken;
+
     @Value("${switching.mock-bank.pacs002.force-reject}")
     private boolean mockForceReject;
 
@@ -329,6 +335,15 @@ public class ProductionStartupValidator implements InitializingBean {
                     "UPI",
                     upiAdapterEnabled,
                     upiInboundApiKey);
+        }
+        if (rtgsCallbackEnabled) {
+            rejectBlankOrPlaceholder(
+                    violations,
+                    "switching.settlement.rtgs-callback.authentication-token",
+                    rtgsCallbackAuthenticationToken);
+            if (rtgsCallbackAuthenticationToken != null && rtgsCallbackAuthenticationToken.length() < 32) {
+                violations.add("switching.settlement.rtgs-callback.authentication-token must contain at least 32 characters in production.");
+            }
         }
 
         rejectBlankOrPlaceholder(violations, "spring.kafka.bootstrap-servers", kafkaBootstrapServers);

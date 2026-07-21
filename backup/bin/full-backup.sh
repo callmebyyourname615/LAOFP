@@ -14,7 +14,8 @@ require_command aws
 require_command jq
 require_command openssl
 require_command flock
-require_env PGHOST PGUSER PGPASSWORD S3_BUCKET BACKUP_AGE_RECIPIENT
+require_env PGHOST PGUSER PGPASSWORD S3_BUCKET BACKUP_AGE_RECIPIENT BACKUP_AGE_IDENTITY_FILE
+require_age_identity_for_recipient "$BACKUP_AGE_IDENTITY_FILE" "$BACKUP_AGE_RECIPIENT"
 
 validate_safe_token "${S3_PREFIX:-switching}" S3_PREFIX
 BACKUP_WORK_DIR="${BACKUP_WORK_DIR:-/var/lib/switching-backup/work}"

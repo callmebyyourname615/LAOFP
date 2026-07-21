@@ -45,6 +45,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
 
     private static final HttpServer RTGS_SERVER;
     private static final String RTGS_URL;
+    private static final String CALLBACK_TOKEN = "test-rtgs-callback-token-0123456789";
     private static final List<String> REQUEST_BODIES = new CopyOnWriteArrayList<>();
     private static final AtomicInteger RESPONSE_STATUS = new AtomicInteger(200);
 
@@ -64,6 +65,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
         registry.add("switching.settlement.bol-rtgs-url", () -> RTGS_URL);
         registry.add("switching.settlement.rtgs-timeout-ms", () -> "5000");
         registry.add("switching.settlement.rtgs-callback.enabled", () -> "true");
+        registry.add("switching.settlement.rtgs-callback.authentication-token", () -> CALLBACK_TOKEN);
         registry.add("switching.settlement.rtgs-callback-ip-whitelist", () -> "127.0.0.1");
     }
 
@@ -144,7 +146,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
                 """.formatted(sent.getInstructionRef(), sent.getRtgsMsgId());
 
         mockMvc.perform(post("/v1/settlement/rtgs-callback")
-                        .header("X-Forwarded-For", "127.0.0.1")
+                        .header("X-RTGS-Callback-Token", CALLBACK_TOKEN)
                         .contentType("application/json")
                         .content(callback))
                 .andExpect(status().isOk())
@@ -153,7 +155,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.status").value("CONFIRMED"));
 
         mockMvc.perform(post("/v1/settlement/rtgs-callback")
-                        .header("X-Forwarded-For", "127.0.0.1")
+                        .header("X-RTGS-Callback-Token", CALLBACK_TOKEN)
                         .contentType("application/json")
                         .content(callback))
                 .andExpect(status().isOk())
@@ -172,7 +174,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
         SettlementInstructionEntity sent = sentInstruction(LocalDate.now().plusDays(134));
 
         mockMvc.perform(post("/v1/settlement/rtgs-callback")
-                        .header("X-Forwarded-For", "127.0.0.1")
+                        .header("X-RTGS-Callback-Token", CALLBACK_TOKEN)
                         .contentType("application/json")
                         .content("""
                                 {"rtgsMsgId":"%s","status":"REJECTED","reason":"BOL rejected settlement"}
@@ -193,7 +195,28 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
         SettlementInstructionEntity sent = sentInstruction(LocalDate.now().plusDays(135));
 
         mockMvc.perform(post("/v1/settlement/rtgs-callback")
-                        .header("X-Forwarded-For", "203.0.113.10")
+                        .header("X-RTGS-Callback-Token", CALLBACK_TOKEN)
+                        .with(httpRequest -> {
+                            httpRequest.setRemoteAddr("203.0.113.10");
+                            return httpRequest;
+                        })
+                        .contentType("application/json")
+                        .content("""
+                                {"instructionRef":"%s","rtgsMsgId":"%s","status":"CONFIRMED"}
+                                """.formatted(sent.getInstructionRef(), sent.getRtgsMsgId())))
+                .andExpect(status().isForbidden());
+
+        SettlementInstructionEntity stored = instructionRepository
+                .findByInstructionRef(sent.getInstructionRef())
+                .orElseThrow();
+        assertEquals("SENT_RTGS", stored.getStatus());
+    }
+
+    @Test
+    void rtgsCallback_rejectsMissingAuthenticationToken() throws Exception {
+        SettlementInstructionEntity sent = sentInstruction(LocalDate.now().plusDays(136));
+
+        mockMvc.perform(post("/v1/settlement/rtgs-callback")
                         .contentType("application/json")
                         .content("""
                                 {"instructionRef":"%s","rtgsMsgId":"%s","status":"CONFIRMED"}
@@ -226,7 +249,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
         assertTrue(REQUEST_BODIES.getFirst().contains("<IntrBkSttlmAmt Ccy=\"LAK\">600000000.00</IntrBkSttlmAmt>"));
 
         mockMvc.perform(post("/v1/settlement/rtgs-callback")
-                        .header("X-Forwarded-For", "127.0.0.1")
+                        .header("X-RTGS-Callback-Token", CALLBACK_TOKEN)
                         .contentType("application/json")
                         .content("""
                                 {"instructionRef":"%s","rtgsMsgId":"%s","status":"CONFIRMED"}
