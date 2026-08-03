@@ -1,0 +1,25 @@
+{
+  "scenario": "Risk rules list",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/api/risk/rules",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "totalItems": 1,
+    "returnedItems": 1,
+    "items": [
+      {
+        "updatedAt": "2026-08-03T04:06:25.057676Z",
+        "ruleName": "EVD-RISK-FEES-20260803T040407Z-RULE",
+        "enabled": true,
+        "threshold": "5 txns/3600s",
+        "description": "Risk portal evidence velocity rule",
+        "priority": 10,
+        "updatedBy": "evidence",
+        "ruleId": "892fe271-c365-4ee0-9e64-63ac375b3d4f",
+        "actionOnBreach": "REVIEW"
+      }
+    ]
+  }
+}

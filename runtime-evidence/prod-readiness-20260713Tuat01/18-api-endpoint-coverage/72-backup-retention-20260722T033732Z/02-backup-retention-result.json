@@ -1,0 +1,7 @@
+{
+  "control": "BACKUP_RETENTION_LIFECYCLE",
+  "environment": "UAT",
+  "status": "FAIL",
+  "exitCode": 254,
+  "mode": "Isolated primary and secondary MinIO smoke test"
+}

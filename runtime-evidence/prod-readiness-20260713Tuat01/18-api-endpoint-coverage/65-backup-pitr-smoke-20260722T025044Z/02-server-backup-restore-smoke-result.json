@@ -1,0 +1,8 @@
+{
+  "control": "BACKUP_RESTORE_SMOKE",
+  "environment": "UAT",
+  "runId": "20260722T025044Z",
+  "exitCode": 0,
+  "status": "PASS",
+  "evidenceFile": "01-server-backup-restore-smoke.txt"
+}

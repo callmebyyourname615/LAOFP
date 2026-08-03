@@ -1,0 +1,381 @@
+erDiagram
+    FX_GOVERNANCE_POLICY {
+        varchar_7 currency_pair PK
+        integer minimum_quorum
+        integer maximum_age_seconds
+        numeric_12 maximum_deviation_basis_points
+        integer quote_ttl_seconds
+        boolean enabled
+        timestamptz updated_at
+    }
+
+    FX_RATE_PROVIDER {
+        varchar_80 provider_code PK
+        boolean enabled
+        integer trust_weight
+        timestamptz last_success_at
+    }
+
+    FX_RATE_OBSERVATION {
+        uuid id PK
+        varchar_80 provider_code FK
+        varchar_7 currency_pair
+        numeric_24 rate
+        timestamptz observed_at
+        char_64 payload_hash
+        timestamptz received_at
+    }
+
+    GOVERNED_FX_RATE_PUBLICATION {
+        uuid id PK
+        varchar_7 currency_pair
+        numeric_24 rate
+        integer provider_count
+        varchar_16 status
+        timestamptz valid_from
+        timestamptz valid_until
+        varchar_120 requested_by
+        varchar_120 approved_by
+        char_64 evidence_hash
+        string more_columns "plus 1 more"
+    }
+
+    PARTICIPANT_CERTIFICATE {
+        uuid id PK
+        varchar_32 participant_code
+        varchar_24 certificate_type
+        char_64 fingerprint_sha256
+        varchar_160 serial_number
+        varchar_1000 subject_dn
+        varchar_1000 issuer_dn
+        timestamptz not_before
+        timestamptz not_after
+        varchar_20 status
+        string more_columns "plus 8 more"
+    }
+
+    CERTIFICATE_LIFECYCLE_EVENT {
+        uuid id PK
+        uuid certificate_id FK
+        varchar_40 event_type
+        varchar_120 actor
+        varchar_500 reason
+        char_64 evidence_hash
+        timestamptz occurred_at
+    }
+
+    REGULATORY_REPORT_DEFINITION {
+        varchar_80 report_code PK
+        varchar_40 regulator_code
+        varchar_20 frequency
+        varchar_40 schema_version
+        time due_time
+        boolean enabled
+        timestamptz updated_at
+    }
+
+    REGULATORY_REPORT_RUN {
+        uuid id PK
+        varchar_80 report_code FK
+        date period_start
+        date period_end
+        varchar_20 status
+        varchar_120 generated_by
+        varchar_120 validated_by
+        bigint record_count
+        numeric_28 total_amount
+        char_64 evidence_hash
+        string more_columns "plus 2 more"
+    }
+
+    REGULATORY_REPORT_ARTIFACT {
+        uuid id PK
+        uuid report_run_id FK
+        varchar_1000 object_key
+        varchar_160 media_type
+        bigint size_bytes
+        char_64 sha256
+        boolean encrypted
+        timestamptz created_at
+    }
+
+    REGULATORY_REPORT_SUBMISSION {
+        uuid id PK
+        uuid report_run_id FK
+        varchar_200 submission_reference
+        varchar_120 submitted_by
+        timestamptz submitted_at
+        varchar_120 acknowledgement_code
+        char_64 acknowledgement_hash
+        timestamptz acknowledged_at
+        varchar_20 response_status
+    }
+
+    NOTIFICATION_TEMPLATE {
+        varchar_100 template_code PK
+        varchar_200 purpose
+        boolean contains_sensitive_data
+        timestamptz created_at
+    }
+
+    NOTIFICATION_TEMPLATE_VERSION {
+        uuid id PK
+        varchar_100 template_code FK
+        integer version_no
+        varchar_20 channel
+        varchar_20 locale
+        text subject_template
+        text body_template
+        varchar_16 status
+        varchar_120 requested_by
+        varchar_120 approved_by
+        string more_columns "plus 2 more"
+    }
+
+    NOTIFICATION_DELIVERY {
+        uuid id PK
+        varchar_200 deduplication_key
+        uuid template_version_id FK
+        char_64 recipient_reference_hash
+        jsonb payload_json
+        varchar_20 status
+        integer attempt_count
+        timestamptz next_attempt_at
+        varchar_200 provider_reference
+        varchar_100 last_error_code
+        string more_columns "plus 3 more"
+    }
+
+    OUTBOX_MESSAGES {
+        bigint id PK
+        varchar_80 transaction_ref
+        varchar_80 inquiry_ref
+        varchar_100 message_type
+        text payload
+        varchar_20 status
+        int retry_count
+        int max_retries
+        varchar_40 failure_class
+        boolean will_retry
+        string more_columns "plus 7 more"
+    }
+
+    OUTBOX_ATTEMPTS {
+        bigint id PK
+        bigint outbox_message_id
+        int attempt_number
+        varchar_20 status
+        varchar_50 error_code
+        varchar_500 error_message
+        varchar_40 failure_class
+        varchar_128 connector_name
+        int duration_ms
+        timestamp attempted_at
+    }
+
+    DEAD_LETTER_MESSAGES {
+        bigint id PK
+        bigint original_message_id
+        varchar_80 transaction_ref
+        varchar_100 message_type
+        text payload
+        varchar_500 failure_reason
+        varchar_40 final_failure_class
+        int total_attempts
+        timestamp created_at
+        timestamp reviewed_at
+        string more_columns "plus 1 more"
+    }
+
+    RELEASE_CHANGE_WINDOW {
+        uuid id PK
+        varchar_160 window_name
+        varchar_32 environment
+        varchar_40 change_type
+        timestamptz starts_at
+        timestamptz ends_at
+        varchar_120 approved_by
+        timestamptz created_at
+    }
+
+    RELEASE_FREEZE_PERIOD {
+        uuid id PK
+        varchar_32 environment
+        varchar_500 reason
+        timestamptz starts_at
+        timestamptz ends_at
+        varchar_20 severity
+        varchar_120 created_by
+        varchar_120 approved_by
+        timestamptz created_at
+    }
+
+    RELEASE_FREEZE_EXCEPTION {
+        uuid id PK
+        uuid freeze_period_id FK
+        varchar_160 release_reference
+        varchar_1000 justification
+        varchar_120 requested_by
+        varchar_120 approved_by
+        timestamptz expires_at
+        varchar_16 status
+        timestamptz created_at
+    }
+
+    RELEASE_GATE_DECISION {
+        uuid id PK
+        varchar_160 release_reference
+        varchar_32 environment
+        varchar_40 change_type
+        varchar_16 decision
+        varchar_1000 reason
+        varchar_120 evaluated_by
+        char_64 evidence_hash
+        timestamptz evaluated_at
+    }
+
+    SYNTHETIC_PROBE_DEFINITION {
+        varchar_80 probe_code PK
+        varchar_32 participant_code
+        varchar_40 probe_type
+        varchar_100 schedule_cron
+        integer timeout_seconds
+        numeric_20 maximum_amount
+        char_3 currency
+        boolean enabled
+        timestamptz updated_at
+    }
+
+    SYNTHETIC_PROBE_EXECUTION {
+        uuid id PK
+        varchar_80 probe_code FK
+        varchar_160 synthetic_reference
+        timestamptz started_at
+        timestamptz completed_at
+        varchar_16 status
+        bigint latency_ms
+        varchar_80 response_code
+        varchar_20 cleanup_status
+        char_64 evidence_hash
+        string more_columns "plus 1 more"
+    }
+
+    INCIDENT_RECORD {
+        uuid id PK
+        varchar_80 incident_reference
+        varchar_8 severity
+        varchar_300 title
+        varchar_20 status
+        varchar_120 incident_commander
+        timestamptz detected_at
+        timestamptz mitigated_at
+        timestamptz closed_at
+        text root_cause
+        string more_columns "plus 3 more"
+    }
+
+    INCIDENT_TIMELINE_EVENT {
+        uuid id PK
+        uuid incident_id FK
+        timestamptz event_time
+        varchar_40 event_type
+        text details
+        varchar_120 actor
+        char_64 evidence_hash
+        timestamptz created_at
+    }
+
+    CORRECTIVE_ACTION {
+        uuid id PK
+        uuid incident_id FK
+        varchar_20 action_type
+        varchar_12 priority
+        text description
+        varchar_120 owner
+        timestamptz due_at
+        varchar_20 status
+        timestamptz completed_at
+        char_64 completion_evidence_hash
+        string more_columns "plus 2 more"
+    }
+
+    INCIDENT_CLOSURE_APPROVAL {
+        uuid id PK
+        uuid incident_id FK
+        varchar_40 approval_role
+        varchar_120 approver
+        varchar_16 decision
+        varchar_1000 comment
+        timestamptz decided_at
+    }
+
+    PARTICIPANT_PRODUCT_ENTITLEMENT {
+        uuid id PK
+        varchar_32 participant_code
+        varchar_64 product_code
+        varchar_32 channel
+        char_3 currency
+        varchar_16 status
+        timestamptz effective_from
+        timestamptz effective_until
+        varchar_120 requested_by
+        varchar_120 approved_by
+        string more_columns "plus 2 more"
+    }
+
+    TRANSACTION_LIMIT_POLICY {
+        uuid id PK
+        varchar_160 policy_name
+        varchar_24 scope_type
+        varchar_160 scope_value
+        varchar_64 product_code
+        varchar_32 channel
+        char_3 currency
+        numeric_24 per_transaction_amount
+        numeric_24 hourly_amount
+        numeric_24 daily_amount
+        string more_columns "plus 10 more"
+    }
+
+    TRANSACTION_LIMIT_CONSUMPTION {
+        uuid policy_id FK
+        varchar_32 participant_code
+        varchar_64 product_code
+        char_3 currency
+        varchar_12 window_type
+        timestamptz window_start
+        timestamptz window_end
+        numeric_24 consumed_amount
+        bigint consumed_count
+        timestamptz updated_at
+    }
+
+    TRANSACTION_LIMIT_OVERRIDE_REQUEST {
+        uuid id PK
+        uuid policy_id FK
+        varchar_32 participant_code
+        varchar_160 transaction_reference
+        numeric_24 requested_amount
+        varchar_1000 reason
+        varchar_120 requested_by
+        varchar_120 approved_by
+        timestamptz expires_at
+        varchar_16 status
+        string more_columns "plus 3 more"
+    }
+
+    FX_RATE_PROVIDER ||--o{ FX_RATE_OBSERVATION : "provider_code"
+    PARTICIPANT_CERTIFICATE ||--o{ PARTICIPANT_CERTIFICATE : "replaced_certificate_id"
+    PARTICIPANT_CERTIFICATE ||--o{ CERTIFICATE_LIFECYCLE_EVENT : "certificate_id"
+    REGULATORY_REPORT_DEFINITION ||--o{ REGULATORY_REPORT_RUN : "report_code"
+    REGULATORY_REPORT_RUN ||--o{ REGULATORY_REPORT_ARTIFACT : "report_run_id"
+    REGULATORY_REPORT_RUN ||--o{ REGULATORY_REPORT_SUBMISSION : "report_run_id"
+    NOTIFICATION_TEMPLATE ||--o{ NOTIFICATION_TEMPLATE_VERSION : "template_code"
+    NOTIFICATION_TEMPLATE_VERSION ||--o{ NOTIFICATION_DELIVERY : "template_version_id"
+    RELEASE_FREEZE_PERIOD ||--o{ RELEASE_FREEZE_EXCEPTION : "freeze_period_id"
+    SYNTHETIC_PROBE_DEFINITION ||--o{ SYNTHETIC_PROBE_EXECUTION : "probe_code"
+    INCIDENT_RECORD ||--o{ INCIDENT_TIMELINE_EVENT : "incident_id"
+    INCIDENT_RECORD ||--o{ CORRECTIVE_ACTION : "incident_id"
+    INCIDENT_RECORD ||--o{ INCIDENT_CLOSURE_APPROVAL : "incident_id"
+    TRANSACTION_LIMIT_POLICY ||--o{ TRANSACTION_LIMIT_CONSUMPTION : "policy_id"
+    TRANSACTION_LIMIT_POLICY ||--o{ TRANSACTION_LIMIT_OVERRIDE_REQUEST : "policy_id"

@@ -1,0 +1,12 @@
+{
+  "status": 401,
+  "error": "UNAUTHORIZED",
+  "errorCode": "SEC-001",
+  "message": "Missing or invalid authentication credential",
+  "path": "/error",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/webhooks//test",
+    "method": "POST",
+    "httpCode": 401
+  }
+}

@@ -1,1 +1,32 @@
-{"mfaRequired":false,"mfaToken":null,"accessToken":"smos.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd2l0Y2hpbmctc21vcyIsImF1ZCI6InN3aXRjaGluZy1vcGVyYXRvci1hcGkiLCJqdGkiOiI0OGZkZjNhZC1jYmIwLTQ1NzEtYjIzMi0wN2UxN2U0MWE2Y2QiLCJzdWIiOiJhZG1pbiIsInVpZCI6Miwicm9sZXMiOlsiU1lTVEVNX0FETUlOIl0sInBlcm1pc3Npb25zIjpbInNldHRsZW1lbnQuYXBwcm92ZSIsIm1ha2VyX2NoZWNrZXIuYXBwcm92ZSIsInVzZXIubWFuYWdlIiwiZGlzcHV0ZS52aWV3Iiwic2Vzc2lvbi5yZXZva2UiLCJkYXNoYm9hcmQuc2V0dGxlbWVudCIsImRpc3B1dGUucmVzb2x2ZSIsInNlY3VyaXR5LnJlc2V0X3Bhc3N3b3JkIiwidXNlci52aWV3IiwibWFrZXJfY2hlY2tlci5zdWJtaXQiLCJyaXNrLnZpZXciLCJkYXNoYm9hcmQuY3Jvc3Nib3JkZXIiLCJzZWN1cml0eS5yZXNldF9tZmEiLCJwYXJ0aWNpcGFudC5tYW5hZ2UiLCJzZXR0bGVtZW50LnZpZXciLCJkYXNoYm9hcmQucmlzayIsImF1ZGl0LnJlYWQiLCJwYXJ0aWNpcGFudC52aWV3Iiwicmlzay5pbnZlc3RpZ2F0ZSIsInNlc3Npb24udmlldyJdLCJpYXQiOjE3ODQwODMxMTcsIm5iZiI6MTc4NDA4MzA1NywiZXhwIjoxNzg0MDg2NzE3fQ.WNsTKwE3T9IGwGG7gv_RR6xd6yHynQjKPR6EgdCxAao","refreshToken":"kCricxScqooGmJS5nFjyr-dFWdzWZbunr9NFRcddMis","expiresIn":3600,"roles":["SYSTEM_ADMIN"],"permissions":["settlement.approve","maker_checker.approve","user.manage","dispute.view","session.revoke","dashboard.settlement","dispute.resolve","security.reset_password","user.view","maker_checker.submit","risk.view","dashboard.crossborder","security.reset_mfa","participant.manage","settlement.view","dashboard.risk","audit.read","participant.view","risk.investigate","session.view"]}
+{
+  "accessToken": "[REDACTED]",
+  "expiresIn": 3600,
+  "mfaRequired": false,
+  "mfaToken": null,
+  "permissions": [
+    "settlement.approve",
+    "maker_checker.approve",
+    "user.manage",
+    "dispute.view",
+    "session.revoke",
+    "dashboard.settlement",
+    "dispute.resolve",
+    "security.reset_password",
+    "user.view",
+    "maker_checker.submit",
+    "risk.view",
+    "dashboard.crossborder",
+    "security.reset_mfa",
+    "participant.manage",
+    "settlement.view",
+    "dashboard.risk",
+    "audit.read",
+    "participant.view",
+    "risk.investigate",
+    "session.view"
+  ],
+  "refreshToken": "[REDACTED]",
+  "roles": [
+    "SYSTEM_ADMIN"
+  ]
+}

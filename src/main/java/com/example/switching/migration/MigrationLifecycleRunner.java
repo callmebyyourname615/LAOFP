@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -22,6 +23,7 @@ import org.springframework.util.StringUtils;
  * the Job before V44 and before the application rollout.</p>
  */
 @Component
+@Profile("!test")
 public class MigrationLifecycleRunner implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(MigrationLifecycleRunner.class);

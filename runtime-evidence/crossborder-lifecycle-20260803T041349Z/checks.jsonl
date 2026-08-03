@@ -1,0 +1,13 @@
+{"name":"SMOS admin login","status":"PASS","expected":"HTTP 200 and token present","actual":"HTTP 200","details":"https://175.11.0.200/api/auth/login"}
+{"name":"List active crossborder corridors","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/crossborder/corridors"}
+{"name":"List crossborder FX rates","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/crossborder/fx-rates?from=LAK&to=THB"}
+{"name":"Create binding FX quote","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/crossborder/quote"}
+{"name":"Initiate crossborder payment partner dependency guard","status":"PASS","expected":"HTTP 200|422|503","actual":"HTTP 422","details":"https://175.11.0.200/v1/crossborder/initiate"}
+{"name":"Create large FX quote","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/crossborder/quote"}
+{"name":"Large crossborder payment requires purpose and source of funds","status":"PASS","expected":"HTTP 422","actual":"HTTP 422","details":"https://175.11.0.200/v1/crossborder/initiate"}
+{"name":"DB reconciliation fixture inserted","status":"PASS","expected":"outbound rail journal + completed transfer","actual":"insert ok","details":"switching_db"}
+{"name":"Crossborder rail reconciliation matched and missing internal","status":"PASS","expected":"HTTP 200 matched=1 missingInternal=1","actual":"matched=1 missingInternal=1","details":"https://175.11.0.200/v1/operator/crossborder/reconciliation/PROMPTPAY/2026-08-03"}
+{"name":"Inbound rail invalid partner credential rejected","status":"PASS","expected":"HTTP 400|403|500","actual":"HTTP 400","details":"https://175.11.0.200/v1/crossborder/inbound/PROMPTPAY"}
+{"name":"Unsupported rail reconciliation rejected","status":"PASS","expected":"HTTP 400","actual":"HTTP 400","details":"https://175.11.0.200/v1/operator/crossborder/reconciliation/UNKNOWN/2026-08-03"}
+{"name":"Unauthenticated crossborder quote rejected","status":"PASS","expected":"HTTP 401","actual":"HTTP 401","details":"https://175.11.0.200/v1/crossborder/quote"}
+{"name":"Unauthenticated crossborder initiate rejected","status":"PASS","expected":"HTTP 401","actual":"HTTP 401","details":"https://175.11.0.200/v1/crossborder/initiate"}

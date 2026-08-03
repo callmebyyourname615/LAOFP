@@ -1,0 +1,4 @@
+INSERT INTO privileged_access_sessions(session_ref, requested_by, requested_at, reason, ticket_reference, requested_ttl_minutes, max_uses, approved_by, approved_at, token_hash, token_prefix, expires_at, use_count, status, version)
+VALUES ('BG-EVD-OUTBOX-DLQ-20260803', 'admin', NOW(), 'UAT evidence break-glass for dead-letter execute/discard', 'UAT-EVD-OUTBOX-DLQ-20260803', 5, 2, 'checker-evidence', NOW(), '[REDACTED_TOKEN_HASH]', 'BG-EVD-20260', NOW() + interval '5 minutes', 0, 'ACTIVE', 0)
+ON CONFLICT (session_ref) DO UPDATE SET token_hash=EXCLUDED.token_hash, token_prefix=EXCLUDED.token_prefix, expires_at=EXCLUDED.expires_at, use_count=0, status='ACTIVE', max_uses=2, requested_by='admin', approved_by='checker-evidence';
+SELECT json_build_object('sessionRef','BG-EVD-OUTBOX-DLQ-20260803','requestedBy','admin','approvedBy','checker-evidence','tokenPrefix','BG-EVD-20260','maxUses',2,'status','ACTIVE') AS breakglass_fixture;

@@ -1,0 +1,17 @@
+{
+  "scenario": "Decline RTP request",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/rtp/requests/00c7056f-d0b7-4394-a38d-1c07adcd1c9c/decline",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "requestId": "00c7056f-d0b7-4394-a38d-1c07adcd1c9c",
+    "authorisationReference": null,
+    "mode": null,
+    "authorisedAmount": 0.0000,
+    "transferReference": null,
+    "status": "DECLINED",
+    "installments": []
+  }
+}

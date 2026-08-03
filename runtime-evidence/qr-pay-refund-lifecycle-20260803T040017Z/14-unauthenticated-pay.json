@@ -1,0 +1,15 @@
+{
+  "scenario": "Unauthenticated QR pay rejected",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/pay",
+  "expectedHttpStatus": 401,
+  "actualHttpStatus": 401,
+  "passed": true,
+  "response": {
+    "status": 401,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SEC-001",
+    "message": "Missing or invalid authentication credential",
+    "path": "/v1/qr/pay"
+  }
+}

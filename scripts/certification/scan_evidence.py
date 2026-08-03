@@ -18,10 +18,11 @@ PATTERNS = {
     "credential-in-uri": re.compile(r"(?i)\b(?:jdbc:)?(?:postgresql|postgres|mysql|mongodb|redis)://[^\s:/@]+:[^\s/@]+@"),
     "aws-access-key-id": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     "github-token": re.compile(r"\bgh[pousr]_[A-Za-z0-9]{36,255}\b"),
+    "jwt": re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b"),
     "slack-token": re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}\b"),
 }
 TEXT_SUFFIXES = {
-    ".txt", ".log", ".json", ".jsonl", ".xml", ".yaml", ".yml", ".md", ".csv", ".sql", ".properties"
+    ".txt", ".log", ".json", ".jsonl", ".xml", ".yaml", ".yml", ".md", ".csv", ".sql", ".properties", ".key"
 }
 
 

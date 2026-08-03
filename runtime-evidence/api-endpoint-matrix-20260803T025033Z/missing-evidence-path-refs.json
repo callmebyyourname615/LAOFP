@@ -1,0 +1,282 @@
+[
+  {
+    "evidence_path": "18-api-endpoint-coverage/01-api-key-lifecycle",
+    "method": "GET",
+    "path": "/api/admin/api-keys"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/01-api-key-lifecycle",
+    "method": "POST",
+    "path": "/api/admin/api-keys"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/01-api-key-lifecycle",
+    "method": "POST",
+    "path": "/api/admin/api-keys/{id}/disable"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/01-api-key-lifecycle",
+    "method": "POST",
+    "path": "/api/admin/api-keys/{id}/rotate"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/02-maker-checker",
+    "method": "GET",
+    "path": "/api/admin/requests"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/02-maker-checker",
+    "method": "POST",
+    "path": "/api/admin/requests"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/02-maker-checker",
+    "method": "POST",
+    "path": "/api/admin/requests/{id}/reject"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/03-user-lifecycle",
+    "method": "GET",
+    "path": "/api/admin/users/{id}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/03-user-lifecycle",
+    "method": "PUT",
+    "path": "/api/admin/users/{id}/roles"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/03-user-lifecycle",
+    "method": "PUT",
+    "path": "/api/admin/users/{id}/status"
+  },
+  {
+    "evidence_path": "17-security-operational/audit-integrity",
+    "method": "GET",
+    "path": "/api/audit-logs"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/41-mfa",
+    "method": "POST",
+    "path": "/api/auth/mfa"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/54-revoke-all-sessions",
+    "method": "DELETE",
+    "path": "/api/auth/sessions"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/46-iso-acmt023",
+    "method": "POST",
+    "path": "/api/iso20022/acmt023"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/45-iso-pacs008",
+    "method": "POST",
+    "path": "/api/iso20022/pacs008"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/47-aggregation",
+    "method": "POST",
+    "path": "/api/operations/aggregation/run"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/47-aggregation",
+    "method": "POST",
+    "path": "/api/operations/aggregation/run/{date}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/49-generate-routes",
+    "method": "POST",
+    "path": "/api/operations/bank-onboarding/generate-routes"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/56-hypercare-flow",
+    "method": "POST",
+    "path": "/api/operations/continuous-assurance/hypercare/complete"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/56-hypercare-flow",
+    "method": "POST",
+    "path": "/api/operations/continuous-assurance/hypercare/events"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/56-hypercare-flow",
+    "method": "POST",
+    "path": "/api/operations/continuous-assurance/hypercare/start"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/55-continuous-assurance-scorecard",
+    "method": "POST",
+    "path": "/api/operations/continuous-assurance/scorecard"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/57-outbox-stuck-recovery",
+    "method": "POST",
+    "path": "/api/operations/outbox-stuck/recover-all"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/38-promotion-funder-ledger",
+    "method": "GET",
+    "path": "/api/operations/promotions/funder-ledger/reconciliation"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "GET",
+    "path": "/api/operations/reconciliation/files"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "POST",
+    "path": "/api/operations/reconciliation/files"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "GET",
+    "path": "/api/operations/reconciliation/files/{fileRef}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "GET",
+    "path": "/api/operations/reconciliation/files/{fileRef}/discrepancies"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "GET",
+    "path": "/api/operations/reconciliation/files/{fileRef}/items"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "POST",
+    "path": "/api/operations/reconciliation/files/{fileRef}/items"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/39-reconciliation-files",
+    "method": "POST",
+    "path": "/api/operations/reconciliation/files/{fileRef}/rematch"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/29-settlement-operations",
+    "method": "GET",
+    "path": "/api/operations/settlement/cycles/{cycleRef}/ops-report.csv"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/29-settlement-operations",
+    "method": "GET",
+    "path": "/api/operations/settlement/cycles/{cycleRef}/report"
+  },
+  {
+    "evidence_path": "04-payment-failure-retry-auto",
+    "method": "GET",
+    "path": "/api/operations/transfers/{transferRef}/trace"
+  },
+  {
+    "evidence_path": "17-security-operational/certificate-lifecycle",
+    "method": "POST",
+    "path": "/api/participants"
+  },
+  {
+    "evidence_path": "04-payment-failure-retry-auto",
+    "method": "POST",
+    "path": "/api/transfers"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/42-crossborder-quote",
+    "method": "POST",
+    "path": "/v1/crossborder/quote"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/36-vpa-lookup",
+    "method": "POST",
+    "path": "/v1/lookup/resolve"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/36-vpa-lookup",
+    "method": "POST",
+    "path": "/v1/lookup/vpa/register"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/36-vpa-lookup",
+    "method": "DELETE",
+    "path": "/v1/lookup/vpa/{vpaId}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/36-vpa-lookup",
+    "method": "GET",
+    "path": "/v1/lookup/vpa/{vpaId}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/36-vpa-lookup",
+    "method": "PUT",
+    "path": "/v1/lookup/vpa/{vpaId}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/35-oauth",
+    "method": "POST",
+    "path": "/v1/oauth/token"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/35-oauth",
+    "method": "POST",
+    "path": "/v1/oauth/token/revoke"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/53-config-change-reject",
+    "method": "POST",
+    "path": "/v1/operations/config-changes/{id}/reject"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/58-legal-hold-guardrail",
+    "method": "POST",
+    "path": "/v1/operations/legal-holds"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/58-legal-hold-guardrail",
+    "method": "POST",
+    "path": "/v1/operations/legal-holds/{id}/approve"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/58-legal-hold-guardrail",
+    "method": "POST",
+    "path": "/v1/operations/legal-holds/{id}/approve-release"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/58-legal-hold-guardrail",
+    "method": "POST",
+    "path": "/v1/operations/legal-holds/{id}/request-release"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/51-participant-certification",
+    "method": "POST",
+    "path": "/v1/operations/participant-certifications"
+  },
+  {
+    "evidence_path": "17-security-operational/certificate-lifecycle",
+    "method": "POST",
+    "path": "/v1/participants/{pspId}/certificates/register"
+  },
+  {
+    "evidence_path": "17-security-operational/certificate-lifecycle",
+    "method": "DELETE",
+    "path": "/v1/participants/{pspId}/certificates/{certId}"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/37-qr",
+    "method": "POST",
+    "path": "/v1/qr/decode"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/37-qr",
+    "method": "POST",
+    "path": "/v1/qr/generate/dynamic"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/37-qr",
+    "method": "POST",
+    "path": "/v1/qr/generate/static"
+  },
+  {
+    "evidence_path": "18-api-endpoint-coverage/44-risk-score",
+    "method": "GET",
+    "path": "/v1/risk/scores/{txnId}"
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "scenario": "Unsupported rail reconciliation rejected",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/operator/crossborder/reconciliation/UNKNOWN/2026-08-03",
+  "expectedHttpStatus": "400",
+  "actualHttpStatus": 400,
+  "passed": true,
+  "response": {
+    "category": "REQUEST",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "REQ-001",
+    "layer": "API",
+    "message": "Unsupported cross-border rail",
+    "path": "/v1/operator/crossborder/reconciliation/UNKNOWN/2026-08-03",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "96f9425e-13ca-445a-bc00-66d44714caeb",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-08-03T04:13:51.167095316",
+    "traceId": null
+  }
+}

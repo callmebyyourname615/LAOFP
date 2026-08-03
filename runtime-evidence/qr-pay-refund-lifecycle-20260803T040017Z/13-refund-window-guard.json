@@ -1,0 +1,23 @@
+{
+  "scenario": "Refund outside configured window rejected",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/refund",
+  "expectedHttpStatus": 400,
+  "actualHttpStatus": 404,
+  "passed": false,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "NOT_FOUND",
+    "errorCode": "TRF-001",
+    "layer": "TRANSFER",
+    "message": "Original QR transaction not found: EVD-QR-20260803T040017Z-OLD-TXN",
+    "path": "/v1/qr/refund",
+    "phase": "READ_RESOURCE",
+    "requestId": "a83d36c1-374b-4f4a-898a-5559946eba27",
+    "retryable": false,
+    "status": 404,
+    "timestamp": "2026-08-03T04:00:19.078864472",
+    "traceId": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "outboxEventId": 68,
+  "transferRef": "EVD-OUTBOX-DLQ-20260803TMANUAL_RETRY",
+  "previousStatus": "FAILED",
+  "newStatus": "PENDING",
+  "retryCount": 0,
+  "message": "Outbox event reset to PENDING for manual retry",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/outbox-events/68/retry",
+    "method": "POST",
+    "httpCode": 200
+  }
+}

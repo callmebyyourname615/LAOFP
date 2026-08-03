@@ -1,0 +1,6 @@
+{
+  "control": "SMOS_MFA_ENFORCEMENT_INTEGRATION",
+  "environment": "UAT",
+  "status": "PASS",
+  "exitCode": 0
+}

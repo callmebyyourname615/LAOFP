@@ -1,0 +1,49 @@
+schemaVersion: 1
+environment: production
+template: true
+release:
+  reference: switching-1.0.0-rc.1
+  gitCommit: 0123456789abcdef0123456789abcdef01234567
+  applicationImageDigest: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  rollbackImageDigest: sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789
+
+scope:
+  participants:
+    - SUNDAYBANK
+  channels:
+    - TRANSFER
+  currencies:
+    - LAK
+  settlementModel: DNS_T_PLUS_1
+  transactionLimits:
+    currency: LAK
+    minimumAmount: 1
+    maximumAmount: 50000000
+
+serviceObjectives:
+  maximumRpoSeconds: 300
+  maximumRtoSeconds: 1800
+  availabilityPercent: 99.9
+  minimumPaymentSuccessPercent: 99.9
+  reconciliationSlaMinutes: 30
+
+owners:
+  businessOwner: business-owner-name
+  engineeringLead: engineering-lead-name
+  qaLead: qa-lead-name
+  secOpsLead: secops-lead-name
+  sreLead: sre-lead-name
+  changeManager: change-manager-name
+
+change:
+  ticketReference: CHG-20260722-001
+  plannedDeploymentUtc: 2026-08-01T02:00:00Z
+  rollbackOwner: sre-lead-name
+  communicationChannel: production-cutover-channel
+  riskRegisterReference: RISK-20260722-001
+
+environmentSeparation:
+  uatSeparateFromProduction: true
+  stagingSeparateFromProduction: true
+  productionDataRestrictedToProduction: true
+  productionSecretsExternallyManaged: true

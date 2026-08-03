@@ -1,0 +1,9 @@
+{
+  "evidenceDir": "runtime-evidence/risk-fees-portal-20260803T040407Z",
+  "total": 14,
+  "pass": 14,
+  "fail": 0,
+  "warn": 0,
+  "skipped": 0,
+  "verdict": "PASS"
+}

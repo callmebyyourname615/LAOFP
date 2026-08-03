@@ -1,0 +1,56 @@
+erDiagram
+    LEGAL_HOLDS {
+        bigint id PK
+        varchar hold_ref UK
+        varchar scope_type
+        varchar scope_key "REF"
+        timestamp effective_from
+        timestamp effective_to
+        varchar reason
+        varchar case_reference
+        varchar status
+        varchar requested_by
+        varchar approved_by
+        bigint version
+    }
+
+    CONFIGURATION_CHANGE_REQUESTS {
+        uuid id PK
+        varchar change_ref UK
+        varchar change_type
+        jsonb payload_json
+        varchar payload_sha256
+        varchar requested_by
+        varchar approved_by
+        varchar status
+        varchar execution_reference
+    }
+
+    PRIVILEGED_ACCESS_SESSIONS {
+        bigint id PK
+        varchar session_ref UK
+        varchar requested_by
+        varchar approved_by
+        varchar token_hash UK
+        varchar status
+        int use_count
+        timestamp expires_at
+        bigint version
+    }
+
+    AUDIT_LOGS {
+        bigint id PK
+        varchar event_type
+        varchar reference_type
+        varchar reference_id "REF"
+        varchar actor
+        text payload
+        varchar previous_hash
+        varchar entry_hash UK
+        timestamp created_at
+        varchar trace_id
+    }
+
+    LEGAL_HOLDS }o..o{ AUDIT_LOGS : "scope_key/reference_id"
+    CONFIGURATION_CHANGE_REQUESTS }o..o{ AUDIT_LOGS : "change_ref/reference_id"
+    PRIVILEGED_ACCESS_SESSIONS }o..o{ AUDIT_LOGS : "session_ref/reference_id"

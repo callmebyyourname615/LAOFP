@@ -1,0 +1,561 @@
+erDiagram
+    PARTICIPANTS {
+        bigint id PK
+        varchar bank_code UK
+        varchar bank_name
+        varchar status
+        varchar participant_type
+        varchar country
+        varchar currency
+        varchar settlement_account
+        numeric max_daily_limit
+        numeric max_single_txn
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PARTICIPANT_LIMITS {
+        bigint id PK
+        varchar bank_code FK
+        varchar limit_type
+        varchar currency
+        numeric limit_value
+        varchar period_type
+        boolean is_active
+        date effective_from
+        date effective_to
+    }
+
+    ROUTING_RULES {
+        bigint id PK
+        varchar route_code UK
+        varchar source_bank "REF"
+        varchar destination_bank "REF"
+        varchar message_type
+        varchar connector_name "REF"
+        int priority
+        boolean enabled
+    }
+
+    CONNECTOR_CONFIGS {
+        bigint id PK
+        varchar connector_name UK
+        varchar bank_code FK
+        varchar connector_type
+        varchar endpoint_url
+        int timeout_ms
+        boolean enabled
+        boolean force_reject
+    }
+
+    CONNECTOR_CREDENTIALS {
+        bigint id PK
+        varchar connector_name FK
+        varchar credential_type
+        varchar credential_key
+        text encrypted_value
+        varchar key_ref
+        timestamp expires_at
+        boolean is_active
+    }
+
+    CONNECTOR_RATE_LIMITS {
+        bigint id PK
+        varchar connector_name FK
+        varchar limit_type
+        int limit_value
+        int burst_value
+        int window_seconds
+        boolean is_active
+    }
+
+    PAYMENT_FLOWS {
+        bigint id PK
+        varchar flow_ref UK
+        varchar inquiry_ref "REF"
+        varchar transaction_ref "REF"
+        varchar source_bank "REF"
+        varchar destination_bank "REF"
+        varchar channel_id
+        numeric amount
+        varchar currency
+        varchar status
+        date business_date PK
+    }
+
+    INQUIRIES {
+        bigint id PK
+        varchar inquiry_ref UK
+        varchar client_inquiry_id
+        varchar idempotency_key "REF"
+        varchar flow_ref "REF"
+        varchar message_id
+        varchar instruction_id
+        varchar end_to_end_id
+        varchar source_bank "REF"
+        varchar destination_bank "REF"
+        varchar creditor_account
+        numeric amount
+        varchar currency
+        varchar status
+        boolean account_found
+        boolean bank_available
+        boolean eligible_for_transfer
+        varchar used_by_transaction_ref "REF"
+        date business_date PK
+    }
+
+    TRANSACTIONS {
+        bigint id PK
+        varchar transaction_ref UK
+        varchar client_transaction_id
+        varchar idempotency_key "REF"
+        varchar flow_ref "REF"
+        varchar inquiry_ref "REF"
+        varchar source_bank "REF"
+        varchar source_account_no
+        varchar destination_bank "REF"
+        varchar destination_account_no
+        numeric amount
+        varchar currency
+        varchar channel_id
+        varchar route_code "REF"
+        varchar connector_name "REF"
+        varchar status
+        varchar settlement_status
+        varchar confirmation_status
+        date business_date PK
+    }
+
+    TRANSACTION_STATUS_HISTORY {
+        bigint id PK
+        varchar transaction_ref "REF"
+        varchar from_status
+        varchar to_status
+        varchar reason_code
+        varchar actor
+        date business_date PK
+        timestamp occurred_at
+    }
+
+    TRANSACTION_EVENTS {
+        bigint id PK
+        varchar transaction_ref "REF"
+        varchar event_type
+        jsonb payload
+        varchar actor
+        date business_date PK
+        timestamp occurred_at
+    }
+
+    IDEMPOTENCY_RECORDS {
+        bigint id PK
+        varchar channel_id
+        varchar idempotency_key
+        varchar request_hash
+        varchar transaction_ref "REF"
+        varchar status
+        timestamp expires_at
+    }
+
+    ISO_MESSAGES {
+        bigint id PK
+        varchar correlation_ref
+        varchar transaction_ref "REF"
+        varchar inquiry_ref "REF"
+        varchar message_id
+        varchar end_to_end_id
+        varchar instruction_id
+        varchar message_type
+        varchar direction
+        varchar source_bank "REF"
+        varchar destination_bank "REF"
+        varchar connector_name "REF"
+        varchar security_status
+        varchar validation_status
+        date business_date PK
+    }
+
+    ISO_MESSAGE_PAYLOADS {
+        bigint id PK
+        bigint iso_message_id "REF"
+        varchar payload_type
+        text plain_payload
+        text encrypted_payload
+        int payload_size_bytes
+        varchar payload_hash
+        boolean stored_in_cold
+        varchar cold_storage_key
+        date business_date PK
+    }
+
+    ISO_VALIDATION_ERRORS {
+        bigint id PK
+        bigint iso_message_id "REF"
+        varchar field_path
+        varchar error_code
+        text error_message
+        varchar severity
+        date business_date PK
+    }
+
+    SETTLEMENT_CYCLES {
+        bigint id PK
+        varchar cycle_ref UK
+        date settlement_date
+        smallint cycle_number
+        varchar status
+        timestamp opened_at
+        timestamp closed_at
+        timestamp settled_at
+    }
+
+    SETTLEMENT_POSITIONS {
+        bigint id PK
+        bigint cycle_id FK
+        varchar bank_code FK
+        varchar currency
+        numeric debit_amount
+        numeric credit_amount
+        numeric net_position
+        int transaction_count
+        varchar status
+    }
+
+    SETTLEMENT_ITEMS {
+        bigint id PK
+        bigint cycle_id "REF"
+        varchar bank_code "REF"
+        varchar transaction_ref "REF"
+        varchar direction
+        numeric amount
+        varchar currency
+        date settlement_date PK
+    }
+
+    SETTLEMENT_INSTRUCTIONS {
+        bigint instruction_id PK
+        varchar instruction_ref UK
+        bigint cycle_id FK
+        varchar source_type
+        varchar transfer_ref "REF"
+        varchar debtor_psp_id FK
+        varchar creditor_psp_id FK
+        varchar currency
+        numeric net_amount
+        varchar status
+        varchar rtgs_msg_id
+    }
+
+    SETTLEMENT_REPORTS {
+        bigint id PK
+        bigint cycle_id FK
+        varchar report_ref UK
+        varchar report_type
+        varchar file_name
+        varchar object_key
+        varchar status
+    }
+
+    RECONCILIATION_FILES {
+        bigint id PK
+        varchar file_ref UK
+        varchar source_bank "REF"
+        varchar file_name
+        varchar file_type
+        date reconciliation_date
+        varchar status
+        int total_records
+        int matched_count
+        int unmatched_count
+    }
+
+    RECONCILIATION_ITEMS {
+        bigint id PK
+        bigint file_id "REF"
+        int line_number
+        varchar transaction_ref "REF"
+        varchar external_ref
+        numeric amount
+        varchar currency
+        varchar match_status
+        text mismatch_reason
+        date reconciliation_date PK
+    }
+
+    OUTBOX_EVENTS {
+        bigint id PK
+        varchar aggregate_type
+        varchar aggregate_id
+        varchar event_type
+        jsonb payload
+        varchar status
+        int attempt_count
+        timestamp next_attempt_at
+        varchar failure_class
+    }
+
+    OUTBOX_DEAD_LETTER {
+        uuid id PK
+        bigint outbox_event_id "REF"
+        varchar aggregate_type
+        varchar aggregate_id
+        varchar event_type
+        jsonb payload
+        varchar status
+        varchar failure_class
+        varchar payload_sha256
+    }
+
+    REVERSAL_LOG {
+        bigint reversal_id PK
+        varchar transaction_ref "REF"
+        varchar psp_id "REF"
+        varchar reason_code
+        varchar status
+        timestamp created_at
+    }
+
+    PSP_SUSPENSION_LOG {
+        bigint suspension_id PK
+        varchar psp_id "REF"
+        timestamp suspended_at
+        int reversal_count
+        int window_minutes
+        timestamp reinstated_at
+    }
+
+    WEBHOOK_REGISTRATIONS {
+        bigint id PK
+        varchar webhook_id UK
+        varchar psp_id FK
+        varchar url
+        text event_types
+        varchar secret_hash
+        varchar status
+        int failed_deliveries
+    }
+
+    WEBHOOK_DELIVERY_LOG {
+        bigint id PK
+        varchar webhook_id FK
+        varchar event_type
+        varchar event_ref "REF"
+        text payload
+        int attempt_count
+        timestamp next_retry_at
+        int response_status
+        varchar status
+    }
+
+    VPA_REGISTRATIONS {
+        varchar vpa_id PK
+        varchar psp_id FK
+        varchar account_no
+        varchar alias_type
+        varchar alias_value
+        varchar status
+        timestamp created_at
+    }
+
+    BENEFICIARY_TOKENS {
+        bigint token_id PK
+        varchar vpa_id FK
+        varchar token
+        varchar beneficiary_account
+        timestamp expires_at
+        boolean used
+    }
+
+    BILLERS {
+        bigint biller_id PK
+        varchar biller_code UK
+        varchar biller_name
+        varchar category
+        varchar api_url
+        varchar api_key_hash
+        int timeout_seconds
+        varchar status
+    }
+
+    BILL_TOKENS {
+        bigint token_id PK
+        bigint biller_id FK
+        varchar bill_ref
+        numeric bill_amount
+        date due_date
+        varchar customer_name
+        text details
+        timestamp expires_at
+        boolean used
+    }
+
+    BILL_PAYMENTS {
+        bigint payment_id PK
+        bigint token_id FK
+        bigint biller_id FK
+        varchar transaction_ref "REF"
+        numeric amount
+        varchar status
+        timestamp paid_at
+    }
+
+    FX_CORRIDORS {
+        bigint corridor_id PK
+        varchar source_currency
+        varchar dest_currency
+        varchar target_network
+        numeric indicative_rate
+        numeric min_amount
+        numeric max_amount
+        varchar status
+    }
+
+    FX_QUOTES {
+        bigint quote_id PK
+        bigint corridor_id FK
+        varchar quote_ref UK
+        numeric source_amount
+        numeric dest_amount
+        numeric rate
+        timestamp expires_at
+        varchar status
+    }
+
+    CROSSBORDER_TRANSFERS {
+        bigint id PK
+        bigint quote_id FK
+        varchar transfer_ref "REF"
+        varchar source_psp_id "REF"
+        varchar destination_network
+        numeric source_amount
+        numeric destination_amount
+        varchar status
+    }
+
+    DISPUTES {
+        bigint dispute_id PK
+        varchar txn_ref "REF"
+        varchar raising_psp_id "REF"
+        varchar responding_psp_id "REF"
+        varchar dispute_type
+        varchar status
+        timestamp raised_at
+        timestamp sla_deadline
+        text evidence
+    }
+
+    DISPUTE_EVIDENCE_ATTACHMENTS {
+        uuid id PK
+        bigint dispute_id FK
+        varchar file_name
+        varchar object_key
+        varchar sha256
+        timestamp uploaded_at
+    }
+
+    AUDIT_LOGS {
+        bigint id PK
+        varchar event_type
+        varchar reference_type
+        varchar reference_id "REF"
+        varchar actor
+        text payload
+        varchar previous_hash
+        varchar entry_hash UK
+        timestamp created_at
+        varchar trace_id
+    }
+
+    API_KEYS {
+        bigint id PK
+        varchar key_value UK
+        varchar key_prefix
+        varchar name
+        varchar role
+        varchar bank_code "REF"
+        boolean enabled
+        timestamp expires_at
+    }
+
+    OAUTH_CLIENTS {
+        varchar client_id PK
+        varchar psp_id FK
+        varchar client_secret_hash
+        varchar tier
+        text scopes
+        varchar status
+        timestamp expires_at
+    }
+
+    PARTICIPANT_CERTIFICATIONS {
+        bigint id PK
+        varchar certification_ref UK
+        varchar bank_code FK
+        varchar suite_version
+        varchar git_commit
+        varchar image_digest
+        varchar evidence_sha256 UK
+        varchar result
+        timestamp executed_at
+        timestamp expires_at
+    }
+
+    PARTICIPANTS ||--o{ PARTICIPANT_LIMITS : "bank_code"
+    PARTICIPANTS ||--o{ CONNECTOR_CONFIGS : "bank_code"
+    CONNECTOR_CONFIGS ||--o{ CONNECTOR_CREDENTIALS : "connector_name"
+    CONNECTOR_CONFIGS ||--o{ CONNECTOR_RATE_LIMITS : "connector_name"
+    CONNECTOR_CONFIGS ||--o{ ROUTING_RULES : "connector_name"
+
+    PARTICIPANTS ||--o{ PAYMENT_FLOWS : "source_bank/destination_bank"
+    PAYMENT_FLOWS ||--o| INQUIRIES : "flow_ref"
+    PAYMENT_FLOWS ||--o| TRANSACTIONS : "flow_ref"
+    INQUIRIES ||--o| TRANSACTIONS : "inquiry_ref"
+    TRANSACTIONS ||--o{ TRANSACTION_STATUS_HISTORY : "transaction_ref"
+    TRANSACTIONS ||--o{ TRANSACTION_EVENTS : "transaction_ref"
+    TRANSACTIONS ||--o{ IDEMPOTENCY_RECORDS : "transaction_ref"
+
+    TRANSACTIONS ||--o{ ISO_MESSAGES : "transaction_ref"
+    INQUIRIES ||--o{ ISO_MESSAGES : "inquiry_ref"
+    ISO_MESSAGES ||--o{ ISO_MESSAGE_PAYLOADS : "iso_message_id"
+    ISO_MESSAGES ||--o{ ISO_VALIDATION_ERRORS : "iso_message_id"
+
+    SETTLEMENT_CYCLES ||--o{ SETTLEMENT_POSITIONS : "cycle_id"
+    PARTICIPANTS ||--o{ SETTLEMENT_POSITIONS : "bank_code"
+    SETTLEMENT_CYCLES ||--o{ SETTLEMENT_ITEMS : "cycle_id"
+    TRANSACTIONS ||--o{ SETTLEMENT_ITEMS : "transaction_ref"
+    SETTLEMENT_CYCLES ||--o{ SETTLEMENT_INSTRUCTIONS : "cycle_id"
+    PARTICIPANTS ||--o{ SETTLEMENT_INSTRUCTIONS : "debtor_psp_id"
+    PARTICIPANTS ||--o{ SETTLEMENT_INSTRUCTIONS : "creditor_psp_id"
+    SETTLEMENT_CYCLES ||--o{ SETTLEMENT_REPORTS : "cycle_id"
+
+    RECONCILIATION_FILES ||--o{ RECONCILIATION_ITEMS : "file_id"
+    TRANSACTIONS ||--o{ RECONCILIATION_ITEMS : "transaction_ref"
+
+    OUTBOX_EVENTS ||--o{ OUTBOX_DEAD_LETTER : "outbox_event_id"
+    TRANSACTIONS ||--o{ REVERSAL_LOG : "transaction_ref"
+    PARTICIPANTS ||--o{ PSP_SUSPENSION_LOG : "psp_id"
+
+    PARTICIPANTS ||--o{ WEBHOOK_REGISTRATIONS : "psp_id"
+    WEBHOOK_REGISTRATIONS ||--o{ WEBHOOK_DELIVERY_LOG : "webhook_id"
+    TRANSACTIONS ||--o{ WEBHOOK_DELIVERY_LOG : "event_ref"
+
+    PARTICIPANTS ||--o{ VPA_REGISTRATIONS : "psp_id"
+    VPA_REGISTRATIONS ||--o{ BENEFICIARY_TOKENS : "vpa_id"
+
+    BILLERS ||--o{ BILL_TOKENS : "biller_id"
+    BILLERS ||--o{ BILL_PAYMENTS : "biller_id"
+    BILL_TOKENS ||--o{ BILL_PAYMENTS : "token_id"
+    TRANSACTIONS ||--o{ BILL_PAYMENTS : "transaction_ref"
+
+    FX_CORRIDORS ||--o{ FX_QUOTES : "corridor_id"
+    FX_QUOTES ||--o{ CROSSBORDER_TRANSFERS : "quote_id"
+    TRANSACTIONS ||--o{ CROSSBORDER_TRANSFERS : "transfer_ref"
+
+    TRANSACTIONS ||--o{ DISPUTES : "txn_ref"
+    PARTICIPANTS ||--o{ DISPUTES : "raising/responding_psp_id"
+    DISPUTES ||--o{ DISPUTE_EVIDENCE_ATTACHMENTS : "dispute_id"
+
+    PARTICIPANTS ||--o{ OAUTH_CLIENTS : "psp_id"
+    PARTICIPANTS ||--o{ API_KEYS : "bank_code"
+    PARTICIPANTS ||--o{ PARTICIPANT_CERTIFICATIONS : "bank_code"

@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"Idempotency key reused with different payload","path":"/v1/qr/pay","phase":"VALIDATE_REQUEST","requestId":"81fa15df-6971-4d68-8f72-4c2aac01741b","retryable":false,"status":400,"timestamp":"2026-08-03T04:00:18.396447783","traceId":null}

@@ -1,0 +1,23 @@
+{
+  "scenario": "Dynamic QR cannot be paid twice",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/pay",
+  "expectedHttpStatus": 422,
+  "actualHttpStatus": 422,
+  "passed": true,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "LFP-QR-002",
+    "layer": "QR",
+    "message": "QR code has already been used: 2d1ba1e4-a880-4cb3-9258-918fb8a27a44",
+    "path": "/v1/qr/pay",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "28c01e42-a83f-4467-bbe4-0fa496a7effb",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-08-03T04:01:31.835596929",
+    "traceId": null
+  }
+}

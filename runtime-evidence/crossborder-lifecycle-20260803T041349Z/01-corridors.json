@@ -1,0 +1,58 @@
+{
+  "scenario": "List active crossborder corridors",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/v1/crossborder/corridors",
+  "expectedHttpStatus": "200",
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": [
+    {
+      "corridorId": 1,
+      "sourceCurrency": "LAK",
+      "destCurrency": "THB",
+      "targetNetwork": "PROMPTPAY",
+      "indicativeRate": 0.00180000,
+      "feePercent": 0.010000,
+      "feeFixed": 100.0000,
+      "minAmount": 10000.0000,
+      "maxAmount": 50000000.0000,
+      "validForSeconds": 30
+    },
+    {
+      "corridorId": 2,
+      "sourceCurrency": "LAK",
+      "destCurrency": "CNY",
+      "targetNetwork": "CNAPS",
+      "indicativeRate": 0.00013000,
+      "feePercent": 0.015000,
+      "feeFixed": 50.0000,
+      "minAmount": 50000.0000,
+      "maxAmount": 100000000.0000,
+      "validForSeconds": 30
+    },
+    {
+      "corridorId": 3,
+      "sourceCurrency": "LAK",
+      "destCurrency": "VND",
+      "targetNetwork": "NAPAS",
+      "indicativeRate": 0.26000000,
+      "feePercent": 0.010000,
+      "feeFixed": 5000.0000,
+      "minAmount": 10000.0000,
+      "maxAmount": 200000000.0000,
+      "validForSeconds": 30
+    },
+    {
+      "corridorId": 4,
+      "sourceCurrency": "LAK",
+      "destCurrency": "USD",
+      "targetNetwork": "SWIFT",
+      "indicativeRate": 0.00004800,
+      "feePercent": 0.020000,
+      "feeFixed": 1.0000,
+      "minAmount": 100000.0000,
+      "maxAmount": 999999999.0000,
+      "validForSeconds": 30
+    }
+  ]
+}

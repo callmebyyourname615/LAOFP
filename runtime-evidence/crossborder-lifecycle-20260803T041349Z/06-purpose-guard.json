@@ -1,0 +1,23 @@
+{
+  "scenario": "Large crossborder payment requires purpose and source of funds",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/crossborder/initiate",
+  "expectedHttpStatus": "422",
+  "actualHttpStatus": 422,
+  "passed": true,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "LFP-CB-003",
+    "layer": "CROSSBORDER",
+    "message": "purposeCode and sourceOfFunds are required for transfers > LAK 5000000 (requested: 6000000.0000)",
+    "path": "/v1/crossborder/initiate",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "b551b30c-edac-48a9-922a-8305e26de190",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-08-03T04:13:50.788189814",
+    "traceId": null
+  }
+}

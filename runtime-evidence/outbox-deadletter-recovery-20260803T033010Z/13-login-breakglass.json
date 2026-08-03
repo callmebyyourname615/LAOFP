@@ -1,0 +1,38 @@
+{
+  "mfaRequired": false,
+  "expiresIn": 3600,
+  "roles": [
+    "SYSTEM_ADMIN"
+  ],
+  "permissions": [
+    "maker_checker.submit",
+    "dashboard.settlement",
+    "dashboard.transaction",
+    "risk.view",
+    "dashboard.risk",
+    "security.reset_password",
+    "settlement.view",
+    "participant.manage",
+    "risk.investigate",
+    "dispute.resolve",
+    "settlement.approve",
+    "maker_checker.approve",
+    "dashboard.participant",
+    "dashboard.infrastructure",
+    "session.revoke",
+    "dispute.view",
+    "participant.view",
+    "session.view",
+    "dashboard.crossborder",
+    "user.view",
+    "audit.read",
+    "security.reset_mfa",
+    "dashboard.dr",
+    "user.manage"
+  ],
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/auth/login",
+    "method": "POST",
+    "httpCode": 200
+  }
+}

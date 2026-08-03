@@ -1,0 +1,31 @@
+== backup-wal status ==
+NAME                   IMAGE                  COMMAND                  SERVICE      CREATED        STATUS        PORTS
+switching-backup-wal   switching-backup-wal   "/usr/bin/tini -- /o…"   backup-wal   18 hours ago   Up 18 hours   5432/tcp
+
+== recent WAL receiver logs ==
+switching-backup-wal  | 2026-07-21T08:48:07Z level=INFO component=switching-backup message=creating\ physical\ replication\ slot\ slot=switching_backup_slot
+switching-backup-wal  |  pg_create_physical_replication_slot 
+switching-backup-wal  | -------------------------------------
+switching-backup-wal  |  (switching_backup_slot,0/219B8608)
+switching-backup-wal  | (1 row)
+switching-backup-wal  | 
+switching-backup-wal  | 2026-07-21T08:48:07Z level=INFO component=switching-backup message=starting\ pg_receivewal\ slot=switching_backup_slot
+switching-backup-wal  | pg_receivewal: starting log streaming at 0/21000000 (timeline 1)
+switching-backup-wal  | pg_receivewal: finished segment at 0/22000000 (timeline 1)
+switching-backup-wal  | pg_receivewal: finished segment at 0/23000000 (timeline 1)
+switching-backup-wal  | 2026-07-21T08:48:13Z level=INFO component=switching-backup message=WAL\ archived\ segment=000000010000000000000021
+switching-backup-wal  | 2026-07-21T08:48:14Z level=INFO component=switching-backup message=WAL\ archived\ segment=000000010000000000000022
+switching-backup-wal  | pg_receivewal: finished segment at 0/24000000 (timeline 1)
+switching-backup-wal  | pg_receivewal: finished segment at 0/25000000 (timeline 1)
+switching-backup-wal  | 2026-07-21T08:55:30Z level=INFO component=switching-backup message=WAL\ archived\ segment=000000010000000000000023
+switching-backup-wal  | 2026-07-21T08:55:31Z level=INFO component=switching-backup message=WAL\ archived\ segment=000000010000000000000024
+
+== recent WAL objects ==
+2026-07-21 08:48:12   16781496 switching/wal/00000001/000000010000000000000021.age
+2026-07-21 08:48:13         65 switching/wal/00000001/000000010000000000000021.age.sha256
+2026-07-21 08:48:13   16781496 switching/wal/00000001/000000010000000000000022.age
+2026-07-21 08:48:14         65 switching/wal/00000001/000000010000000000000022.age.sha256
+2026-07-21 08:55:30   16781496 switching/wal/00000001/000000010000000000000023.age
+2026-07-21 08:55:30         65 switching/wal/00000001/000000010000000000000023.age.sha256
+2026-07-21 08:55:31   16781496 switching/wal/00000001/000000010000000000000024.age
+2026-07-21 08:55:31         65 switching/wal/00000001/000000010000000000000024.age.sha256

@@ -1,0 +1,6 @@
+Bucket created successfully `local/switching-backups`.
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE

@@ -1,0 +1,786 @@
+[
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/67-maker-checker-approve-20260721T025101Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/67-maker-checker-approve-20260721T025101Z/02-self-approve-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/76-maker-checker-approve-happy-20260721T040257Z/03-fresh-maker-checker-submit.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/76-maker-checker-approve-happy-20260721T040257Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/76-maker-checker-approve-happy-20260721T040257Z/04-approve-reaches-business-logic.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/02-maker-checker-20260716T092351Z/01-maker-request-submitted.json"
+    ],
+    "domain": "admin",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "MakerCheckerController.approve  (src/main/java/com/example/switching/usermgmt/controller/MakerCheckerController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/admin/requests/{id}/approve",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/67-maker-checker-approve-20260721T025101Z/NOTE.md"
+    ],
+    "domain": "iso20022",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "IsoPacs008InboundController.receivePacs008  (src/main/java/com/example/switching/iso/inbound/IsoPacs008InboundController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/iso20022/application/*+xml",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/63-outbox-retry-mark-reviewed-20260721T023805Z/NOTE.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "OperationsOutboxMarkReviewedController.markReviewed  (src/main/java/com/example/switching/operations/controller/OperationsOutboxMarkReviewedController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/outbox-events/{id}/mark-reviewed",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "OperationsOutboxFailureRetryAllController.retryAllFailedOutboxEvents  (src/main/java/com/example/switching/operations/controller/OperationsOutboxFailureRetryAllController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/outbox-failures/retry-all",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/stgs-failed-callback-20260701094550/06-cycle-created.json",
+      "runtime-evidence/stgs-failed-callback-20260701094614/06-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/05-cycle-detail-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/04-open-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/06-cycle-actions-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.openCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/cycles",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/stgs-failed-callback-20260701094550/06-cycle-created.json",
+      "runtime-evidence/stgs-failed-callback-20260701094614/06-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/05-cycle-detail-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/04-open-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/06-cycle-actions-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.batchTransactions  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/cycles/{cycleRef}/batch",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/stgs-failed-callback-20260701094550/06-cycle-created.json",
+      "runtime-evidence/stgs-failed-callback-20260701094614/06-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/05-cycle-detail-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/04-open-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/06-cycle-actions-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.closeCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/cycles/{cycleRef}/close",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/stgs-failed-callback-20260701094550/06-cycle-created.json",
+      "runtime-evidence/stgs-failed-callback-20260701094614/06-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/05-cycle-detail-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/04-open-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/06-cycle-actions-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.generateInstructions  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/cycles/{cycleRef}/instructions/generate",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/stgs-failed-callback-20260701094550/06-cycle-created.json",
+      "runtime-evidence/stgs-failed-callback-20260701094614/06-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/05-cycle-detail-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/04-open-cycle-created.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/07-settlement/06-cycle-actions-before-batch.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.settleCycle  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/cycles/{cycleRef}/settle",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/full-new-transfer-settle-20260702145239/10-instruction-approve.json",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/null-pacs009.xml",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/11-record-rtgs-upload.json",
+      "runtime-evidence/settlement-error-catalog-20260706155121/set-004-instruction-wrong-state.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z/11-rtgs-file-blocked-before-approval.json"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.approveInstruction  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/instructions/{instructionRef}/approve",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/full-new-transfer-settle-20260702145239/10-instruction-approve.json",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/null-pacs009.xml",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/11-record-rtgs-upload.json",
+      "runtime-evidence/settlement-error-catalog-20260706155121/set-004-instruction-wrong-state.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z/11-rtgs-file-blocked-before-approval.json"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.recordRtgsPortalUpload  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/instructions/{instructionRef}/record-rtgs-upload",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/full-new-transfer-settle-20260702145239/10-instruction-approve.json",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/null-pacs009.xml",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/11-record-rtgs-upload.json",
+      "runtime-evidence/settlement-error-catalog-20260706155121/set-004-instruction-wrong-state.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z/11-rtgs-file-blocked-before-approval.json"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.rejectInstruction  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/instructions/{instructionRef}/reject",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/full-new-transfer-settle-20260702145239/10-instruction-approve.json",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/null-pacs009.xml",
+      "runtime-evidence/full-new-transfer-settle-20260702145239/11-record-rtgs-upload.json",
+      "runtime-evidence/settlement-error-catalog-20260706155121/set-004-instruction-wrong-state.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/29-settlement-operations-20260717T042342Z/11-rtgs-file-blocked-before-approval.json"
+    ],
+    "domain": "operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "SettlementController.sendInstructionToRtgs  (src/main/java/com/example/switching/settlement/controller/SettlementController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/operations/settlement/instructions/{instructionRef}/send-rtgs",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/08-outbox-recovery-final-20260716T083824Z/01-outbox-failures-before.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/08-outbox-recovery/03-outbox-failures-before.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/63-outbox-retry-mark-reviewed-20260721T023805Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/20-operations-dashboard-summary-20260717T033103Z/01-operations-dashboard-summary.json"
+    ],
+    "domain": "outbox-events",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "OutboxManualRetryController.retryOutboxEvent  (src/main/java/com/example/switching/outbox/controller/OutboxManualRetryController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/api/outbox-events/{outboxEventId}/retry",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/SUMMARY.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/01-crossborder-inbound-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/05-crossborder-initiate-validation.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/79-missing-header-validation-20260721T083306Z/01-missing-partner-header-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/75-crossborder-unblocked-20260721T035838Z/NOTE.md"
+    ],
+    "domain": "v1-crossborder",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "CrossBorderInboundController.inbound  (src/main/java/com/example/switching/crossborder/controller/CrossBorderInboundController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/crossborder/inbound/{rail}",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/05-crossborder-initiate-validation.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/77-crossborder-initiate-chain-20260721T040628Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/77-crossborder-initiate-chain-20260721T040628Z/03-initiate-reaches-partner-check.json"
+    ],
+    "domain": "v1-crossborder",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "CrossBorderController.initiate  (src/main/java/com/example/switching/crossborder/controller/CrossBorderController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/crossborder/initiate",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "v1-operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "OutboxDeadLetterController.approveReplay  (src/main/java/com/example/switching/outbox/deadletter/controller/OutboxDeadLetterController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/operations/dead-letters/{id}/approve-replay",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "v1-operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "OutboxDeadLetterController.discard  (src/main/java/com/example/switching/outbox/deadletter/controller/OutboxDeadLetterController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/operations/dead-letters/{id}/discard",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "v1-operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "OutboxDeadLetterController.executeReplay  (src/main/java/com/example/switching/outbox/deadletter/controller/OutboxDeadLetterController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/operations/dead-letters/{id}/execute-replay",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md"
+    ],
+    "domain": "v1-operations",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "OutboxDeadLetterController.requestReplay  (src/main/java/com/example/switching/outbox/deadletter/controller/OutboxDeadLetterController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/operations/dead-letters/{id}/request-replay",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/02-crossborder-reconciliation-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/52-crossborder-reconciliation-20260717T082953Z/01-empty-future-statement-reconciled.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/75-crossborder-unblocked-20260721T035838Z/03-reconciliation-empty-list-pass.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/75-crossborder-unblocked-20260721T035838Z/NOTE.md"
+    ],
+    "domain": "v1-operator",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "CrossBorderReconciliationController.reconcile  (src/main/java/com/example/switching/crossborder/controller/CrossBorderReconciliationController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/operator/crossborder/reconciliation/{rail}/{statementDate}",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/04-report-delivery-schedules-suspend-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/03-report-delivery-schedules-post-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/26-report-delivery-schedules-20260717T033921Z/01-report-delivery-schedules.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/60-report-delivery-schedules-20260721T014323Z/01-report-delivery-schedules.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/03-schedules-suspend-not-found.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/NOTE.md"
+    ],
+    "domain": "v1-operator",
+    "evidence_path": "",
+    "evidence_required": "authenticated read + unauthorized negative",
+    "handler": "ReportScheduleController.list  (src/main/java/com/example/switching/reportdelivery/ReportScheduleController.java)",
+    "method": "GET",
+    "notes": "",
+    "path": "/v1/operator/report-delivery-schedules",
+    "risk": "read",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/04-report-delivery-schedules-suspend-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/03-report-delivery-schedules-post-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/26-report-delivery-schedules-20260717T033921Z/01-report-delivery-schedules.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/60-report-delivery-schedules-20260721T014323Z/01-report-delivery-schedules.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/03-schedules-suspend-not-found.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/NOTE.md"
+    ],
+    "domain": "v1-operator",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "ReportScheduleController.create  (src/main/java/com/example/switching/reportdelivery/ReportScheduleController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/operator/report-delivery-schedules",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/04-report-delivery-schedules-suspend-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/68-blocked-endpoints-recheck-20260721T030120Z/03-report-delivery-schedules-post-still-blocked.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/26-report-delivery-schedules-20260717T033921Z/01-report-delivery-schedules.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/60-report-delivery-schedules-20260721T014323Z/01-report-delivery-schedules.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/03-schedules-suspend-not-found.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/NOTE.md"
+    ],
+    "domain": "v1-operator",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "ReportScheduleController.suspend  (src/main/java/com/example/switching/reportdelivery/ReportScheduleController.java)",
+    "method": "PATCH",
+    "notes": "",
+    "path": "/v1/operator/report-delivery-schedules/{id}/suspend",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/72-oauth-rotation-race-20260721T033833Z/01-rotation-race-error.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/72-oauth-rotation-race-20260721T033833Z/FINDING.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/66-credentials-rotate-20260721T024825Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/07-certificate-issue-20260717T014548Z/RESULT.md"
+    ],
+    "domain": "v1-participants",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "ParticipantCredentialController.rotateCredentials  (src/main/java/com/example/switching/participant/controller/ParticipantCredentialController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/participants/{pspId}/credentials/rotate",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/74-bank-role-oauth-unblocked-20260721T035024Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/74-bank-role-oauth-unblocked-20260721T035024Z/02-qr-pay-validation.json"
+    ],
+    "domain": "v1-qr",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "QrController.pay  (src/main/java/com/example/switching/qr/controller/QrController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/qr/pay",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/74-bank-role-oauth-unblocked-20260721T035024Z/03-qr-refund-validation.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/74-bank-role-oauth-unblocked-20260721T035024Z/NOTE.md"
+    ],
+    "domain": "v1-qr",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "QrController.refund  (src/main/java/com/example/switching/qr/controller/QrController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/qr/refund",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/SUMMARY.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/62-reports-download-20260721T022753Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/62-reports-download-20260721T022753Z/01-report-download-route-not-found.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/43-report-download-20260717T080823Z/01-report-download-not-found.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/71-report-delivery-unblocked-20260721T033041Z/04-download-invalid-token.json"
+    ],
+    "domain": "v1-reports",
+    "evidence_path": "",
+    "evidence_required": "authenticated read + unauthorized negative",
+    "handler": "ReportDownloadController.download  (src/main/java/com/example/switching/reportdelivery/ReportDownloadController.java)",
+    "method": "GET",
+    "notes": "",
+    "path": "/v1/reports/download/{id}",
+    "risk": "read",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/61-rtp-20260721T014357Z/01-rtp-read-not-found.json"
+    ],
+    "domain": "v1-rtp",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "RequestToPayController.create  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/rtp/requests",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/61-rtp-20260721T014357Z/01-rtp-read-not-found.json"
+    ],
+    "domain": "v1-rtp",
+    "evidence_path": "",
+    "evidence_required": "authenticated read + unauthorized negative",
+    "handler": "RequestToPayController.get  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)",
+    "method": "GET",
+    "notes": "",
+    "path": "/v1/rtp/requests/{id}",
+    "risk": "read",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/61-rtp-20260721T014357Z/01-rtp-read-not-found.json"
+    ],
+    "domain": "v1-rtp",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "RequestToPayController.authorise  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/rtp/requests/{id}/authorise",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/61-rtp-20260721T014357Z/01-rtp-read-not-found.json"
+    ],
+    "domain": "v1-rtp",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "RequestToPayController.cancel  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/rtp/requests/{id}/cancel",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/61-rtp-20260721T014357Z/01-rtp-read-not-found.json"
+    ],
+    "domain": "v1-rtp",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "RequestToPayController.decline  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/rtp/requests/{id}/decline",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/61-rtp-20260721T014357Z/01-rtp-read-not-found.json"
+    ],
+    "domain": "v1-rtp",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "RequestToPayController.confirmSettlement  (src/main/java/com/example/switching/rtp/controller/RequestToPayController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/rtp/requests/{id}/settlements",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/09-config-hardcode-check/01-hardcode-scan.txt",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/74-bank-role-oauth-unblocked-20260721T035024Z/NOTE.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/74-bank-role-oauth-unblocked-20260721T035024Z/01-liquidity-topup-pass.json"
+    ],
+    "domain": "v1-settlement",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "LiquidityController.topUp  (src/main/java/com/example/switching/liquidity/controller/LiquidityController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/settlement/liquidity/topup",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/full-new-transfer-settle-20260702145239/12-rtgs-callback-confirm.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/SUMMARY.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/64-rtgs-callback-ip-whitelist-bypass-20260721T024217Z/01-no-spoof-still-bypasses.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/64-rtgs-callback-ip-whitelist-bypass-20260721T024217Z/FINDING.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/64-rtgs-callback-ip-whitelist-bypass-20260721T024217Z/02-spoofed-xff-also-bypasses.json"
+    ],
+    "domain": "v1-settlement",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + audit + rollback/cleanup",
+    "handler": "RtgsCallbackController.callback  (src/main/java/com/example/switching/settlement/controller/RtgsCallbackController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/settlement/rtgs-callback",
+    "risk": "high",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/09-config-hardcode-check/01-hardcode-scan.txt",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/01-webhook-private-url-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/02-webhook-loopback-https-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/78-remaining-probes-20260721T041011Z/03-webhook-mutation-probes.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md"
+    ],
+    "domain": "v1-webhooks",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "WebhookController.register  (src/main/java/com/example/switching/webhook/controller/WebhookController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/webhooks",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/09-config-hardcode-check/01-hardcode-scan.txt",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/01-webhook-private-url-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/02-webhook-loopback-https-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/78-remaining-probes-20260721T041011Z/03-webhook-mutation-probes.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md"
+    ],
+    "domain": "v1-webhooks",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "WebhookController.pause  (src/main/java/com/example/switching/webhook/controller/WebhookController.java)",
+    "method": "DELETE",
+    "notes": "",
+    "path": "/v1/webhooks/{webhookId}",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/09-config-hardcode-check/01-hardcode-scan.txt",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/01-webhook-private-url-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/02-webhook-loopback-https-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/78-remaining-probes-20260721T041011Z/03-webhook-mutation-probes.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md"
+    ],
+    "domain": "v1-webhooks",
+    "evidence_path": "",
+    "evidence_required": "authenticated read + unauthorized negative",
+    "handler": "WebhookController.detail  (src/main/java/com/example/switching/webhook/controller/WebhookController.java)",
+    "method": "GET",
+    "notes": "",
+    "path": "/v1/webhooks/{webhookId}",
+    "risk": "read",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/09-config-hardcode-check/01-hardcode-scan.txt",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/01-webhook-private-url-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/02-webhook-loopback-https-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/78-remaining-probes-20260721T041011Z/03-webhook-mutation-probes.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md"
+    ],
+    "domain": "v1-webhooks",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "WebhookController.rotateSecret  (src/main/java/com/example/switching/webhook/controller/WebhookController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/webhooks/{webhookId}/secret/rotate",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  },
+  {
+    "candidate_files": [
+      "runtime-evidence/prod-readiness-20260713Tuat01/11-score.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/09-config-hardcode-check/01-hardcode-scan.txt",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/endpoint-evidence-matrix.csv",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/ENDPOINT_EVIDENCE_MATRIX.md",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/01-webhook-private-url-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/40-webhook-lifecycle-20260717T075703Z/02-webhook-loopback-https-rejected.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/78-remaining-probes-20260721T041011Z/03-webhook-mutation-probes.json",
+      "runtime-evidence/prod-readiness-20260713Tuat01/18-api-endpoint-coverage/73-oauth-filter-disabled-20260721T033900Z/FINDING.md"
+    ],
+    "domain": "v1-webhooks",
+    "evidence_path": "",
+    "evidence_required": "happy path + authorization + validation + cleanup",
+    "handler": "WebhookController.testPing  (src/main/java/com/example/switching/webhook/controller/WebhookController.java)",
+    "method": "POST",
+    "notes": "",
+    "path": "/v1/webhooks/{webhookId}/test",
+    "risk": "standard",
+    "status": "NOT_TESTED"
+  }
+]

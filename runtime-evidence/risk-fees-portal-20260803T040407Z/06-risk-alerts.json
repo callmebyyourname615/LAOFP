@@ -1,0 +1,26 @@
+{
+  "scenario": "Risk alerts critical block list",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/api/risk/alerts?severity=CRITICAL&status=BLOCK&limit=20",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "totalItems": 1,
+    "returnedItems": 1,
+    "items": [
+      {
+        "txnId": "EVD-RISK-FEES-20260803T040407Z-TXN-HIGH",
+        "score": 0.9100,
+        "receivingPspId": "BANK_B",
+        "severity": "CRITICAL",
+        "timestamp": "2026-08-03T04:06:25.058Z",
+        "sendingPspId": "BANK_A",
+        "signals": "{\"evidence\": \"risk-fees-portal\", \"velocity\": \"high\"}",
+        "action": "BLOCK",
+        "alertId": 72,
+        "amount": 999999.0000
+      }
+    ]
+  }
+}

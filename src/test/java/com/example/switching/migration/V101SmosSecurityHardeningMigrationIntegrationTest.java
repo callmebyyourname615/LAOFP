@@ -13,12 +13,12 @@ class V101SmosSecurityHardeningMigrationIntegrationTest extends AbstractIntegrat
 
     @Test
     void cleanInstallContainsV101IdentityAndSessionHardening() {
-        // version is VARCHAR — MAX does lex compare ("97" > "106"); use installed_rank.
+        // version is VARCHAR — MAX does lex compare ("97" > "107"); use installed_rank.
         assertThat(jdbc.queryForObject(
                 "SELECT version FROM flyway_schema_history WHERE success "
-                        + "ORDER BY installed_rank DESC LIMIT 1", String.class)).isEqualTo("106");
+                        + "ORDER BY installed_rank DESC LIMIT 1", String.class)).isEqualTo("107");
         assertThat(jdbc.queryForObject(
-                "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(99);
+                "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(100);
 
         List<String> userColumns = jdbc.queryForList("""
                 SELECT column_name FROM information_schema.columns

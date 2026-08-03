@@ -31,6 +31,8 @@ public class TransferListService {
                                        String inquiryRef,
                                        String sourceBank,
                                        String destinationBank,
+                                       Integer riskScoreMin,
+                                       Integer riskScoreMax,
                                        Integer limit) {
         int resolvedLimit = resolveLimit(limit);
         TransferStatus resolvedStatus = resolveStatus(status);
@@ -38,12 +40,20 @@ public class TransferListService {
         String resolvedInquiryRef = normalize(inquiryRef);
         String resolvedSourceBank = normalize(sourceBank);
         String resolvedDestinationBank = normalize(destinationBank);
+        Integer resolvedRiskScoreMin = resolveRiskScore(riskScoreMin, "riskScoreMin");
+        Integer resolvedRiskScoreMax = resolveRiskScore(riskScoreMax, "riskScoreMax");
+        if (resolvedRiskScoreMin != null && resolvedRiskScoreMax != null
+                && resolvedRiskScoreMin > resolvedRiskScoreMax) {
+            throw new InquiryValidationException("riskScoreMin must not exceed riskScoreMax");
+        }
 
-        List<TransferEntity> transfers = transferRepository.searchTransfers(
-                resolvedStatus,
+        List<TransferEntity> transfers = transferRepository.searchTransfersByRisk(
+                resolvedStatus == null ? null : resolvedStatus.name(),
                 resolvedInquiryRef,
                 resolvedSourceBank,
                 resolvedDestinationBank,
+                resolvedRiskScoreMin,
+                resolvedRiskScoreMax,
                 PageRequest.of(0, resolvedLimit)
         );
 
@@ -103,6 +113,14 @@ public class TransferListService {
         }
 
         return Math.min(limit, MAX_LIMIT);
+    }
+
+    private Integer resolveRiskScore(Integer value, String parameterName) {
+        if (value == null) return null;
+        if (value < 0 || value > 100) {
+            throw new InquiryValidationException(parameterName + " must be between 0 and 100");
+        }
+        return value;
     }
 
     private String normalize(String value) {

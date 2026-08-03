@@ -1,0 +1,1 @@
+{"category":"BUSINESS","details":null,"error":"NOT_FOUND","errorCode":"TRF-001","layer":"TRANSFER","message":"Original QR transaction not found: EVD-QR-20260803T040131Z-UNKNOWN-TXN","path":"/v1/qr/refund","phase":"READ_RESOURCE","requestId":"c889e046-a0d9-41fa-838b-c99c2466e050","retryable":false,"status":404,"timestamp":"2026-08-03T04:01:31.956360006","traceId":null}

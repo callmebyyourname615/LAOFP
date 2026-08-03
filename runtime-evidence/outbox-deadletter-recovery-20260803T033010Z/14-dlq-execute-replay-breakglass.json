@@ -1,0 +1,23 @@
+{
+  "id": 3,
+  "eventId": "c087ecee-1e32-43fc-959e-b0894bede89d",
+  "schemaName": "switching.outbox.dispatch",
+  "schemaVersion": 1,
+  "outboxEventId": 71,
+  "transferRef": "EVD-DLQ-EXECUTE-2026-08-03T03:30:10Z",
+  "status": "REPLAYED",
+  "failureCount": 1,
+  "failureType": "EvidenceFixtureFailure",
+  "failureMessage": "UAT evidence dead-letter fixture",
+  "firstFailedAt": "2026-08-03T03:30:11.078701",
+  "lastFailedAt": "2026-08-03T03:30:11.078701",
+  "replayRequestedBy": "evidence-maker",
+  "replayApprovedBy": "admin",
+  "replayedBy": "admin",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/operations/dead-letters/3/execute-replay",
+    "method": "POST",
+    "httpCode": 200,
+    "breakGlassTokenPrefix": "BG-EVD-20260"
+  }
+}

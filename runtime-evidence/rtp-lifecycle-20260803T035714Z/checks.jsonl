@@ -1,0 +1,16 @@
+{"name":"SMOS admin login","status":"PASS","expected":"HTTP 200 and token present","actual":"HTTP 200","details":"https://175.11.0.200/api/auth/login"}
+{"name":"Create RTP request for GET","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/rtp/requests"}
+{"name":"Get RTP request detail","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/87410d20-6c95-4cdf-aa4c-1011da249086"}
+{"name":"Create RTP request idempotent replay","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests"}
+{"name":"Create RTP request for cancel","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/rtp/requests"}
+{"name":"Cancel RTP request","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/fe33babf-9a25-4e60-a58d-50310ff0d5cd/cancel"}
+{"name":"Create RTP request for decline","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/rtp/requests"}
+{"name":"Decline RTP request","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/00c7056f-d0b7-4394-a38d-1c07adcd1c9c/decline"}
+{"name":"Create RTP request for installment settlement","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/rtp/requests"}
+{"name":"Authorise RTP request with installment schedule","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/b0434027-cfd5-47f2-92da-f332b9daf95e/authorise"}
+{"name":"Confirm RTP partial installment settlement","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/b0434027-cfd5-47f2-92da-f332b9daf95e/settlements"}
+{"name":"Confirm RTP final installment settlement","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/b0434027-cfd5-47f2-92da-f332b9daf95e/settlements"}
+{"name":"Get settled RTP request detail","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/rtp/requests/b0434027-cfd5-47f2-92da-f332b9daf95e"}
+{"name":"Create RTP request for partial authorise","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/rtp/requests"}
+{"name":"Partial RTP authorise requires existing transfer inquiry","status":"PASS","expected":"HTTP 400","actual":"HTTP 400","details":"https://175.11.0.200/v1/rtp/requests/0ebf5966-d660-40c6-a196-f4064a59cf39/authorise"}
+{"name":"Unauthenticated RTP detail rejected","status":"PASS","expected":"HTTP 401","actual":"HTTP 401","details":"https://175.11.0.200/v1/rtp/requests/87410d20-6c95-4cdf-aa4c-1011da249086"}

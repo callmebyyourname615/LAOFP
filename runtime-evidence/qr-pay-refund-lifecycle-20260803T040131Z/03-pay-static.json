@@ -1,0 +1,18 @@
+{
+  "scenario": "Pay reusable static QR",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/pay",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "txnId": "QRP-7D9A5DB63241-13637789731367373",
+    "qrId": "7d9a5db6-3241-4f3b-b9ca-7ea92a7f2674",
+    "issuingPspId": "BANK_A",
+    "acquiringPspId": "BANK_B",
+    "amount": 1500.0000,
+    "currency": "LAK",
+    "status": "COMPLETED",
+    "completedAt": "2026-08-03T04:01:31.539014556"
+  }
+}

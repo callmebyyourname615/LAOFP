@@ -40,7 +40,7 @@
   pgbouncer:
     image: edoburu/pgbouncer:latest
     environment:
-      DATABASE_URL: postgresql://switching:${POSTGRES_PASSWORD}@postgres:5432/switching_db
+      DATABASE_URL: postgresql://postgres:5432/switching_db
       POOL_MODE: transaction
       MAX_CLIENT_CONN: 2000
       DEFAULT_POOL_SIZE: 100
@@ -99,7 +99,7 @@
           minimum-idle: 5
           pool-name: SwitchingPrimary
       replica:
-        url: ${REPLICA_DB_URL:jdbc:postgresql://postgres-read-replica:5432/switching_db}
+        url: ${REPLICA_DB_URL:jdbc:postgresql://postgres:5432/switching_db}
         username: ${DB_APP_USERNAME:switching_app}
         password: ${DB_APP_PASSWORD}
         read-only: true
@@ -205,7 +205,7 @@
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
     environment:
-      DATA_SOURCE_NAME: "postgresql://switching:${POSTGRES_PASSWORD}@postgres:5432/switching_db?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres:5432/switching_db?sslmode=disable"
     ports: ["9187:9187"]
   ```
 - [ ] Add Prometheus scrape config for `postgres-exporter:9187`

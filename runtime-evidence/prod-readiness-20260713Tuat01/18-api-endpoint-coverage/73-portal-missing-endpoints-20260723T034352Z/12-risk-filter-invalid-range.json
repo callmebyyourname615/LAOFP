@@ -1,0 +1,18 @@
+{
+  "httpStatus": 400,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "INQ-002",
+    "layer": "TRANSFER",
+    "message": "riskScoreMin must not exceed riskScoreMax",
+    "path": "/api/transfers",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "26bcd171-44ef-415b-9f93-89f59487ddf3",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-07-23T03:44:05.721030627",
+    "traceId": null
+  }
+}

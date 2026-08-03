@@ -1,0 +1,28 @@
+{
+  "scenario": "Fee exceptions portal list",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/api/fees/exceptions?status=PENDING&limit=20",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "totalItems": 1,
+    "returnedItems": 1,
+    "items": [
+      {
+        "exceptionId": "80d82c7c-1098-4922-b249-3459ea70a47b",
+        "ruleId": "4cf53226-6f44-43a8-88fd-3aca314a8ee2",
+        "participant": "BANK_A",
+        "messageType": "QR",
+        "overrideType": "FIXED",
+        "overrideValue": 50.0000,
+        "reason": "Fees portal evidence exception",
+        "requestedBy": "evidence",
+        "requestedAt": "2026-08-03T04:06:25.057676Z",
+        "status": "PENDING",
+        "validFrom": "2026-08-03T04:06:25.057676Z",
+        "validUntil": "2026-08-10T04:06:25.057676Z"
+      }
+    ]
+  }
+}

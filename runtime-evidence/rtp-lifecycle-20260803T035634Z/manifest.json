@@ -1,0 +1,18 @@
+{
+  "evidence": "rtp-full-lifecycle",
+  "runId": "EVD-RTP-20260803T035634Z",
+  "generatedAt": "2026-08-03T03:56:36Z",
+  "baseUrl": "https://175.11.0.200",
+  "endpoints": [
+    "POST /v1/rtp/requests",
+    "GET /v1/rtp/requests/{id}",
+    "POST /v1/rtp/requests/{id}/cancel",
+    "POST /v1/rtp/requests/{id}/decline",
+    "POST /v1/rtp/requests/{id}/authorise",
+    "POST /v1/rtp/requests/{id}/settlements"
+  ],
+  "notes": [
+    "Installment mode is used for settlement confirmation to avoid external transfer-rail dependencies.",
+    "Login tokens and passwords are not persisted in evidence files."
+  ]
+}

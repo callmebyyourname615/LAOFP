@@ -1,0 +1,15 @@
+{
+  "scenario": "Crossborder rail reconciliation matched and missing internal",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/operator/crossborder/reconciliation/PROMPTPAY/2026-08-03",
+  "expectedHttpStatus": "200 with matched=1 and missingInternal=1",
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "mismatched": 0,
+    "missingExternal": 0,
+    "matched": 1,
+    "total": 2,
+    "missingInternal": 1
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "category": "REQUEST",
+  "details": null,
+  "error": "NOT_FOUND",
+  "errorCode": "REQ-005",
+  "layer": "API",
+  "message": "API route not found",
+  "path": "/v1/webhooks/",
+  "phase": "RECEIVE_REQUEST",
+  "requestId": "5bb9e6bf-4165-4021-a743-5486ae9adfad",
+  "retryable": false,
+  "status": 404,
+  "timestamp": "2026-08-03T03:38:39.816684401",
+  "traceId": null,
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/webhooks/",
+    "method": "DELETE",
+    "httpCode": 404
+  }
+}

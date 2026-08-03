@@ -84,10 +84,13 @@ public class OutboxQueueConfig {
 
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, OutboxQueueMessage>>
-            kafkaListenerContainerFactory(ConsumerFactory<String, OutboxQueueMessage> outboxQueueConsumerFactory) {
+            kafkaListenerContainerFactory(
+                    ConsumerFactory<String, OutboxQueueMessage> outboxQueueConsumerFactory,
+                    @Value("${switching.outbox.queue.listener-auto-startup:true}") boolean listenerAutoStartup) {
         ConcurrentKafkaListenerContainerFactory<String, OutboxQueueMessage> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(outboxQueueConsumerFactory);
+        factory.setAutoStartup(listenerAutoStartup);
         return factory;
     }
 }

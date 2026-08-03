@@ -1,0 +1,364 @@
+erDiagram
+    CONTROL_EVIDENCE_CATALOG {
+        uuid id PK
+        varchar_80 control_code
+        timestamptz evidence_period_start
+        timestamptz evidence_period_end
+        varchar_1500 artifact_reference
+        char_64 artifact_sha256
+        varchar_120 content_type
+        bigint size_bytes
+        varchar_120 producer
+        varchar_16 status
+        string more_columns "plus 2 more"
+    }
+
+    CONTROL_EVIDENCE_VERIFICATION {
+        uuid id PK
+        uuid evidence_id FK
+        varchar_120 verifier
+        varchar_16 decision
+        char_64 observed_sha256
+        varchar_1000 comment
+        timestamptz verified_at
+    }
+
+    DECISION_RULE_PACKAGE {
+        uuid id PK
+        varchar_120 package_code
+        varchar_24 domain
+        varchar_120 owner_team
+        varchar_16 criticality
+        varchar_16 status
+        timestamptz created_at
+    }
+
+    DECISION_RULE_VERSION {
+        uuid id PK
+        uuid package_id FK
+        varchar_80 version
+        varchar_1000 artifact_reference
+        char_64 artifact_sha256
+        char_64 manifest_sha256
+        varchar_1000 change_reason
+        varchar_120 requested_by
+        varchar_120 risk_approved_by
+        varchar_120 compliance_approved_by
+        string more_columns "plus 5 more"
+    }
+
+    DECISION_RULE_TEST_EXECUTION {
+        uuid id PK
+        uuid rule_version_id FK
+        varchar_80 suite_version
+        integer test_case_count
+        integer passed_count
+        integer failed_count
+        numeric_7 false_positive_rate
+        numeric_7 false_negative_rate
+        varchar_12 status
+        varchar_1000 result_artifact_reference
+        string more_columns "plus 3 more"
+    }
+
+    DECISION_RULE_DEPLOYMENT {
+        uuid id PK
+        uuid rule_version_id FK
+        varchar_32 environment
+        varchar_160 deployment_reference
+        uuid previous_version_id FK
+        varchar_120 deployed_by
+        varchar_20 status
+        timestamptz started_at
+        timestamptz completed_at
+        char_64 evidence_hash
+    }
+
+    DECOMMISSION_PLAN {
+        uuid id PK
+        varchar_160 plan_reference
+        varchar_24 target_type
+        varchar_160 target_code
+        timestamptz planned_effective_at
+        varchar_2000 reason
+        boolean data_exit_required
+        varchar_24 status
+        varchar_120 requested_by
+        varchar_120 operations_approved_by
+        string more_columns "plus 6 more"
+    }
+
+    DECOMMISSION_TASK {
+        uuid id PK
+        uuid plan_id FK
+        varchar_80 task_code
+        integer task_order
+        varchar_120 owner_team
+        varchar_1000 description
+        boolean blocking
+        varchar_16 status
+        char_64 completion_evidence_hash
+        varchar_120 completed_by
+        string more_columns "plus 1 more"
+    }
+
+    DECOMMISSION_DATA_EXIT_ARTIFACT {
+        uuid id PK
+        uuid plan_id FK
+        varchar_64 artifact_type
+        varchar_1500 artifact_reference
+        char_64 artifact_sha256
+        boolean encrypted
+        varchar_500 recipient_reference
+        bigint size_bytes
+        date retention_until
+        varchar_120 created_by
+        string more_columns "plus 1 more"
+    }
+
+    DECOMMISSION_EXECUTION_EVENT {
+        uuid id PK
+        uuid plan_id FK
+        varchar_64 event_type
+        varchar_120 actor
+        varchar_2000 detail
+        char_64 evidence_hash
+        timestamptz created_at
+    }
+
+    REPORTING_TRANSACTION_STATUS_DAILY {
+        date summary_date
+        varchar_30 status
+        bigint total_count
+        timestamp calculated_at
+        timestamp source_through_at
+        bigint source_row_count
+        varchar_30 aggregation_version
+    }
+
+    REPORTING_INQUIRY_STATUS_DAILY {
+        date summary_date
+        varchar_30 status
+        bigint total_count
+        timestamp calculated_at
+        timestamp source_through_at
+        bigint source_row_count
+        varchar_30 aggregation_version
+    }
+
+    REPORTING_OUTBOX_STATUS_DAILY {
+        date summary_date
+        varchar_30 status
+        bigint total_count
+        timestamp calculated_at
+        timestamp source_through_at
+        bigint source_row_count
+        varchar_30 aggregation_version
+    }
+
+    REPORTING_REFRESH_STATE {
+        varchar_80 dataset PK
+        timestamp refreshed_at
+        timestamp source_through_at
+        bigint source_row_count
+        varchar_30 aggregation_version
+    }
+
+    REPORTING_CURRENT_TRANSACTION_STATUS {
+        varchar_30 status PK
+        bigint total_count
+        timestamp updated_at
+    }
+
+    REPORTING_CURRENT_INQUIRY_STATUS {
+        varchar_30 status PK
+        bigint total_count
+        timestamp updated_at
+    }
+
+    REPORTING_CURRENT_OUTBOX_STATUS {
+        varchar_30 status PK
+        bigint total_count
+        timestamp updated_at
+    }
+
+    SETTLEMENT_CYCLES {
+        bigint id PK
+        varchar_40 cycle_ref
+        date settlement_date
+        smallint cycle_number
+        varchar_20 status
+        timestamp opened_at
+        timestamp closed_at
+        timestamp settled_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SETTLEMENT_POSITIONS {
+        bigint id PK
+        bigint cycle_id FK
+        varchar_32 bank_code FK
+        varchar_8 currency
+        numeric_18 debit_amount
+        numeric_18 credit_amount
+        numeric_18 net_position
+        int transaction_count
+        varchar_20 status
+        timestamp settled_at
+        string more_columns "plus 2 more"
+    }
+
+    SETTLEMENT_ITEMS {
+        bigint id
+        bigint cycle_id
+        varchar_32 bank_code
+        varchar_80 transaction_ref
+        varchar_10 direction
+        numeric_18 amount
+        varchar_8 currency
+        date settlement_date
+        timestamp created_at
+    }
+
+    RECONCILIATION_FILES {
+        bigint id PK
+        varchar_80 file_ref
+        varchar_32 source_bank
+        varchar_255 file_name
+        varchar_20 file_type
+        bigint file_size_bytes
+        date reconciliation_date
+        varchar_20 status
+        int total_records
+        int matched_count
+        string more_columns "plus 5 more"
+    }
+
+    RECONCILIATION_ITEMS {
+        bigint id
+        bigint file_id
+        int line_number
+        varchar_80 transaction_ref
+        varchar_100 external_ref
+        numeric_18 amount
+        varchar_8 currency
+        varchar_20 match_status
+        text mismatch_reason
+        date reconciliation_date
+        string more_columns "plus 2 more"
+    }
+
+    RTP_REQUEST {
+        uuid id PK
+        varchar_64 request_correlation_id
+        varchar_64 request_fingerprint
+        varchar_64 payee_participant_id
+        varchar_64 payer_participant_id
+        varchar_128 payee_account
+        varchar_128 payer_account
+        numeric_19 requested_amount
+        numeric_19 authorised_amount
+        numeric_19 settled_amount
+        string more_columns "plus 16 more"
+    }
+
+    RTP_AUTHORISATION {
+        uuid id PK
+        uuid request_id FK
+        varchar_64 authorisation_reference
+        varchar_24 mode
+        numeric_19 authorised_amount
+        varchar_64 actor_participant_id
+        timestamptz created_at
+    }
+
+    RTP_INSTALLMENT_SCHEDULE {
+        uuid id PK
+        uuid request_id FK
+        integer installment_number
+        timestamptz due_at
+        numeric_19 amount
+        varchar_24 status
+        varchar_64 transaction_reference
+        timestamptz settled_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    RTP_STATE_TRANSITION {
+        uuid id PK
+        uuid request_id FK
+        varchar_32 from_status
+        varchar_32 to_status
+        varchar_128 actor_id
+        varchar_500 reason
+        timestamptz created_at
+        is from_status
+    }
+
+    PROMOTION {
+        uuid id PK
+        varchar_64 code
+        varchar_160 name
+        varchar_24 promotion_type
+        varchar_24 status
+        integer priority
+        boolean combinable
+        varchar_64 funder_participant_id
+        varchar_3 currency
+        numeric_19 budget_cap
+        string more_columns "plus 16 more"
+    }
+
+    PROMOTION_ELIGIBILITY_RULE {
+        uuid id PK
+        uuid promotion_id FK
+        integer rule_order
+        jsonb rule_json
+        varchar_64 rule_sha256
+        timestamptz created_at
+    }
+
+    PROMOTION_APPLICATION {
+        uuid id PK
+        uuid promotion_id FK
+        varchar_128 transaction_reference
+        varchar_64 participant_id
+        varchar_32 channel
+        numeric_19 gross_fee
+        numeric_19 discount_amount
+        numeric_19 net_fee
+        varchar_3 currency
+        varchar_24 status
+        string more_columns "plus 7 more"
+    }
+
+    PROMOTION_SETTLEMENT {
+        uuid id PK
+        uuid promotion_application_id FK
+        varchar_64 funder_participant_id
+        varchar_64 beneficiary_participant_id
+        numeric_19 amount
+        varchar_3 currency
+        varchar_128 settlement_reference
+        varchar_24 status
+        timestamptz settled_at
+        timestamptz created_at
+    }
+
+    CONTROL_EVIDENCE_CATALOG ||--o{ CONTROL_EVIDENCE_VERIFICATION : "evidence_id"
+    DECISION_RULE_PACKAGE ||--o{ DECISION_RULE_VERSION : "package_id"
+    DECISION_RULE_VERSION ||--o{ DECISION_RULE_TEST_EXECUTION : "rule_version_id"
+    DECISION_RULE_VERSION ||--o{ DECISION_RULE_DEPLOYMENT : "rule_version_id"
+    DECISION_RULE_VERSION ||--o{ DECISION_RULE_DEPLOYMENT : "previous_version_id"
+    DECOMMISSION_PLAN ||--o{ DECOMMISSION_TASK : "plan_id"
+    DECOMMISSION_PLAN ||--o{ DECOMMISSION_DATA_EXIT_ARTIFACT : "plan_id"
+    DECOMMISSION_PLAN ||--o{ DECOMMISSION_EXECUTION_EVENT : "plan_id"
+    SETTLEMENT_CYCLES ||--o{ SETTLEMENT_POSITIONS : "cycle_id"
+    RTP_REQUEST ||--o{ RTP_AUTHORISATION : "request_id"
+    RTP_REQUEST ||--o{ RTP_INSTALLMENT_SCHEDULE : "request_id"
+    RTP_REQUEST ||--o{ RTP_STATE_TRANSITION : "request_id"
+    PROMOTION ||--o{ PROMOTION_ELIGIBILITY_RULE : "promotion_id"
+    PROMOTION ||--o{ PROMOTION_APPLICATION : "promotion_id"
+    PROMOTION_APPLICATION ||--o{ PROMOTION_SETTLEMENT : "promotion_application_id"

@@ -1,0 +1,23 @@
+{
+  "scenario": "Refund outside configured window rejected",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/refund",
+  "expectedHttpStatus": 400,
+  "actualHttpStatus": 422,
+  "passed": false,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "UNPROCESSABLE_ENTITY",
+    "errorCode": "LFP-QR-007",
+    "layer": "QR",
+    "message": "QR refund window has expired (max 30 days) for transaction: EVD-QR-20260803T040102Z-OLD-TXN",
+    "path": "/v1/qr/refund",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "2991de59-16fc-41c6-8d99-65b17ff00a68",
+    "retryable": false,
+    "status": 422,
+    "timestamp": "2026-08-03T04:01:03.970432213",
+    "traceId": null
+  }
+}

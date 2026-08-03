@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "environment": "uat",
+  "generatedAt": "2026-08-03T03:44:22Z",
+  "scope": "webhook lifecycle endpoint evidence with allowlist guard and fixture-backed active registration",
+  "webhookId": "0f91569f-f210-43c6-b683-d679ecfeae90",
+  "adminListWebhookId": "47b1c99f-b213-4cff-8f27-e1b45ddf7964",
+  "checks": [
+    {
+      "id": "login",
+      "status": "PASS",
+      "detail": "admin login HTTP 200; token redacted",
+      "observedAt": "2026-08-03T03:42:39Z"
+    },
+    {
+      "id": "register-allowlist-guard",
+      "status": "PASS",
+      "detail": "register rejects non-allowlisted HTTPS host as expected",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "db-fixture",
+      "status": "PASS",
+      "detail": "active webhook fixture inserted; webhookId=0f91569f-f210-43c6-b683-d679ecfeae90; secret material redacted",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "list",
+      "status": "PASS",
+      "detail": "HTTP 200; SUNDAYBANK fixture not returned in admin principal list scope, owner scoping enforced",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "detail",
+      "status": "PASS",
+      "detail": "HTTP 200; detail status ACTIVE",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "test-ping",
+      "status": "PASS",
+      "detail": "HTTP 200; TEST.PING queued",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "rotate-secret",
+      "status": "PASS",
+      "detail": "HTTP 200; secretVersion=2; plaintext secret redacted",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "pause",
+      "status": "PASS",
+      "detail": "HTTP 204; webhook paused",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "detail-after-pause",
+      "status": "PASS",
+      "detail": "HTTP 200; final status PAUSED",
+      "observedAt": "2026-08-03T03:42:40Z"
+    },
+    {
+      "id": "unauthorized-detail",
+      "status": "PASS",
+      "detail": "unauthenticated detail rejected HTTP 401",
+      "observedAt": "2026-08-03T03:42:41Z"
+    },
+    {
+      "id": "list-admin-scope",
+      "status": "PASS",
+      "detail": "HTTP 200; admin-scoped webhook appears in list",
+      "observedAt": "2026-08-03T03:43:48Z"
+    },
+    {
+      "id": "cleanup-admin-list-fixture",
+      "status": "PASS",
+      "detail": "admin-scoped list fixture paused after positive list evidence",
+      "observedAt": "2026-08-03T03:44:22Z"
+    }
+  ]
+}

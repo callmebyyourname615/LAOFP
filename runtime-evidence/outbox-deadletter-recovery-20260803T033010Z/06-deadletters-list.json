@@ -1,0 +1,43 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "eventId": "9d014ab4-e38e-4029-8dbb-63e4255e5799",
+      "schemaName": "switching.outbox.dispatch",
+      "schemaVersion": 1,
+      "outboxEventId": null,
+      "transferRef": "EVD-DLQ-REQUEST-2026-08-03T03:30:10Z",
+      "status": "QUARANTINED",
+      "failureCount": 1,
+      "failureType": "EvidenceFixtureFailure",
+      "failureMessage": "UAT evidence dead-letter fixture",
+      "firstFailedAt": "2026-08-03T03:30:11.078701",
+      "lastFailedAt": "2026-08-03T03:30:11.078701",
+      "replayRequestedBy": null,
+      "replayApprovedBy": null,
+      "replayedBy": null
+    },
+    {
+      "id": 4,
+      "eventId": "d9d70ad7-1e14-4d5c-9b45-34a224e80a9c",
+      "schemaName": "switching.outbox.dispatch",
+      "schemaVersion": 1,
+      "outboxEventId": null,
+      "transferRef": "EVD-DLQ-DISCARD-2026-08-03T03:30:10Z",
+      "status": "QUARANTINED",
+      "failureCount": 1,
+      "failureType": "EvidenceFixtureFailure",
+      "failureMessage": "UAT evidence dead-letter fixture",
+      "firstFailedAt": "2026-08-03T03:30:11.078701",
+      "lastFailedAt": "2026-08-03T03:30:11.078701",
+      "replayRequestedBy": null,
+      "replayApprovedBy": null,
+      "replayedBy": null
+    }
+  ],
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/operations/dead-letters?status=QUARANTINED&limit=10",
+    "method": "GET",
+    "httpCode": 200
+  }
+}

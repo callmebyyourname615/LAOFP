@@ -1,0 +1,10 @@
+{
+  "control": "CONTINUOUS_WAL_ARCHIVAL",
+  "environment": "UAT",
+  "runId": "20260722T025329Z",
+  "status": "PASS",
+  "walSwitchLsn": "0/25A7A828",
+  "archivedSegment": "000000010000000000000025",
+  "checksumPresent": true,
+  "evidenceFile": "02-live-wal-archive-probe-debug.txt"
+}

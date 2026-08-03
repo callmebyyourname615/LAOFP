@@ -1,0 +1,20 @@
+{
+  "scenario": "Create binding FX quote",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/crossborder/quote",
+  "expectedHttpStatus": "200",
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "quoteId": 3,
+    "sourceCurrency": "LAK",
+    "destCurrency": "THB",
+    "targetNetwork": "PROMPTPAY",
+    "sourceAmount": 20000.0000,
+    "destAmount": 35.4600,
+    "rate": 0.00180000,
+    "fee": 300.0000,
+    "issuedAt": "2026-08-03T04:13:50.356805503",
+    "expiresAt": "2026-08-03T04:14:20.356805503"
+  }
+}

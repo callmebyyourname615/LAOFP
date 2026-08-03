@@ -1,0 +1,20 @@
+{
+  "scenario": "Generate dynamic QR",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/generate/dynamic",
+  "expectedHttpStatus": 201,
+  "actualHttpStatus": 201,
+  "passed": true,
+  "response": {
+    "qrId": "469ff752-ce1f-4ad3-9105-cbd7a8834547",
+    "merchantId": "EVD-QR-20260803T040102Z-MERCH-DYN",
+    "pspId": "BANK_B",
+    "qrType": "DYNAMIC",
+    "payload": "00020101021226890009com.laofp0132EVD-QR-20260803T040102Z-MERCH-DY0236469ff752-ce1f-4ad3-9105-cbd7a883454752040000530341854092500.00005802LA5925EVD-QR-20260803T040102Z-M6009VIENTIANE62290525EVD-QR-20260803T040102Z-D6304F587",
+    "amount": 2500.0000,
+    "currency": "LAK",
+    "txnRef": "EVD-QR-20260803T040102Z-DYN-TXN",
+    "expiresAt": "2026-08-03T04:11:03.311536975",
+    "createdAt": null
+  }
+}

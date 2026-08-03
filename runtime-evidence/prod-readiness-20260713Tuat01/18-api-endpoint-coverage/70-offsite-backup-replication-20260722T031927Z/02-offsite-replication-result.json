@@ -1,0 +1,7 @@
+{
+  "control": "OFFSITE_BACKUP_REPLICATION",
+  "environment": "UAT",
+  "status": "PASS",
+  "exitCode": 0,
+  "mode": "Isolated dual-MinIO smoke test"
+}

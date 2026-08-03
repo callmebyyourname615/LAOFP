@@ -1,0 +1,2 @@
+{"id":"open-cycle-auth-guard","status":"PASS","detail":"expected auth guard without OPS/ADMIN token; http=401","file":"01-open-cycle-noauth.json","observedAt":"2026-08-03T03:05:10Z"}
+{"id":"batch-auth-guard","status":"PASS","detail":"expected auth guard without OPS/ADMIN token; http=401","file":"02-batch-noauth.json","observedAt":"2026-08-03T03:05:10Z"}

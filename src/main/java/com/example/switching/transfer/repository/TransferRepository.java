@@ -63,4 +63,31 @@ public interface TransferRepository extends JpaRepository<TransferEntity, Long> 
             @Param("destinationBank") String destinationBank,
             Pageable pageable
     );
+
+    @Query(value = """
+            SELECT t.*
+              FROM transactions t
+             WHERE (:status IS NULL OR t.status = CAST(:status AS varchar))
+               AND (:inquiryRef IS NULL OR t.inquiry_ref = :inquiryRef)
+               AND (:sourceBank IS NULL OR upper(t.source_bank) = upper(:sourceBank))
+               AND (:destinationBank IS NULL OR upper(t.destination_bank) = upper(:destinationBank))
+               AND (:riskScoreMin IS NULL OR COALESCE((
+                    SELECT MAX(fs.score * 100)
+                      FROM fraud_scores fs
+                     WHERE fs.txn_id = t.transaction_ref), 0) >= :riskScoreMin)
+               AND (:riskScoreMax IS NULL OR COALESCE((
+                    SELECT MAX(fs.score * 100)
+                      FROM fraud_scores fs
+                     WHERE fs.txn_id = t.transaction_ref), 0) <= :riskScoreMax)
+             ORDER BY t.created_at DESC, t.id DESC
+            """, nativeQuery = true)
+    List<TransferEntity> searchTransfersByRisk(
+            @Param("status") String status,
+            @Param("inquiryRef") String inquiryRef,
+            @Param("sourceBank") String sourceBank,
+            @Param("destinationBank") String destinationBank,
+            @Param("riskScoreMin") Integer riskScoreMin,
+            @Param("riskScoreMax") Integer riskScoreMax,
+            Pageable pageable
+    );
 }

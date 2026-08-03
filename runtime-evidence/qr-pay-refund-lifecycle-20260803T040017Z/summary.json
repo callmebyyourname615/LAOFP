@@ -1,0 +1,9 @@
+{
+  "evidenceDir": "runtime-evidence/qr-pay-refund-lifecycle-20260803T040017Z",
+  "total": 14,
+  "pass": 11,
+  "fail": 3,
+  "warn": 0,
+  "skipped": 0,
+  "verdict": "FAIL"
+}

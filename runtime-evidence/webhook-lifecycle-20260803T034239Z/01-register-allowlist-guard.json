@@ -1,0 +1,20 @@
+{
+  "category": "REQUEST",
+  "details": null,
+  "error": "BAD_REQUEST",
+  "errorCode": "REQ-001",
+  "layer": "API",
+  "message": "Webhook host is not in the outbound allowlist",
+  "path": "/v1/webhooks",
+  "phase": "VALIDATE_REQUEST",
+  "requestId": "3d7130d8-4088-4e69-aa91-f1c481c7141e",
+  "retryable": false,
+  "status": 400,
+  "timestamp": "2026-08-03T03:42:40.052401784",
+  "traceId": null,
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/webhooks",
+    "method": "POST",
+    "httpCode": 400
+  }
+}

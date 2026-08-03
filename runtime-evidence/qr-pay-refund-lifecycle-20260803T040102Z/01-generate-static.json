@@ -1,0 +1,20 @@
+{
+  "scenario": "Generate static QR",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/generate/static",
+  "expectedHttpStatus": 201,
+  "actualHttpStatus": 201,
+  "passed": true,
+  "response": {
+    "qrId": "3e4439da-379b-49db-b950-0de4a9c5cd79",
+    "merchantId": "EVD-QR-20260803T040102Z-MERCH-STATIC",
+    "pspId": "BANK_B",
+    "qrType": "STATIC",
+    "payload": "00020101021126890009com.laofp0132EVD-QR-20260803T040102Z-MERCH-ST02363e4439da-379b-49db-b950-0de4a9c5cd795204000053034185802LA5925EVD-QR-20260803T040102Z-M6009VIENTIANE630402E3",
+    "amount": null,
+    "currency": "LAK",
+    "txnRef": null,
+    "expiresAt": null,
+    "createdAt": null
+  }
+}

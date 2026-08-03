@@ -1,0 +1,24 @@
+{
+  "status": "REQUEUED",
+  "processedAt": "2026-08-03T03:31:15.05318113",
+  "requestedLimit": 1,
+  "totalFailedBefore": 3,
+  "requeuedCount": 1,
+  "items": [
+    {
+      "outboxEventId": 69,
+      "transferRef": "EVD-OUTBOX-DLQ-20260803TRETRY_ALL",
+      "messageType": "EVIDENCE_RECOVERY",
+      "previousStatus": "FAILED",
+      "newStatus": "PENDING",
+      "retryCount": 0,
+      "requeued": true,
+      "message": "Outbox event requeued for worker dispatch"
+    }
+  ],
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/outbox-failures/retry-all?limit=1",
+    "method": "POST",
+    "httpCode": 200
+  }
+}

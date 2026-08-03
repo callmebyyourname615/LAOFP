@@ -1,0 +1,376 @@
+erDiagram
+    FRAUD_VELOCITY_DECISION {
+        uuid id PK
+        varchar_120 transaction_reference
+        varchar_32 participant_code
+        varchar_200 subject_key
+        varchar_24 decision
+        jsonb matched_rules
+        integer risk_score
+        char_64 evidence_hash
+        timestamptz created_at
+    }
+
+    PARTICIPANT_LIFECYCLE_CASE {
+        uuid id PK
+        varchar_32 participant_code
+        varchar_40 case_type
+        varchar_32 status
+        varchar_120 requested_by
+        varchar_120 approved_by
+        timestamptz requested_at
+        timestamptz approved_at
+        timestamptz effective_at
+        timestamptz sla_due_at
+        string more_columns "plus 3 more"
+    }
+
+    PARTICIPANT_CONTACT_REGISTRY {
+        uuid id PK
+        varchar_32 participant_code
+        varchar_60 role
+        varchar_160 contact_name
+        varchar_254 email
+        varchar_60 phone
+        integer escalation_level
+        boolean active
+        timestamptz verified_at
+    }
+
+    ISO_VALIDATION_PACK {
+        uuid id PK
+        varchar_80 pack_code
+        varchar_40 message_type
+        varchar_40 version
+        text schema_uri
+        char_64 schema_sha256
+        text rule_uri
+        char_64 rule_sha256
+        varchar_24 status
+        timestamptz activated_at
+        string more_columns "plus 2 more"
+    }
+
+    ISO_VALIDATION_RESULT {
+        uuid id PK
+        varchar_120 transaction_reference
+        varchar_80 pack_code FK
+        varchar_24 result
+        jsonb errors
+        char_64 canonical_payload_hash
+        timestamptz created_at
+    }
+
+    SETTLEMENT_EVIDENCE_LEDGER {
+        uuid id PK
+        varchar_120 settlement_cycle_id
+        varchar_60 evidence_type
+        varchar_32 participant_code
+        numeric_20 amount
+        varchar_3 currency
+        text source_uri
+        char_64 source_sha256
+        char_64 previous_hash
+        char_64 chain_hash
+        string more_columns "plus 2 more"
+    }
+
+    SETTLEMENT_DISPUTE_EVIDENCE {
+        uuid id PK
+        varchar_120 dispute_case_id
+        uuid evidence_ledger_id FK
+        varchar_120 submitted_by
+        timestamptz submitted_at
+        boolean accepted
+        varchar_120 accepted_by
+        timestamptz accepted_at
+    }
+
+    OPS_DAILY_CONTROL_ROOM {
+        uuid id PK
+        date business_date
+        varchar_32 status
+        jsonb opening_snapshot
+        jsonb closing_snapshot
+        varchar_120 opened_by
+        varchar_120 closed_by
+        timestamptz opened_at
+        timestamptz closed_at
+        char_64 close_evidence_sha256
+    }
+
+    OPS_CONTROL_ROOM_TASK {
+        uuid id PK
+        uuid control_room_id FK
+        varchar_80 task_code
+        varchar_200 title
+        varchar_120 owner
+        timestamptz due_at
+        varchar_32 status
+        timestamptz completed_at
+        text evidence_uri
+        char_64 evidence_sha256
+    }
+
+    DATA_QUALITY_RULE {
+        uuid id PK
+        varchar_100 rule_code
+        varchar_120 table_name
+        varchar_60 rule_type
+        varchar_20 severity
+        text sql_check
+        boolean enabled
+        varchar_120 owner
+        timestamptz created_at
+    }
+
+    DATA_QUALITY_RUN {
+        uuid id PK
+        varchar_120 run_id
+        varchar_100 rule_code FK
+        varchar_24 status
+        bigint failing_count
+        jsonb sample_rows
+        timestamptz started_at
+        timestamptz completed_at
+    }
+
+    ISO_MESSAGES {
+        bigint id
+        varchar_100 correlation_ref
+        varchar_80 transaction_ref
+        varchar_80 inquiry_ref
+        varchar_100 message_id
+        varchar_100 end_to_end_id
+        varchar_100 instruction_id
+        varchar_50 message_type
+        varchar_10 direction
+        varchar_32 source_bank
+        string more_columns "plus 9 more"
+    }
+
+    ISO_MESSAGE_PAYLOADS {
+        bigint id
+        bigint iso_message_id
+        varchar_20 payload_type
+        text plain_payload
+        text encrypted_payload
+        int payload_size_bytes
+        varchar_64 payload_hash
+        boolean stored_in_cold
+        varchar_500 cold_storage_key
+        date business_date
+        string more_columns "plus 1 more"
+    }
+
+    ISO_VALIDATION_ERRORS {
+        bigint id
+        bigint iso_message_id
+        varchar_200 field_path
+        varchar_50 error_code
+        text error_message
+        varchar_10 severity
+        date business_date
+        timestamp created_at
+    }
+
+    REGION_READINESS_PROBE {
+        uuid id PK
+        varchar_40 region_code
+        varchar_60 probe_type
+        varchar_24 status
+        integer latency_ms
+        integer replication_lag_seconds
+        jsonb evidence
+        timestamptz observed_at
+    }
+
+    REGION_FAILOVER_CANDIDATE {
+        uuid id PK
+        varchar_40 region_code
+        varchar_32 candidate_status
+        timestamptz last_probe_at
+        jsonb blocker_summary
+        varchar_120 approved_by
+        timestamptz approved_at
+    }
+
+    PRIVACY_ACCESS_CASE {
+        uuid id PK
+        varchar_120 case_reference
+        varchar_40 requester_type
+        varchar_200 subject_reference
+        varchar_40 case_type
+        varchar_32 status
+        varchar_120 legal_basis
+        timestamptz requested_at
+        timestamptz due_at
+        timestamptz completed_at
+        string more_columns "plus 3 more"
+    }
+
+    PII_DISCOVERY_RESULT {
+        uuid id PK
+        varchar_120 scan_id
+        varchar_120 table_name
+        varchar_120 column_name
+        varchar_80 pii_category
+        integer confidence
+        char_64 sample_hash
+        timestamptz created_at
+    }
+
+    COMPLIANCE_CONTROL_DEFINITION {
+        uuid id PK
+        varchar_100 control_code
+        varchar_80 domain
+        varchar_200 title
+        varchar_40 frequency
+        text evidence_query
+        varchar_120 owner
+        boolean enabled
+        timestamptz created_at
+    }
+
+    COMPLIANCE_CONTROL_RUN {
+        uuid id PK
+        varchar_120 run_id
+        varchar_100 control_code FK
+        varchar_24 result
+        text evidence_uri
+        char_64 evidence_sha256
+        varchar_120 exception_reference
+        timestamptz started_at
+        timestamptz completed_at
+    }
+
+    CONTROL_LEDGER_ACCOUNT {
+        varchar_80 account_code PK
+        varchar_200 account_name
+        varchar_32 participant_code
+        char_3 currency
+        varchar_6 normal_side
+        boolean active
+        timestamptz created_at
+    }
+
+    CONTROL_JOURNAL {
+        uuid id PK
+        varchar_80 source_type
+        varchar_160 source_reference
+        date business_date
+        char_3 currency
+        varchar_16 status
+        char_64 evidence_hash
+        varchar_120 created_by
+        timestamptz created_at
+        timestamptz posted_at
+        string more_columns "plus 1 more"
+    }
+
+    CONTROL_JOURNAL_ENTRY {
+        uuid id PK
+        uuid journal_id FK
+        integer line_no
+        varchar_80 account_code FK
+        varchar_6 side
+        numeric_24 amount
+        varchar_500 narrative
+        timestamptz created_at
+    }
+
+    PARTICIPANT_LIQUIDITY_CONTROL {
+        varchar_32 participant_code
+        char_3 currency
+        numeric_24 available_balance
+        numeric_24 reserved_balance
+        numeric_24 minimum_operating_balance
+        numeric_24 warning_threshold
+        bigint version
+        timestamptz updated_at
+    }
+
+    LIQUIDITY_FUND_RESERVATION {
+        uuid id PK
+        varchar_160 reservation_reference
+        varchar_32 participant_code
+        char_3 currency
+        numeric_24 amount
+        varchar_16 status
+        timestamptz expires_at
+        timestamptz created_at
+        timestamptz completed_at
+    }
+
+    LIQUIDITY_CONTROL_BREACH {
+        uuid id PK
+        varchar_32 participant_code
+        char_3 currency
+        varchar_40 breach_type
+        numeric_24 headroom
+        char_64 evidence_hash
+        timestamptz detected_at
+        timestamptz resolved_at
+    }
+
+    TARIFF_PLAN {
+        uuid id PK
+        varchar_80 plan_code
+        varchar_500 description
+        varchar_32 participant_code
+        timestamptz created_at
+    }
+
+    TARIFF_VERSION {
+        uuid id PK
+        uuid plan_id FK
+        integer version_no
+        varchar_16 status
+        timestamptz valid_from
+        timestamptz valid_until
+        varchar_120 requested_by
+        varchar_120 approved_by
+        varchar_500 approval_reason
+        char_64 content_hash
+        string more_columns "plus 1 more"
+    }
+
+    TARIFF_RULE {
+        uuid id PK
+        uuid tariff_version_id FK
+        varchar_80 message_type
+        char_3 currency
+        numeric_24 minimum_amount
+        numeric_24 maximum_amount
+        numeric_24 flat_fee
+        numeric_12 rate_basis_points
+        numeric_24 minimum_fee
+        numeric_24 maximum_fee
+        string more_columns "plus 1 more"
+    }
+
+    FEE_ASSESSMENT {
+        uuid id PK
+        varchar_160 transaction_reference
+        uuid tariff_version_id FK
+        uuid tariff_rule_id FK
+        numeric_24 amount
+        numeric_24 assessed_fee
+        char_3 currency
+        char_64 evidence_hash
+        timestamptz assessed_at
+    }
+
+    ISO_VALIDATION_PACK ||--o{ ISO_VALIDATION_RESULT : "pack_code"
+    SETTLEMENT_EVIDENCE_LEDGER ||--o{ SETTLEMENT_DISPUTE_EVIDENCE : "evidence_ledger_id"
+    OPS_DAILY_CONTROL_ROOM ||--o{ OPS_CONTROL_ROOM_TASK : "control_room_id"
+    DATA_QUALITY_RULE ||--o{ DATA_QUALITY_RUN : "rule_code"
+    COMPLIANCE_CONTROL_DEFINITION ||--o{ COMPLIANCE_CONTROL_RUN : "control_code"
+    CONTROL_JOURNAL ||--o{ CONTROL_JOURNAL : "reversed_by_journal_id"
+    CONTROL_JOURNAL ||--o{ CONTROL_JOURNAL_ENTRY : "journal_id"
+    CONTROL_LEDGER_ACCOUNT ||--o{ CONTROL_JOURNAL_ENTRY : "account_code"
+    PARTICIPANT_LIQUIDITY_CONTROL ||--o{ LIQUIDITY_FUND_RESERVATION : "participant_code,currency"
+    TARIFF_PLAN ||--o{ TARIFF_VERSION : "plan_id"
+    TARIFF_VERSION ||--o{ TARIFF_RULE : "tariff_version_id"
+    TARIFF_VERSION ||--o{ FEE_ASSESSMENT : "tariff_version_id"
+    TARIFF_RULE ||--o{ FEE_ASSESSMENT : "tariff_rule_id"

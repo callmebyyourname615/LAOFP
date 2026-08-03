@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "environment": "uat",
+  "generatedAt": "2026-08-03T03:25:01Z",
+  "scope": "settlement instruction mutation endpoints previously skipped",
+  "approveFlowInstructionRef": "SC-20260717-C4-SI001",
+  "rejectFlowInstructionRef": "SC-20260717-C2-SI001",
+  "checks": [
+    {
+      "id": "login",
+      "status": "PASS",
+      "detail": "admin login HTTP 200; token issued and redacted",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "approve-before",
+      "status": "PASS",
+      "detail": "SC-20260717-C4-SI001 is PENDING_APPROVAL",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "approve",
+      "status": "PASS",
+      "detail": "HTTP 200; status APPROVED",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "rtgs-file",
+      "status": "PASS",
+      "detail": "HTTP 200; XML body saved with SHA256",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "record-rtgs-upload",
+      "status": "PASS",
+      "detail": "HTTP 200; status SENT_RTGS",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "send-rtgs",
+      "status": "PASS",
+      "detail": "HTTP 200; idempotent status SENT_RTGS",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "approve-final",
+      "status": "PASS",
+      "detail": "final instruction status SENT_RTGS",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "reject-before",
+      "status": "PASS",
+      "detail": "SC-20260717-C2-SI001 is PENDING_APPROVAL",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "reject",
+      "status": "PASS",
+      "detail": "HTTP 200; status REJECTED",
+      "observedAt": "2026-08-03T03:25:01Z"
+    },
+    {
+      "id": "reject-final",
+      "status": "PASS",
+      "detail": "final instruction status REJECTED",
+      "observedAt": "2026-08-03T03:25:01Z"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "scenario": "SMOS admin login",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/api/auth/login",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "accessToken": "<redacted>",
+    "refreshToken": "<redacted>",
+    "tokenPresent": true
+  }
+}

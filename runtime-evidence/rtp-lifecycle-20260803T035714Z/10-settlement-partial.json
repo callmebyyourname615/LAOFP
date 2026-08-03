@@ -1,0 +1,32 @@
+{
+  "scenario": "Confirm RTP partial installment settlement",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/rtp/requests/b0434027-cfd5-47f2-92da-f332b9daf95e/settlements",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "requestId": "b0434027-cfd5-47f2-92da-f332b9daf95e",
+    "authorisationReference": null,
+    "mode": "INSTALLMENT",
+    "authorisedAmount": 3000.0000,
+    "transferReference": null,
+    "status": "INSTALMENT_IN_PROGRESS",
+    "installments": [
+      {
+        "installmentNumber": 1,
+        "dueAt": "2026-08-05T03:57:14Z",
+        "amount": 1000.0000,
+        "status": "SETTLED",
+        "transactionReference": "EVD-RTP-20260803T035714Z-SETTLE-1"
+      },
+      {
+        "installmentNumber": 2,
+        "dueAt": "2026-08-06T03:57:14Z",
+        "amount": 2000.0000,
+        "status": "SCHEDULED",
+        "transactionReference": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "scenario": "Authorise RTP request with installment schedule",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/rtp/requests/097abeb0-8ba9-4281-a4ba-34dec94d1488/authorise",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "requestId": "097abeb0-8ba9-4281-a4ba-34dec94d1488",
+    "authorisationReference": "EVD-RTP-20260803T035634Z-AUTH-INSTALL",
+    "mode": "INSTALLMENT",
+    "authorisedAmount": 3000.0000,
+    "transferReference": null,
+    "status": "AUTHORISED",
+    "installments": [
+      {
+        "installmentNumber": 1,
+        "dueAt": "2026-08-05T03:56:35Z",
+        "amount": 1000.0000,
+        "status": "SCHEDULED",
+        "transactionReference": null
+      },
+      {
+        "installmentNumber": 2,
+        "dueAt": "2026-08-06T03:56:35Z",
+        "amount": 2000.0000,
+        "status": "SCHEDULED",
+        "transactionReference": null
+      }
+    ]
+  }
+}

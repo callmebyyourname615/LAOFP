@@ -1,0 +1,23 @@
+{
+  "scenario": "Partial RTP authorise requires existing transfer inquiry",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/rtp/requests/0ebf5966-d660-40c6-a196-f4064a59cf39/authorise",
+  "expectedHttpStatus": 400,
+  "actualHttpStatus": 400,
+  "passed": true,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "INQ-002",
+    "layer": "TRANSFER",
+    "message": "Inquiry not found: EVD-RTP-20260803T035714Z-INQ-PARTIAL",
+    "path": "/v1/rtp/requests/0ebf5966-d660-40c6-a196-f4064a59cf39/authorise",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "bbd9606c-1dd9-4782-93ed-afdf5beb1bd4",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-08-03T03:57:15.399264791",
+    "traceId": null
+  }
+}

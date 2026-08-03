@@ -1,0 +1,1 @@
+./scripts/security/tests/test_redact_runtime_evidence.py:28:        value, changes = MODULE.redact_text("rejected [REDACTED_PRIVATE_KEY_HEADER] header")

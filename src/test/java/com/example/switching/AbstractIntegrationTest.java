@@ -21,8 +21,21 @@ public abstract class AbstractIntegrationTest {
         POSTGRES = new PostgreSQLContainer<>("postgres:16")
                 .withDatabaseName("switching_clean")
                 .withUsername("switching_test")
-                .withPassword("switching_test");
+                .withPassword("switching_test")
+                .withInitScript("postgres-test-init.sql");
         POSTGRES.start();
+        try {
+            var result = POSTGRES.execInContainer(
+                    "psql", "-v", "ON_ERROR_STOP=1",
+                    "-U", POSTGRES.getUsername(),
+                    "-d", POSTGRES.getDatabaseName(),
+                    "-c", "CREATE ROLE switching_app NOLOGIN;");
+            if (result.getExitCode() != 0 && !result.getStderr().contains("already exists")) {
+                throw new IllegalStateException("Unable to create switching_app test role: " + result.getStderr());
+            }
+        } catch (Exception exception) {
+            throw new IllegalStateException("Unable to prepare PostgreSQL integration-test roles", exception);
+        }
     }
 
     @DynamicPropertySource

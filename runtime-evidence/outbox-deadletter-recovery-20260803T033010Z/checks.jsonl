@@ -1,0 +1,13 @@
+{"id":"login","status":"PASS","detail":"admin login HTTP 200; token redacted","observedAt":"2026-08-03T03:31:14Z"}
+{"id":"outbox-manual-retry","status":"PASS","detail":"id=68 FAILED -> PENDING","observedAt":"2026-08-03T03:31:14Z"}
+{"id":"outbox-retry-all","status":"PASS","detail":"limit=1 requeued=1; status=REQUEUED; item=69","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"login-continue","status":"PASS","detail":"admin login continue HTTP 200; token redacted","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"outbox-mark-reviewed","status":"PASS","detail":"id=70 FAILED -> REVIEWED","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"deadletters-list","status":"PASS","detail":"QUARANTINED list returned 2 item(s)","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"dlq-request-replay","status":"PASS","detail":"id=1 QUARANTINED -> REPLAY_REQUESTED","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"dlq-approve-replay","status":"PASS","detail":"id=2 REPLAY_REQUESTED -> APPROVED; four-eyes requester=evidence-maker approver=admin","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"dlq-execute-replay","status":"PASS","detail":"without break-glass rejected HTTP 403 as expected (SEC-BG-001)","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"dlq-discard","status":"PASS","detail":"without break-glass rejected HTTP 403 as expected (SEC-BG-001)","observedAt":"2026-08-03T03:32:33Z"}
+{"id":"login-breakglass","status":"PASS","detail":"admin login for break-glass calls HTTP 200; token redacted","observedAt":"2026-08-03T03:34:05Z"}
+{"id":"dlq-execute-replay-breakglass","status":"PASS","detail":"id=3 APPROVED -> REPLAYED with valid break-glass token","observedAt":"2026-08-03T03:34:05Z"}
+{"id":"dlq-discard-breakglass","status":"PASS","detail":"id=4 QUARANTINED -> DISCARDED with valid break-glass token","observedAt":"2026-08-03T03:34:05Z"}

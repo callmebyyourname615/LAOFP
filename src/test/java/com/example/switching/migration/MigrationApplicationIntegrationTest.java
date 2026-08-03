@@ -28,7 +28,8 @@ class MigrationApplicationIntegrationTest {
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.9-alpine")
             .withDatabaseName("switching_migration")
             .withUsername("switching_migration")
-            .withPassword("switching_migration");
+            .withPassword("switching_migration")
+            .withInitScript("postgres-test-init.sql");
 
     @Test
     void appliesAllMigrationsThroughLatestVersionWithoutLoadingKafkaOrRuntimeWorkers() {
@@ -58,7 +59,7 @@ class MigrationApplicationIntegrationTest {
                     .load();
 
             assertThat(flyway.info().current()).isNotNull();
-            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("106");
+            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("107");
             assertThat(flyway.info().pending()).isEmpty();
             flyway.validate();
 

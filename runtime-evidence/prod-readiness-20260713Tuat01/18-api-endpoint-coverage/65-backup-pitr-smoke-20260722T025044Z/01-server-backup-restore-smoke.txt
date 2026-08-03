@@ -1,0 +1,48 @@
+Bucket created successfully `local/switching-backups`.
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+backup successfully verified
+backup successfully verified
+waiting for server to start..... done
+server started
+ restored_database 
+-------------------
+ switching_db
+(1 row)
+
+ postgres_16_or_newer 
+----------------------
+ t
+(1 row)
+
+ recovery_completed 
+--------------------
+ t
+(1 row)
+
+ flyway_history_present 
+------------------------
+ t
+(1 row)
+
+ transactions_table_present 
+----------------------------
+ t
+(1 row)
+
+ outbox_table_present 
+----------------------
+ t
+(1 row)
+
+ public_table_count 
+--------------------
+                  3
+(1 row)
+
+waiting for server to shut down.... done
+server stopped
+Phase 8 PostgreSQL/MinIO backup and restore smoke test: PASS

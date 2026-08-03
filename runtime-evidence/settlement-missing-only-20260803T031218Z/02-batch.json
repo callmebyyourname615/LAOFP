@@ -1,0 +1,10 @@
+{
+  "cycleRef": "SC-20261002-C1",
+  "transfersProcessed": 0,
+  "itemRowsWritten": 0,
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/settlement/cycles/SC-20261002-C1/batch",
+    "method": "POST",
+    "httpCode": 200
+  }
+}

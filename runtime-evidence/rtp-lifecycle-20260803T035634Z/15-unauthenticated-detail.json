@@ -1,0 +1,15 @@
+{
+  "scenario": "Unauthenticated RTP detail rejected",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/v1/rtp/requests/7265396c-969b-4f1b-8d01-ed1c51ea94b0",
+  "expectedHttpStatus": 401,
+  "actualHttpStatus": 401,
+  "passed": true,
+  "response": {
+    "status": 401,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SEC-001",
+    "message": "Missing or invalid authentication credential",
+    "path": "/v1/rtp/requests/7265396c-969b-4f1b-8d01-ed1c51ea94b0"
+  }
+}

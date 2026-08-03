@@ -1,0 +1,27 @@
+{
+  "scenario": "Fee decisions portal list",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/api/fees/decisions?participant=BANK_A&messageType=QR&limit=20",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "totalItems": 1,
+    "returnedItems": 1,
+    "items": [
+      {
+        "decisionId": "d053b806-5e7e-4288-9535-d70b3bd3054b",
+        "transactionRef": "EVD-RISK-FEES-20260803T040407Z-FEE-ASSESS",
+        "participant": "BANK_A",
+        "messageType": "QR",
+        "grossFee": 105.0000,
+        "promotionDiscount": 0,
+        "netFee": 105.0000,
+        "discountRecorded": false,
+        "currency": "LAK",
+        "ruleId": "4cf53226-6f44-43a8-88fd-3aca314a8ee2",
+        "assessedAt": "2026-08-03T04:08:49.641703Z"
+      }
+    ]
+  }
+}

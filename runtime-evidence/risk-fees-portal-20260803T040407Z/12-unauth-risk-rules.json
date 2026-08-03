@@ -1,0 +1,15 @@
+{
+  "scenario": "Unauthenticated risk rules rejected",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/api/risk/rules",
+  "expectedHttpStatus": 401,
+  "actualHttpStatus": 401,
+  "passed": true,
+  "response": {
+    "status": 401,
+    "error": "UNAUTHORIZED",
+    "errorCode": "SEC-001",
+    "message": "Missing or invalid authentication credential",
+    "path": "/api/risk/rules"
+  }
+}

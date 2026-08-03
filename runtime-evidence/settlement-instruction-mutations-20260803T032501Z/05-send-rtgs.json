@@ -1,0 +1,28 @@
+{
+  "id": 20,
+  "instructionRef": "SC-20260717-C4-SI001",
+  "cycleRef": "SC-20260717-C4",
+  "sourceType": "DNS_CYCLE",
+  "transferRef": null,
+  "debtorPspId": "SUNDAYBANK",
+  "creditorPspId": "UAT260716T02220",
+  "currency": "LAK",
+  "netAmount": 2000.0000,
+  "status": "SENT_RTGS",
+  "approvalNote": "UAT evidence: settlement skipped mutation approve",
+  "approvedBy": "admin",
+  "approvedAt": "2026-08-03T03:25:01.492",
+  "rejectedBy": null,
+  "rejectedAt": null,
+  "rejectionReason": null,
+  "rtgsMsgId": "RTGS-SC-20260717-C4-SI001-1785727501547",
+  "lastError": null,
+  "sentAt": "2026-08-03T03:25:01.637",
+  "confirmedAt": null,
+  "createdAt": "2026-07-16T12:45:00.032",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/settlement/instructions/SC-20260717-C4-SI001/send-rtgs",
+    "method": "POST",
+    "httpCode": 200
+  }
+}

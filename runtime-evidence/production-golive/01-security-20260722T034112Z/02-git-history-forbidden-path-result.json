@@ -1,0 +1,7 @@
+{
+  "control": "GIT_HISTORY_FORBIDDEN_PATHS",
+  "runId": "20260722T034112Z",
+  "status": "FAIL",
+  "gitleaksExecuted": false,
+  "note": "Forbidden-path scan found prohibited paths; purge history before running the full Gitleaks scan."
+}

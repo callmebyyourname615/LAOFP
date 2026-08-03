@@ -1,0 +1,20 @@
+{
+  "category": "BUSINESS",
+  "details": null,
+  "error": "CONFLICT",
+  "errorCode": "SET-002",
+  "layer": "SETTLEMENT",
+  "message": "Cannot settle cycle SC-20261002-C1 before all RTGS portal instructions are CONFIRMED",
+  "path": "/api/operations/settlement/cycles/SC-20261002-C1/settle",
+  "phase": "VALIDATE_REQUEST",
+  "requestId": "aca57010-6aec-4511-8b9a-315812a24d8c",
+  "retryable": false,
+  "status": 409,
+  "timestamp": "2026-08-03T03:12:20.890929072",
+  "traceId": null,
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/settlement/cycles/SC-20261002-C1/settle",
+    "method": "POST",
+    "httpCode": 409
+  }
+}

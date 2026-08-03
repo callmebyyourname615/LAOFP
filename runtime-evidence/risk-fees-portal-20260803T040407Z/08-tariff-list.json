@@ -1,0 +1,42 @@
+{
+  "scenario": "Tariff operations list",
+  "method": "GET",
+  "endpoint": "https://175.11.0.200/api/operations/tariffs",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": [
+    {
+      "id": "a8dc5da7-5f18-4ab1-9a36-7a7e3ebcd783",
+      "name": "EVD-RISK-FEES-20260803T040407Z-PLAN",
+      "version": 1,
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-08-03T04:05:25.057676Z",
+      "rules": 1
+    },
+    {
+      "id": "9fc3a6b0-e7cc-4a84-aa67-eb1c6d44450c",
+      "name": "EVIDENCE_TARIFF_20260715T040716Z",
+      "version": 1,
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-07-15T04:07:16Z",
+      "rules": 1
+    },
+    {
+      "id": "f38ad504-bfc1-4b5e-9819-21f3c2675ba2",
+      "name": "MANUAL_TARIFF_TEST_20260715T041121Z",
+      "version": 1,
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-07-15T04:11:21Z",
+      "rules": 1
+    },
+    {
+      "id": "28fdcc11-76e1-4f51-b6bb-adc8cbba7883",
+      "name": "UAT_TARIFF_TEST_20260715T040645Z",
+      "version": 1,
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-07-15T04:06:45Z",
+      "rules": 1
+    }
+  ]
+}

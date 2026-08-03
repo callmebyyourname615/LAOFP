@@ -1,0 +1,85 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< com.example:switching >------------------------
+[INFO] Building switching 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ switching ---
+[INFO] Deleting /workspace/target
+[INFO] 
+[INFO] --- jacoco:0.8.13:prepare-agent (prepare-agent) @ switching ---
+[INFO] argLine set to -javaagent:/root/.m2/repository/org/jacoco/org.jacoco.agent/0.8.13/org.jacoco.agent-0.8.13-runtime.jar=destfile=/workspace/target/jacoco.exec
+[INFO] 
+[INFO] --- spring-boot:4.0.3:build-info (default) @ switching ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ switching ---
+[INFO] Copying 6 resources from src/main/resources to target/classes
+[INFO] Copying 106 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ switching ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 926 source files with javac [debug parameters release 21] to target/classes
+[WARNING] /workspace/src/main/java/com/example/switching/outbox/queue/OutboxQueueConfig.java:[58,65] org.springframework.kafka.support.serializer.JsonSerializer in org.springframework.kafka.support.serializer has been deprecated and marked for removal
+[WARNING] /workspace/src/main/java/com/example/switching/outbox/queue/OutboxQueueConfig.java:[61,19] org.springframework.kafka.support.serializer.JsonSerializer in org.springframework.kafka.support.serializer has been deprecated and marked for removal
+[WARNING] /workspace/src/main/java/com/example/switching/outbox/queue/OutboxQueueConfig.java:[80,67] org.springframework.kafka.support.serializer.JsonDeserializer in org.springframework.kafka.support.serializer has been deprecated and marked for removal
+[WARNING] /workspace/src/main/java/com/example/switching/outbox/queue/OutboxQueueConfig.java:[81,9] org.springframework.kafka.support.serializer.JsonDeserializer in org.springframework.kafka.support.serializer has been deprecated and marked for removal
+[WARNING] /workspace/src/main/java/com/example/switching/outbox/queue/OutboxQueueConfig.java:[81,70] org.springframework.kafka.support.serializer.JsonDeserializer in org.springframework.kafka.support.serializer has been deprecated and marked for removal
+[INFO] /workspace/src/main/java/com/example/switching/security/util/SensitiveDataSanitizer.java: Some input files use or override a deprecated API.
+[INFO] /workspace/src/main/java/com/example/switching/security/util/SensitiveDataSanitizer.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ switching ---
+[INFO] Copying 5 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ switching ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 162 source files with javac [debug parameters release 21] to target/test-classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[10,37] cannot find symbol
+  symbol:   class Camt006ParseResult
+  location: package com.example.switching.iso.dto
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[11,40] cannot find symbol
+  symbol:   class Camt006Parser
+  location: package com.example.switching.iso.parser
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[12,40] cannot find symbol
+  symbol:   class StatusEnquiryResult
+  location: package com.example.switching.outbox.dto
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[16,19] cannot find symbol
+  symbol:   class LmpsMessageSupport
+  location: class com.example.switching.iso.mapper.LmpsCamtXmlBuilderTest
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsPacsXmlBuilderTest.java:[16,19] cannot find symbol
+  symbol:   class LmpsMessageSupport
+  location: class com.example.switching.iso.mapper.LmpsPacsXmlBuilderTest
+[INFO] 5 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.733 s
+[INFO] Finished at: 2026-07-22T04:13:17Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:testCompile (default-testCompile) on project switching: Compilation failure: Compilation failure: 
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[10,37] cannot find symbol
+[ERROR]   symbol:   class Camt006ParseResult
+[ERROR]   location: package com.example.switching.iso.dto
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[11,40] cannot find symbol
+[ERROR]   symbol:   class Camt006Parser
+[ERROR]   location: package com.example.switching.iso.parser
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[12,40] cannot find symbol
+[ERROR]   symbol:   class StatusEnquiryResult
+[ERROR]   location: package com.example.switching.outbox.dto
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsCamtXmlBuilderTest.java:[16,19] cannot find symbol
+[ERROR]   symbol:   class LmpsMessageSupport
+[ERROR]   location: class com.example.switching.iso.mapper.LmpsCamtXmlBuilderTest
+[ERROR] /workspace/src/test/java/com/example/switching/iso/mapper/LmpsPacsXmlBuilderTest.java:[16,19] cannot find symbol
+[ERROR]   symbol:   class LmpsMessageSupport
+[ERROR]   location: class com.example.switching.iso.mapper.LmpsPacsXmlBuilderTest
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

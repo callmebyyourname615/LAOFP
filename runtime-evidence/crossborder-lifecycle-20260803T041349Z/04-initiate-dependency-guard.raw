@@ -1,0 +1,1 @@
+{"category":"BUSINESS","details":null,"error":"UNPROCESSABLE_ENTITY","errorCode":"LFP-CB-002","layer":"CROSSBORDER","message":"FX corridor is not available: PromptPay unreachable","path":"/v1/crossborder/initiate","phase":"VALIDATE_REQUEST","requestId":"6c65cf22-3d8d-4e45-a844-6c5a0d6f74a7","retryable":false,"status":422,"timestamp":"2026-08-03T04:13:50.683771095","traceId":null}

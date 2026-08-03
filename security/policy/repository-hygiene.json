@@ -11,6 +11,7 @@
     "performance/settlement/",
     "reconciliation/sql/",
     "scripts/",
+    "sql/",
     "src/main/resources/db/migration/"
   ],
   "forbidden_basenames": [

@@ -1,0 +1,23 @@
+{
+  "scenario": "Authorise RTP request with partial amount",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/rtp/requests/9fff65d9-65c6-4186-ab72-4ba7296dbff6/authorise",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 400,
+  "passed": false,
+  "response": {
+    "category": "BUSINESS",
+    "details": null,
+    "error": "BAD_REQUEST",
+    "errorCode": "INQ-002",
+    "layer": "TRANSFER",
+    "message": "Inquiry not found: EVD-RTP-20260803T035634Z-INQ-PARTIAL",
+    "path": "/v1/rtp/requests/9fff65d9-65c6-4186-ab72-4ba7296dbff6/authorise",
+    "phase": "VALIDATE_REQUEST",
+    "requestId": "55bac0a1-35f7-4421-9093-92ecd93e9321",
+    "retryable": false,
+    "status": 400,
+    "timestamp": "2026-08-03T03:56:36.230262865",
+    "traceId": null
+  }
+}

@@ -1,0 +1,1 @@
+./runtime-evidence/production-golive/01-security-20260722T034851Z/06-sensitive-logging-static-check.txt:1:./scripts/security/tests/test_redact_runtime_evidence.py:30:            path.write_text("[REDACTED_PRIVATE_KEY]\n", encoding="utf-8")

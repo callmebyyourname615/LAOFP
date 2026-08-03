@@ -23,6 +23,8 @@ public class TransferListController {
             @RequestParam(value = "inquiryRef", required = false) String inquiryRef,
             @RequestParam(value = "sourceBank", required = false) String sourceBank,
             @RequestParam(value = "destinationBank", required = false) String destinationBank,
+            @RequestParam(value = "riskScoreMin", required = false) Integer riskScoreMin,
+            @RequestParam(value = "riskScoreMax", required = false) Integer riskScoreMax,
             @RequestParam(value = "limit", required = false) Integer limit) {
 
         TransferListResponse response = transferListService.search(
@@ -30,6 +32,8 @@ public class TransferListController {
                 inquiryRef,
                 sourceBank,
                 destinationBank,
+                riskScoreMin,
+                riskScoreMax,
                 limit
         );
 

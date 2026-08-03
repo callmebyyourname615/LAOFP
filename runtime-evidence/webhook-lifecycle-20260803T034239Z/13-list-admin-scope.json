@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "webhookId": "47b1c99f-b213-4cff-8f27-e1b45ddf7964",
+      "pspId": "admin",
+      "url": "https://example.com/admin-webhook-list-fixture",
+      "eventTypes": [
+        "TEST.PING"
+      ],
+      "status": "ACTIVE",
+      "failedDeliveries": 0,
+      "lastDeliveredAt": null,
+      "createdAt": "2026-08-03T03:43:47.759"
+    }
+  ],
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/webhooks",
+    "method": "GET",
+    "httpCode": 200
+  }
+}

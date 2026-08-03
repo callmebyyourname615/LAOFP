@@ -1,0 +1,71 @@
+erDiagram
+    RTP_REQUEST {
+        uuid id PK
+        varchar request_correlation_id
+        varchar request_fingerprint
+        varchar payee_participant_id "REF"
+        varchar payer_participant_id "REF"
+        varchar payee_account
+        varchar payer_account
+        numeric requested_amount
+        numeric authorised_amount
+        numeric settled_amount
+        varchar currency
+        varchar status
+        varchar authorisation_mode
+        timestamp expires_at
+        varchar transfer_reference "REF"
+        varchar settlement_reference "REF"
+        varchar settlement_inquiry_ref "REF"
+        bigint version
+    }
+
+    RTP_AUTHORISATION {
+        uuid id PK
+        uuid request_id FK
+        varchar authorisation_reference UK
+        varchar mode
+        numeric authorised_amount
+        varchar actor_participant_id "REF"
+        varchar decision_payload_sha256
+        timestamp created_at
+    }
+
+    RTP_INSTALLMENT_SCHEDULE {
+        uuid id PK
+        uuid request_id FK
+        int installment_number
+        timestamp due_at
+        numeric amount
+        varchar status
+        varchar transaction_reference "REF"
+        timestamp settled_at
+    }
+
+    RTP_STATE_TRANSITION {
+        uuid id PK
+        uuid request_id FK
+        varchar from_status
+        varchar to_status
+        varchar actor_id
+        varchar reason
+        timestamp created_at
+    }
+
+    PARTICIPANTS {
+        bigint id PK
+        varchar bank_code UK
+    }
+
+    TRANSACTIONS {
+        bigint id PK
+        varchar transaction_ref UK
+    }
+
+    RTP_REQUEST ||--o{ RTP_AUTHORISATION : "request_id"
+    RTP_REQUEST ||--o{ RTP_INSTALLMENT_SCHEDULE : "request_id"
+    RTP_REQUEST ||--o{ RTP_STATE_TRANSITION : "request_id"
+    PARTICIPANTS ||--o{ RTP_REQUEST : "payee/payer participant"
+    PARTICIPANTS ||--o{ RTP_AUTHORISATION : "actor_participant_id"
+    TRANSACTIONS ||--o{ RTP_REQUEST : "transfer_reference"
+    TRANSACTIONS ||--o{ RTP_INSTALLMENT_SCHEDULE : "transaction_reference"

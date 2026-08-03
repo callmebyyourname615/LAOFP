@@ -1,0 +1,1 @@
+[{"score_id":72,"txn_id":"EVD-RISK-FEES-20260803T040407Z-TXN-HIGH","scored_at":"2026-08-03T04:06:25.058Z","score":0.9100,"risk_tier":"CRITICAL","signals":{"null":false,"type":"jsonb","value":"{\"evidence\": \"risk-fees-portal\", \"velocity\": \"high\"}"},"action_taken":"BLOCK","sending_psp_id":"BANK_A","receiving_psp_id":"BANK_B","amount":999999.0000}]

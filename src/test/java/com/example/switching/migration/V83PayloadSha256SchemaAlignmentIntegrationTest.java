@@ -37,7 +37,8 @@ class V83PayloadSha256SchemaAlignmentIntegrationTest {
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.9-alpine")
             .withDatabaseName("switching_v83")
             .withUsername("switching_v83")
-            .withPassword("switching_v83");
+            .withPassword("switching_v83")
+            .withInitScript("postgres-test-init.sql");
 
     @Test
     void upgradesV82DataToValidatedVarchar64WithoutChangingDigestValues() throws Exception {
@@ -74,7 +75,7 @@ class V83PayloadSha256SchemaAlignmentIntegrationTest {
         throughLatest.validate();
 
         try (Connection connection = connection()) {
-            assertThat(currentFlywayVersion(connection)).isEqualTo("106");
+            assertThat(currentFlywayVersion(connection)).isEqualTo("107");
 
             assertVarchar64NotNull(connection, "configuration_change_requests");
             assertVarchar64NotNull(connection, "outbox_dead_letters");

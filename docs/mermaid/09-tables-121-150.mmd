@@ -1,0 +1,392 @@
+erDiagram
+    TRANSACTION_LIMIT_DECISION_AUDIT {
+        uuid id PK
+        varchar_160 transaction_reference
+        varchar_32 participant_code
+        uuid policy_id FK
+        varchar_16 decision
+        numeric_24 amount
+        varchar_1000 reason
+        char_64 evidence_hash
+        timestamptz decided_at
+    }
+
+    MANUAL_FINANCIAL_ADJUSTMENT {
+        uuid id PK
+        varchar_160 adjustment_reference
+        date business_date
+        char_3 currency
+        varchar_64 reason_code
+        varchar_2000 reason_detail
+        varchar_20 status
+        varchar_120 requested_by
+        varchar_120 approved_by
+        varchar_120 executed_by
+        string more_columns "plus 6 more"
+    }
+
+    MANUAL_FINANCIAL_ADJUSTMENT_LINE {
+        uuid id PK
+        uuid adjustment_id FK
+        integer line_no
+        varchar_80 account_code FK
+        varchar_6 side
+        numeric_24 amount
+        varchar_500 narrative
+        timestamptz created_at
+    }
+
+    MANUAL_ADJUSTMENT_APPROVAL_EVENT {
+        uuid id PK
+        uuid adjustment_id FK
+        varchar_120 actor
+        varchar_16 decision
+        varchar_1000 comment
+        char_64 evidence_hash
+        timestamptz created_at
+    }
+
+    SETTLEMENT_CALENDAR {
+        uuid id PK
+        varchar_64 calendar_code
+        integer version
+        varchar_80 timezone
+        smallint weekend_days
+        varchar_16 status
+        date effective_from
+        date effective_until
+        varchar_120 requested_by
+        varchar_120 approved_by
+        string more_columns "plus 2 more"
+    }
+
+    SETTLEMENT_CALENDAR_HOLIDAY {
+        uuid id PK
+        uuid calendar_id FK
+        date holiday_date
+        varchar_200 holiday_name
+        boolean full_day
+        time early_close_time
+        timestamptz created_at
+    }
+
+    SETTLEMENT_CUTOFF_RULE {
+        uuid id PK
+        uuid calendar_id FK
+        varchar_64 cycle_code
+        varchar_64 product_code
+        time submission_cutoff
+        time finality_cutoff
+        varchar_20 late_action
+        integer grace_seconds
+        timestamptz created_at
+    }
+
+    SETTLEMENT_CALENDAR_CHANGE_REQUEST {
+        uuid id PK
+        varchar_64 calendar_code
+        integer proposed_version
+        char_64 bundle_hash
+        varchar_1000 reason
+        varchar_120 requested_by
+        varchar_120 approved_by
+        varchar_16 status
+        timestamptz created_at
+        timestamptz decided_at
+    }
+
+    SETTLEMENT_CUTOFF_DECISION {
+        uuid id PK
+        varchar_160 transaction_reference
+        uuid calendar_id FK
+        uuid cutoff_rule_id FK
+        timestamptz submitted_at
+        date business_date
+        varchar_24 decision
+        varchar_500 reason
+        char_64 evidence_hash
+        timestamptz created_at
+    }
+
+    PAYMENT_IDEMPOTENCY_RECORD {
+        uuid id PK
+        varchar_32 participant_code
+        varchar_200 idempotency_key
+        char_64 request_hash
+        varchar_160 transaction_reference
+        varchar_16 status
+        char_64 response_hash
+        timestamptz expires_at
+        timestamptz created_at
+        timestamptz completed_at
+    }
+
+    PAYMENT_DUPLICATE_FINGERPRINT {
+        char_64 fingerprint PK
+        varchar_32 participant_code
+        varchar_64 product_code
+        varchar_160 transaction_reference
+        numeric_24 amount
+        char_3 currency
+        timestamptz first_seen_at
+        timestamptz expires_at
+    }
+
+    PAYMENT_FINALITY_RECORD {
+        uuid id PK
+        varchar_160 transaction_reference
+        varchar_32 participant_code
+        varchar_20 finality_status
+        varchar_500 finality_reason
+        timestamptz finalized_at
+        char_64 evidence_hash
+        timestamptz created_at
+    }
+
+    PAYMENT_REVERSAL_REQUEST {
+        uuid id PK
+        varchar_160 transaction_reference FK
+        varchar_160 reversal_reference
+        varchar_64 reason_code
+        varchar_1000 reason_detail
+        varchar_120 requested_by
+        varchar_120 operations_approved_by
+        varchar_120 risk_approved_by
+        varchar_20 status
+        timestamptz expires_at
+        string more_columns "plus 3 more"
+    }
+
+    CRYPTOGRAPHIC_ASSET_INVENTORY {
+        uuid id PK
+        varchar_120 asset_code
+        varchar_32 asset_type
+        varchar_64 provider
+        varchar_500 external_reference
+        char_64 fingerprint_sha256
+        varchar_80 algorithm
+        integer key_size_bits
+        varchar_120 owner_team
+        varchar_32 environment
+        string more_columns "plus 8 more"
+    }
+
+    CRYPTOGRAPHIC_ASSET_BINDING {
+        uuid id PK
+        uuid asset_id FK
+        varchar_120 service_name
+        varchar_64 usage_type
+        varchar_500 configuration_reference
+        varchar_16 criticality
+        timestamptz created_at
+    }
+
+    CRYPTOGRAPHIC_ROTATION_PLAN {
+        uuid id PK
+        uuid asset_id FK
+        timestamptz planned_for
+        timestamptz overlap_until
+        varchar_500 rollback_reference
+        varchar_120 requested_by
+        varchar_120 approved_by
+        varchar_120 executed_by
+        varchar_20 status
+        char_64 old_fingerprint
+        string more_columns "plus 4 more"
+    }
+
+    CRYPTOGRAPHIC_ROTATION_EVIDENCE {
+        uuid id PK
+        uuid rotation_plan_id FK
+        varchar_64 evidence_type
+        varchar_1000 artifact_reference
+        char_64 artifact_sha256
+        varchar_120 recorded_by
+        timestamptz recorded_at
+    }
+
+    THIRD_PARTY_DEPENDENCY {
+        uuid id PK
+        varchar_80 dependency_code
+        varchar_200 display_name
+        varchar_32 dependency_type
+        varchar_500 endpoint_reference
+        varchar_120 owner_team
+        varchar_16 criticality
+        boolean enabled
+        timestamptz created_at
+    }
+
+    THIRD_PARTY_SLA_POLICY {
+        uuid id PK
+        uuid dependency_id FK
+        integer version
+        numeric_7 availability_target
+        integer latency_p95_ms
+        integer failure_threshold
+        integer recovery_success_threshold
+        integer open_seconds
+        varchar_16 status
+        varchar_120 requested_by
+        string more_columns "plus 3 more"
+    }
+
+    THIRD_PARTY_HEALTH_SAMPLE {
+        uuid id PK
+        uuid dependency_id FK
+        timestamptz observed_at
+        boolean success
+        integer latency_ms
+        varchar_32 response_class
+        char_64 evidence_hash
+    }
+
+    THIRD_PARTY_CIRCUIT_STATE {
+        uuid dependency_id PK FK
+        varchar_16 state
+        integer consecutive_failures
+        integer consecutive_successes
+        timestamptz opened_at
+        timestamptz next_probe_at
+        varchar_500 reason
+        timestamptz updated_at
+    }
+
+    THIRD_PARTY_OVERRIDE_REQUEST {
+        uuid id PK
+        uuid dependency_id FK
+        varchar_16 requested_state
+        varchar_1000 reason
+        varchar_120 requested_by
+        varchar_120 approved_by
+        timestamptz expires_at
+        varchar_16 status
+        timestamptz created_at
+    }
+
+    CAPACITY_OBSERVATION {
+        uuid id PK
+        varchar_80 component
+        varchar_32 environment
+        timestamptz observed_at
+        numeric_24 request_rate
+        numeric_7 cpu_utilization
+        numeric_7 memory_utilization
+        numeric_16 p95_latency_ms
+        numeric_7 error_rate
+        integer active_replicas
+        string more_columns "plus 1 more"
+    }
+
+    CAPACITY_FORECAST {
+        uuid id PK
+        varchar_80 component
+        varchar_32 environment
+        integer horizon_days
+        timestamptz forecast_for
+        numeric_24 forecast_request_rate
+        integer required_replicas
+        numeric_24 confidence_lower
+        numeric_24 confidence_upper
+        varchar_80 model_version
+        string more_columns "plus 4 more"
+    }
+
+    GOVERNED_AUTOSCALING_POLICY {
+        uuid id PK
+        varchar_80 component
+        varchar_32 environment
+        integer version
+        integer min_replicas
+        integer max_replicas
+        integer target_cpu_percent
+        integer target_memory_percent
+        integer scale_up_percent
+        integer scale_down_percent
+        string more_columns "plus 6 more"
+    }
+
+    CAPACITY_CHANGE_REQUEST {
+        uuid id PK
+        uuid policy_id FK
+        uuid forecast_id FK
+        varchar_1000 reason
+        varchar_120 requested_by
+        varchar_120 operations_approved_by
+        varchar_120 performance_approved_by
+        varchar_20 status
+        varchar_500 rollback_reference
+        char_64 evidence_hash
+        string more_columns "plus 1 more"
+    }
+
+    REVERSAL_LOG {
+        bigint reversal_id PK
+        varchar_80 original_txn_id
+        varchar_80 reversal_txn_id
+        varchar_32 destination_bank
+        varchar_30 reason
+        varchar_20 status
+        varchar_40 failure_class
+        timestamp triggered_at
+        timestamp completed_at
+        timestamp created_at
+        string more_columns "plus 1 more"
+    }
+
+    PSP_SUSPENSION_LOG {
+        bigint suspension_id PK
+        varchar_32 psp_id FK
+        timestamp suspended_at
+        int reversal_count
+        int window_minutes
+        timestamp reinstated_at
+        varchar_100 reinstated_by
+        timestamp created_at
+    }
+
+    GOVERNED_DATA_ASSET {
+        uuid id PK
+        varchar_160 asset_code
+        varchar_24 asset_type
+        varchar_1000 physical_reference
+        varchar_120 owner_team
+        varchar_24 classification
+        varchar_80 retention_policy_code
+        boolean contains_pii
+        varchar_16 status
+        char_64 evidence_hash
+        string more_columns "plus 1 more"
+    }
+
+    DATA_LINEAGE_EDGE {
+        uuid id PK
+        uuid source_asset_id FK
+        uuid target_asset_id FK
+        varchar_160 transformation_code
+        varchar_80 transformation_version
+        varchar_500 processing_purpose
+        char_64 field_mapping_hash
+        varchar_16 status
+        varchar_120 approved_by
+        timestamptz created_at
+    }
+
+    MANUAL_FINANCIAL_ADJUSTMENT ||--o{ MANUAL_FINANCIAL_ADJUSTMENT_LINE : "adjustment_id"
+    MANUAL_FINANCIAL_ADJUSTMENT ||--o{ MANUAL_ADJUSTMENT_APPROVAL_EVENT : "adjustment_id"
+    SETTLEMENT_CALENDAR ||--o{ SETTLEMENT_CALENDAR_HOLIDAY : "calendar_id"
+    SETTLEMENT_CALENDAR ||--o{ SETTLEMENT_CUTOFF_RULE : "calendar_id"
+    SETTLEMENT_CALENDAR ||--o{ SETTLEMENT_CUTOFF_DECISION : "calendar_id"
+    SETTLEMENT_CUTOFF_RULE ||--o{ SETTLEMENT_CUTOFF_DECISION : "cutoff_rule_id"
+    PAYMENT_FINALITY_RECORD ||--o{ PAYMENT_REVERSAL_REQUEST : "transaction_reference"
+    CRYPTOGRAPHIC_ASSET_INVENTORY ||--o{ CRYPTOGRAPHIC_ASSET_BINDING : "asset_id"
+    CRYPTOGRAPHIC_ASSET_INVENTORY ||--o{ CRYPTOGRAPHIC_ROTATION_PLAN : "asset_id"
+    CRYPTOGRAPHIC_ROTATION_PLAN ||--o{ CRYPTOGRAPHIC_ROTATION_EVIDENCE : "rotation_plan_id"
+    THIRD_PARTY_DEPENDENCY ||--o{ THIRD_PARTY_SLA_POLICY : "dependency_id"
+    THIRD_PARTY_DEPENDENCY ||--o{ THIRD_PARTY_HEALTH_SAMPLE : "dependency_id"
+    THIRD_PARTY_DEPENDENCY ||--o{ THIRD_PARTY_CIRCUIT_STATE : "dependency_id"
+    THIRD_PARTY_DEPENDENCY ||--o{ THIRD_PARTY_OVERRIDE_REQUEST : "dependency_id"
+    GOVERNED_AUTOSCALING_POLICY ||--o{ CAPACITY_CHANGE_REQUEST : "policy_id"
+    CAPACITY_FORECAST ||--o{ CAPACITY_CHANGE_REQUEST : "forecast_id"
+    GOVERNED_DATA_ASSET ||--o{ DATA_LINEAGE_EDGE : "source_asset_id"
+    GOVERNED_DATA_ASSET ||--o{ DATA_LINEAGE_EDGE : "target_asset_id"

@@ -1,0 +1,4 @@
+{
+  "schema_version": 1,
+  "forbidden_paths_found": [".env.bak", "app-live.log", "boot.log", "new.txt", "run-error.log", "backups/switching_db_legacy_20260521_101054.sql"]
+}

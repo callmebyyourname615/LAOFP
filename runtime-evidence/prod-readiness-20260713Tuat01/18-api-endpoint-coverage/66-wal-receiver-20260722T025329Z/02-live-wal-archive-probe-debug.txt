@@ -1,0 +1,32 @@
+== WAL objects before ==
++ cd /opt/switching
++ echo '== WAL objects before =='
++ docker compose --profile backup exec -T backup-wal aws --endpoint-url http://minio:9000 s3 ls s3://switching-backups/switching/wal/ --recursive
++ tail -n 10
+2026-07-21 08:48:12   16781496 switching/wal/00000001/000000010000000000000021.age
+2026-07-21 08:48:13         65 switching/wal/00000001/000000010000000000000021.age.sha256
+2026-07-21 08:48:13   16781496 switching/wal/00000001/000000010000000000000022.age
+2026-07-21 08:48:14         65 switching/wal/00000001/000000010000000000000022.age.sha256
+2026-07-21 08:55:30   16781496 switching/wal/00000001/000000010000000000000023.age
+2026-07-21 08:55:30         65 switching/wal/00000001/000000010000000000000023.age.sha256
+2026-07-21 08:55:31   16781496 switching/wal/00000001/000000010000000000000024.age
+2026-07-21 08:55:31         65 switching/wal/00000001/000000010000000000000024.age.sha256
+== Force WAL switch ==
++ echo '== Force WAL switch =='
++ docker compose exec -T postgres psql -U switching -d switching_db -AtX -c 'SELECT pg_switch_wal();'
+0/25A7A828
++ sleep 15
+== WAL objects after ==
++ echo '== WAL objects after =='
++ docker compose --profile backup exec -T backup-wal aws --endpoint-url http://minio:9000 s3 ls s3://switching-backups/switching/wal/ --recursive
++ tail -n 10
+2026-07-21 08:48:12   16781496 switching/wal/00000001/000000010000000000000021.age
+2026-07-21 08:48:13         65 switching/wal/00000001/000000010000000000000021.age.sha256
+2026-07-21 08:48:13   16781496 switching/wal/00000001/000000010000000000000022.age
+2026-07-21 08:48:14         65 switching/wal/00000001/000000010000000000000022.age.sha256
+2026-07-21 08:55:30   16781496 switching/wal/00000001/000000010000000000000023.age
+2026-07-21 08:55:30         65 switching/wal/00000001/000000010000000000000023.age.sha256
+2026-07-21 08:55:31   16781496 switching/wal/00000001/000000010000000000000024.age
+2026-07-21 08:55:31         65 switching/wal/00000001/000000010000000000000024.age.sha256
+2026-07-22 02:55:48   16781496 switching/wal/00000001/000000010000000000000025.age
+2026-07-22 02:55:48         65 switching/wal/00000001/000000010000000000000025.age.sha256

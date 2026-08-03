@@ -1,0 +1,9 @@
+{
+  "evidenceDir": "runtime-evidence/crossborder-lifecycle-20260803T041349Z",
+  "total": 13,
+  "pass": 13,
+  "fail": 0,
+  "warn": 0,
+  "skipped": 0,
+  "verdict": "PASS"
+}

@@ -1,0 +1,391 @@
+erDiagram
+    FINANCIAL_PRECISION_POLICY {
+        varchar_64 domain_name PK
+        integer precision_digits
+        integer scale_digits
+        varchar_32 rounding_mode
+        varchar_512 notes
+        timestamptz updated_at
+    }
+
+    PROMOTION_BUDGET_ACCOUNT {
+        bigint promotion_id PK
+        varchar_8 currency
+        numeric_24 budget_cap
+        numeric_24 reserved_amount
+        numeric_24 consumed_amount
+        bigint version
+        timestamptz updated_at
+    }
+
+    PROMOTION_BUDGET_RESERVATION {
+        uuid reservation_id PK
+        bigint promotion_id FK
+        varchar_120 transaction_ref
+        numeric_24 amount
+        varchar_8 currency
+        varchar_24 status
+        timestamptz expires_at
+        timestamptz consumed_at
+        timestamptz released_at
+        timestamptz refunded_at
+        string more_columns "plus 1 more"
+    }
+
+    PROMOTION_FUNDER_LEDGER {
+        uuid id PK
+        bigint promotion_id FK
+        varchar_120 transaction_ref
+        uuid reservation_id FK
+        varchar_24 entry_type
+        numeric_24 amount
+        varchar_8 currency
+        varchar_160 idempotency_key
+        uuid reversal_of FK
+        timestamptz created_at
+    }
+
+    ARCHIVE_JOBS {
+        bigint id PK
+        varchar_80 job_ref
+        varchar_30 job_type
+        varchar_100 table_name
+        date archive_from
+        date archive_to
+        varchar_20 status
+        bigint rows_archived
+        bigint rows_verified
+        text error_message
+        string more_columns "plus 4 more"
+    }
+
+    PARTITION_MAINTENANCE_LOGS {
+        bigint id PK
+        varchar_100 table_name
+        varchar_120 partition_name
+        varchar_20 operation
+        date partition_date
+        boolean success
+        text error_message
+        timestamp executed_at
+    }
+
+    SCHEDULER_LOCKS {
+        varchar_64 lock_name
+        timestamp lock_until
+        timestamp locked_at
+        varchar_255 locked_by
+    }
+
+    DRS_DISPUTE_ATTACHMENTS {
+        bigint attachment_id PK
+        bigint dispute_id FK
+        varchar_255 file_name
+        varchar_120 content_type
+        bigint file_size_bytes
+        varchar_64 sha256
+        varchar_100 uploaded_by
+        timestamp uploaded_at
+        text description
+        bytea payload
+    }
+
+    FEE_EXCEPTION {
+        uuid id PK
+        uuid tariff_rule_id FK
+        varchar_32 participant_code
+        varchar_80 message_type
+        varchar_20 override_type
+        numeric_24 override_value
+        text reason
+        varchar_120 requested_by
+        timestamptz requested_at
+        varchar_120 approved_by
+        string more_columns "plus 4 more"
+    }
+
+    AUDIT_LOGS {
+        bigint id PK
+        varchar_60 event_type
+        varchar_40 reference_type
+        varchar_80 reference_id
+        varchar_60 actor
+        text payload
+        date business_date
+        timestamp created_at
+    }
+
+    WEBHOOK_REGISTRATIONS {
+        bigint id PK
+        varchar_36 webhook_id
+        varchar_32 psp_id FK
+        varchar_500 url
+        text event_types
+        varchar_256 secret_plain
+        varchar_64 secret_hash
+        varchar_20 status
+        int failed_deliveries
+        timestamp last_delivered_at
+        string more_columns "plus 2 more"
+    }
+
+    WEBHOOK_DELIVERY_LOG {
+        bigint id PK
+        varchar_36 webhook_id FK
+        varchar_100 event_type
+        varchar_80 event_ref
+        text payload
+        int attempt_count
+        timestamp last_attempt_at
+        timestamp next_retry_at
+        int response_status
+        timestamp delivered_at
+        string more_columns "plus 3 more"
+    }
+
+    SANCTIONS_LISTS {
+        bigint list_id PK
+        varchar_10 list_type
+        varchar_500 entity_name
+        varchar_10 entity_type
+        jsonb identifiers
+        timestamp added_at
+        varchar_100 source_ref
+        boolean is_active
+    }
+
+    SANCTIONS_SCREENING_RESULTS {
+        bigint screen_id PK
+        varchar_80 txn_id
+        timestamp screened_at
+        decimal_5 match_score
+        text match_entity
+        varchar_10 list_type
+        varchar_15 outcome
+        int screening_ms
+        varchar_500 debtor_name
+        varchar_500 creditor_name
+        string more_columns "plus 1 more"
+    }
+
+    STR_REPORTS {
+        bigint str_id PK
+        varchar_80 txn_id
+        timestamp triggered_at
+        timestamp submitted_at
+        varchar_100 submission_ref
+        varchar_25 status
+        jsonb report_payload
+        int retry_count
+        text last_error
+        text matched_entity
+        string more_columns "plus 1 more"
+    }
+
+    FRAUD_SCORES {
+        bigint score_id PK
+        varchar_80 txn_id
+        timestamp scored_at
+        decimal_5 score
+        varchar_10 risk_tier
+        jsonb signals
+        varchar_10 action_taken
+        varchar_32 sending_psp_id
+        varchar_32 receiving_psp_id
+        decimal_20 amount
+    }
+
+    VELOCITY_CHECKS {
+        varchar_32 psp_id FK
+        timestamp window_start
+        timestamp window_end
+        decimal_20 current_value
+        decimal_20 limit_value
+        boolean breached
+        timestamp last_updated_at
+    }
+
+    PSP_POOLS {
+        bigint pool_id PK
+        varchar_32 psp_id FK
+        decimal_20 balance
+        decimal_20 held_amount
+        decimal_20 available_balance
+        char_3 currency
+        decimal_20 minimum_balance
+        decimal_5 alert_threshold_pct
+        timestamp last_alert_sent_at
+        timestamp last_updated_at
+    }
+
+    POOL_TRANSACTIONS {
+        bigint pool_txn_id PK
+        bigint pool_id FK
+        varchar_80 txn_id
+        varchar_15 operation
+        decimal_20 amount
+        decimal_20 balance_before
+        decimal_20 held_before
+        decimal_20 balance_after
+        decimal_20 held_after
+        timestamp occurred_at
+        string more_columns "plus 2 more"
+    }
+
+    VPA_REGISTRATIONS {
+        bigint id PK
+        varchar_36 vpa_id
+        varchar_20 vpa_type
+        varchar_200 vpa_value
+        varchar_32 psp_id FK
+        varchar_200 account_ref
+        varchar_20 account_type
+        varchar_200 display_name
+        boolean is_primary
+        varchar_20 status
+        string more_columns "plus 2 more"
+    }
+
+    PARTICIPANTS {
+        bigint id PK
+        varchar_32 bank_code
+        varchar_255 bank_name
+        varchar_32 status
+        varchar_32 participant_type
+        varchar_8 country
+        varchar_8 currency
+        varchar_20 swift_bic
+        varchar_60 settlement_account
+        numeric_18 max_daily_limit
+        string more_columns "plus 5 more"
+    }
+
+    PARTICIPANT_LIMITS {
+        bigint id PK
+        varchar_32 bank_code FK
+        varchar_40 limit_type
+        varchar_8 currency
+        numeric_18 limit_value
+        varchar_20 period_type
+        boolean is_active
+        date effective_from
+        date effective_to
+        timestamp created_at
+        string more_columns "plus 1 more"
+    }
+
+    ROUTING_RULES {
+        bigint id PK
+        varchar_128 route_code
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        varchar_32 message_type
+        varchar_128 connector_name
+        int priority
+        boolean enabled
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CONNECTOR_CONFIGS {
+        bigint id PK
+        varchar_128 connector_name
+        varchar_32 bank_code
+        varchar_32 connector_type
+        varchar_512 endpoint_url
+        int timeout_ms
+        boolean enabled
+        boolean force_reject
+        varchar_32 reject_reason_code
+        varchar_512 reject_reason_message
+        string more_columns "plus 2 more"
+    }
+
+    CONNECTOR_CREDENTIALS {
+        bigint id PK
+        varchar_128 connector_name FK
+        varchar_40 credential_type
+        varchar_100 credential_key
+        text encrypted_value
+        varchar_64 key_ref
+        timestamp expires_at
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CONNECTOR_RATE_LIMITS {
+        bigint id PK
+        varchar_128 connector_name FK
+        varchar_20 limit_type
+        int limit_value
+        int burst_value
+        int window_seconds
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    BENEFICIARY_TOKENS {
+        varchar_36 token_id PK
+        varchar_36 vpa_id FK
+        timestamp issued_at
+        timestamp expires_at
+        boolean used
+        timestamp used_at
+    }
+
+    SETTLEMENT_INSTRUCTIONS {
+        bigint id PK
+        varchar_80 instruction_ref
+        bigint cycle_id FK
+        varchar_32 debtor_psp_id FK
+        varchar_32 creditor_psp_id FK
+        varchar_8 currency
+        numeric_18 net_amount
+        varchar_24 status
+        text approval_note
+        varchar_100 approved_by
+        string more_columns "plus 9 more"
+    }
+
+    SETTLEMENT_REPORTS {
+        bigint id PK
+        bigint cycle_id FK
+        varchar_32 psp_id
+        varchar_20 report_type
+        varchar_80 report_ref
+        text content
+        timestamp generated_at
+    }
+
+    QR_CODES {
+        bigint id PK
+        varchar_36 qr_id
+        varchar_100 merchant_id
+        varchar_32 psp_id
+        varchar_10 qr_type
+        text payload_text
+        decimal_20 amount
+        varchar_3 currency
+        varchar_100 txn_ref
+        timestamp expires_at
+        string more_columns "plus 2 more"
+    }
+
+    PROMOTION_BUDGET_ACCOUNT ||--o{ PROMOTION_BUDGET_RESERVATION : "promotion_id"
+    PROMOTION_BUDGET_ACCOUNT ||--o{ PROMOTION_FUNDER_LEDGER : "promotion_id"
+    PROMOTION_BUDGET_RESERVATION ||--o{ PROMOTION_FUNDER_LEDGER : "reservation_id"
+    PROMOTION_FUNDER_LEDGER ||--o{ PROMOTION_FUNDER_LEDGER : "reversal_of"
+    PARTICIPANTS ||--o{ WEBHOOK_REGISTRATIONS : "psp_id"
+    WEBHOOK_REGISTRATIONS ||--o{ WEBHOOK_DELIVERY_LOG : "webhook_id"
+    PARTICIPANTS ||--o{ VELOCITY_CHECKS : "psp_id"
+    PARTICIPANTS ||--o{ PSP_POOLS : "psp_id"
+    PSP_POOLS ||--o{ POOL_TRANSACTIONS : "pool_id"
+    PARTICIPANTS ||--o{ VPA_REGISTRATIONS : "psp_id"
+    PARTICIPANTS ||--o{ PARTICIPANT_LIMITS : "bank_code"
+    CONNECTOR_CONFIGS ||--o{ CONNECTOR_CREDENTIALS : "connector_name"
+    CONNECTOR_CONFIGS ||--o{ CONNECTOR_RATE_LIMITS : "connector_name"
+    VPA_REGISTRATIONS ||--o{ BENEFICIARY_TOKENS : "vpa_id"
+    PARTICIPANTS ||--o{ SETTLEMENT_INSTRUCTIONS : "debtor_psp_id"
+    PARTICIPANTS ||--o{ SETTLEMENT_INSTRUCTIONS : "creditor_psp_id"

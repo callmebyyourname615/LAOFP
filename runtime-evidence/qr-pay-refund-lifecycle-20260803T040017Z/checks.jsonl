@@ -1,0 +1,14 @@
+{"name":"SMOS admin login","status":"PASS","expected":"HTTP 200 and token present","actual":"HTTP 200","details":"https://175.11.0.200/api/auth/login"}
+{"name":"Generate static QR","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/qr/generate/static"}
+{"name":"Decode generated static QR","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/decode"}
+{"name":"Pay reusable static QR","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/pay"}
+{"name":"Pay static QR second time remains reusable","status":"FAIL","expected":"HTTP 200","actual":"HTTP 400","details":"https://175.11.0.200/v1/qr/pay"}
+{"name":"Generate dynamic QR","status":"PASS","expected":"HTTP 201","actual":"HTTP 201","details":"https://175.11.0.200/v1/qr/generate/dynamic"}
+{"name":"Decode generated dynamic QR before payment","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/decode"}
+{"name":"Pay dynamic QR","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/pay"}
+{"name":"Decode dynamic QR after payment shows used","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/decode"}
+{"name":"Dynamic QR cannot be paid twice","status":"FAIL","expected":"HTTP 409","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/pay"}
+{"name":"Refund QR payment partial amount","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/qr/refund"}
+{"name":"Refund unknown original transaction rejected","status":"PASS","expected":"HTTP 404","actual":"HTTP 404","details":"https://175.11.0.200/v1/qr/refund"}
+{"name":"Refund outside configured window rejected","status":"FAIL","expected":"HTTP 400","actual":"HTTP 404","details":"https://175.11.0.200/v1/qr/refund"}
+{"name":"Unauthenticated QR pay rejected","status":"PASS","expected":"HTTP 401","actual":"HTTP 401","details":"https://175.11.0.200/v1/qr/pay"}

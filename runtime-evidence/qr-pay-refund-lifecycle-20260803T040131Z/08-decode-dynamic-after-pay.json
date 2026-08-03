@@ -1,0 +1,18 @@
+{
+  "scenario": "Decode dynamic QR after payment shows used",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/decode",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "qrId": "2d1ba1e4-a880-4cb3-9258-918fb8a27a44",
+    "merchantId": "EVD-QR-20260803T040131Z-MERCH-DYN",
+    "amount": 2500.0000,
+    "currency": "LAK",
+    "qrType": "DYNAMIC",
+    "valid": false,
+    "expiryStatus": "USED",
+    "expiresAt": "2026-08-03T04:11:31.643"
+  }
+}

@@ -1,0 +1,395 @@
+erDiagram
+    BILLERS {
+        bigint biller_id PK
+        varchar_50 biller_code
+        varchar_200 biller_name
+        varchar_20 category
+        varchar_500 api_url
+        varchar_64 api_key_hash
+        int timeout_seconds
+        varchar_10 status
+        timestamp created_at
+    }
+
+    BILL_TOKENS {
+        bigint token_id PK
+        bigint biller_id FK
+        varchar_200 bill_ref
+        decimal_20 bill_amount
+        date due_date
+        varchar_200 customer_name
+        text details
+        timestamp fetched_at
+        timestamp expires_at
+        boolean used
+    }
+
+    BILL_PAYMENTS {
+        bigint payment_id PK
+        bigint token_id FK
+        bigint biller_id FK
+        varchar_200 bill_ref
+        varchar_200 txn_ref
+        varchar_32 paying_psp_id
+        varchar_200 receipt_number
+        decimal_20 amount
+        varchar_10 status
+        timestamp initiated_at
+        string more_columns "plus 1 more"
+    }
+
+    DISPUTES {
+        bigint dispute_id PK
+        varchar_200 txn_ref
+        varchar_32 raising_psp_id
+        varchar_32 responding_psp_id
+        varchar_30 dispute_type
+        varchar_30 status
+        timestamp raised_at
+        timestamp sla_deadline
+        timestamp resolved_at
+        text evidence
+        string more_columns "plus 4 more"
+    }
+
+    REFUND_TRANSACTIONS {
+        bigint refund_id PK
+        bigint dispute_id FK
+        varchar_200 original_txn_ref
+        varchar_200 refund_txn_ref
+        decimal_20 amount
+        varchar_10 status
+        timestamp initiated_at
+        timestamp completed_at
+    }
+
+    FX_CORRIDORS {
+        bigint corridor_id PK
+        varchar_3 source_currency
+        varchar_3 dest_currency
+        varchar_10 target_network
+        decimal_20 indicative_rate
+        decimal_20 min_amount
+        decimal_20 max_amount
+        decimal_7 fee_percent
+        decimal_20 fee_fixed
+        varchar_10 status
+        string more_columns "plus 1 more"
+    }
+
+    API_KEYS {
+        bigint id PK
+        varchar_64 key_value
+        varchar_16 key_prefix
+        varchar_128 name
+        varchar_32 role
+        varchar_32 bank_code
+        boolean enabled
+        timestamp expires_at
+        timestamp created_at
+        timestamp last_used_at
+    }
+
+    OAUTH_CLIENTS {
+        varchar_128 client_id
+        varchar_32 psp_id
+        varchar_64 client_secret_hash
+        varchar_16 tier
+        text scopes
+        varchar_32 status
+        timestamp expires_at
+        timestamp created_at
+    }
+
+    PSP_CERTIFICATES {
+        varchar_36 cert_id
+        varchar_32 psp_id
+        varchar_64 cert_fingerprint
+        text subject_dn
+        timestamp issued_at
+        timestamp expires_at
+        varchar_16 status
+        timestamp created_at
+    }
+
+    FX_QUOTES {
+        bigint quote_id PK
+        bigint corridor_id FK
+        varchar_3 source_currency
+        varchar_3 dest_currency
+        decimal_20 source_amount
+        decimal_20 dest_amount
+        decimal_20 rate
+        decimal_20 fee
+        timestamp issued_at
+        timestamp expires_at
+        string more_columns "plus 1 more"
+    }
+
+    CROSSBORDER_TRANSFERS {
+        bigint cb_id PK
+        bigint quote_id FK
+        varchar_200 txn_ref
+        varchar_32 initiating_psp_id
+        varchar_50 purpose_code
+        varchar_200 source_of_funds
+        varchar_200 beneficiary_name
+        varchar_200 beneficiary_bank
+        varchar_200 beneficiary_account
+        varchar_3 beneficiary_country
+        string more_columns "plus 6 more"
+    }
+
+    SANCTIONS_IMPORT_RUNS {
+        uuid run_id PK
+        varchar_10 provider_code
+        varchar_200 source_ref
+        char_64 content_sha256
+        varchar_16 status
+        timestamptz fetched_at
+        timestamptz started_at
+        timestamptz completed_at
+        integer parsed_count
+        integer inserted_count
+        string more_columns "plus 4 more"
+    }
+
+    SANCTIONS_IMPORT_STAGING {
+        uuid batch_id
+        varchar_10 provider_code
+        varchar_220 provider_uid
+        varchar_500 entity_name
+        varchar_500 normalized_name
+        varchar_10 entity_type
+        jsonb aliases
+        jsonb aliases_normalized
+        jsonb identifiers
+        varchar_200 source_ref
+        string more_columns "plus 2 more"
+    }
+
+    OUTBOX_DEAD_LETTERS {
+        bigserial id PK
+        varchar_36 event_id
+        varchar_160 schema_name
+        integer schema_version
+        bigint outbox_event_id
+        varchar_128 transfer_ref
+        text payload_json
+        char_64 payload_sha256
+        varchar_160 failure_type
+        varchar_1000 failure_message
+        string more_columns "plus 14 more"
+    }
+
+    DATABASE_MAINTENANCE_RUNS {
+        bigserial id PK
+        uuid run_id
+        varchar_64 operation
+        varchar_24 status
+        timestamp started_at
+        timestamp completed_at
+        text details_json
+    }
+
+    LEGAL_HOLDS {
+        bigserial id PK
+        varchar_64 hold_ref
+        varchar_24 scope_type
+        varchar_160 scope_key
+        date effective_from
+        date effective_to
+        varchar_1000 reason
+        varchar_160 case_reference
+        varchar_32 status
+        varchar_160 requested_by
+        string more_columns "plus 8 more"
+    }
+
+    RETENTION_EXECUTION_LOG {
+        bigserial id PK
+        varchar_160 policy_name
+        varchar_160 target_table
+        date business_date
+        varchar_32 action
+        varchar_24 status
+        bigint affected_rows
+        varchar_64 legal_hold_ref
+        varchar_1000 details
+        timestamp executed_at
+    }
+
+    PAYMENT_FLOWS {
+        bigint id
+        varchar_80 flow_ref
+        varchar_80 inquiry_ref
+        varchar_80 transaction_ref
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        varchar_50 channel_id
+        numeric_18 amount
+        varchar_8 currency
+        varchar_30 status
+        string more_columns "plus 6 more"
+    }
+
+    INQUIRIES {
+        bigint id
+        varchar_80 inquiry_ref
+        varchar_128 client_inquiry_id
+        varchar_255 idempotency_key
+        varchar_80 flow_ref
+        varchar_36 message_id
+        varchar_36 instruction_id
+        varchar_36 end_to_end_id
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        string more_columns "plus 20 more"
+    }
+
+    TRANSACTIONS {
+        bigint id
+        varchar_80 transaction_ref
+        varchar_128 client_transaction_id
+        varchar_255 idempotency_key
+        varchar_80 flow_ref
+        varchar_80 inquiry_ref
+        varchar_32 source_bank
+        varchar_34 source_account_no
+        varchar_32 destination_bank
+        varchar_34 destination_account_no
+        string more_columns "plus 17 more"
+    }
+
+    TRANSACTION_STATUS_HISTORY {
+        bigint id
+        varchar_80 transaction_ref
+        varchar_30 from_status
+        varchar_30 to_status
+        varchar_50 reason_code
+        varchar_100 actor
+        date business_date
+        timestamp occurred_at
+    }
+
+    TRANSACTION_EVENTS {
+        bigint id
+        varchar_80 transaction_ref
+        varchar_60 event_type
+        jsonb payload
+        varchar_100 actor
+        date business_date
+        timestamp occurred_at
+    }
+
+    IDEMPOTENCY_RECORDS {
+        bigint id PK
+        varchar_50 channel_id
+        varchar_255 idempotency_key
+        varchar_64 request_hash
+        varchar_80 transaction_ref
+        varchar_30 status
+        timestamp expires_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    INQUIRY_STATUS_HISTORY {
+        bigint id PK
+        varchar_80 inquiry_ref
+        varchar_30 status
+        varchar_50 reason_code
+        timestamp created_at
+    }
+
+    PRIVILEGED_ACCESS_SESSIONS {
+        bigserial id PK
+        varchar_64 session_ref
+        varchar_160 requested_by
+        timestamp requested_at
+        varchar_1000 reason
+        varchar_160 ticket_reference
+        integer requested_ttl_minutes
+        integer max_uses
+        varchar_160 approved_by
+        timestamp approved_at
+        string more_columns "plus 9 more"
+    }
+
+    CONFIGURATION_CHANGE_REQUESTS {
+        bigserial id PK
+        varchar_64 request_ref
+        varchar_48 target_type
+        varchar_160 target_key
+        varchar_512 previous_value
+        varchar_512 desired_value
+        char_64 payload_sha256
+        varchar_1000 reason
+        varchar_160 ticket_reference
+        varchar_24 status
+        string more_columns "plus 11 more"
+    }
+
+    PARTICIPANT_CERTIFICATIONS {
+        bigserial id PK
+        varchar_64 certification_ref
+        varchar_32 bank_code
+        varchar_64 suite_version
+        char_40 git_commit
+        varchar_71 image_digest
+        char_64 evidence_sha256
+        varchar_16 result
+        timestamp executed_at
+        timestamp expires_at
+        string more_columns "plus 3 more"
+    }
+
+    RECONCILIATION_CONTROL_RUN {
+        uuid id PK
+        date business_date
+        varchar_80 source_system
+        varchar_80 target_system
+        varchar_40 run_type
+        varchar_32 status
+        bigint expected_count
+        bigint actual_count
+        numeric_20 expected_amount
+        numeric_20 actual_amount
+        string more_columns "plus 6 more"
+    }
+
+    RECONCILIATION_EXCEPTION_CASE {
+        uuid id PK
+        uuid run_id FK
+        varchar_120 transaction_reference
+        varchar_32 participant_code
+        varchar_60 exception_type
+        varchar_20 severity
+        varchar_32 status
+        char_64 expected_payload_hash
+        char_64 actual_payload_hash
+        varchar_120 assigned_to
+        string more_columns "plus 4 more"
+    }
+
+    FRAUD_VELOCITY_RULE {
+        uuid id PK
+        varchar_80 rule_code
+        text description
+        varchar_40 subject_type
+        integer window_seconds
+        integer max_count
+        numeric_20 max_amount
+        varchar_3 currency
+        varchar_24 action
+        boolean enabled
+        string more_columns "plus 3 more"
+    }
+
+    BILLERS ||--o{ BILL_TOKENS : "biller_id"
+    BILL_TOKENS ||--o{ BILL_PAYMENTS : "token_id"
+    BILLERS ||--o{ BILL_PAYMENTS : "biller_id"
+    DISPUTES ||--o{ REFUND_TRANSACTIONS : "dispute_id"
+    FX_CORRIDORS ||--o{ FX_QUOTES : "corridor_id"
+    FX_QUOTES ||--o{ CROSSBORDER_TRANSFERS : "quote_id"
+    RECONCILIATION_CONTROL_RUN ||--o{ RECONCILIATION_EXCEPTION_CASE : "run_id"

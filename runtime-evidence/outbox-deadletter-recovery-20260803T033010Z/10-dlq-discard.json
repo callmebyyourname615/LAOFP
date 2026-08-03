@@ -1,0 +1,11 @@
+{
+  "status": 403,
+  "error": "FORBIDDEN",
+  "errorCode": "SEC-BG-001",
+  "message": "Valid break-glass authorization required",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/v1/operations/dead-letters/4/discard",
+    "method": "POST",
+    "httpCode": 403
+  }
+}

@@ -1,0 +1,1 @@
+{"category":"REQUEST","details":null,"error":"BAD_REQUEST","errorCode":"REQ-001","layer":"API","message":"Webhook host is not in the outbound allowlist","path":"/v1/webhooks","phase":"VALIDATE_REQUEST","requestId":"b0bc60a7-75d3-469b-8282-63e183be87d8","retryable":false,"status":400,"timestamp":"2026-08-03T03:40:29.487848888","traceId":null}

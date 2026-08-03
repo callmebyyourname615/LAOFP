@@ -1,0 +1,18 @@
+{
+  "evidence": "qr-pay-refund-lifecycle",
+  "runId": "EVD-QR-20260803T040131Z",
+  "generatedAt": "2026-08-03T04:01:32Z",
+  "baseUrl": "https://175.11.0.200",
+  "endpoints": [
+    "POST /v1/qr/generate/static",
+    "POST /v1/qr/generate/dynamic",
+    "POST /v1/qr/decode",
+    "POST /v1/qr/pay",
+    "POST /v1/qr/refund"
+  ],
+  "notes": [
+    "BANK_A/B UAT pool balances were sufficient before execution.",
+    "An old SETTLED QR transaction fixture is inserted only to exercise refund-window rejection.",
+    "Login tokens and passwords are not persisted in evidence files."
+  ]
+}

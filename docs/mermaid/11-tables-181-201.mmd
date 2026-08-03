@@ -1,0 +1,261 @@
+erDiagram
+    PUSH_PAYMENT_POLICY {
+        uuid id PK
+        varchar_32 channel
+        integer policy_version
+        varchar_24 status
+        bigint timeout_ms
+        integer retry_schedule_seconds
+        varchar_24 finality_mode
+        jsonb webhook_event_names
+        bigint idempotency_ttl_seconds
+        timestamptz valid_from
+        string more_columns "plus 4 more"
+    }
+
+    PUSH_PAYMENT_EXECUTION {
+        uuid id PK
+        varchar_32 channel
+        varchar_128 business_reference
+        varchar_128 idempotency_key
+        varchar_64 request_sha256
+        uuid policy_id FK
+        varchar_24 status
+        varchar_128 external_reference
+        integer attempt_count
+        timestamptz next_attempt_at
+        string more_columns "plus 4 more"
+    }
+
+    PUSH_PAYMENT_TRANSITION {
+        uuid id PK
+        uuid execution_id FK
+        varchar_24 from_status
+        varchar_24 to_status
+        varchar_64 reason_code
+        jsonb evidence
+        timestamptz occurred_at
+    }
+
+    REPORT_DELIVERY_SCHEDULE {
+        uuid id PK
+        varchar_64 code
+        varchar_64 report_type
+        varchar_64 recipient_participant_id
+        varchar_128 cron_expression
+        varchar_64 time_zone
+        varchar_24 delivery_channel
+        jsonb destination_config
+        integer retention_days
+        varchar_24 status
+        string more_columns "plus 5 more"
+    }
+
+    REPORT_ARTIFACT {
+        uuid id PK
+        varchar_64 report_type
+        varchar_64 recipient_participant_id
+        varchar_160 generation_key
+        varchar_128 content_type
+        varchar_255 file_name
+        bytea content
+        varchar_64 content_sha256
+        bigint size_bytes
+        timestamptz created_at
+        string more_columns "plus 1 more"
+    }
+
+    REPORT_DELIVERY_RUN {
+        uuid id PK
+        uuid schedule_id FK
+        timestamptz scheduled_for
+        uuid artifact_id FK
+        varchar_24 status
+        integer attempt_count
+        timestamptz next_attempt_at
+        varchar_64 last_error_code
+        timestamptz delivered_at
+        varchar_512 remote_reference
+        string more_columns "plus 2 more"
+    }
+
+    REPORT_DELIVERY_AUDIT {
+        uuid id PK
+        uuid run_id FK
+        varchar_64 event_type
+        jsonb event_payload
+        varchar_64 payload_sha256
+        timestamptz created_at
+    }
+
+    CROSS_BORDER_RAIL_MESSAGE {
+        uuid id PK
+        varchar_32 rail
+        varchar_16 direction
+        varchar_160 external_ref
+        varchar_160 internal_ref
+        varchar_64 message_type
+        jsonb request_payload
+        jsonb response_payload
+        varchar_64 request_sha256
+        varchar_64 response_sha256
+        string more_columns "plus 10 more"
+    }
+
+    CROSS_BORDER_RAIL_RECONCILIATION {
+        uuid id PK
+        varchar_32 rail
+        date statement_date
+        varchar_160 external_ref
+        varchar_160 internal_ref
+        numeric_19 external_amount
+        numeric_19 internal_amount
+        varchar_3 currency
+        varchar_24 status
+        varchar_500 discrepancy_reason
+        string more_columns "plus 2 more"
+    }
+
+    SMOS_ROLES {
+        bigint id PK
+        varchar_40 name
+        varchar_256 description
+    }
+
+    SMOS_PERMISSIONS {
+        bigint id PK
+        varchar_64 resource
+        varchar_32 action
+        varchar_256 description
+    }
+
+    SMOS_USERS {
+        bigint id PK
+        varchar_64 username
+        varchar_128 password_hash
+        varchar_160 email
+        varchar_160 full_name
+        varchar_16 status
+        text mfa_secret_ciphertext
+        integer failed_login_count
+        timestamptz last_login_at
+        timestamptz created_at
+        string more_columns "plus 2 more"
+    }
+
+    SMOS_USER_ROLES {
+        bigint user_id FK
+        bigint role_id FK
+        timestamptz granted_at
+        bigint granted_by FK
+    }
+
+    SMOS_ROLE_PERMISSIONS {
+        bigint role_id FK
+        bigint permission_id FK
+    }
+
+    SMOS_AUTH_SESSIONS {
+        uuid id PK
+        bigint user_id FK
+        varchar_24 session_type
+        varchar_64 token_hash
+        timestamptz expires_at
+        timestamptz revoked_at
+        timestamptz created_at
+    }
+
+    SMOS_MAKER_CHECKER_REQUESTS {
+        uuid id PK
+        varchar_64 request_type
+        jsonb payload_json
+        varchar_64 payload_sha256
+        bigint maker_id FK
+        varchar_16 status
+        timestamptz submitted_at
+        timestamptz decided_at
+        varchar_512 decision_notes
+        varchar_160 execution_reference
+    }
+
+    TRANSACTION_LOOKUP {
+        bigint id PK
+        varchar_80 transaction_ref
+        varchar_80 flow_ref
+        varchar_80 inquiry_ref
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        numeric_18 amount
+        varchar_8 currency
+        varchar_30 status
+        date business_date
+        string more_columns "plus 2 more"
+    }
+
+    INQUIRY_LOOKUP {
+        bigint id PK
+        varchar_80 inquiry_ref
+        varchar_80 flow_ref
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        varchar_34 creditor_account
+        varchar_30 status
+        date business_date
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    HOURLY_TRANSACTION_SUMMARY {
+        bigint id PK
+        date summary_date
+        smallint hour_of_day
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        varchar_8 currency
+        bigint total_count
+        bigint settled_count
+        bigint rejected_count
+        numeric_18 total_amount
+        string more_columns "plus 3 more"
+    }
+
+    DAILY_TRANSACTION_SUMMARY {
+        bigint id PK
+        date summary_date
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        varchar_8 currency
+        bigint total_count
+        bigint settled_count
+        bigint rejected_count
+        bigint reversed_count
+        numeric_18 total_amount
+        string more_columns "plus 4 more"
+    }
+
+    INQUIRY_DAILY_SUMMARY {
+        bigint id PK
+        date summary_date
+        varchar_32 source_bank
+        varchar_32 destination_bank
+        bigint total_count
+        bigint completed_count
+        bigint failed_count
+        bigint expired_count
+        bigint eligible_count
+        timestamp created_at
+        string more_columns "plus 1 more"
+    }
+
+    PUSH_PAYMENT_POLICY ||--o{ PUSH_PAYMENT_EXECUTION : "policy_id"
+    PUSH_PAYMENT_EXECUTION ||--o{ PUSH_PAYMENT_TRANSITION : "execution_id"
+    REPORT_DELIVERY_SCHEDULE ||--o{ REPORT_DELIVERY_RUN : "schedule_id"
+    REPORT_ARTIFACT ||--o{ REPORT_DELIVERY_RUN : "artifact_id"
+    REPORT_DELIVERY_RUN ||--o{ REPORT_DELIVERY_AUDIT : "run_id"
+    SMOS_USERS ||--o{ SMOS_USER_ROLES : "user_id"
+    SMOS_ROLES ||--o{ SMOS_USER_ROLES : "role_id"
+    SMOS_USERS ||--o{ SMOS_USER_ROLES : "granted_by"
+    SMOS_ROLES ||--o{ SMOS_ROLE_PERMISSIONS : "role_id"
+    SMOS_PERMISSIONS ||--o{ SMOS_ROLE_PERMISSIONS : "permission_id"
+    SMOS_USERS ||--o{ SMOS_AUTH_SESSIONS : "user_id"
+    SMOS_USERS ||--o{ SMOS_MAKER_CHECKER_REQUESTS : "maker_id"

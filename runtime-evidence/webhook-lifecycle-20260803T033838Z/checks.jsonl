@@ -1,0 +1,9 @@
+{"id":"login","status":"PASS","detail":"admin login HTTP 200; token redacted","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"register","status":"FAIL","detail":"HTTP 400, webhookId=, status=400","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"list","status":"FAIL","detail":"HTTP 200, found=0","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"detail","status":"FAIL","detail":"HTTP 404, detailId=, status=","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"test-ping","status":"FAIL","detail":"HTTP 401, status=401, event=","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"rotate-secret","status":"FAIL","detail":"HTTP 401, version=0, status=401","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"invalid-url-rejected","status":"PASS","detail":"HTTP 400; invalid/private non-HTTPS URL rejected","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"pause","status":"FAIL","detail":"HTTP 404","observedAt":"2026-08-03T03:38:39Z"}
+{"id":"detail-after-pause","status":"FAIL","detail":"HTTP 404, status=","observedAt":"2026-08-03T03:38:39Z"}

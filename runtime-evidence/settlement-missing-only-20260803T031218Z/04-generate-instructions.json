@@ -1,0 +1,8 @@
+{
+  "data": [],
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/settlement/cycles/SC-20261002-C1/instructions/generate",
+    "method": "POST",
+    "httpCode": 200
+  }
+}

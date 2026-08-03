@@ -1,0 +1,7 @@
+{
+  "control": "SECONDARY_BACKUP_RESTORE_FAILOVER",
+  "environment": "UAT",
+  "status": "PASS",
+  "exitCode": 0,
+  "mode": "Primary base-backup objects removed inside isolated fixture"
+}

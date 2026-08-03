@@ -1,0 +1,79 @@
+erDiagram
+    SMOS_USERS {
+        bigint id PK
+        varchar username UK
+        varchar password_hash
+        varchar email UK
+        varchar full_name
+        varchar status
+        bigint participant_id FK
+        boolean participant_admin
+        int failed_login_count
+        timestamp last_login_at
+        bigint version
+    }
+
+    SMOS_ROLES {
+        bigint id PK
+        varchar name UK
+        varchar description
+    }
+
+    SMOS_PERMISSIONS {
+        bigint id PK
+        varchar resource
+        varchar action
+        varchar description
+    }
+
+    SMOS_USER_ROLES {
+        bigint user_id FK
+        bigint role_id FK
+        timestamp granted_at
+        bigint granted_by FK
+    }
+
+    SMOS_ROLE_PERMISSIONS {
+        bigint role_id FK
+        bigint permission_id FK
+    }
+
+    SMOS_AUTH_SESSIONS {
+        uuid id PK
+        bigint user_id FK
+        varchar session_type
+        varchar token_hash UK
+        uuid rotated_from_id FK
+        varchar client_fingerprint_hash
+        timestamp expires_at
+        timestamp revoked_at
+    }
+
+    SMOS_MAKER_CHECKER_REQUESTS {
+        uuid id PK
+        varchar request_type
+        jsonb payload_json
+        varchar payload_sha256
+        bigint maker_id FK
+        bigint checker_id FK
+        varchar status
+        timestamp submitted_at
+        timestamp decided_at
+        varchar execution_reference
+    }
+
+    PARTICIPANTS {
+        bigint id PK
+        varchar bank_code UK
+    }
+
+    PARTICIPANTS ||--o{ SMOS_USERS : "participant_id"
+    SMOS_USERS ||--o{ SMOS_USER_ROLES : "user_id"
+    SMOS_ROLES ||--o{ SMOS_USER_ROLES : "role_id"
+    SMOS_USERS ||--o{ SMOS_USER_ROLES : "granted_by"
+    SMOS_ROLES ||--o{ SMOS_ROLE_PERMISSIONS : "role_id"
+    SMOS_PERMISSIONS ||--o{ SMOS_ROLE_PERMISSIONS : "permission_id"
+    SMOS_USERS ||--o{ SMOS_AUTH_SESSIONS : "user_id"
+    SMOS_AUTH_SESSIONS ||--o| SMOS_AUTH_SESSIONS : "rotated_from_id"
+    SMOS_USERS ||--o{ SMOS_MAKER_CHECKER_REQUESTS : "maker_id"
+    SMOS_USERS ||--o{ SMOS_MAKER_CHECKER_REQUESTS : "checker_id"

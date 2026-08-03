@@ -1,0 +1,10 @@
+Bucket created successfully `primary/switching-backups`.
+Bucket created successfully `secondary/switching-backups-dr`.
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+Backup identity mismatch rejection: PASS
+backup successfully verified
+Secondary offsite replication: PASS

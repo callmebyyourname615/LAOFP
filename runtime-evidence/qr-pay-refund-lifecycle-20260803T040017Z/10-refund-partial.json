@@ -1,0 +1,15 @@
+{
+  "scenario": "Refund QR payment partial amount",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/refund",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "refundTxnId": "QRR-B984B170FFAE-13637716891454077",
+    "originalTxnId": "QRP-B984B170FFAE-13637716739986360",
+    "amount": 1000.0000,
+    "status": "COMPLETED",
+    "initiatedAt": "2026-08-03T04:00:18.699085308"
+  }
+}

@@ -1,0 +1,14 @@
+{"name":"SMOS admin login","status":"PASS","expected":"HTTP 200 and token present","actual":"HTTP 200","details":"https://175.11.0.200/api/auth/login"}
+{"name":"DB fixtures inserted","status":"PASS","expected":"risk rule, fraud score, tariff, fee exception","actual":"insert ok","details":"switching_db"}
+{"name":"Risk rules list","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/risk/rules"}
+{"name":"Risk rule disable","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/risk/rules/892fe271-c365-4ee0-9e64-63ac375b3d4f/disable"}
+{"name":"Risk rule enable","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/risk/rules/892fe271-c365-4ee0-9e64-63ac375b3d4f/enable"}
+{"name":"Risk score distribution","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/risk/scores/distribution"}
+{"name":"Risk alerts critical block list","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/risk/alerts?severity=CRITICAL&status=BLOCK&limit=20"}
+{"name":"Risk score by transaction","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/v1/risk/scores/EVD-RISK-FEES-20260803T040407Z-TXN-HIGH"}
+{"name":"Tariff operations list","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/operations/tariffs"}
+{"name":"Fee assess active tariff","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/operations/tariffs/assess"}
+{"name":"Fee decisions portal list","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/fees/decisions?participant=BANK_A&messageType=QR&limit=20"}
+{"name":"Fee exceptions portal list","status":"PASS","expected":"HTTP 200","actual":"HTTP 200","details":"https://175.11.0.200/api/fees/exceptions?status=PENDING&limit=20"}
+{"name":"Unauthenticated risk rules rejected","status":"PASS","expected":"HTTP 401","actual":"HTTP 401","details":"https://175.11.0.200/api/risk/rules"}
+{"name":"Unauthenticated fee decisions rejected","status":"PASS","expected":"HTTP 401","actual":"HTTP 401","details":"https://175.11.0.200/api/fees/decisions"}

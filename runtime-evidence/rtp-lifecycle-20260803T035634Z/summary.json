@@ -1,0 +1,9 @@
+{
+  "evidenceDir": "runtime-evidence/rtp-lifecycle-20260803T035634Z",
+  "total": 16,
+  "pass": 15,
+  "fail": 1,
+  "warn": 0,
+  "skipped": 0,
+  "verdict": "FAIL"
+}

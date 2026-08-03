@@ -1,0 +1,12 @@
+{
+  "scenario": "Risk rule enable",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/api/risk/rules/892fe271-c365-4ee0-9e64-63ac375b3d4f/enable",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "ruleId": "892fe271-c365-4ee0-9e64-63ac375b3d4f",
+    "enabled": true
+  }
+}

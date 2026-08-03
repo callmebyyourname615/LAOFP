@@ -1,0 +1,12 @@
+{
+  "status": 401,
+  "error": "UNAUTHORIZED",
+  "errorCode": "SEC-001",
+  "message": "Missing or invalid authentication credential",
+  "path": "/api/operations/settlement/cycles/MOCK-CYCLE-REF/batch",
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/settlement/cycles/MOCK-CYCLE-REF/batch",
+    "method": "POST",
+    "httpCode": 401
+  }
+}

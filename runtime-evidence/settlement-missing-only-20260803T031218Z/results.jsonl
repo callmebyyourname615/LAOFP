@@ -1,0 +1,7 @@
+{"id":"auth","status":"PASS","detail":"authenticated; access token redacted","file":"00-login.json","observedAt":"2026-08-03T03:12:18Z"}
+{"id":"open-cycle","status":"PASS","detail":"cycleRef=SC-20261002-C1","file":"01-open-cycle.json","observedAt":"2026-08-03T03:12:20Z"}
+{"id":"batch","status":"PASS","detail":"mock batch endpoint exercised","file":"02-batch.json","observedAt":"2026-08-03T03:12:20Z"}
+{"id":"close","status":"PASS","detail":"cycle closed","file":"03-close.json","observedAt":"2026-08-03T03:12:20Z"}
+{"id":"generate-instructions","status":"PASS","detail":"instructionRef=none","file":"04-generate-instructions.json","observedAt":"2026-08-03T03:12:20Z"}
+{"id":"settle-guard","status":"PASS","detail":"expected no-real-RTGS guard http=409","file":"05-settle-guard.json","observedAt":"2026-08-03T03:12:20Z"}
+{"id":"instruction-mutations","status":"SKIPPED","detail":"no instruction generated in no-real-transfer mock cycle","file":"","observedAt":"2026-08-03T03:12:20Z"}

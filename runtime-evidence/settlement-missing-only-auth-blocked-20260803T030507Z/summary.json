@@ -1,0 +1,24 @@
+{
+  "evidenceDir": "runtime-evidence/settlement-missing-only-auth-blocked-20260803T030507Z",
+  "scenario": "settlement-missing-endpoints-auth-blocked",
+  "verdict": "BLOCKED_NEEDS_SMOS_CREDENTIAL",
+  "total": 2,
+  "pass": 2,
+  "fail": 0,
+  "checks": [
+    {
+      "id": "open-cycle-auth-guard",
+      "status": "PASS",
+      "detail": "expected auth guard without OPS/ADMIN token; http=401",
+      "file": "01-open-cycle-noauth.json",
+      "observedAt": "2026-08-03T03:05:10Z"
+    },
+    {
+      "id": "batch-auth-guard",
+      "status": "PASS",
+      "detail": "expected auth guard without OPS/ADMIN token; http=401",
+      "file": "02-batch-noauth.json",
+      "observedAt": "2026-08-03T03:05:10Z"
+    }
+  ]
+}

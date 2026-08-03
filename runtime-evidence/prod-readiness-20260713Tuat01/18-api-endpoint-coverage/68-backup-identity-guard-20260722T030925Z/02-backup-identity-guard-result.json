@@ -1,0 +1,6 @@
+{
+  "control": "BACKUP_IDENTITY_MATCH_GUARD",
+  "environment": "UAT",
+  "status": "FAIL",
+  "exitCode": 1
+}

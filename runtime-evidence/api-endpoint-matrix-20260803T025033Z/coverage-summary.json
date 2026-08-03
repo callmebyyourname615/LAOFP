@@ -1,0 +1,33 @@
+{
+  "coveragePercent": 80.0,
+  "generatedAt": "2026-08-03T02:50:33Z",
+  "inventory": "API_ENDPOINTS.txt",
+  "matrixDir": "runtime-evidence/api-endpoint-matrix-20260803T025033Z",
+  "missingByDomain": {
+    "admin": 2,
+    "fees": 2,
+    "iso20022": 1,
+    "operations": 11,
+    "outbox-events": 1,
+    "risk": 4,
+    "v1-aml": 1,
+    "v1-crossborder": 2,
+    "v1-operations": 4,
+    "v1-operator": 5,
+    "v1-participants": 1,
+    "v1-qr": 2,
+    "v1-reports": 1,
+    "v1-rtp": 6,
+    "v1-settlement": 2,
+    "v1-webhooks": 5
+  },
+  "missingByRisk": {
+    "high": 17,
+    "read": 11,
+    "standard": 22
+  },
+  "notTested": 50,
+  "pass": 200,
+  "registeredEvidenceRefsMissingOnDisk": 56,
+  "totalEndpoints": 250
+}

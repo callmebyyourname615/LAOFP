@@ -1,0 +1,9 @@
+{
+  "_evidence": {
+    "endpoint": "https://175.11.0.200/api/operations/settlement/instructions/SC-20260717-C4-SI001/rtgs-file",
+    "method": "GET",
+    "httpCode": 200,
+    "contentType": "application/xml",
+    "bodySha256": "2e13cfab66be4d8f7dd09c0e3547dfe6dbc2a9ad3c86401ae6f1ac8b26b69cd9"
+  }
+}

@@ -21,7 +21,8 @@ class V83CleanInstallCertificationIntegrationTest {
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.9-alpine")
             .withDatabaseName("switching_clean_v83")
             .withUsername("switching_clean_v83")
-            .withPassword("switching_clean_v83");
+            .withPassword("switching_clean_v83")
+            .withInitScript("postgres-test-init.sql");
 
     @Test
     void cleanDatabaseMigratesAndValidatesAtVersion83() throws Exception {
@@ -37,14 +38,14 @@ class V83CleanInstallCertificationIntegrationTest {
         flyway.validate();
 
         assertThat(result.success).isTrue();
-        assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("106");
+        assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("107");
         assertThat(flyway.info().pending()).isEmpty();
 
         try (Connection connection = DriverManager.getConnection(
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())) {
             assertThat(queryLong(connection,
                     "SELECT count(*) FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
-                    .isEqualTo(99L);
+                    .isEqualTo(100L);
             assertThat(queryLong(connection,
                     "SELECT count(*) FROM flyway_schema_history WHERE NOT success"))
                     .isZero();

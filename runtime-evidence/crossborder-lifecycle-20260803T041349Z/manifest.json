@@ -1,0 +1,19 @@
+{
+  "evidence": "crossborder-lifecycle",
+  "runId": "EVD-CB-20260803T041349Z",
+  "generatedAt": "2026-08-03T04:13:51Z",
+  "baseUrl": "https://175.11.0.200",
+  "endpoints": [
+    "GET /v1/crossborder/corridors",
+    "GET /v1/crossborder/fx-rates",
+    "POST /v1/crossborder/quote",
+    "POST /v1/crossborder/initiate",
+    "POST /v1/crossborder/inbound/{rail}",
+    "POST /v1/operator/crossborder/reconciliation/{rail}/{date}"
+  ],
+  "notes": [
+    "UAT has no real partner rail endpoint; initiate evidence accepts partner dependency guard.",
+    "Reconciliation positive path uses evidence-prefixed completed-transfer and outbound-rail fixture.",
+    "Login tokens and passwords are not persisted."
+  ]
+}

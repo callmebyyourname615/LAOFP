@@ -1,0 +1,22 @@
+{
+  "evidence": "risk-fees-portal",
+  "runId": "EVD-RISK-FEES-20260803T040407Z",
+  "generatedAt": "2026-08-03T04:08:50Z",
+  "baseUrl": "https://175.11.0.200",
+  "endpoints": [
+    "GET /api/risk/rules",
+    "POST /api/risk/rules/{id}/disable",
+    "POST /api/risk/rules/{id}/enable",
+    "GET /api/risk/scores/distribution",
+    "GET /api/risk/alerts",
+    "GET /v1/risk/scores/{txnId}",
+    "GET /api/operations/tariffs",
+    "POST /api/operations/tariffs/assess",
+    "GET /api/fees/decisions",
+    "GET /api/fees/exceptions"
+  ],
+  "notes": [
+    "DB fixtures use evidence prefix only.",
+    "Login tokens and passwords are not persisted in evidence files."
+  ]
+}

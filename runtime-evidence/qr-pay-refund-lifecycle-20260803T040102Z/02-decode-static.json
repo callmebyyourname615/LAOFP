@@ -1,0 +1,18 @@
+{
+  "scenario": "Decode generated static QR",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/decode",
+  "expectedHttpStatus": 200,
+  "actualHttpStatus": 200,
+  "passed": true,
+  "response": {
+    "qrId": "3e4439da-379b-49db-b950-0de4a9c5cd79",
+    "merchantId": "EVD-QR-20260803T040102Z-MERCH-STATIC",
+    "amount": null,
+    "currency": "LAK",
+    "qrType": "STATIC",
+    "valid": true,
+    "expiryStatus": "NO_EXPIRY",
+    "expiresAt": null
+  }
+}

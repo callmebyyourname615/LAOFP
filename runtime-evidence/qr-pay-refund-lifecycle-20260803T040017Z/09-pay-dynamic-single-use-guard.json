@@ -1,0 +1,18 @@
+{
+  "scenario": "Dynamic QR cannot be paid twice",
+  "method": "POST",
+  "endpoint": "https://175.11.0.200/v1/qr/pay",
+  "expectedHttpStatus": 409,
+  "actualHttpStatus": 200,
+  "passed": false,
+  "response": {
+    "txnId": "QRP-B984B170FFAE-13637716739986360",
+    "qrId": "b984b170-ffae-4c09-9d0c-9393f3eb6df0",
+    "issuingPspId": "BANK_A",
+    "acquiringPspId": "BANK_B",
+    "amount": 2500.0000,
+    "currency": "LAK",
+    "status": "COMPLETED",
+    "completedAt": "2026-08-03T04:00:18.547607552"
+  }
+}

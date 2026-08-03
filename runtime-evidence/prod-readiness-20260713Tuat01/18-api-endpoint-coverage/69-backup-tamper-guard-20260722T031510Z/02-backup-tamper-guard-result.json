@@ -1,0 +1,6 @@
+{
+  "control": "BACKUP_ARCHIVE_TAMPER_GUARD",
+  "environment": "UAT",
+  "status": "PASS",
+  "exitCode": 0
+}

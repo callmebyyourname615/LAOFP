@@ -1,0 +1,1 @@
+{"status":401,"error":"UNAUTHORIZED","errorCode":"SEC-001","message":"Missing or invalid authentication credential","path":"/v1/rtp/requests/7265396c-969b-4f1b-8d01-ed1c51ea94b0"}

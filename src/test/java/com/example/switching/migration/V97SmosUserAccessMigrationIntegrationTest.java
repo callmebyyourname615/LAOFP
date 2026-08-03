@@ -17,13 +17,13 @@ class V97SmosUserAccessMigrationIntegrationTest extends AbstractIntegrationTest 
     void cleanInstallContainsV97SmosSchemaAndSeededPermissionMatrix() {
         Integer migrationCount = jdbc.queryForObject(
                 "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class);
-        // version is VARCHAR — MAX does lex compare ("97" > "106"); use installed_rank.
+        // version is VARCHAR — MAX does lex compare ("97" > "107"); use installed_rank.
         String currentVersion = jdbc.queryForObject(
                 "SELECT version FROM flyway_schema_history WHERE success "
                         + "ORDER BY installed_rank DESC LIMIT 1", String.class);
 
-        assertThat(migrationCount).isEqualTo(99);
-        assertThat(currentVersion).isEqualTo("106");
+        assertThat(migrationCount).isEqualTo(100);
+        assertThat(currentVersion).isEqualTo("107");
 
         List<String> roles = jdbc.queryForList(
                 "SELECT name FROM smos_roles ORDER BY name", String.class);
