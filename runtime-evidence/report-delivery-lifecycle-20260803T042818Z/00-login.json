@@ -1,0 +1,36 @@
+{
+  "mfaRequired": false,
+  "mfaToken": null,
+  "accessToken": "<redacted>",
+  "refreshToken": "<redacted>",
+  "expiresIn": 3600,
+  "roles": [
+    "SYSTEM_ADMIN"
+  ],
+  "permissions": [
+    "maker_checker.submit",
+    "dashboard.settlement",
+    "dashboard.transaction",
+    "risk.view",
+    "dashboard.risk",
+    "security.reset_password",
+    "settlement.view",
+    "participant.manage",
+    "risk.investigate",
+    "dispute.resolve",
+    "settlement.approve",
+    "maker_checker.approve",
+    "dashboard.participant",
+    "dashboard.infrastructure",
+    "session.revoke",
+    "session.view",
+    "participant.view",
+    "dispute.view",
+    "dashboard.crossborder",
+    "user.view",
+    "audit.read",
+    "security.reset_mfa",
+    "dashboard.dr",
+    "user.manage"
+  ]
+}

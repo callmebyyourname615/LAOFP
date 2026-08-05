@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-08-03T04:34:12Z",
+  "request": {
+    "method": "GET",
+    "endpoint": "/v1/operator/report-delivery-history?status=DELIVERED&limit=100"
+  },
+  "response": {
+    "httpStatus": 200,
+    "body": {
+      "totalItems": 1,
+      "returnedItems": 1,
+      "items": [
+        {
+          "recipient": "BANK_A",
+          "deliveryChannel": "EMAIL_LINK",
+          "date": "2026-08-03T04:34:12.623682Z",
+          "reportName": "CAMT054",
+          "status": "DELIVERED",
+          "format": "",
+          "runId": "4e1a9161-2520-4a3f-a6c7-062a9e207d36",
+          "errorMessage": "",
+          "artifactId": "228de9d3-fd49-4f26-b15b-47999d219b15"
+        }
+      ]
+    }
+  }
+}

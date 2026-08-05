@@ -1,0 +1,54 @@
+{
+  "name": "SMOS admin login",
+  "verdict": "FAIL",
+  "detail": "HTTP 401",
+  "file": "00-login.json"
+}
+{
+  "name": "create EMAIL_LINK schedule",
+  "verdict": "FAIL",
+  "detail": "HTTP 401",
+  "file": "01-create-schedule.json"
+}
+{
+  "name": "list schedule contains created",
+  "verdict": "FAIL",
+  "detail": "HTTP 401 created id missing",
+  "file": "02-list-schedules.json"
+}
+{
+  "name": "schedule unauth guard",
+  "verdict": "PASS",
+  "detail": "HTTP 401 blocked",
+  "file": "03-schedules-unauth-guard.json"
+}
+{
+  "name": "delivery history reachable",
+  "verdict": "FAIL",
+  "detail": "HTTP 401",
+  "file": "04-delivery-history.json"
+}
+{
+  "name": "history unauth guard",
+  "verdict": "PASS",
+  "detail": "HTTP 401 blocked",
+  "file": "05-history-unauth-guard.json"
+}
+{
+  "name": "download valid signed link",
+  "verdict": "SKIP",
+  "detail": "no delivered artifact",
+  "file": "06-download-artifact.json"
+}
+{
+  "name": "download invalid token guard",
+  "verdict": "SKIP",
+  "detail": "no delivered artifact",
+  "file": "07-download-invalid-token-guard.json"
+}
+{
+  "name": "evidence secret scan",
+  "verdict": "PASS",
+  "detail": "no raw secrets/tokens found",
+  "file": "09-secret-scan.log"
+}

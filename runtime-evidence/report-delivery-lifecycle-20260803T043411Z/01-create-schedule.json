@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-08-03T04:34:12Z",
+  "request": {
+    "method": "POST",
+    "endpoint": "/v1/operator/report-delivery-schedules"
+  },
+  "response": {
+    "httpStatus": 201,
+    "body": {
+      "nextRunAt": "2026-08-03T11:35:00+07:00",
+      "status": "ACTIVE",
+      "id": "6ada2377-cbab-42c4-a14c-3469354e0607"
+    }
+  }
+}

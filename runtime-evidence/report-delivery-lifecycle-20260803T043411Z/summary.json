@@ -1,0 +1,87 @@
+{
+  "flow": "Report delivery schedules/history/download lifecycle",
+  "generatedAt": "2026-08-03T04:35:02Z",
+  "evidenceDir": "/Users/macbookpro/Desktop/Switching/runtime-evidence/report-delivery-lifecycle-20260803T043411Z",
+  "summary": {
+    "total": 12,
+    "pass": 12,
+    "fail": 0,
+    "warn": 0,
+    "skipped": 0,
+    "verdict": "PASS"
+  },
+  "results": [
+    {
+      "name": "SMOS admin login",
+      "verdict": "PASS",
+      "detail": "HTTP 200 token issued",
+      "file": "00-login.json"
+    },
+    {
+      "name": "create EMAIL_LINK schedule",
+      "verdict": "PASS",
+      "detail": "HTTP 201 id=6ada2377-cbab-42c4-a14c-3469354e0607",
+      "file": "01-create-schedule.json"
+    },
+    {
+      "name": "list schedule contains created",
+      "verdict": "PASS",
+      "detail": "HTTP 200 created id present",
+      "file": "02-list-schedules.json"
+    },
+    {
+      "name": "schedule unauth guard",
+      "verdict": "PASS",
+      "detail": "HTTP 401 blocked",
+      "file": "03-schedules-unauth-guard.json"
+    },
+    {
+      "name": "DB fixture delivered run",
+      "verdict": "PASS",
+      "detail": "artifact/run inserted for endpoint evidence",
+      "file": "04-db-fixture-delivered-run.log"
+    },
+    {
+      "name": "delivery history delivered",
+      "verdict": "PASS",
+      "detail": "HTTP 200 fixture run visible",
+      "file": "05-delivery-history.json"
+    },
+    {
+      "name": "history unauth guard",
+      "verdict": "PASS",
+      "detail": "HTTP 401 blocked",
+      "file": "06-history-unauth-guard.json"
+    },
+    {
+      "name": "download valid signed link",
+      "verdict": "PASS",
+      "detail": "HTTP 200 artifact saved",
+      "file": "07-download-artifact.json"
+    },
+    {
+      "name": "download invalid token guard",
+      "verdict": "PASS",
+      "detail": "HTTP 403 rejected",
+      "file": "08-download-invalid-token-guard.json"
+    },
+    {
+      "name": "suspend schedule",
+      "verdict": "PASS",
+      "detail": "HTTP 200 SUSPENDED",
+      "file": "09-suspend-schedule.json"
+    },
+    {
+      "name": "DB final state captured",
+      "verdict": "PASS",
+      "detail": "schedule/run/artifact snapshot",
+      "file": "10-db-final-state.log"
+    },
+    {
+      "name": "evidence secret scan",
+      "verdict": "PASS",
+      "detail": "no raw secrets/tokens found",
+      "file": "11-secret-scan.log"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-08-03T04:34:12Z",
+  "request": {
+    "method": "PATCH",
+    "endpoint": "/v1/operator/report-delivery-schedules/6ada2377-cbab-42c4-a14c-3469354e0607/suspend"
+  },
+  "response": {
+    "httpStatus": 200,
+    "body": {
+      "status": "SUSPENDED",
+      "id": "6ada2377-cbab-42c4-a14c-3469354e0607"
+    }
+  }
+}

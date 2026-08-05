@@ -1,0 +1,54 @@
+{
+  "name": "create EMAIL_LINK schedule",
+  "verdict": "PASS",
+  "detail": "HTTP 201 id=84f19007-82f3-40fa-b8ce-089d65dd9b89",
+  "file": "01-create-schedule.json"
+}
+{
+  "name": "SMOS admin login",
+  "verdict": "PASS",
+  "detail": "HTTP 200 token issued",
+  "file": "00-login.json"
+}
+{
+  "name": "list schedule contains created",
+  "verdict": "PASS",
+  "detail": "HTTP 200 created id present",
+  "file": "02-list-schedules.json"
+}
+{
+  "name": "schedule unauth guard",
+  "verdict": "PASS",
+  "detail": "HTTP 401 blocked",
+  "file": "03-schedules-unauth-guard.json"
+}
+{
+  "name": "delivery history delivered",
+  "verdict": "FAIL",
+  "detail": "HTTP 200 no artifact for schedule",
+  "file": "04-delivery-history.json"
+}
+{
+  "name": "history unauth guard",
+  "verdict": "PASS",
+  "detail": "HTTP 401 blocked",
+  "file": "05-history-unauth-guard.json"
+}
+{
+  "name": "suspend schedule",
+  "verdict": "FAIL",
+  "detail": "HTTP 400",
+  "file": "08-suspend-schedule.json"
+}
+{
+  "name": "DB final state captured",
+  "verdict": "PASS",
+  "detail": "schedule/run/artifact snapshot",
+  "file": "09-db-final-state.log"
+}
+{
+  "name": "evidence secret scan",
+  "verdict": "FAIL",
+  "detail": "raw secret/token pattern found",
+  "file": "10-secret-scan.log"
+}

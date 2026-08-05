@@ -1,0 +1,6 @@
+{
+  "name": "SMOS admin login",
+  "verdict": "FAIL",
+  "detail": "HTTP 401",
+  "file": "00-login.json"
+}

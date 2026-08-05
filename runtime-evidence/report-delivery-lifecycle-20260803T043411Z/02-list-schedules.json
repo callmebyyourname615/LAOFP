@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-08-03T04:34:12Z",
+  "request": {
+    "method": "GET",
+    "endpoint": "/v1/operator/report-delivery-schedules"
+  },
+  "response": {
+    "httpStatus": 200,
+    "body": [
+      {
+        "id": "84f19007-82f3-40fa-b8ce-089d65dd9b89",
+        "code": "EVD-RPT-20260803T042818Z",
+        "report_type": "CAMT054",
+        "recipient_participant_id": "BANK_A",
+        "cron_expression": "*/1 * * * * *",
+        "time_zone": "Asia/Vientiane",
+        "delivery_channel": "EMAIL_LINK",
+        "status": "SUSPENDED",
+        "next_run_at": "2026-08-03T04:28:20.000Z"
+      },
+      {
+        "id": "6ada2377-cbab-42c4-a14c-3469354e0607",
+        "code": "EVD-RPT-20260803T043411Z",
+        "report_type": "CAMT054",
+        "recipient_participant_id": "BANK_A",
+        "cron_expression": "0 0/5 * * * *",
+        "time_zone": "Asia/Vientiane",
+        "delivery_channel": "EMAIL_LINK",
+        "status": "ACTIVE",
+        "next_run_at": "2026-08-03T04:35:00.000Z"
+      }
+    ]
+  }
+}

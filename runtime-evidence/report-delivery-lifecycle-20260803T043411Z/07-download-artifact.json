@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-08-03T04:35:02Z",
+  "request": {
+    "method": "GET",
+    "endpoint": "/v1/reports/download/228de9d3-fd49-4f26-b15b-47999d219b15?expires=1785735301&token=<redacted>"
+  },
+  "response": {
+    "httpStatus": 200,
+    "contentType": "text/plain",
+    "sizeBytes": 118,
+    "sha256": "7307b9fca5ccb5a69b59a24033c1744ee54381bc9cb5eb8af55d710a46bdc7a4"
+  }
+}

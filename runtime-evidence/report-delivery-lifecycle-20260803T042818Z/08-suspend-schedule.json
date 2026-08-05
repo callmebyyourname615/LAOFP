@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-08-03T04:32:38Z",
+  "request": {
+    "method": "PATCH",
+    "endpoint": "/v1/operator/report-delivery-schedules/84f19007-82f3-40fa-b8ce-089d65dd9b89/suspend"
+  },
+  "response": {
+    "httpStatus": 400,
+    "body": {
+      "category": "REQUEST",
+      "details": null,
+      "error": "BAD_REQUEST",
+      "errorCode": "REQ-001",
+      "layer": "API",
+      "message": "Active report schedule not found",
+      "path": "/v1/operator/report-delivery-schedules/84f19007-82f3-40fa-b8ce-089d65dd9b89/suspend",
+      "phase": "VALIDATE_REQUEST",
+      "requestId": "f5a8d987-7455-4355-9c39-b5668836441e",
+      "retryable": false,
+      "status": 400,
+      "timestamp": "2026-08-03T04:32:38.499859908",
+      "traceId": null
+    }
+  }
+}

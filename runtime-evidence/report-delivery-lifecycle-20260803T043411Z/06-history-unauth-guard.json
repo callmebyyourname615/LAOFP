@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-08-03T04:34:12Z",
+  "request": {
+    "method": "GET",
+    "endpoint": "/v1/operator/report-delivery-history?limit=1"
+  },
+  "response": {
+    "httpStatus": 401,
+    "body": {
+      "status": 401,
+      "error": "UNAUTHORIZED",
+      "errorCode": "SEC-001",
+      "message": "Missing or invalid authentication credential",
+      "path": "/v1/operator/report-delivery-history"
+    }
+  }
+}

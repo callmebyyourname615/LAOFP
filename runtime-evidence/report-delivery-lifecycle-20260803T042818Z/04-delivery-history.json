@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-08-03T04:32:38Z",
+  "request": {
+    "method": "GET",
+    "endpoint": "/v1/operator/report-delivery-history?status=DELIVERED&limit=100"
+  },
+  "response": {
+    "httpStatus": 200,
+    "body": {
+      "totalItems": 0,
+      "returnedItems": 0,
+      "items": []
+    }
+  }
+}

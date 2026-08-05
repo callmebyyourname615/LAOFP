@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-08-03T04:34:12Z",
+  "request": {
+    "method": "GET",
+    "endpoint": "/v1/reports/download/228de9d3-fd49-4f26-b15b-47999d219b15?expires=1785735252&token=<bad>"
+  },
+  "response": {
+    "httpStatus": 403,
+    "body": {
+      "category": "REQUEST",
+      "details": null,
+      "error": "FORBIDDEN",
+      "errorCode": "LFP-2004",
+      "layer": "API",
+      "message": "Access denied",
+      "path": "/v1/reports/download/228de9d3-fd49-4f26-b15b-47999d219b15",
+      "phase": "RECEIVE_REQUEST",
+      "requestId": "7fac3eba-2adb-4cab-b3be-8561d3f529f9",
+      "retryable": false,
+      "status": 403,
+      "timestamp": "2026-08-03T04:34:12.881025696",
+      "traceId": null
+    }
+  }
+}
