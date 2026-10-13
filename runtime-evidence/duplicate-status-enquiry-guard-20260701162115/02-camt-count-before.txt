@@ -1,5 +1,0 @@
- message_type | direction | count 
---------------+-----------+-------
- CAMT_005     | OUTBOUND  |     1
-(1 row)
-

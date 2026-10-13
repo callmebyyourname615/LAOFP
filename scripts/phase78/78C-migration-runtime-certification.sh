@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-source "$(dirname "$0")/common.sh"; cd "$PHASE78_ROOT"; phase_setup 78C 'Migration V1-V106 runtime certification'
+source "$(dirname "$0")/common.sh"; cd "$PHASE78_ROOT"; phase_setup 78C 'Migration V1-V117 runtime certification'
 set +e; python3 scripts/phase78/verify_source_convergence.py --root . --output "$PHASE78_DIR/migration-inventory.json" >/dev/null 2>&1; rc=$?; set -e
 if ((rc!=0)); then phase_finalize BLOCKED 2 'migration/source convergence contract incomplete'; exit 0; fi
 if phase_preflight || phase_repo; then phase_finalize PREPARED 0 'clean-install and upgrade hooks ready'; exit 0; fi

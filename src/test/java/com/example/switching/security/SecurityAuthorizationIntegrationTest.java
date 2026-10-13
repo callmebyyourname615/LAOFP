@@ -1,5 +1,8 @@
 package com.example.switching.security;
 
+import static com.example.switching.TestDemoBanks.ADMIN_KEY;
+import static com.example.switching.TestDemoBanks.BANK_A_KEY;
+import static com.example.switching.TestDemoBanks.OPS_KEY;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,9 +23,7 @@ import com.example.switching.AbstractIntegrationTest;
 @TestPropertySource(properties = "switching.security.api-key.enabled=true")
 class SecurityAuthorizationIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String ADMIN_KEY = "sk-admin-switching-2026";
-    private static final String OPS_KEY = "sk-ops-switching-2026";
-    private static final String BANK_KEY = "sk-bank-a-switching-2026";
+    private static final String BANK_KEY = BANK_A_KEY;
 
     @Autowired
     private WebApplicationContext webApplicationContext;

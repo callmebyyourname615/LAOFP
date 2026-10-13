@@ -17,6 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 class ParticipantTokenBucketServiceTest {
 
+    private static final String TEST_IDENTITY = "participant:TEST_PARTICIPANT";
+    private static final String TEST_PARTICIPANT = "TEST_PARTICIPANT";
+
     @TempDir
     Path tempDir;
 
@@ -32,7 +35,7 @@ class ParticipantTokenBucketServiceTest {
                 results.add(executor.submit(() -> {
                     ready.countDown();
                     start.await();
-                    return buckets.consume("participant:BANK_A").allowed();
+                    return buckets.consume(TEST_IDENTITY).allowed();
                 }));
             }
             ready.await();
@@ -57,14 +60,14 @@ class ParticipantTokenBucketServiceTest {
         policyService.initialize();
         ParticipantTokenBucketService buckets = new ParticipantTokenBucketService(policyService, 100);
 
-        assertThat(buckets.consume("participant:BANK_A").allowed()).isTrue();
-        assertThat(buckets.consume("participant:BANK_A").allowed()).isFalse();
+        assertThat(buckets.consume(TEST_IDENTITY).allowed()).isTrue();
+        assertThat(buckets.consume(TEST_IDENTITY).allowed()).isFalse();
 
         Files.writeString(policy, policyJson("v2", 2));
         assertThat(policyService.reloadNow()).isTrue();
-        assertThat(buckets.consume("participant:BANK_A").allowed()).isTrue();
-        assertThat(buckets.consume("participant:BANK_A").allowed()).isTrue();
-        assertThat(buckets.consume("participant:BANK_A").allowed()).isFalse();
+        assertThat(buckets.consume(TEST_IDENTITY).allowed()).isTrue();
+        assertThat(buckets.consume(TEST_IDENTITY).allowed()).isTrue();
+        assertThat(buckets.consume(TEST_IDENTITY).allowed()).isFalse();
     }
 
     @Test
@@ -98,8 +101,8 @@ class ParticipantTokenBucketServiceTest {
                 {
                   "version":"%s",
                   "defaultQuota":{"capacity":%d,"refillTokens":%d,"refillPeriodSeconds":3600},
-                  "participants":{"BANK_A":{"capacity":%d,"refillTokens":%d,"refillPeriodSeconds":3600}}
+                  "participants":{"%s":{"capacity":%d,"refillTokens":%d,"refillPeriodSeconds":3600}}
                 }
-                """.formatted(version, capacity, capacity, capacity, capacity);
+                """.formatted(version, capacity, capacity, TEST_PARTICIPANT, capacity, capacity);
     }
 }

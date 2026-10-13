@@ -72,11 +72,11 @@ class DisputeResolutionIntegrationTest extends AbstractIntegrationTest {
                 Integer.class, raised.disputeId());
         assertEquals(1, refundCount, "refund_transactions COMPLETED row must exist");
 
-        // Verify SETTLED reversal transaction created
+        // Verify refund evidence ref is not modeled as a transfer/reversal transaction.
         Integer txnCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM transactions t JOIN refund_transactions rt ON rt.refund_txn_ref = t.transaction_ref WHERE rt.dispute_id = ? AND t.status = 'SETTLED'",
+                "SELECT COUNT(*) FROM transactions t JOIN refund_transactions rt ON rt.refund_txn_ref = t.transaction_ref WHERE rt.dispute_id = ?",
                 Integer.class, raised.disputeId());
-        assertEquals(1, txnCount, "SETTLED reversal transaction must exist");
+        assertEquals(0, txnCount, "Refund evidence ref must not create a reversal transaction");
     }
 
     // ── TC-DISPUTE-RES-003 ───────────────────────────────────────────────────

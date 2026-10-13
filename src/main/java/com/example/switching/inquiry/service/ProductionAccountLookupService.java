@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * <p>The endpoint contract is intentionally small and explicit:
  * {@code POST {baseUrl}/accounts/lookup} with
- * {@code {"destinationBank":"BANK_B","accountNumber":"..."}} and a response
+ * {@code {"destinationBank":"<participant-code>","accountNumber":"..."}} and a response
  * containing {@code found}, optional {@code accountName}, and optional
  * {@code errorReason}. If the endpoint is not configured, production startup
  * fails through {@link com.example.switching.config.ProductionStartupValidator}.

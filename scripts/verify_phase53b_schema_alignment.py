@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATION_DIR = ROOT / "src/main/resources/db/migration"
-EXPECTED_LATEST_VERSION = 106
+EXPECTED_LATEST_VERSION = 117
 RESERVED_GAP = {88, 89, 90, 98, 99, 102, 103}  # reserved for future read-scaling extension
 
 
@@ -169,7 +169,7 @@ def check_test_contracts() -> str:
         'MigrationVersion.fromVersion("82")',
         'isInstanceOf(FlywayException.class)',
         'isEqualTo("82")',
-        'isEqualTo("106")',
+        'LATEST_VERSION',
         'isEqualTo("character varying")',
         'isEqualTo(64)',
         'isEqualTo("23514")',

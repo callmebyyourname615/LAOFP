@@ -49,12 +49,12 @@ public class DemoFlowService {
         TransferTraceResponse response = new TransferTraceResponse();
         response.setTransferRef(transferRef);
         response.setCurrentStatus("IN_PROGRESS");
-        response.setSourceBank("BANK_A");
-        response.setDestinationBank("BANK_B");
+        response.setSourceBank("UNKNOWN_SOURCE_BANK");
+        response.setDestinationBank("UNKNOWN_DESTINATION_BANK");
         response.setTimeline(Arrays.asList(
-                "Bank A sent request",
+                "Source participant sent request",
                 "Switching received message",
-                "Routing resolved to Bank B",
+                "Routing resolved to destination participant",
                 "Outbox event created",
                 "Dispatch pending"
         ));

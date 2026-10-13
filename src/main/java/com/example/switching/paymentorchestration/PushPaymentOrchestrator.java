@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.example.switching.common.PhaseIIAuditPublisher;
+import com.example.switching.idempotency.exception.IdempotencyConflictException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -109,7 +110,7 @@ public class PushPaymentOrchestrator {
             OffsetDateTime expiresAt = asOffsetDateTime(row.get("idempotency_expires_at"));
             if (expiresAt != null && expiresAt.isAfter(OffsetDateTime.now())) {
                 if (!requestHash.equals(row.get("request_sha256"))) {
-                    throw new IllegalStateException(
+                    throw new IdempotencyConflictException(
                             "Idempotency key reused with different payload");
                 }
                 PaymentExecutionStatus existingStatus = PaymentExecutionStatus.valueOf(
@@ -120,7 +121,7 @@ public class PushPaymentOrchestrator {
                 if (restored == null
                         && (existingStatus == PaymentExecutionStatus.STARTED
                                 || existingStatus == PaymentExecutionStatus.RETRY_SCHEDULED)) {
-                    throw new IllegalStateException(
+                    throw new IdempotencyConflictException(
                             "An execution with this idempotency key is still in progress");
                 }
                 return new Claim(

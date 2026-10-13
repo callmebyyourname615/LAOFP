@@ -14,6 +14,7 @@ import com.example.switching.outbox.service.OutboxProcessorService;
 @Component
 @Profile("!migration")
 @ConditionalOnProperty(prefix = "switching.outbox.queue", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "switching.outbox.queue", name = "consumer-enabled", havingValue = "true", matchIfMissing = true)
 public class OutboxQueueConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(OutboxQueueConsumer.class);
@@ -32,7 +33,8 @@ public class OutboxQueueConsumer {
 
     @KafkaListener(
             topics = "${switching.outbox.queue.topic:switching.outbox.dispatch}",
-            groupId = "${switching.outbox.queue.group-id:switching-outbox-dispatcher}"
+            groupId = "${switching.outbox.queue.group-id:switching-outbox-dispatcher}",
+            autoStartup = "${switching.outbox.queue.listener-auto-startup:true}"
     )
     public void consume(OutboxQueueMessage message) {
         try {

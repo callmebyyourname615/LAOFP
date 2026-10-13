@@ -1,6 +1,8 @@
 package com.example.switching.migration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static com.example.switching.migration.MigrationAssertions.SUCCESSFUL_MIGRATION_COUNT;
+import static com.example.switching.migration.MigrationAssertions.assertCleanInstallAtHead;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,7 +16,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /** Production certification for the empty-database V1 through V83 path. */
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 class V83CleanInstallCertificationIntegrationTest {
 
     @Container
@@ -38,14 +40,13 @@ class V83CleanInstallCertificationIntegrationTest {
         flyway.validate();
 
         assertThat(result.success).isTrue();
-        assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("107");
-        assertThat(flyway.info().pending()).isEmpty();
+        assertCleanInstallAtHead(flyway);
 
         try (Connection connection = DriverManager.getConnection(
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())) {
             assertThat(queryLong(connection,
                     "SELECT count(*) FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
-                    .isEqualTo(100L);
+                    .isEqualTo(SUCCESSFUL_MIGRATION_COUNT);
             assertThat(queryLong(connection,
                     "SELECT count(*) FROM flyway_schema_history WHERE NOT success"))
                     .isZero();

@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,6 +74,8 @@ class IdempotencyIntegrationTest extends AbstractIntegrationTest {
         CountDownLatch startGate = new CountDownLatch(1);
         AtomicInteger successCount  = new AtomicInteger(0);
         AtomicInteger conflictCount = new AtomicInteger(0);
+        AtomicInteger unexpectedCount = new AtomicInteger(0);
+        List<String> unexpectedFailures = new CopyOnWriteArrayList<>();
 
         Runnable task = () -> {
             try {
@@ -86,11 +89,20 @@ class IdempotencyIntegrationTest extends AbstractIntegrationTest {
                     successCount.incrementAndGet();
                 } else if (httpStatus == 409 || httpStatus == 422) {
                     conflictCount.incrementAndGet();
+                } else {
+                    unexpectedCount.incrementAndGet();
+                    unexpectedFailures.add("HTTP " + httpStatus + ": "
+                            + result.getResponse().getContentAsString());
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                // count as neither — test will catch the assertion below
+                if (isExpectedConcurrentDuplicate(e)) {
+                    conflictCount.incrementAndGet();
+                } else {
+                    unexpectedCount.incrementAndGet();
+                    unexpectedFailures.add(e.getClass().getSimpleName() + ": " + e.getMessage());
+                }
             }
         };
 
@@ -108,7 +120,9 @@ class IdempotencyIntegrationTest extends AbstractIntegrationTest {
 
         assertEquals(1, transferCount,
                 "Exactly 1 transfer must be created even under concurrent submission. "
-                        + "successes=" + successCount.get() + " conflicts=" + conflictCount.get());
+                        + "successes=" + successCount.get() + " conflicts=" + conflictCount.get()
+                        + " unexpected=" + unexpectedFailures);
+        assertEquals(0, unexpectedCount.get(), "Unexpected concurrent failure: " + unexpectedFailures);
 
         // Combined, threads must account for 2 responses
         assertEquals(2, successCount.get() + conflictCount.get(),
@@ -435,5 +449,21 @@ class IdempotencyIntegrationTest extends AbstractIntegrationTest {
         int end = jsonBody.indexOf('"', start + 1);
         if (end < 0) return null;
         return jsonBody.substring(start + 1, end);
+    }
+
+    private boolean isExpectedConcurrentDuplicate(Exception exception) {
+        Throwable current = exception;
+        while (current != null) {
+            String message = current.getMessage();
+            if (message != null
+                    && (message.contains("Inquiry already used")
+                            || message.contains("already used by transfer")
+                            || message.contains("duplicate key")
+                            || message.contains("Idempotency key reused"))) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

@@ -27,6 +27,9 @@ spring:
   kafka:
     listener:
       auto-startup: false
+    producer:
+      properties:
+        max.block.ms: 1000
 
   flyway:
     enabled: true
@@ -36,6 +39,8 @@ spring:
     password: ${TEST_DB_PASSWORD:}   # overridden at runtime by Testcontainers via @DynamicPropertySource
 
 switching:
+  scheduling:
+    enabled: false
   read-replica:
     max-lag: PT5S
   archive:
@@ -68,6 +73,9 @@ switching:
   outbox:
     queue:
       enabled: true
+      publisher-enabled: false
+      consumer-enabled: false
+      create-topic: false
       listener-auto-startup: false
       topic: switching.outbox.dispatch
       group-id: switching-outbox-dispatcher-test

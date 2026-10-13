@@ -56,8 +56,8 @@ public class OAuthTokenController {
      * <p>Request (application/x-www-form-urlencoded):
      * <pre>
      * grant_type=client_credentials
-     * &amp;client_id=client-bank-a
-     * &amp;client_secret=secret-bank-a-switching-2026
+     * &amp;client_id=&lt;client-id&gt;
+     * &amp;client_secret=&lt;client-secret&gt;
      * &amp;scope=payments:write payments:read        (optional)
      * </pre>
      *

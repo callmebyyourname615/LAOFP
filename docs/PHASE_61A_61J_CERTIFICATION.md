@@ -45,4 +45,4 @@ The resulting logs are hashed under the Phase 61I evidence directory. An operato
 
 ## Baseline migration consistency
 
-Phase 61 validates the repository it is run against. The Phase 62 target baseline contains 99 migration files through V106. Reserved gaps are V88–V90, V98–V99 and V102–V103. Phase II V91–V96 must be present before repository or full certification.
+Phase 61 validates the repository it is run against. The current target baseline contains 110 migration files through V117. Reserved gaps are V88–V90, V98–V99 and V102–V103. Phase II V91–V96 must be present before repository or full certification.

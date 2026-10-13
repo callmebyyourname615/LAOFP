@@ -4,11 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.dashboard.crossborder.service.CrossBorderDashboardService;
@@ -35,8 +40,17 @@ class CriticalDashboardDataAcceptanceIntegrationTest extends AbstractIntegration
     @Autowired RiskDashboardService risk;
     @Autowired CrossBorderDashboardService crossBorder;
 
+    @BeforeEach
+    void authenticateSchemeOperator() {
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                "dashboard-ops",
+                "n/a",
+                List.of(new SimpleGrantedAuthority("ROLE_OPS"))));
+    }
+
     @AfterEach
     void cleanup() {
+        SecurityContextHolder.clearContext();
         jdbc.update("DELETE FROM crossborder_transfers WHERE txn_ref = ?", CROSS_BORDER_TXN);
         jdbc.update("DELETE FROM fx_quotes WHERE source_amount = 600060 AND dest_amount = 156015.6000");
         jdbc.update("DELETE FROM cross_border_rail_reconciliation WHERE id = ?", RECONCILIATION_ID);

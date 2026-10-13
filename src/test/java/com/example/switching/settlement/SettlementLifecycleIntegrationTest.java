@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
 import com.example.switching.settlement.entity.SettlementPositionEntity;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
 import com.example.switching.settlement.service.SettlementBatchService;
 import com.example.switching.settlement.service.SettlementCycleService;
 import com.example.switching.settlement.service.SettlementDateService;
@@ -181,7 +182,7 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
         LocalDate sd = LocalDate.now().plusDays(75);
         SettlementCycleEntity cycle = cycleService.openCycle(sd);
 
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
+        SettlementCycleInvalidStateException ex = assertThrows(SettlementCycleInvalidStateException.class,
                 () -> netPositionService.settle(cycle.getCycleRef()));
         assertTrue(ex.getMessage().contains("CLOSED"),
                 "Error message must tell the caller that CLOSED status is required");
@@ -199,7 +200,7 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
         cycleService.closeCycle(cycle.getCycleRef());
         netPositionService.settle(cycle.getCycleRef());  // cycle is now SETTLED
 
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
+        SettlementCycleInvalidStateException ex = assertThrows(SettlementCycleInvalidStateException.class,
                 () -> batchService.batchTransactions(cycle.getCycleRef()));
         assertTrue(ex.getMessage().contains("SETTLED"),
                 "Error must state that SETTLED cycles cannot be re-batched");
@@ -221,7 +222,7 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
         assertEquals((short) 4, fourth.getCycleNumber(),
                 "Fourth cycle must have cycleNumber=4");
 
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
+        SettlementCycleInvalidStateException ex = assertThrows(SettlementCycleInvalidStateException.class,
                 () -> cycleService.openCycle(sd));
         assertTrue(ex.getMessage().contains("Maximum 4"),
                 "Error must mention the 4-cycle-per-day limit");
@@ -230,17 +231,16 @@ class SettlementLifecycleIntegrationTest extends AbstractIntegrationTest {
     // ── Test 6 ───────────────────────────────────────────────────────────────
 
     /**
-     * Closing an already-CLOSED cycle must throw (must not advance to SETTLED accidentally).
+     * Closing an already-CLOSED cycle is idempotent and must not advance to SETTLED accidentally.
      */
     @Test
-    void closeCycle_whenAlreadyClosed_throwsIllegalState() {
+    void closeCycle_whenAlreadyClosed_isIdempotent() {
         LocalDate sd = LocalDate.now().plusDays(65);
         SettlementCycleEntity cycle = cycleService.openCycle(sd);
         cycleService.closeCycle(cycle.getCycleRef());   // first close — OK
 
-        assertThrows(IllegalStateException.class,
-                () -> cycleService.closeCycle(cycle.getCycleRef()),
-                "Double-close must throw");
+        SettlementCycleEntity closedAgain = cycleService.closeCycle(cycle.getCycleRef());
+        assertEquals("CLOSED", closedAgain.getStatus(), "Double-close must remain CLOSED");
     }
 
     // ── Test 7 ───────────────────────────────────────────────────────────────

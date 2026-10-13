@@ -1,0 +1,115 @@
+{
+  "qa_status": "NOT_RUN",
+  "removed_file_count": 7217,
+  "removed_bytes": 64015946,
+  "protected_file_count": 2530,
+  "protected_files_verified_unchanged": true,
+  "database_or_docker_volumes_reset": false,
+  "fresh_tests_executed": false,
+  "preserved_qa_dependencies": [
+    {
+      "path": "AGENT/PHASE69A-69J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase69_static.py",
+        "config/phase69/verification-policy.yaml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE77A-77J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase76_77_boundary.py",
+        "scripts/verify_phase76_static.py",
+        "scripts/verify_phase77_static.py",
+        "config/phase76/file-ownership-policy.yaml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_74A_75J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase74_75_static.py"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_70A_70J_IMPLEMENTATION_CHECKLIST.md",
+      "required_by": [
+        "scripts/phase70/verify_phase70_static.py"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE81A-81J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase81_static.py"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_78A_79J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase78_79_static.py"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_73A_73J_IMPLEMENTATION_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase73_static.py",
+        ".github/workflows/phase73-chaos-certification.yml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_64A_64J_IMPLEMENTATION_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase64_static.py",
+        ".github/workflows/phase64-uat-evidence.yml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE80A-80J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase80_static.py"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE76A-76J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase76_77_boundary.py",
+        "scripts/verify_phase76_static.py",
+        "config/phase76/file-ownership-policy.yaml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_67A_67J_IMPLEMENTATION_CHECKLIST.md",
+      "required_by": [
+        "scripts/phase67/phase67_control.py",
+        ".github/workflows/phase67-production-cutover.yml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE_65A_65J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase65_static.py"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE66_IMPLEMENTATION_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase66_static.py",
+        "config/phase66/file-boundary.yaml"
+      ]
+    },
+    {
+      "path": "AGENT/PHASE72A-72J_CHECKLIST.md",
+      "required_by": [
+        "scripts/verify_phase72_static.py"
+      ]
+    }
+  ],
+  "verification": {
+    "checklist_items_reset": 61,
+    "old_run_output_files_remaining": 0,
+    "api_inventory_endpoints_default_NOT_TESTED": 250,
+    "preserved_qa_dependencies_exist": true,
+    "source_baseline_hashes_valid": true,
+    "report_links_valid": true,
+    "future_output_ignore_rules_valid": true,
+    "fresh_qa_suite_executed": false
+  }
+}

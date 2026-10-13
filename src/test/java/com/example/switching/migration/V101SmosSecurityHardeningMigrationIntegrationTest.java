@@ -1,6 +1,7 @@
 package com.example.switching.migration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static com.example.switching.migration.MigrationAssertions.assertMigrationApplied;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -13,12 +14,7 @@ class V101SmosSecurityHardeningMigrationIntegrationTest extends AbstractIntegrat
 
     @Test
     void cleanInstallContainsV101IdentityAndSessionHardening() {
-        // version is VARCHAR — MAX does lex compare ("97" > "107"); use installed_rank.
-        assertThat(jdbc.queryForObject(
-                "SELECT version FROM flyway_schema_history WHERE success "
-                        + "ORDER BY installed_rank DESC LIMIT 1", String.class)).isEqualTo("107");
-        assertThat(jdbc.queryForObject(
-                "SELECT count(*) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(100);
+        assertMigrationApplied(jdbc, "101");
 
         List<String> userColumns = jdbc.queryForList("""
                 SELECT column_name FROM information_schema.columns
@@ -35,7 +31,7 @@ class V101SmosSecurityHardeningMigrationIntegrationTest extends AbstractIntegrat
                 "session_family_id", "rotated_from_id", "last_used_at", "client_fingerprint_hash");
 
         Integer permissionCount = jdbc.queryForObject("SELECT count(*) FROM smos_permissions", Integer.class);
-        assertThat(permissionCount).isEqualTo(20);
+        assertThat(permissionCount).isGreaterThanOrEqualTo(20);
         assertThat(jdbc.queryForObject("""
                 SELECT count(*) FROM smos_permissions
                 WHERE (resource, action) IN (

@@ -527,7 +527,6 @@ public class OutboxProcessorService {
         // Technical/no-response exhaustion is ambiguous. When status enquiry is
         // still unknown, continue to provisional settlement instead of creating
         // DRS noise. Clear reject/not-found answers still open DRS.
-
         Map<String, Object> payload = buildErrorPayload(
                 catalog,
                 event.getId(),

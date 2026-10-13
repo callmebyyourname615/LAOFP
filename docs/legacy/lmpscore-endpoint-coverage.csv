@@ -1,0 +1,85 @@
+legacy_endpoint,status,domain,priority,switching_coverage,recommended_action
+/,covered,platform,P0,Actuator health and readiness endpoints,Use existing health/readiness contract instead of legacy root route.
+/admin/loadmembers,deprecated,admin,DNE,Operations onboarding and participant refresh are controlled APIs,Do not expose legacy admin side-effect endpoint.
+/admin/shutdown,deprecated,admin,DNE,None,Do not implement public shutdown endpoint.
+/confirm,partial,core-switching,P1,Transfer callbacks and settlement callbacks exist,Define exact legacy confirmation semantics before compatibility facade.
+/crossborder/crossborder_report,partial,crossborder-reporting,P2,Cross-border reporting primitives exist,Add legacy report shape only if a consumer still requires it.
+/crossborder/ecny/settlementbankreport,missing,crossborder-ecny,P2,None,Implement only behind rail-specific settlement report scope.
+/crossborder/ecny/settlementfile,missing,crossborder-ecny,P2,None,Implement rail-specific file generation if e-CNY is in active scope.
+/crossborder/ecny/settlementreport,missing,crossborder-ecny,P2,None,Implement rail-specific report if e-CNY is in active scope.
+/crossborder/exchangerate,covered,crossborder-fx,P1,Cross-border FX rate APIs exist,Map legacy request/response into existing FX quote/rate service.
+/crossborder/getexchangerates,covered,crossborder-fx,P1,Cross-border FX rate APIs exist,Map legacy request/response into existing FX quote/rate service.
+/crossborder/itmx/feesettlementfile,partial,crossborder-itmx,P1,Generic rail settlement and reconciliation capabilities exist,Add ITMX fee settlement file format and evidence.
+/crossborder/itmx/report,partial,crossborder-itmx,P1,Generic report capabilities exist,Add ITMX report compatibility format.
+/crossborder/itmx/settlementfile,partial,crossborder-itmx,P1,Generic rail settlement and reconciliation capabilities exist,Add ITMX settlement file format and checksum evidence.
+/crossborder/itmx/thaiscan_settlementfile,partial,crossborder-itmx,P1,Generic rail settlement and reconciliation capabilities exist,Add ThaiScan settlement file variant if contracted.
+/crossborder/itmx/thaiscanlao_fee_settlementfile,partial,crossborder-itmx,P1,Generic rail settlement and reconciliation capabilities exist,Add ThaiScan Lao fee settlement file variant if contracted.
+/crossborder/napas/settlementbankreport,partial,crossborder-napas,P1,Generic rail settlement/report capabilities exist,Add NAPAS bank report contract tests.
+/crossborder/napas/settlementfile,partial,crossborder-napas,P1,Generic rail settlement and reconciliation capabilities exist,Add NAPAS settlement file format and evidence.
+/crossborder/napas/settlementreport,partial,crossborder-napas,P1,Generic rail settlement/report capabilities exist,Add NAPAS report compatibility format.
+/crossborder/report/transactions,partial,crossborder-reporting,P2,Transaction report/search capabilities exist,Add legacy filter and response compatibility if used.
+/crossborder/settlementfile,partial,crossborder-settlement,P1,Generic settlement file generation exists,Add cross-border legacy file layout.
+/crossborder/upi/login,deprecated,crossborder-upi,DNE,Adapter authentication should remain internal,Do not expose rail login as public endpoint.
+/crossborder/upi/report,partial,crossborder-upi,P2,Generic report capabilities exist,Add UPI report compatibility format if contracted.
+/crossborder/upi/resettle,missing,crossborder-upi,P2,None,Design guarded resettlement workflow with approval and audit.
+/crossborder/upi/settlementlakfile,partial,crossborder-upi,P2,Generic rail settlement and reconciliation capabilities exist,Add UPI LAK settlement file format.
+/crossborder/upi/summary,partial,crossborder-upi,P2,Generic dashboard/report capabilities exist,Add UPI summary projection if needed.
+/electricity/basicdata,missing,biller-electricity,P3,Generic biller catalog may exist,Add electricity biller reference-data facade if active.
+/electricity/inquiry,partial,biller-electricity,P3,Generic bill inquiry capability exists,Add legacy electricity inquiry adapter contract.
+/electricity/payment,partial,biller-electricity,P3,Generic bill payment capability exists,Add legacy electricity payment adapter contract.
+/fee002,missing,fee-government,P2,None,Clarify product owner and implement only with settlement/accounting rules.
+/finlink/adjustment_settlementfileeasytax,missing,finlink-tax,P1,None,Add EasyTax adjustment settlement file generator after accounting spec.
+/finlink/bol_nswa_adjustmentfile,missing,finlink-bol-nswa,P2,None,Add BOL NSWA adjustment file only if active.
+/finlink/bol_nswa_settlementfile,missing,finlink-bol-nswa,P2,None,Add BOL NSWA settlement file only if active.
+/finlink/bol_settlementfile,missing,finlink-bol,P2,None,Add BOL settlement file only if active.
+/finlink/cancel,partial,finlink-core,P2,Transfer cancellation/dispute primitives exist,Add Finlink cancel compatibility facade with idempotency.
+/finlink/finpass_settlement,missing,finlink-finpass,P2,None,Add FinPass settlement file/report after FinPass scope is confirmed.
+/finlink/getrtgsjournal,partial,finlink-rtgs,P1,RTGS file/journal evidence exists,Add legacy RTGS journal response format.
+/finlink/getsuccesstransactions,partial,finlink-core,P2,Transfer search/status capabilities exist,Add legacy success transaction filters if still consumed.
+/finlink/inform_LIFMIS,missing,finlink-lifmis,P1,None,Add LIFMIS outbound notification workflow with retry/audit.
+/finlink/report/lapnet_settlement,partial,finlink-reporting,P1,Settlement report capabilities exist,Add LAPNet settlement report layout.
+/finlink/report/settlement,partial,finlink-reporting,P1,Settlement report capabilities exist,Add Finlink settlement report compatibility layout.
+/finlink/report/settlement_v2,partial,finlink-reporting,P1,Settlement report capabilities exist,Add v2 legacy report layout and regression fixtures.
+/finlink/report/smartvat10,missing,finlink-tax,P2,None,Add SmartVAT10 report only with tax authority spec.
+/finlink/roadtax/settlementfile,missing,finlink-roadtax,P2,None,Add roadtax settlement file generator after vertical contract.
+/finlink/settlefile_byproduct,missing,finlink-settlement,P2,None,Add product-group settlement file if operations still consume it.
+/finlink/settlementfileeasytax,missing,finlink-tax,P1,None,Add EasyTax settlement file generator after accounting spec.
+/finlink/smvat10_settlement,missing,finlink-tax,P2,None,Add SmartVAT10 settlement workflow only with active spec.
+/finlink/success,partial,finlink-core,P2,Transfer success/status capabilities exist,Add legacy success callback/query facade if required.
+/finlink/transit_fund_move,missing,finlink-treasury,P1,None,Add transit fund movement workflow with ledger and approval controls.
+/finlink/travelfee_fundmove,missing,finlink-travelfee,P2,None,Add travel fee fund movement workflow if active.
+/finlink/travelfee_settlement,missing,finlink-travelfee,P2,None,Add travel fee settlement workflow if active.
+/finpass/basicdata,missing,finpass,P3,Generic biller catalog may exist,Add FinPass reference-data facade if active.
+/finpass/cancel,missing,finpass,P3,None,Add FinPass cancel flow only with reversal rules.
+/finpass/d53,missing,finpass,P3,None,Clarify D53 business contract before implementation.
+/finpass/inquiry,partial,finpass,P3,Generic bill inquiry capability exists,Add FinPass inquiry adapter contract.
+/finpass/payment,partial,finpass,P3,Generic bill payment capability exists,Add FinPass payment adapter contract.
+/finpass/qrinquiry,missing,finpass,P3,None,Add QR inquiry only if FinPass QR is active.
+/getpendinglist,covered,core-switching,P1,Pending transfer/operations query capabilities exist,Map legacy query to current pending transfer API.
+/inquiry,covered,core-switching,P0,Inquiry and lookup flows exist,Keep current API as canonical and add facade only if external legacy clients remain.
+/issuccess,covered,core-switching,P1,Transfer status and trace APIs exist,Map legacy status check to current transfer status/trace.
+/landtax/basicdata,missing,biller-landtax,P3,Generic biller catalog may exist,Add landtax reference-data facade if active.
+/landtax/checktransaction,missing,biller-landtax,P3,None,Add landtax transaction check only with provider spec.
+/landtax/inquiry,partial,biller-landtax,P3,Generic bill inquiry capability exists,Add landtax inquiry adapter contract.
+/landtax/payment,partial,biller-landtax,P3,Generic bill payment capability exists,Add landtax payment adapter contract.
+/landtax/report,missing,biller-landtax,P3,None,Add landtax report only with consumer evidence.
+/lfx/report,missing,crossborder-lfx,P2,None,Add LFX report only if rail remains active.
+/lfx/settlementfile,missing,crossborder-lfx,P2,None,Add LFX settlement file only if rail remains active.
+/members,covered,participant-management,P0,Participant/member APIs exist,Use current participant registry as canonical source.
+/report,partial,reporting,P2,Operational reports exist,Add legacy report facade only for known consumers.
+/report/download,partial,reporting,P2,Signed report download capabilities exist,Add legacy download naming and authorization if used.
+/report/settlement,partial,settlement-reporting,P1,Settlement reports exist,Add legacy settlement report layout.
+/report/settlement_lapnet,partial,settlement-reporting,P1,Settlement reports exist,Add LAPNet legacy layout.
+/report/settlement_v2,partial,settlement-reporting,P1,Settlement reports exist,Add v2 compatibility layout.
+/report/transaction,partial,reporting,P2,Transaction report/search capabilities exist,Add legacy transaction report filters/columns.
+/roadtax/basicdata,missing,biller-roadtax,P3,Generic biller catalog may exist,Add roadtax reference-data facade if active.
+/roadtax/check-treasury-account,missing,biller-roadtax,P2,None,Add treasury-account validation only with treasury source of truth.
+/roadtax/checktransaction,missing,biller-roadtax,P3,None,Add roadtax transaction check only with provider spec.
+/roadtax/esticker,missing,biller-roadtax,P3,None,Add e-sticker issuance/status only with provider spec.
+/roadtax/inquiry,partial,biller-roadtax,P3,Generic bill inquiry capability exists,Add roadtax inquiry adapter contract.
+/roadtax/payment,partial,biller-roadtax,P3,Generic bill payment capability exists,Add roadtax payment adapter contract.
+/roadtax/report,missing,biller-roadtax,P3,None,Add roadtax report only with consumer evidence.
+/settlementfile,partial,settlement-file,P1,Settlement file generation capabilities exist,Add exact legacy settlement file layout if still consumed.
+/test,deprecated,diagnostic,DNE,Health/readiness and test profile cover diagnostics,Do not expose legacy test endpoint in production.
+/transfer,covered,core-switching,P0,Transfer flow exists,Keep current transfer API canonical and add facade only for legacy clients.
+/treasury/deposit,partial,treasury,P1,Liquidity top-up and settlement funding primitives exist,Add treasury deposit facade with ledger/audit controls.

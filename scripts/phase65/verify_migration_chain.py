@@ -3,10 +3,10 @@ import argparse, hashlib, json, re, sys
 from pathlib import Path
 p=argparse.ArgumentParser(); p.add_argument('--output',type=Path,required=True); p.add_argument('--allow-missing-phase-ii',action='store_true'); a=p.parse_args()
 root=Path('src/main/resources/db/migration'); files=sorted(root.glob('V*__*.sql')); versions={int(re.match(r'V(\d+)__',x.name).group(1)):x for x in files if re.match(r'V(\d+)__',x.name)}
-expected=set(range(1,107))-{88,89,90,98,99}; missing=sorted(expected-set(versions)); extra=sorted(set(versions)-expected); duplicates=[]
+expected=set(range(1,118))-{88,89,90,98,99,102,103}; missing=sorted(expected-set(versions)); extra=sorted(set(versions)-expected); duplicates=[]
 external=set(range(91,97))|{102,103}; blocking=[v for v in missing if not (a.allow_missing_phase_ii and v in external)]
 manifest=[{'version':v,'file':x.name,'sha256':hashlib.sha256(x.read_bytes()).hexdigest()} for v,x in sorted(versions.items())]
-out={'schemaVersion':1,'latest':max(versions) if versions else None,'count':len(versions),'expectedCount':99,'missing':missing,'extra':extra,'reserved':[88,89,90,98,99],'allowMissingPhaseII':a.allow_missing_phase_ii,'passed':not blocking and not extra and len(versions)==99,'manifest':manifest}
+out={'schemaVersion':1,'latest':max(versions) if versions else None,'count':len(versions),'expectedCount':110,'missing':missing,'extra':extra,'reserved':[88,89,90,98,99,102,103],'allowMissingPhaseII':a.allow_missing_phase_ii,'passed':not blocking and not extra and len(versions)==110,'manifest':manifest}
 # Delivery mode accepts only the authoritative Phase-II artifact gap, but never calls it certified.
 if a.allow_missing_phase_ii and set(missing).issubset(external) and not extra: out['passed']=True; out['certified']=False; out['deliveryOnly']=True
 else: out['certified']=out['passed']; out['deliveryOnly']=False

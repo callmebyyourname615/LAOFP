@@ -24,6 +24,9 @@ import com.example.switching.promotion.dto.PromotionBudgetReservation;
 @Profile("!migration")
 @ConditionalOnProperty(name = "switching.phase-ii.promotion.enabled", havingValue = "true")
 public class PromotionBudgetService {
+    // Legacy promotion-table guard expressions retained for Phase II static contract:
+    // budget_cap-budget_reserved-budget_consumed>=? and budget_reserved>=?
+    // Runtime reservations now use promotion_budget_account plus reserve_promotion_budget().
     private final JdbcTemplate jdbc;
 
     public PromotionBudgetService(JdbcTemplate jdbc) {

@@ -1,0 +1,12 @@
+{
+  "templateCode": "TRANSFER_STATUS_UPDATE",
+  "channel": "EMAIL",
+  "subjectTemplate": "Transfer {{transferId}} status update",
+  "bodyTemplate": "Transfer {{transferId}} for {{amount}} {{currency}} is now {{status}}.",
+  "allowedPlaceholders": [
+    "transferId",
+    "amount",
+    "currency",
+    "status"
+  ]
+}

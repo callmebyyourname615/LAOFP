@@ -46,7 +46,7 @@ public class ConnectorRegistry {
     /**
      * Resolve the BankConnector implementation for the given connector name.
      *
-     * @param connectorName the connector name stored in connector_configs (e.g. MOCK_BANK_B_CONNECTOR)
+     * @param connectorName the connector name stored in connector_configs
      * @return the BankConnector implementation appropriate for this connector's type
      * @throws com.example.switching.connector.exception.ConnectorConfigNotFoundException
      *         if the connectorName is not found in connector_configs

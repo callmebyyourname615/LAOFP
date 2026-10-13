@@ -2,8 +2,14 @@ package com.example.switching.dashboard;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.dashboard.crossborder.service.CrossBorderDashboardService;
@@ -19,6 +25,19 @@ class CriticalDashboardIntegrationTest extends AbstractIntegrationTest {
     @Autowired SettlementDashboardService settlement;
     @Autowired RiskDashboardService risk;
     @Autowired CrossBorderDashboardService crossBorder;
+
+    @BeforeEach
+    void authenticateSchemeOperator() {
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                "dashboard-ops",
+                "n/a",
+                List.of(new SimpleGrantedAuthority("ROLE_OPS"))));
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void settlementDashboardReturnsStableEmptyOrLiveShape() {

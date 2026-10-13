@@ -98,3 +98,16 @@ compliance/evidence/
 /PHASE*_SOURCE_CONVERGENCE_DELIVERY.json
 /PHASE_*_IMPLEMENTATION_REPORT.md
 /PHASE_*_DELIVERY_NOTES.md
+
+### QA reset: generated evidence and scratch outputs ###
+/runtime-evidence/
+/evidence/*
+!/evidence/phase63/
+/evidence/phase63/*
+!/evidence/phase63/README.md
+/scripts/phase*/evidence/
+/scripts/evidence/api-endpoint-status.json
+/docs/phase*/validation/
+/output/
+/tmp/
+/typescript

@@ -1,0 +1,28 @@
+{
+  "assets": [
+    {
+      "code": "TRANSFER_TABLE",
+      "type": "TABLE",
+      "reference": "public.transfers",
+      "owner": "platform",
+      "classification": "CONFIDENTIAL"
+    },
+    {
+      "code": "SETTLEMENT_REPORT",
+      "type": "REPORT",
+      "reference": "reports.settlement_daily",
+      "owner": "settlement",
+      "classification": "INTERNAL"
+    }
+  ],
+  "edges": [
+    {
+      "source": "TRANSFER_TABLE",
+      "target": "SETTLEMENT_REPORT",
+      "transformation": "daily aggregation",
+      "version": "1",
+      "purpose": "settlement evidence",
+      "field_mapping_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ]
+}

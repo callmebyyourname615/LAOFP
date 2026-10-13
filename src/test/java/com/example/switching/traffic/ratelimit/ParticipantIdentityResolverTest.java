@@ -25,11 +25,11 @@ class ParticipantIdentityResolverTest {
     void resolvesApiKeyParticipantFromAuthenticatedDetails() {
         var authentication = new UsernamePasswordAuthenticationToken(
                 "key-name", null, List.of(new SimpleGrantedAuthority("ROLE_BANK")));
-        authentication.setDetails(Map.of("bankCode", "bank_a"));
+        authentication.setDetails(Map.of("bankCode", "test_participant"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         assertThat(resolver.resolve(new MockHttpServletRequest()))
-                .isEqualTo("participant:BANK_A");
+                .isEqualTo("participant:TEST_PARTICIPANT");
     }
 
     @Test

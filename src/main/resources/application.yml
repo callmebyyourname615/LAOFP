@@ -232,6 +232,10 @@ switching:
       allow-legacy-messages: ${OUTBOX_SCHEMA_ALLOW_LEGACY:false}
     queue:
       enabled: ${OUTBOX_QUEUE_ENABLED:false}
+      publisher-enabled: ${OUTBOX_QUEUE_PUBLISHER_ENABLED:true}
+      consumer-enabled: ${OUTBOX_QUEUE_CONSUMER_ENABLED:true}
+      create-topic: ${OUTBOX_QUEUE_CREATE_TOPIC:true}
+      listener-auto-startup: ${OUTBOX_QUEUE_LISTENER_AUTO_STARTUP:true}
       topic: ${OUTBOX_QUEUE_TOPIC:switching.outbox.dispatch}
       group-id: ${OUTBOX_QUEUE_GROUP_ID:switching-outbox-dispatcher}
     worker:

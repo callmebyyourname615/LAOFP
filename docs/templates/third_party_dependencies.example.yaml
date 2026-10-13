@@ -1,0 +1,12 @@
+dependencies:
+  - code: CORE_BANKING
+    name: Core Banking API
+    type: API
+    endpoint: https://core.example.invalid/health
+    criticality: CRITICAL
+    sla:
+      availability_target: 0.999
+      latency_p95_ms: 500
+      failure_threshold: 3
+      recovery_success_threshold: 2
+      open_seconds: 300

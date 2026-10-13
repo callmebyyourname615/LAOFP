@@ -88,7 +88,7 @@ class FpreAmbiguousCheckIntegrationTest extends AbstractIntegrationTest {
         assertFalse(bool(outbox.get("will_retry")));
 
         Map<String, Object> transfer = fetchTransfer(transferRef);
-        assertEquals("SETTLED", transfer.get("status"));
+        assertEquals("READY_FOR_SETTLEMENT", transfer.get("status"));
         assertEquals("AMBIGUOUS_CREDIT_CONFIRMED", transfer.get("reference"));
     }
 

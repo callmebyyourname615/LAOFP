@@ -1,8 +1,0 @@
-{
-  "control": "BACKUP_COMPOSE_CONFIGURATION",
-  "environment": "LOCAL",
-  "status": "PASS",
-  "exitCode": 0,
-  "secondaryS3Enabled": false,
-  "note": "Syntax and variable interpolation only; no identity or secondary S3 credentials provisioned."
-}

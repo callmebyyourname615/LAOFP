@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "package_code": "RISK_ROUTING_STANDARD",
+  "domain": "RISK_SCORING",
+  "version": "1.0.0",
+  "artifact": "rules/risk-routing-standard.json",
+  "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "minimum_test_cases": 10,
+  "maximum_false_positive_rate": 0.05,
+  "maximum_false_negative_rate": 0.02,
+  "rollback_version": "0.9.0"
+}

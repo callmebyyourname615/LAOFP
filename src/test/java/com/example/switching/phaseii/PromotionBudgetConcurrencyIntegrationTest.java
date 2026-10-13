@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -30,7 +29,7 @@ class PromotionBudgetConcurrencyIntegrationTest extends AbstractIntegrationTest 
     @Autowired JdbcTemplate jdbc;
     @Autowired PromotionBudgetService budgets;
 
-    private UUID promotionId;
+    private long promotionId;
 
     @BeforeEach
     void setup() {
@@ -38,17 +37,15 @@ class PromotionBudgetConcurrencyIntegrationTest extends AbstractIntegrationTest 
         jdbc.update("DELETE FROM promotion_application");
         jdbc.update("DELETE FROM promotion_eligibility_rule");
         jdbc.update("DELETE FROM promotion");
-        promotionId = UUID.randomUUID();
+        jdbc.update("DELETE FROM promotion_funder_ledger");
+        jdbc.update("DELETE FROM promotion_budget_reservation");
+        jdbc.update("DELETE FROM promotion_budget_account");
+        promotionId = Math.floorMod(System.nanoTime(), Long.MAX_VALUE - 1) + 1;
         jdbc.update("""
-                INSERT INTO promotion(
-                    id, code, name, promotion_type, status, priority, combinable,
-                    funder_participant_id, currency, budget_cap, budget_reserved,
-                    budget_consumed, discount_value, discount_mode, starts_at,
-                    ends_at, created_by)
-                VALUES (?, ?, 'Phase 70 concurrency', 'WAIVER', 'ACTIVE', 100, false,
-                        'BANK_A', 'LAK', 100, 0, 0, 10, 'FIXED',
-                        now() - interval '1 minute', now() + interval '1 day', 'test')
-                """, promotionId, "P-" + promotionId);
+                INSERT INTO promotion_budget_account(
+                    promotion_id, currency, budget_cap, reserved_amount, consumed_amount)
+                VALUES (?, 'LAK', 100.0000, 0.0000, 0.0000)
+                """, promotionId);
     }
 
     @Test
@@ -78,12 +75,12 @@ class PromotionBudgetConcurrencyIntegrationTest extends AbstractIntegrationTest 
         }
 
         Map<String, Object> row = jdbc.queryForMap("""
-                SELECT budget_reserved, budget_consumed, budget_cap
-                  FROM promotion
-                 WHERE id = ?
+                SELECT reserved_amount, consumed_amount, budget_cap
+                  FROM promotion_budget_account
+                 WHERE promotion_id = ?
                 """, promotionId);
-        BigDecimal reserved = (BigDecimal) row.get("budget_reserved");
-        BigDecimal consumed = (BigDecimal) row.get("budget_consumed");
+        BigDecimal reserved = (BigDecimal) row.get("reserved_amount");
+        BigDecimal consumed = (BigDecimal) row.get("consumed_amount");
         BigDecimal cap = (BigDecimal) row.get("budget_cap");
 
         assertThat(reserved).isEqualByComparingTo(RESERVATION.multiply(BigDecimal.valueOf(EXPECTED_ACCEPTED)));

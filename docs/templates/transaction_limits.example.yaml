@@ -1,0 +1,19 @@
+version: 1
+entitlements:
+  - participant: BANK_A
+    product: PUSH_TRANSFER
+    channel: API
+    currency: LAK
+    effective_from: "2026-01-01"
+limits:
+  - name: BANK_A_DAILY_PUSH
+    scope_type: PARTICIPANT
+    scope_value: BANK_A
+    product: PUSH_TRANSFER
+    channel: API
+    currency: LAK
+    per_transaction_amount: "10000000"
+    hourly_amount: "50000000"
+    daily_amount: "250000000"
+    daily_count: 1000
+    timezone: Asia/Vientiane

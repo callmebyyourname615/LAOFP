@@ -16,6 +16,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
 import com.example.switching.settlement.entity.SettlementInstructionEntity;
+import com.example.switching.settlement.exception.SettlementCycleInvalidStateException;
+import com.example.switching.settlement.exception.SettlementInstructionInvalidStateException;
 import com.example.switching.settlement.service.SettlementCycleService;
 import com.example.switching.settlement.service.SettlementInstructionService;
 
@@ -67,7 +69,7 @@ class SettlementInstructionServiceIntegrationTest extends AbstractIntegrationTes
         assertEquals("ops-user", approved.getApprovedBy());
         assertEquals("checked net positions", approved.getApprovalNote());
         assertNotNull(approved.getApprovedAt());
-        assertThrows(IllegalStateException.class,
+        assertThrows(SettlementInstructionInvalidStateException.class,
                 () -> instructionService.reject(approved.getInstructionRef(), "ops-user", "too late"));
 
         SettlementCycleEntity rejectCycle = closedCycleWithPositions(
@@ -84,7 +86,7 @@ class SettlementInstructionServiceIntegrationTest extends AbstractIntegrationTes
         assertEquals("checker-user", rejected.getRejectedBy());
         assertEquals("reconciliation mismatch", rejected.getRejectionReason());
         assertNotNull(rejected.getRejectedAt());
-        assertThrows(IllegalStateException.class,
+        assertThrows(SettlementInstructionInvalidStateException.class,
                 () -> instructionService.approve(rejected.getInstructionRef(), "checker-user", "too late"));
     }
 
@@ -92,7 +94,7 @@ class SettlementInstructionServiceIntegrationTest extends AbstractIntegrationTes
     void generateForCycle_openCycleThrows() {
         SettlementCycleEntity cycle = cycleService.openCycle(LocalDate.now().plusDays(123));
 
-        assertThrows(IllegalStateException.class,
+        assertThrows(SettlementCycleInvalidStateException.class,
                 () -> instructionService.generateForCycle(cycle.getCycleRef()));
     }
 

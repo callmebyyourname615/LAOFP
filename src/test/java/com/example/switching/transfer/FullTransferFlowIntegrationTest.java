@@ -1,7 +1,8 @@
 package com.example.switching.transfer;
 
-import com.example.switching.AbstractIntegrationTest;
-
+import static com.example.switching.TestDemoBanks.BANK_A;
+import static com.example.switching.TestDemoBanks.BANK_B;
+import static com.example.switching.TestDemoBanks.MOCK_BANK_B_CONNECTOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,18 +28,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.example.switching.outbox.service.OutboxProcessorService;
+import com.example.switching.AbstractIntegrationTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class FullTransferFlowIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String SOURCE_BANK      = "BANK_A";
-    private static final String DESTINATION_BANK = "BANK_B";
+    private static final String SOURCE_BANK      = BANK_A;
+    private static final String DESTINATION_BANK = BANK_B;
     private static final String DEBTOR_ACCOUNT   = "010100000001";
     private static final String CREDITOR_ACCOUNT = "020200000001";
     private static final BigDecimal AMOUNT       = new BigDecimal("150000.00");
     private static final String CURRENCY         = "LAK";
-    private static final String CONNECTOR_NAME   = "MOCK_BANK_B_CONNECTOR";
+    private static final String CONNECTOR_NAME   = MOCK_BANK_B_CONNECTOR;
 
     private static final AtomicInteger SEQ = new AtomicInteger(50_000);
 
@@ -299,8 +301,8 @@ class FullTransferFlowIntegrationTest extends AbstractIntegrationTest {
         outboxProcessorService.processSingleEvent(outboxId);
 
         String finalStatus = transferStatus(transferRef);
-            assertEquals("SETTLED", finalStatus,
-                "transfer must reach SETTLED after outbox dispatch with mock connector");
+        assertEquals("READY_FOR_SETTLEMENT", finalStatus,
+                "transfer must reach settlement-ready after outbox dispatch with mock connector");
         assertEquals(1, countPoolOperation(transferRef, "CONFIRM"),
                 "successful dispatch must confirm the prefunded pool hold");
     }
@@ -369,7 +371,7 @@ class FullTransferFlowIntegrationTest extends AbstractIntegrationTest {
     // ── Section 6: Force Reject Path ─────────────────────────────────────────
 
     @Test
-    void transfer_forceReject_transferStatusIsRejected() throws Exception {
+    void transfer_forceReject_transferStatusIsDrsRequired() throws Exception {
         setForceReject(true);
         try {
             String suffix = suffix();
@@ -380,10 +382,12 @@ class FullTransferFlowIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(outboxId);
             outboxProcessorService.processSingleEvent(outboxId);
 
-            assertEquals("REJECTED", transferStatus(transferRef),
-                    "force-reject connector must set transfer to REJECTED");
-            assertEquals(1, countPoolOperation(transferRef, "RELEASE"),
-                    "terminal reject must release the prefunded pool hold");
+            assertEquals("DRS_REQUIRED", transferStatus(transferRef),
+                    "force-reject connector must route transfer into DRS_REQUIRED");
+            assertEquals(1, countPoolOperation(transferRef, "HOLD"),
+                    "DRS escalation must retain the original prefunded pool hold");
+            assertEquals(0, countPoolOperation(transferRef, "RELEASE"),
+                    "DRS escalation must not release the prefunded pool hold before resolution");
 
             Map<String, Object> event = jdbcTemplate.queryForMap(
                     "SELECT status, failure_class, will_retry FROM outbox_messages WHERE id = ?",
@@ -443,7 +447,7 @@ class FullTransferFlowIntegrationTest extends AbstractIntegrationTest {
         assertTrue(traceStatus.startsWith("TRACE_FOUND"),
                 "expected TRACE_FOUND, got " + traceStatus);
         assertEquals(transferRef, json.path("transferRef").asText());
-        assertEquals("SETTLED", json.path("currentStatus").asText());
+        assertEquals("READY_FOR_SETTLEMENT", json.path("currentStatus").asText());
         assertTrue(json.path("summary").path("transferSuccessful").asBoolean());
     }
 

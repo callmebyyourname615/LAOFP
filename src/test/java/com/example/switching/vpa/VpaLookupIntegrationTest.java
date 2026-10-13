@@ -1,5 +1,7 @@
 package com.example.switching.vpa;
 
+import static com.example.switching.TestDemoBanks.BANK_A_KEY;
+import static com.example.switching.TestDemoBanks.OPS_KEY;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,8 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class VpaLookupIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String BANK_KEY     = "sk-bank-a-switching-2026";
-    private static final String OPS_KEY      = "sk-ops-switching-2026";
+    private static final String BANK_KEY     = BANK_A_KEY;
     private static final String RESOLVE_URL  = "/v1/lookup/resolve";
     private static final String REGISTER_URL = "/v1/lookup/vpa/register";
 

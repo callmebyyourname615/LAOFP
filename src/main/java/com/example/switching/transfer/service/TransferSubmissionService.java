@@ -32,18 +32,20 @@ public class TransferSubmissionService {
     }
 
     public CreateTransferResponse create(CreateTransferRequest request) {
-        if (!orchestratorEnabled()) {
+        if (!orchestratorEnabled() || request.getIdempotencyKey() == null || request.getIdempotencyKey().isBlank()) {
             return legacy.create(request);
         }
+        String inquiryRef = required(request.getInquiryRef(), "inquiryRef");
+        String idempotencyKey = required(request.getIdempotencyKey(), "idempotencyKey");
         PushPaymentResult result = requiredOrchestrator().start(new PushPaymentRequest(
                 PaymentChannel.TRANSFER,
-                required(request.getInquiryRef(), "inquiryRef"),
-                required(request.getIdempotencyKey(), "idempotencyKey"),
+                inquiryRef,
+                idempotencyKey,
                 request.getSourceBank(),
                 request.getDestinationBank(),
                 request.getAmount(),
                 request.getCurrency(),
-                payload(request)));
+                payload(request, idempotencyKey)));
         if (!(result.channelResult() instanceof CreateTransferResponse response)) {
             throw new IllegalStateException("Transfer lifecycle did not return its channel response");
         }
@@ -66,7 +68,7 @@ public class TransferSubmissionService {
                 false);
     }
 
-    private static Map<String, Object> payload(CreateTransferRequest request) {
+    private static Map<String, Object> payload(CreateTransferRequest request, String idempotencyKey) {
         Map<String, Object> payload = new LinkedHashMap<>();
         put(payload, "sourceBank", request.getSourceBank());
         put(payload, "destinationBank", request.getDestinationBank());
@@ -76,7 +78,7 @@ public class TransferSubmissionService {
                 ? null : request.getAmount().toPlainString());
         put(payload, "currency", request.getCurrency());
         put(payload, "reference", request.getReference());
-        put(payload, "idempotencyKey", request.getIdempotencyKey());
+        put(payload, "idempotencyKey", idempotencyKey);
         put(payload, "inquiryRef", request.getInquiryRef());
         put(payload, "beneficiaryToken", request.getBeneficiaryToken());
         return Collections.unmodifiableMap(new LinkedHashMap<>(payload));
@@ -94,4 +96,5 @@ public class TransferSubmissionService {
         }
         return value;
     }
+
 }

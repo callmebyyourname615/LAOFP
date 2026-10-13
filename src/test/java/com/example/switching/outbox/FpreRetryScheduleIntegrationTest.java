@@ -22,7 +22,8 @@ import com.example.switching.outbox.service.OutboxRetryScheduleService;
  * <ul>
  *   <li>Each retryable attempt schedules next_retry_at using the FPRE delay table [1,1800,3600].</li>
  *   <li>Attempts 1–3 keep the event in PENDING with will_retry=true.</li>
- *   <li>Attempt 4 (initial failure + 3 retry pushes) transitions the event to FAILED and triggers auto-reversal.</li>
+ *   <li>Attempt 4 (initial failure + 3 retry pushes) transitions the event to FAILED
+ *       and moves the transfer to provisional settlement when status enquiry is unknown.</li>
  *   <li>next_retry_at is null after the final attempt.</li>
  * </ul>
  *
@@ -100,10 +101,10 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TC-FR-004  Attempt 4 (final) → FAILED, next_retry_at=null, reversal_log created
+    // TC-FR-004  Attempt 4 (final) → FAILED, next_retry_at=null, provisional settlement
     // ─────────────────────────────────────────────────────────────────────────
     @Test
-    void attempt4_final_setsFailedAndCreatesReversal() {
+    void attempt4_final_setsFailedAndMarksTransferProvisional() {
         String transferRef = "FR-TXN-4-" + System.nanoTime();
         long id = insertEvent(transferRef, 3);
 
@@ -115,13 +116,17 @@ class FpreRetryScheduleIntegrationTest extends AbstractIntegrationTest {
         assertFalse(bool(row.get("will_retry")), "No more retries after attempt 4");
         assertNull(row.get("next_retry_at"), "next_retry_at must be null after final attempt");
 
-        // Verify reversal_log was created
+        Map<String, Object> transfer = jdbcTemplate.queryForMap(
+                "SELECT status, confirmation_status, settlement_confidence FROM transactions WHERE transaction_ref = ?",
+                transferRef);
+        assertEquals("READY_FOR_SETTLEMENT", transfer.get("status"));
+        assertEquals("PROVISIONAL", transfer.get("confirmation_status"));
+        assertEquals("PROVISIONAL", transfer.get("settlement_confidence"));
+
+        // Unknown destination status is settled provisionally, not reversed.
         List<Map<String, Object>> reversals = jdbcTemplate.queryForList(
                 "SELECT * FROM reversal_log WHERE original_txn_id = ?", transferRef);
-        assertFalse(reversals.isEmpty(), "reversal_log must contain a row for the terminal transfer");
-        assertEquals("COMPLETED", reversals.get(0).get("status"),
-                "Reversal should be COMPLETED (mock environment)");
-        assertEquals("MAX_RETRIES", reversals.get(0).get("reason"));
+        assertTrue(reversals.isEmpty(), "unknown terminal technical failures must not create reversal_log rows");
     }
 
     // ─────────────────────────────────────────────────────────────────────────

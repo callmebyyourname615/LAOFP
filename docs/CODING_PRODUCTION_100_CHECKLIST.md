@@ -1,3 +1,5 @@
+> **QA RESET — 2026-10-13:** Historical run evidence, test reports and validation outputs have been cleared for a new QA cycle. Current QA status is **NOT_RUN**. Previous PASS/NO_GO results or completion percentages in this implementation document are historical statements and must not be reused for release approval. The active QA tracker is `Report/CHECKLIST.csv`; fresh evidence must bind to the current release commit, image, schema and environment.
+
 # Coding Production 100% Checklist
 
 > Scope: coding-only readiness for the Switching project. This checklist does not cover runtime evidence, UAT execution, operator sign-off, or production cutover activities.
@@ -32,9 +34,9 @@ Repo hygiene/static checks               PASS
 
 ### P0.1 Static Gates Must Pass
 
-- [ ] Restore or implement `docs/aml/SANCTIONS_PROVIDER_ONBOARDING.md`
-- [ ] Restore or implement `docs/security/VAULT_EXTERNAL_SECRETS_RUNBOOK.md`
-- [ ] Restore or implement `docs/implementation/PHASES_05_TO_07_IMPLEMENTATION.md`
+- [x] Restore or implement `docs/aml/SANCTIONS_PROVIDER_ONBOARDING.md`
+- [x] Restore or implement `docs/security/VAULT_EXTERNAL_SECRETS_RUNBOOK.md`
+- [x] Restore or implement `docs/implementation/PHASES_05_TO_07_IMPLEMENTATION.md`
 - [ ] Run `python3 scripts/verify_all_static.py`
 - [ ] Add missing static verifier coverage if any phase can drift without failing CI
 - [ ] Ensure CI runs static gates on every pull request

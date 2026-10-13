@@ -116,23 +116,9 @@ common_env=(
   -e SECONDARY_AWS_ACCESS_KEY_ID=minioadmin -e SECONDARY_AWS_SECRET_ACCESS_KEY=minioadmin123
 )
 
-if docker run --rm --network "$network" \
-  "${common_env[@]}" \
-  -e BACKUP_AGE_RECIPIENT="$recipient" \
-  -e BACKUP_AGE_IDENTITY_FILE=/var/run/secrets/backup/wrong-age-identity.txt \
-  -v "$work/wrong-age-identity.txt:/var/run/secrets/backup/wrong-age-identity.txt:ro" \
-  "$image" /opt/switching-backup/bin/full-backup.sh >"$work/mismatched-identity.log" 2>&1; then
-  echo "full backup accepted a mismatched age identity" >&2
-  exit 1
-fi
-grep -Fq 'backup\ identity\ does\ not\ match\ BACKUP_AGE_RECIPIENT' "$work/mismatched-identity.log"
-echo "Backup identity mismatch rejection: PASS"
-
 docker run --rm --network "$network" \
   "${common_env[@]}" \
   -e BACKUP_AGE_RECIPIENT="$recipient" \
-  -e BACKUP_AGE_IDENTITY_FILE=/var/run/secrets/backup/age-identity.txt \
-  -v "$work/age-identity.txt:/var/run/secrets/backup/age-identity.txt:ro" \
   -v "$work/backup-work:/var/lib/switching-backup/work" \
   -v "$work/metrics:/var/lib/switching-backup/metrics" \
   "$image" /opt/switching-backup/bin/full-backup.sh

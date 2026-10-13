@@ -145,8 +145,8 @@ class IsoInquiryFlowIntegrationTest extends AbstractIntegrationTest {
 
         JsonNode transfer = getTransfer(transferRef);
         assertEquals(transferRef, transfer.path("transferRef").asText());
-        assertEquals("SETTLED", transfer.path("status").asText());
-        assertEquals("SETTLED", transfer.path("currentStatus").asText());
+        assertEquals("READY_FOR_SETTLEMENT", transfer.path("status").asText());
+        assertEquals("READY_FOR_SETTLEMENT", transfer.path("currentStatus").asText());
         assertEquals(SOURCE_BANK, transfer.path("sourceBank").asText());
         assertEquals(DESTINATION_BANK, transfer.path("destinationBank").asText());
         assertEquals(DEBTOR_ACCOUNT, transfer.path("debtorAccount").asText());
@@ -234,12 +234,13 @@ class IsoInquiryFlowIntegrationTest extends AbstractIntegrationTest {
         long deadline = System.currentTimeMillis() + 5_000L;
         String status = transferStatus(transferRef);
 
-        while (!"SETTLED".equals(status) && System.currentTimeMillis() < deadline) {
+        while (!"READY_FOR_SETTLEMENT".equals(status) && System.currentTimeMillis() < deadline) {
             Thread.sleep(200L);
             status = transferStatus(transferRef);
         }
 
-        assertEquals("SETTLED", status, "Outbox dispatch should mark transfer SETTLED");
+        assertEquals("READY_FOR_SETTLEMENT", status,
+                "Outbox dispatch should make DNS transfer ready for the settlement cycle");
     }
 
     private String transferStatus(String transferRef) {

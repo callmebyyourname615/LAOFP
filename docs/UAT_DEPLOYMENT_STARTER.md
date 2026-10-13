@@ -21,9 +21,9 @@ PROJECT
 - Name: Switching (LaoFPS — Lao Fast Payment Switching)
 - Stack: Spring Boot 4 (Java 21) + Postgres 16 + Redpanda (Kafka) + MinIO
 - Build: ./mvnw, Maven, Dockerfile, docker-compose.yml at the repo root
-- Migrations: Flyway, ~100 contiguous SQL files in src/main/resources/db/migration/
+- Migrations: Flyway, 110 SQL files in src/main/resources/db/migration/
 - Test entry points: ./mvnw verify  AND  ./scripts/run_tests.sh
-- Latest known-good migration: V107 (grant on `reporting` schema)
+- Latest known-good migration: V117 (portal missing endpoint support)
 - Latest known-good test result on a fresh stack: 0 FAIL / 14 SKIP / 118 PASS
 
 SERVER (the only one I am deploying to)
@@ -217,7 +217,7 @@ docker compose logs -f app | grep -E "Migrating|Started Switching|ERROR|Caused b
 # Health
 curl -sf http://localhost:8080/actuator/health | jq .
 
-# Flyway head (should be V107 or higher on the new code)
+# Flyway head (should be V117 or higher on the new code)
 docker compose exec -T postgres psql -U switching_app -d switching_db \
   -c "SELECT version, installed_on FROM flyway_schema_history WHERE success ORDER BY installed_rank DESC LIMIT 5"
 
@@ -368,7 +368,7 @@ docker compose logs -f app | grep -E "Migrating|Started Switching|ERROR|Caused b
 ### U.6 Verify migration head (1 min)
 
 ```bash
-# Should now show the new latest migration (e.g. V106 or higher)
+# Should now show the new latest migration (V117 or higher)
 docker compose exec -T postgres psql -U switching_app -d switching_db \
   -c "SELECT version FROM flyway_schema_history WHERE success ORDER BY installed_rank DESC LIMIT 3"
 ```

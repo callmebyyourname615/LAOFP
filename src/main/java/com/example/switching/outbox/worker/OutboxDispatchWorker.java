@@ -41,6 +41,9 @@ public class OutboxDispatchWorker {
     @Value("${switching.outbox.queue.enabled:false}")
     private boolean queueEnabled;
 
+    @Value("${switching.outbox.queue.publisher-enabled:true}")
+    private boolean queuePublisherEnabled;
+
     public OutboxDispatchWorker(OutboxEventRepository outboxEventRepository,
                                 OutboxProcessorService outboxProcessorService,
                                 MeterRegistry meterRegistry) {
@@ -69,7 +72,7 @@ public class OutboxDispatchWorker {
     // ── Near real-time: triggered immediately after transaction commits ────────
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onOutboxCreated(OutboxCreatedEvent event) {
-        if (queueEnabled) {
+        if (queueEnabled && queuePublisherEnabled) {
             log.debug("Outbox queue enabled — queue publisher will wake dispatcher outboxEventId={} transferRef={}",
                     event.outboxEventId(), event.transferRef());
             return;

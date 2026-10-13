@@ -566,34 +566,7 @@ public class ProductionStartupValidator implements InitializingBean {
 
     private void validateSeedDataRemoved(List<String> violations) {
         rejectIfCountPositive(violations,
-                "Seed API keys from V13 are still active. Rotate/delete sk-admin/sk-ops/sk-bank-* seed keys before production.",
-                """
-                SELECT COUNT(*)
-                FROM api_keys
-                WHERE enabled = TRUE
-                  AND key_prefix IN ('sk-admin-switc', 'sk-ops-switchi', 'sk-bank-a-swit', 'sk-bank-b-swit')
-                """);
-
-        rejectIfCountPositive(violations,
-                "Seed OAuth clients from V13 are still active. Rotate/delete client-bank-a/client-bank-b before production.",
-                """
-                SELECT COUNT(*)
-                FROM oauth_clients
-                WHERE status = 'ACTIVE'
-                  AND client_id IN ('client-bank-a', 'client-bank-b')
-                """);
-
-        rejectIfCountPositive(violations,
-                "Seed mTLS certificates from V13 are still active. Register real PSP certificates before production.",
-                """
-                SELECT COUNT(*)
-                FROM psp_certificates
-                WHERE status = 'ACTIVE'
-                  AND cert_id IN ('seed-bank-a-mtls-cert', 'seed-bank-b-mtls-cert')
-                """);
-
-        rejectIfCountPositive(violations,
-                "Mock connector routes are still enabled. Replace V13 mock connector configs/routing rules before production.",
+                "Mock connector routes are still enabled. Replace mock connector configs/routing rules before production.",
                 """
                 SELECT COUNT(*)
                 FROM connector_configs c

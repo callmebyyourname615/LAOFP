@@ -8,9 +8,9 @@ for p in mig.glob('V*__*.sql'):
  m=re.match(r'V(\d+)__',p.name)
  if m: items.append((int(m.group(1)),p))
 items.sort(); versions=[v for v,_ in items]
-required=[v for v in range(1,107) if v not in {88,89,90,98,99,102,103}]
+required=[v for v in range(1,118) if v not in {88,89,90,98,99,102,103}]
 missing=[v for v in required if v not in versions]; duplicates=sorted({v for v in versions if versions.count(v)>1})
-certified=(not missing and not duplicates and len(items)==99 and max(versions,default=0)==106)
+certified=(not missing and not duplicates and len(items)==110 and max(versions,default=0)==117)
 out={'schemaVersion':1,'certified':certified,'count':len(items),'latest':max(versions,default=0),'missing':missing,'duplicates':duplicates,'reservedGaps':[88,89,90,98,99,102,103],'sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for _,p in items}}
 Path(args.output).write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
 print(json.dumps({k:out[k] for k in ('certified','count','latest','missing','duplicates')},sort_keys=True))

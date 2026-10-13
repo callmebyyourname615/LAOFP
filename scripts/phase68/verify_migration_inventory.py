@@ -9,10 +9,10 @@ for f in sorted(d.glob('V*.sql')):
  v=int(m.group(1));
  if v in found: duplicates.append(v)
  found[v]=f
-reserved={88,89,90,98,99}; expected=set(range(1,107))-reserved; missing=sorted(expected-set(found)); unexpected=sorted(set(found)-expected-reserved)
+reserved={88,89,90,98,99,102,103}; expected=set(range(1,118))-reserved; missing=sorted(expected-set(found)); unexpected=sorted(set(found)-expected-reserved)
 files=[{'version':v,'path':found[v].relative_to(root).as_posix(),'sha256':hashlib.sha256(found[v].read_bytes()).hexdigest()} for v in sorted(found)]
-certified=not missing and not duplicates and not unexpected and len(found)==99 and max(found or [0])==106
-result={'schemaVersion':1,'latest':max(found or [0]),'count':len(found),'expectedCount':99,'reservedGaps':sorted(reserved),'missingVersions':missing,'duplicateVersions':duplicates,'unexpectedVersions':unexpected,'certified':certified,'files':files}
+certified=not missing and not duplicates and not unexpected and len(found)==110 and max(found or [0])==117
+result={'schemaVersion':1,'latest':max(found or [0]),'count':len(found),'expectedCount':110,'reservedGaps':sorted(reserved),'missingVersions':missing,'duplicateVersions':duplicates,'unexpectedVersions':unexpected,'certified':certified,'files':files}
 a.output.parent.mkdir(parents=True,exist_ok=True); a.output.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
 print(json.dumps({k:v for k,v in result.items() if k!='files'},indent=2,sort_keys=True))
 sys.exit(0 if certified or a.allow_missing else 1)

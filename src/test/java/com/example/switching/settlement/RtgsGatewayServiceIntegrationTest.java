@@ -33,6 +33,8 @@ import org.springframework.web.context.WebApplicationContext;
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.settlement.entity.SettlementCycleEntity;
 import com.example.switching.settlement.entity.SettlementInstructionEntity;
+import com.example.switching.settlement.exception.RtgsSubmissionException;
+import com.example.switching.settlement.exception.SettlementInstructionInvalidStateException;
 import com.example.switching.settlement.repository.SettlementInstructionRepository;
 import com.example.switching.settlement.service.HighValueRtgsInstructionService;
 import com.example.switching.settlement.service.RtgsGatewayService;
@@ -113,7 +115,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
     void sendApprovedInstruction_requiresApprovedState() {
         SettlementInstructionEntity pending = pendingInstruction(LocalDate.now().plusDays(131));
 
-        assertThrows(IllegalStateException.class,
+        assertThrows(SettlementInstructionInvalidStateException.class,
                 () -> rtgsGatewayService.sendApprovedInstruction(pending.getInstructionRef(), "ops-user"));
         assertEquals(0, REQUEST_BODIES.size());
     }
@@ -123,7 +125,7 @@ class RtgsGatewayServiceIntegrationTest extends AbstractIntegrationTest {
         RESPONSE_STATUS.set(503);
         SettlementInstructionEntity approved = approvedInstruction(LocalDate.now().plusDays(132));
 
-        assertThrows(IllegalStateException.class,
+        assertThrows(RtgsSubmissionException.class,
                 () -> rtgsGatewayService.sendApprovedInstruction(approved.getInstructionRef(), "ops-user"));
 
         SettlementInstructionEntity stored = instructionRepository

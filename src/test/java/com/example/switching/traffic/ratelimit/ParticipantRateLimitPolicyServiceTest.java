@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 class ParticipantRateLimitPolicyServiceTest {
 
+    private static final String TEST_PARTICIPANT = "TEST_PARTICIPANT";
+
     @TempDir
     Path tempDir;
 
@@ -24,13 +26,13 @@ class ParticipantRateLimitPolicyServiceTest {
         service.initialize();
 
         String firstRevision = service.snapshot().revision();
-        assertThat(service.snapshot().policy().quotaForIdentity("participant:BANK_A").capacity())
+        assertThat(service.snapshot().policy().quotaForIdentity("participant:" + TEST_PARTICIPANT).capacity())
                 .isEqualTo(5);
 
         Files.writeString(policy, "{\"version\":\"broken\",\"defaultQuota\":null}");
         assertThat(service.reloadNow()).isFalse();
         assertThat(service.snapshot().revision()).isEqualTo(firstRevision);
-        assertThat(service.snapshot().policy().quotaForIdentity("participant:BANK_A").capacity())
+        assertThat(service.snapshot().policy().quotaForIdentity("participant:" + TEST_PARTICIPANT).capacity())
                 .isEqualTo(5);
     }
 
@@ -56,17 +58,17 @@ class ParticipantRateLimitPolicyServiceTest {
 
         assertThat(service.snapshot().policy().version()).isEqualTo("phase70-v1");
         assertThat(service.snapshot().revision()).hasSize(64);
-        assertThat(service.snapshot().policy().quotaForIdentity("participant:BANK_A").capacity())
-                .isEqualTo(300);
+        assertThat(service.snapshot().policy().quotaForIdentity("participant:" + TEST_PARTICIPANT).capacity())
+                .isEqualTo(100);
     }
 
-    private static String policyJson(String version, int bankACapacity) {
+    private static String policyJson(String version, int participantCapacity) {
         return """
                 {
                   "version":"%s",
                   "defaultQuota":{"capacity":3,"refillTokens":3,"refillPeriodSeconds":60},
-                  "participants":{"BANK_A":{"capacity":%d,"refillTokens":%d,"refillPeriodSeconds":60}}
+                  "participants":{"%s":{"capacity":%d,"refillTokens":%d,"refillPeriodSeconds":60}}
                 }
-                """.formatted(version, bankACapacity, bankACapacity);
+                """.formatted(version, TEST_PARTICIPANT, participantCapacity, participantCapacity);
     }
 }

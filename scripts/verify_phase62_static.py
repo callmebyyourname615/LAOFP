@@ -17,8 +17,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-LATEST = 106
-AUTHORITATIVE_COUNT = 99
+LATEST = 117
+AUTHORITATIVE_COUNT = 110
 RESERVED_GAPS = {88, 89, 90, 98, 99, 102, 103}
 BASELINE_MISSING_PHASE_II = {91, 92, 93, 94, 95, 96}
 

@@ -11,9 +11,9 @@ rows=[]; mig=root/'src/main/resources/db/migration'
 for f in sorted(mig.glob('V*.sql')):
  m=re.match(r'V(\d+)__',f.name)
  if m: rows.append({'version':int(m.group(1)),'file':f.name,'sha256':hashlib.sha256(f.read_bytes()).hexdigest()})
-versions={x['version'] for x in rows}; expected=set(range(1,107))-{88,89,90,98,99}
+versions={x['version'] for x in rows}; expected=set(range(1,118))-{88,89,90,98,99,102,103}
 missing_versions=sorted(expected-versions)
-if len(rows)!=101 or missing_versions: errors.append(f'migration contract mismatch: count={len(rows)} expected=101 missing={missing_versions}')
+if len(rows)!=110 or missing_versions: errors.append(f'migration contract mismatch: count={len(rows)} expected=110 missing={missing_versions}')
 try: commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True,timeout=3).strip()
 except Exception: commit='unknown'; errors.append('git commit unavailable')
 if a.expected_commit and commit!=a.expected_commit: errors.append(f'commit mismatch: actual={commit} expected={a.expected_commit}')

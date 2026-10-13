@@ -35,6 +35,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 public class OutboxQueueConfig {
 
     @Bean
+    @ConditionalOnProperty(prefix = "switching.outbox.queue", name = "create-topic", havingValue = "true", matchIfMissing = true)
     public KafkaAdmin kafkaAdmin(@Value("${spring.kafka.bootstrap-servers:localhost:9092}") String bootstrapServers) {
         Map<String, Object> props = new HashMap<>();
         props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -42,6 +43,7 @@ public class OutboxQueueConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "switching.outbox.queue", name = "create-topic", havingValue = "true", matchIfMissing = true)
     public NewTopic outboxDispatchTopic(OutboxQueueProperties properties) {
         return TopicBuilder.name(properties.topic())
                 .partitions(3)

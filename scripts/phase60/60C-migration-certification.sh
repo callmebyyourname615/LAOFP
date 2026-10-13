@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 source "$(dirname "$0")/common.sh"
 cd "$PHASE60_ROOT"
-phase_setup "60C" "Migration V1 to V106 certification"
+phase_setup "60C" "Migration V1 to V117 certification"
 PHASE_STATUS="FAIL"
 PHASE_MESSAGE="migration certification failed"
 trap 'code=$?; phase_finalize "$PHASE_STATUS" "$code" "$PHASE_MESSAGE"' EXIT
@@ -16,7 +16,7 @@ if phase_is_preflight; then
   exit 0
 fi
 
-phase_run "clean install and V106 migration integration tests" ./mvnw -B \
+phase_run "clean install and V117 migration integration tests" ./mvnw -B \
   -Dtest=MigrationApplicationIntegrationTest,V83CleanInstallCertificationIntegrationTest,V83PayloadSha256SchemaAlignmentIntegrationTest,V97SmosUserAccessMigrationIntegrationTest,V100CurrentStatusReportingRepairIntegrationTest,V101SmosSecurityHardeningMigrationIntegrationTest,V104FinancialPrecisionMigrationIntegrationTest \
   test
 
@@ -35,8 +35,8 @@ SELECT 'smos_role_count', count(*)::text FROM smos_roles
 UNION ALL
 SELECT 'smos_permission_count', count(*)::text FROM smos_permissions;
 SQL
-  grep -qx 'flyway_success_count,99' "$PHASE60_PHASE_DIR/upgrade-database-verification.csv"
-  grep -qx 'flyway_latest_version,106' "$PHASE60_PHASE_DIR/upgrade-database-verification.csv"
+  grep -qx 'flyway_success_count,109' "$PHASE60_PHASE_DIR/upgrade-database-verification.csv"
+  grep -qx 'flyway_latest_version,116' "$PHASE60_PHASE_DIR/upgrade-database-verification.csv"
   grep -qx 'smos_role_count,8' "$PHASE60_PHASE_DIR/upgrade-database-verification.csv"
   grep -qx 'smos_permission_count,20' "$PHASE60_PHASE_DIR/upgrade-database-verification.csv"
 else

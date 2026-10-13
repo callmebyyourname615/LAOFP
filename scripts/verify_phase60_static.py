@@ -160,9 +160,9 @@ for path in migration_files:
     match = re.match(r"V(\d+)__", path.name)
     if match:
         versions.append(int(match.group(1)))
-if len(versions) != 99 or max(versions, default=0) != 106:
-    FAILURES.append(f"migration inventory must be 99 files through V106, got {len(versions)} through V{max(versions, default=0)}")
-if sorted(set(range(1, 107)) - set(versions)) != [88, 89, 90, 98, 99, 102, 103]:
+if len(versions) != 110 or max(versions, default=0) != 117:
+    FAILURES.append(f"migration inventory must be 110 files through V117, got {len(versions)} through V{max(versions, default=0)}")
+if sorted(set(range(1, 118)) - set(versions)) != [88, 89, 90, 98, 99, 102, 103]:
     FAILURES.append("migration gaps must be V88-V90, V98-V99 and V102-V103")
 
 for sensitive in (".env.bak", "new.txt"):

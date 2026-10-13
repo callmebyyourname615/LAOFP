@@ -54,16 +54,15 @@ class DisputeAutoRefundIntegrationTest extends AbstractIntegrationTest {
                 Integer.class, disputeId);
         assertEquals(1, refundCount, "refund_transactions COMPLETED row must exist");
 
-        // Verify SETTLED reversal transaction (BANK_B → BANK_A)
+        // Verify the refund evidence reference is operational only, not a reverse transfer.
         Integer txnCount = jdbcTemplate.queryForObject(
                 """
                 SELECT COUNT(*) FROM transactions t
                   JOIN refund_transactions rt ON rt.refund_txn_ref = t.transaction_ref
-                 WHERE rt.dispute_id = ? AND t.status = 'SETTLED'
-                   AND t.source_bank = 'BANK_B' AND t.destination_bank = 'BANK_A'
+                 WHERE rt.dispute_id = ?
                 """,
                 Integer.class, disputeId);
-        assertEquals(1, txnCount, "SETTLED reversal transaction (BANK_B→BANK_A) must exist");
+        assertEquals(0, txnCount, "Refund evidence ref must not create a reversal transaction");
     }
 
     // ── TC-DISPUTE-REFUND-002 ────────────────────────────────────────────────

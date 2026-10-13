@@ -227,6 +227,19 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/reports").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/ops-report").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/operations/settlement/cycles/*/ops-report.csv").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/settlementfile").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/report/settlement").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/report/settlement_lapnet").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/report/settlement_v2").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/report/settlement").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/report/settlement_v2").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/report/lapnet_settlement").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/getrtgsjournal").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/finlink/transit_fund_move").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/finlink/inform_LIFMIS").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/settlementfileeasytax").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/adjustment_settlementfileeasytax").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/finlink/roadtax/settlementfile").hasAnyRole("OPS", "ADMIN")
 
                         // ── QR Code Service (P15) ─────────────────────────────
                         .requestMatchers(HttpMethod.POST, v1("/qr/generate/static")).hasAnyRole("BANK", "ADMIN")
@@ -242,6 +255,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/authorise")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/decline")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/rtp/requests/*/settlements")).hasAnyRole("OPS", "ADMIN")
+                        // Default-prefix contract: /v1/promotions/**, /v1/operator/report-delivery-schedules/**
                         .requestMatchers(v1("/promotions/**")).hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(v1("/operator/push-payment-policies/**")).hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(v1("/operator/report-delivery-schedules/**")).hasAnyRole("OPS", "ADMIN")
@@ -273,6 +287,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, v1("/crossborder/initiate")).hasAnyRole("BANK", "ADMIN")
                         .requestMatchers(HttpMethod.POST, v1("/crossborder/inbound/*")).permitAll()
                         .requestMatchers(HttpMethod.POST, v1("/operator/crossborder/reconciliation/*/*")).hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/crossborder/**").hasAnyRole("OPS", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/lfx/**").hasAnyRole("OPS", "ADMIN")
 
                         // ── ADMIN only — P9 credential management ────────────────
                         .requestMatchers(HttpMethod.GET,    v1("/participants/certificates")).hasAnyRole("OPS", "ADMIN")
@@ -311,7 +327,7 @@ public class SecurityConfig {
 
                         // ── ADMIN only — configuration management ─────────────────
                         .requestMatchers(HttpMethod.POST,  "/api/participants").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/participants/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/participants/**").denyAll()
                         .requestMatchers(HttpMethod.GET,   "/api/participants/**").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.GET,   "/api/participants").hasAnyRole("OPS", "ADMIN")
                         .requestMatchers(HttpMethod.POST,  "/api/routing-rules/**").hasRole("ADMIN")

@@ -1,5 +1,8 @@
 package com.example.switching.security.oauth;
 
+import static com.example.switching.TestDemoBanks.BANK_A;
+import static com.example.switching.TestDemoBanks.CLIENT_BANK_A;
+import static com.example.switching.TestDemoBanks.CLIENT_BANK_A_SECRET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -23,26 +26,26 @@ class OAuthTokenServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void createTokenReturnsSignedTokenForActiveClient() {
-        String token = tokenService.createToken("client-bank-a", Set.of("payments:write"));
+        String token = tokenService.createToken(CLIENT_BANK_A, Set.of("payments:write"));
 
         OAuthTokenClaims claims = tokenService.validateToken(token);
 
-        assertThat(claims.clientId()).isEqualTo("client-bank-a");
-        assertThat(claims.pspId()).isEqualTo("BANK_A");
+        assertThat(claims.clientId()).isEqualTo(CLIENT_BANK_A);
+        assertThat(claims.pspId()).isEqualTo(BANK_A);
         assertThat(claims.scopes()).containsExactly("payments:write");
         assertThat(claims.expiresAt()).isAfter(claims.issuedAt());
     }
 
     @Test
     void createTokenRejectsScopeOutsideClientGrant() {
-        assertThatThrownBy(() -> tokenService.createToken("client-bank-a", Set.of("admin:write")))
+        assertThatThrownBy(() -> tokenService.createToken(CLIENT_BANK_A, Set.of("admin:write")))
                 .isInstanceOf(OAuthTokenInvalidException.class)
                 .hasMessageContaining("No requested OAuth scopes");
     }
 
     @Test
     void validateTokenRejectsTamperedToken() {
-        String token = tokenService.createToken("client-bank-a", Set.of("payments:read"));
+        String token = tokenService.createToken(CLIENT_BANK_A, Set.of("payments:read"));
         String tampered = token.substring(0, token.length() - 2) + "xx";
 
         assertThatThrownBy(() -> tokenService.validateToken(tampered))
@@ -52,7 +55,7 @@ class OAuthTokenServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void revokeTokenRejectsFutureValidation() {
-        String token = tokenService.createToken("client-bank-a", Set.of("payments:read"));
+        String token = tokenService.createToken(CLIENT_BANK_A, Set.of("payments:read"));
 
         tokenService.revokeToken(token);
 
@@ -63,7 +66,7 @@ class OAuthTokenServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void verifyClientSecretChecksStoredSecretHash() {
-        assertThat(tokenService.verifyClientSecret("client-bank-a", "secret-bank-a-switching-2026")).isTrue();
-        assertThat(tokenService.verifyClientSecret("client-bank-a", "wrong-secret")).isFalse();
+        assertThat(tokenService.verifyClientSecret(CLIENT_BANK_A, CLIENT_BANK_A_SECRET)).isTrue();
+        assertThat(tokenService.verifyClientSecret(CLIENT_BANK_A, "wrong-secret")).isFalse();
     }
 }

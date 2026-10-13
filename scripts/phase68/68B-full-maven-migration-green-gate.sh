@@ -10,4 +10,4 @@ fi
 phase_run 'strict migration inventory' python3 scripts/phase68/verify_migration_inventory.py --output "$PHASE68_DIR/migration-inventory.json"
 phase_run 'clean Maven verification' ./mvnw -B clean verify
 phase_run 'static production verifiers' python3 scripts/verify_all_static.py
-phase_finalize PASS 0 'Maven tests, static gates and V1-V106 migration inventory passed'
+phase_finalize PASS 0 'Maven tests, static gates and V1-V117 migration inventory passed'

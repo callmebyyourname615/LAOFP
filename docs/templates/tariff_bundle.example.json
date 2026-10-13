@@ -1,0 +1,13 @@
+{
+  "planCode": "STANDARD_BANK_TRANSFER",
+  "version": 1,
+  "validFrom": "2026-01-01",
+  "rules": [
+    {
+      "messageType": "PUSH_TRANSFER",
+      "currency": "LAK",
+      "flatFee": "0.00",
+      "rateBasisPoints": "0"
+    }
+  ]
+}

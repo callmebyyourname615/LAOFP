@@ -51,7 +51,7 @@ class FpreOperationsServiceIntegrationTest extends AbstractIntegrationTest {
         assertEquals("ACCEPTED", response.transferStatus());
         assertEquals("PENDING", response.outboxStatus());
         assertEquals(2, response.attemptCount());
-        assertEquals(5, response.maxAttempts());
+        assertEquals(4, response.maxAttempts());
         assertEquals("TRANSIENT", response.failureClass());
         assertTrue(response.willRetry());
         assertFalse(response.willAutoReverse());

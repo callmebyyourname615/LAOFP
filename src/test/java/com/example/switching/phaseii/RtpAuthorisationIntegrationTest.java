@@ -16,6 +16,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.switching.AbstractIntegrationTest;
 import com.example.switching.rtp.dto.AuthoriseRtpRequest;
@@ -55,6 +56,7 @@ class RtpAuthorisationIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Transactional
     void fullAuthorisationSettlesThroughExistingTransferGateway() {
         Instant now = Instant.parse("2026-06-22T00:00:00Z");
         RtpRequestEntity request = new RtpRequestEntity();

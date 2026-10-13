@@ -5,7 +5,7 @@ Phase 65 turns repository-side readiness into controlled execution gates. A phas
 | Phase | Repository delivery | Runtime/operator dependency |
 |---|---|---|
 | 65A | historical blocker regression verifier + targeted tests | Maven/Testcontainers |
-| 65B | fresh report + V1–V106 inventory certification | full Maven and clean/upgrade DB runs |
+| 65B | fresh report + V1–V117 inventory certification | full Maven and clean/upgrade DB runs |
 | 65C | SMOS five-operator provisioning + security attestation | HTTPS UAT and bootstrap bearer token |
 | 65D | protected secret generator + signed rotation verifier | SecOps, Vault and coordinated history rewrite |
 | 65E | digest/TLS/dependency/replica probes | production-like UAT |

@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "id": "case-001",
+      "decision": "ALLOW"
+    },
+    {
+      "id": "case-002",
+      "decision": "REVIEW"
+    }
+  ]
+}

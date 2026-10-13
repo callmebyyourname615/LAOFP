@@ -1,0 +1,12 @@
+{
+  "component": "switching-api",
+  "environment": "uat",
+  "observations": [
+    { "observed_at": "2026-01-01T00:00:00Z", "request_rate": 100 },
+    { "observed_at": "2026-01-01T01:00:00Z", "request_rate": 120 },
+    { "observed_at": "2026-01-01T02:00:00Z", "request_rate": 140 },
+    { "observed_at": "2026-01-01T03:00:00Z", "request_rate": 160 },
+    { "observed_at": "2026-01-01T04:00:00Z", "request_rate": 180 },
+    { "observed_at": "2026-01-01T05:00:00Z", "request_rate": 200 }
+  ]
+}

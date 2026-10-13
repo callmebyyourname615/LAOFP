@@ -8,8 +8,8 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-EXPECTED_COUNT = 99
-EXPECTED_LATEST = 106
+EXPECTED_COUNT = 110
+EXPECTED_LATEST = 117
 RESERVED_GAPS = [88, 89, 90, 98, 99, 102, 103]
 
 

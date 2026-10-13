@@ -15,6 +15,7 @@ import com.example.switching.observability.tracing.TraceContextSupport;
 
 @Component
 @ConditionalOnProperty(prefix = "switching.outbox.queue", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "switching.outbox.queue", name = "publisher-enabled", havingValue = "true", matchIfMissing = true)
 public class OutboxQueuePublisher {
 
     private static final Logger log = LoggerFactory.getLogger(OutboxQueuePublisher.class);

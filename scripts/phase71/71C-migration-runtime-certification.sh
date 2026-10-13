@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-source "$(dirname "$0")/common.sh"; cd "$PHASE71_ROOT"; phase_setup 71C 'Migration V1-V106 runtime certification'
+source "$(dirname "$0")/common.sh"; cd "$PHASE71_ROOT"; phase_setup 71C 'Migration V1-V117 runtime certification'
 if phase_preflight; then
   phase_run 'inventory migrations in delivery mode' python3 scripts/phase71/verify_migrations.py --allow-missing --output "$PHASE71_DIR/migration-inventory.json"
   certified="$(python3 -c 'import json,sys; print(str(json.load(open(sys.argv[1]))["certified"]).lower())' "$PHASE71_DIR/migration-inventory.json")"
@@ -15,4 +15,4 @@ if [[ -f sql/phase71/data-integrity-checks.sql ]]; then
   : "${PHASE71_PSQL_COMMAND:?PHASE71_PSQL_COMMAND is required}"
   phase_run 'run post-migration data integrity SQL' bash -lc "$PHASE71_PSQL_COMMAND -v ON_ERROR_STOP=1 -f sql/phase71/data-integrity-checks.sql"
 fi
-phase_finalize PASS 0 'V1-V106 clean install, upgrade paths and integrity checks passed'
+phase_finalize PASS 0 'V1-V117 clean install, upgrade paths and integrity checks passed'

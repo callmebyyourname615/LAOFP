@@ -1,3 +1,5 @@
+> **QA RESET — 2026-10-13:** Historical run evidence, test reports and validation outputs have been cleared for a new QA cycle. Current QA status is **NOT_RUN**. Previous PASS/NO_GO results or completion percentages in this implementation document are historical statements and must not be reused for release approval. The active QA tracker is `Report/CHECKLIST.csv`; fresh evidence must bind to the current release commit, image, schema and environment.
+
 # Go-Live Critical Path — Master Checklist
 
 > **Last updated:** 2026-06-24 (Phase 78-81 merged + P0.1 bug (e) closed — commits `1762c76`, `6b0b50a`)
@@ -15,7 +17,7 @@
 
 | Section | Progress | Note |
 |---|---|---|
-| 1. Code Foundation | 🟢 **100%** | 99 migrations (V1–V106) |
+| 1. Code Foundation | 🟢 **100%** | 110 migrations (V1–V117) |
 | 2. P0 Critical Fixes | 🟢 **100%** | All 5 test bug root causes fixed (Phase 65 / 69 / bug-e commit `1762c76`) |
 | 3. P1 Operational | 🟢 **90%** | 3 dashboards + DSL + promotion budget |
 | 4. P2 Nice-to-have | 🔴 **0%** | deferred |
@@ -80,7 +82,7 @@
 - [x] `./mvnw compile` passes
 - [x] Dockerfile + compose syntax validate
 
-**Migration sequence:** V1–V106 (gaps V88–V90, V98–V99 reserved) — **99 migrations**
+**Migration sequence:** V1–V117 (gaps V88–V90, V98–V99, V102–V103 reserved) — **110 migrations**
 
 ---
 
@@ -88,18 +90,18 @@
 
 ## P0.1 — Fix `mvn verify` test failures
 
-- [x] Update Flyway version assertions to V106 (3 ไฟล์)
-- [x] Update static verifiers to expect V106 (verify_phase53b, 53c-j, 43-52, 54a-j, 60, 61)
+- [x] Update Flyway version assertions to V117 / 110 migrations
+- [x] Update static verifiers to expect V117 / 110 migrations (verify_phase53b, 53c-j, 43-52, 54a-j, 60, 61, 65, 68, 71, 74, 78)
 - [x] Phase 62 added static regression guards for 4 historical blockers
 - [x] Fix vault `ObjectMapper` missing in `WebhookEncryptionConfiguration` (Phase 69)
 - [x] Add `provider_uid` seed in `SanctionsScreeningIntegrationTest` (Phase 65A)
 - [x] Fix FK cleanup order in `OperationsGenerateRoutesForBankIntegrationTest` (Phase 69)
 - [x] Fix cross-border JDBC temporal binding with `JdbcTemporalBinder` (Phase 71)
 - [x] Fix Instant → TIMESTAMPTZ binding in `PostgresTemporalBinder` (P0.1 bug e — closes the final mvn-verify root cause). See [docs/BUG_E_INSTANT_SQL_TYPE_CHECKLIST.md](BUG_E_INSTANT_SQL_TYPE_CHECKLIST.md).
-- [ ] **Run `./mvnw verify` → 0 errors, 0 failures**
+- [x] **Run `./mvnw verify` → 0 errors, 0 failures** (Phase 91, 575 tests, 0 failures, 0 errors, 3 Docker-gated skips)
 - [ ] **Run `./scripts/execute-and-verify/00-run-all.sh` → all steps green**
 
-**Effort:** 3 ชม.   **Owner:** 1 dev   **Status:** 🟡 fixes ใส่ static guard / runtime run pending
+**Effort:** 3 ชม.   **Owner:** 1 dev   **Status:** 🟡 full Maven verify green / runtime run-all pending
 
 ---
 
@@ -376,7 +378,7 @@ Orchestrator: `scripts/phase66/` + verifier `scripts/verify_phase66_static.py`
 # 11. Phase 54 — UAT Certification
 
 - [ ] 54A Build & Test certification
-- [ ] 54B Migration certification (V1→V106)
+- [ ] 54B Migration certification (V1→V117)
 - [ ] 54C UAT deployment rehearsal
 - [ ] 54D Performance & capacity
 - [ ] 54E Settlement 500k
@@ -783,9 +785,9 @@ Week 7 ─── Phase 55J sign-off → 🚀 GO-LIVE + 14-day hypercare
 # 📊 Current State
 
 ```yaml
-migrations_total: 99
-migrations_latest: V106
-reserved_gaps: [V88, V89, V90, V98, V99]
+migrations_total: 109
+migrations_latest: V117
+reserved_gaps: [V88, V89, V90, V98, V99, V102, V103]
 code_coverage_brd: ~98%
 critical_path_code_done: 100%
 critical_path_runtime_done: 0%
@@ -815,7 +817,7 @@ p0_1_test_bugs_closed: 4_of_5
 
 | Tier | Progress |
 |---|---|
-| Tier 1: WRITE CODE | 🟢 100% (99 migrations, SMOS, dashboards, tracing, replica routing) |
+| Tier 1: WRITE CODE | 🟢 100% (110 migrations, SMOS, dashboards, tracing, replica routing) |
 | Tier 2: VERIFY CODE | 🟡 70% |
 | Tier 3: PHASE 61 PREFLIGHT | 🟢 100% scripts / 🔴 0% executed |
 | Tier 4: PHASE 64 ENTRY GATE | 🟢 100% scripts / 🔴 0% executed |

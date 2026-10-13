@@ -5,7 +5,10 @@ import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -22,6 +25,9 @@ public abstract class AbstractIntegrationTest {
 
     static final PostgreSQLContainer<?> POSTGRES;
     private static final boolean USING_TESTCONTAINERS;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     static {
         if (isDockerSocketAvailable()) {
@@ -61,6 +67,11 @@ public abstract class AbstractIntegrationTest {
             registry.add("spring.flyway.user",         POSTGRES::getUsername);
             registry.add("spring.flyway.password",     POSTGRES::getPassword);
         }
+    }
+
+    @BeforeEach
+    void seedDemoBankFixtures() {
+        TestDemoBankSeed.seed(jdbcTemplate);
     }
 
     private static void prepareLocalPostgres() {

@@ -1,6 +1,7 @@
 package com.example.switching.migration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static com.example.switching.migration.MigrationAssertions.assertCleanInstallAtHead;
 
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * Boots the dedicated migration process against real PostgreSQL and proves that it applies the
  * complete schema while remaining isolated from application runtime infrastructure.
  */
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 class MigrationApplicationIntegrationTest {
 
     private static final String LOCAL_MASTER_KEY =
@@ -58,9 +59,7 @@ class MigrationApplicationIntegrationTest {
                     .cleanDisabled(true)
                     .load();
 
-            assertThat(flyway.info().current()).isNotNull();
-            assertThat(flyway.info().current().getVersion().getVersion()).isEqualTo("107");
-            assertThat(flyway.info().pending()).isEmpty();
+            assertCleanInstallAtHead(flyway);
             flyway.validate();
 
             assertThat(context.getBeansOfType(KafkaTemplate.class)).isEmpty();

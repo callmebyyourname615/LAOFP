@@ -1,0 +1,18 @@
+plan_reference: DEC-2026-001
+target_type: CONNECTOR
+target_code: LEGACY_CONNECTOR
+planned_effective_at: "2026-12-31T23:00:00+07:00"
+reason: Replace legacy connector after certified migration.
+rollback_reference: RB-LEGACY-CONNECTOR
+approvals_required:
+  - OPERATIONS
+  - RISK
+  - BUSINESS
+data_exit_required: true
+tasks:
+  - code: EXPORT_AND_ENCRYPT_DATA
+    owner_team: Data Governance
+    blocking: true
+  - code: DISABLE_TRAFFIC
+    owner_team: Platform Ops
+    blocking: true

@@ -1,0 +1,16 @@
+calendar_code: LA_STANDARD
+version: 1
+timezone: Asia/Vientiane
+weekend_days: [6, 7]
+effective_from: "2026-01-01"
+holidays:
+  - date: "2026-04-14"
+    name: Lao New Year
+    full_day: true
+cutoffs:
+  - cycle_code: DAILY_NET
+    product_code: PUSH_TRANSFER
+    submission_cutoff: "16:00:00"
+    finality_cutoff: "17:00:00"
+    late_action: NEXT_CYCLE
+    grace_seconds: 300

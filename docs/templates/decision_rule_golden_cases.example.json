@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {
+      "id": "case-001",
+      "input": { "amount": 1000, "currency": "LAK" },
+      "expected_decision": "ALLOW"
+    },
+    {
+      "id": "case-002",
+      "input": { "amount": 999999999, "currency": "LAK" },
+      "expected_decision": "REVIEW"
+    }
+  ]
+}

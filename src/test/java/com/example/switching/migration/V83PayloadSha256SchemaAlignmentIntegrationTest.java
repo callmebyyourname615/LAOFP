@@ -2,6 +2,7 @@ package com.example.switching.migration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static com.example.switching.migration.MigrationAssertions.LATEST_VERSION;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,7 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * applies only V83, and then verifies data preservation, PostgreSQL metadata, Flyway
  * history, validated constraints, and rejection of malformed digests.</p>
  */
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 class V83PayloadSha256SchemaAlignmentIntegrationTest {
 
     private static final String CONFIGURATION_HASH =
@@ -75,7 +76,7 @@ class V83PayloadSha256SchemaAlignmentIntegrationTest {
         throughLatest.validate();
 
         try (Connection connection = connection()) {
-            assertThat(currentFlywayVersion(connection)).isEqualTo("107");
+            assertThat(currentFlywayVersion(connection)).isEqualTo(LATEST_VERSION);
 
             assertVarchar64NotNull(connection, "configuration_change_requests");
             assertVarchar64NotNull(connection, "outbox_dead_letters");
